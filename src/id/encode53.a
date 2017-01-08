@@ -1,0 +1,20 @@
+;-------------------------------
+; IDEncoded53
+; identify bootloader that loads
+; 5-3-encoded data from track 0
+; (these disks are unsupported)
+;
+; in:  track buffer contains T00,S00
+; out: C clear if 5-3-encoding loader found
+;      C set otherwise
+;      all registers clobbered
+;      all other flags clobbered
+;-------------------------------
+IDEncoded53
+         ldy   #$10
+         jsr   SearchTrack
+         !byte $BD,$8C,$C0,$10,$FB,$C9,$B5,$F0
+         !byte 09,$28,$90,$DF,$49,$AD,$F0,$1F
+         bcs   encoded53_exit
+encoded53_exit
+         rts

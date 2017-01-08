@@ -1,0 +1,74 @@
+DiskIIArray
+         !byte 00,00,00,00,00,00,00
+
+;-------------------------------
+; ScanForDiskII
+; scan all slots for things that
+; look like Disk II cards
+;
+; out: all registers clobbered
+;      all flags clobbered
+;      DiskIIArray filled with 00 or FF
+;-------------------------------
+ScanForDiskII
+         lda   #$00
+         sta   cmp1
+         ldx   #$07
+fingerprint
+         txa
+         ora   #$C0
+         sta   cmp1+1
+         ldy   #$01
+         lda   (cmp1),y
+         cmp   #$20
+         bne   slots_next
+         ldy   #$03
+         lda   (cmp1),y
+         bne   slots_next
+         ldy   #$05
+         lda   (cmp1),y
+         cmp   #$03
+         bne   slots_next
+         ldy   #$FF
+         lda   (cmp1),y
+         bne   slots_next
+         tya
+         sta   DiskIIArray-1,x
+slots_next
+         dex
+         bne   fingerprint
+         rts
+
+;-------------------------------
+; NextSlot
+;-------------------------------
+NextSlot
+         lda   DRIVE
+         cmp   #$31
+         bne   incslot
+         lda   #$32
+         sta   DRIVE
+         bne   slots_done       ; unconditional branch
+incslot
+         lda   #$31
+         sta   DRIVE
+         inc   SLOT
+         lda   SLOT
+         cmp   #$38
+         bne   nowrap
+         lda   #$31
+         sta   SLOT
+nowrap
+         sec
+         sbc   #$30
+         tax
+         lda   DiskIIArray-1,x
+         beq   incslot
+slots_done
+         lda   SLOT
+         cmp   #$36
+         bne   reallydone
+         lda   #$32
+         sta   DRIVE
+reallydone
+         rts

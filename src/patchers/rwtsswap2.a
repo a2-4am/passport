@@ -1,0 +1,38 @@
+;-------------------------------
+; #RWTSSWAP2
+; after DOS loads, program calls
+; subroutines at $BA69 and $BA7D
+; to swap RWTS parameters on the
+; fly
+; e.g. Mask Parade
+;-------------------------------
+_rwtsswap2
+         lda   gIsBoot0   ; if DOS 3.3 boot0 loader
+         bne   rwtsswap2_exit
+         lda   #$04
+         ldx   #$69
+         ldy   #$13
+         jsr   compare    ; and T00,S04,$69 ==
+         !byte $A9,$AB,$8D,$4B,$B8,$A9,$FF,$20
+         !byte $DF,$BC,$20,$EC,$BC,$A9,$AA,$8D
+         !byte $29,$BA,$60
+         bcs   rwtsswap2_exit
+         lda   #$04
+         ldx   #$7D
+         ldy   #$15
+         jsr   compare    ; and T00,S04,$7D ==
+         !byte $A9,$FF,$8D,$4B,$B8,$A9,$DE,$20
+         !byte $DF,$BC,$A9,$AA,$20,$EC,$BC,$A9
+         !byte $96,$8D,$29,$BA,$60
+         bcs   rwtsswap2_exit
+         lda   #$04
+         ldx   #$69
+         ldy   #$01
+         jsr   modify     ; then set T00,S04,$69 =
+         !byte $60
+         lda   #$04
+         ldx   #$7D
+         ldy   #$01
+         jsr   modify     ; and set T00,S04,$7D =
+         !byte $60
+rwtsswap2_exit

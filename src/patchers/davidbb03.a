@@ -1,0 +1,49 @@
+;-------------------------------
+; #DAVIDBB03
+; David-DOS boot0 calls $BB03
+; for a self-decrypting nibble
+; check which continues to $B7A9
+; on success
+; e.g. Case of the Great Train
+; Robbery, Case of the Missing
+; Chick, Mrs. Wigglesworth's Secret
+; Mystery of the Witch's Shoes
+;-------------------------------
+_davidbb03
+         lda   #$00
+         ldx   #$00
+         ldy   #$38
+         jsr   compare    ; and T00,S00,$00 ==
+         !byte 01,$A5,$27,$C9,09,$D0,$17,$A5
+         !byte $2B,$4A,$4A,$4A,$4A,$AA,09,$C0
+         !byte $85,$3F,$A9,00,$9D,$78,04,$9D
+         !byte $F8,04,$A9,$5C,$85,$3E,$AE,$FF
+         !byte 08,$30,$15,$BD,$ED,08,$85,$3D
+         !byte $CE,$FF,08,$AD,$FE,08,$85,$27
+         !byte $CE,$FE,08,$A6,$2B,$6C,$3E,00
+         bcs   davidbb03_exit
+         lda   #$00
+         ldx   #$8B
+         ldy   #$03
+         jsr   compare    ; and T00,S00,$8B ==
+         !byte $20,03,$BB
+         bcs   davidbb03_exit
+         lda   #$07
+         ldx   #$03
+         ldy   #$25
+         jsr   compare    ; and T00,S07,$03 ==
+         !byte $4E,06,$BB,$71,$6E
+         !byte $0A,$BB,$40,$27,$6E,$0F,$BB,$DD
+         !byte $1B,$BB,$6E,$15,$BB,$DC,$1E,$BB
+         !byte $6E,$25,$BB,$72,00,$BB,$B3,00
+         !byte $B8,$99,00,$BB,$C8,$A0,$F4,$B0
+         bcs   davidbb03_exit
+         lda   #s_jsrbb03
+         jsr   PrintByID
+         lda   #$07
+         ldx   #$03
+         ldy   #$0B
+         jsr   modify     ; then set T00,S07,$03 =
+         !byte $A9,$B5,$48,$A9,$18,$48,$A0,04
+         !byte $4C,$A9,$B7
+davidbb03_exit

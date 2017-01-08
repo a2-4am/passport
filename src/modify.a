@@ -1,0 +1,73 @@
+;-------------------------------
+; modify subroutine
+; in:  A = starting address (high byte)
+;      X = starting address (low byte)
+;      Y = string length
+;      stack = string to set
+; out  $BASEPAGE buffer changed
+;      $gPatchCount++
+;      $modsrc zero page clobbered
+;      $moddest zero page clobbered
+;      stack set to return to
+;        code after string
+;      all registers clobbered
+;      all flags clobbered
+;-------------------------------
+modify
+         sta   gDisplayBytes
+         clc
+         adc   #BASEPAGE
+         sta   moddest+1
+         stx   moddest
+         stx   gDisplayBytes+1
+         pla
+         sta   modsrc
+         pla
+         sta   modsrc+1
+         tax
+         tya
+         clc
+         adc   modsrc
+         bcc   noinc
+         inx
+noinc
+         sta   tmp
+         txa
+         pha
+         lda   tmp
+         pha
+         sty   modtmp
+         bit   gMode
+         bpl   exitnomod ; verify mode -> no modify
+         bvc   exitnomod ; demuffin mode -> no modify
+         lda   #s_modify
+         jsr   PrintByID
+         ldy   #0
+dest
+         lda   (moddest),y
+         jsr   PrintByte
+         iny
+         cpy   modtmp
+         bne   dest
+         lda   #s_modifyto
+         jsr   PrintByID
+         ldy   #0
+src
+         iny
+         lda   (modsrc),y
+         jsr   PrintByte
+         cpy   modtmp
+         bne   src
+         lda   #$8D
+         jsr   PrintA
+mod
+         lda   (modsrc),y
+         dey
+         bmi   modify_exit
+         sta   (moddest),y
+         clv
+         bvc   mod        ; unconditional branch
+modify_exit
+         inc   gPatchCount
+exitnomod
+         rts

@@ -1,0 +1,24 @@
+;-------------------------------
+; #JMPB4BBHI
+; boot2 jumps to $B4BB for a
+; nibble check
+; e.g. Snooper Troops 2
+;-------------------------------
+_jmpb4bbhi
+         lda   gIsBoot1   ; if DOS 3.3 bootloader
+         bne   jmpb4bbhi_exit
+         lda   #$0C
+         sta   gDisplayBytes
+         ldx   #$84
+         ldy   #$03
+         jsr   compare    ; and T00,S0C,$84 ==
+         !byte $4C,$BB,$B4
+         bcs   jmpb4bbhi_exit
+         lda   #s_jmpb4bb
+         jsr   PrintByID
+         lda   #$0C
+         ldx   #$84
+         ldy   #$03
+         jsr   modify     ; then set T00,S0C,$84 =
+         !byte $AD,$E9,$B7
+jmpb4bbhi_exit

@@ -1,0 +1,77 @@
+;-------------------------------
+; ID8b3
+; identify a bootloader that JSRs to $08B3
+; to alter the nibble translate table used
+; by the drive firmware at $C600
+;
+; in:  track buffer contains T00,S00
+; out: C clear if this bootloader was found
+;      C set otherwise
+;      all other flags clobbered
+;      all registers clobbered
+;-------------------------------
+ID8b3
+         lda   #$00
+         ldx   #$00
+         ldy   #$5A
+         jsr   compare
+         !byte 01,$20,$B3,08,$D0,$19,$EA,$A5
+         !byte $2B,$4A,$4A,$4A,$4A,09,$C0,$85
+         !byte $3F,$A9,$5C,$85,$3E,$18,$AD,$FE
+         !byte 08,$6D,$FF,08,$8D,$FE,08,$AE
+         !byte $FF,08,$F0,$15,$8A,$EA,$EA,$85
+         !byte $3D,$CE,$FF,08,$AD,$FE,08,$85
+         !byte $27,$CE,$FE,08,$A6,$2B,$6C,$3E
+         !byte 00,$EE,$FE,08,$EE,$FE,08,$20
+         !byte $89,$FE,$20,$93,$FE,$20,$2F,$FB
+         !byte $A2,$FF,$BD,00,08,$9D,00,$B6
+         !byte $CA,$E0,$FF,$D0,$F5,$20,$CC,08
+         !byte $A6,$2B
+         bcc   jsr8b3_maybe
+         rts
+
+jsr8b3_maybe
+         lda   #$00
+         ldx   #$B3
+         ldy   #$36
+         jsr   compare
+         !byte $A9,$3F,$8D,$6C,03
+         !byte $A9,$1C,$8D,$CC,03,$A9,00,$8D
+         !byte $D5,03,$A9,$37,$8D,$A3,03,$A5
+         !byte $27,$C9,09,$60,$A9,00,$85,00
+         !byte $A9,$B5,$85,01,$A0,$FF,$C8,$B9
+         !byte 00,$F0,$91,00,$C0,$FF,$D0,$F6
+         !byte $C6,01,$A9,08,$C5,01,$D0,$EC
+         !byte $60
+         rts
+
+found8b3
+         tya
+         pha
+         ldy   #$0F
+         lda   #$00
+A8b3     sta   T00,y
+         dey
+         bpl   A8b3
+         ldy   #$0B
+B8b3     sta   T02,y
+         iny
+         cpy   #$10
+         bne   B8b3
+         pla
+         tay
+         lda   #$4C
+         sta   $085A
+         lda   #<Inspect1_8b3
+         sta   $085B
+         lda   #>Inspect1_8b3
+         sta   $085C
+         lda   #$60
+         sta   $08CC
+         lda   #$2C
+         sta   $083F
+         sta   $0842
+         sta   $0845
+         pla
+         plp
+         jmp   $0801

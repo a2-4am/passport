@@ -1,0 +1,244 @@
+; "Special Delivery" boot tracer
+; for DOS 3.3P disks
+; e.g. Ernie's Quiz, Elite
+;
+;-------------------------------
+; IDSpecDel
+; returns C clear if "Special Delivery" bootloader
+; detected in T00,S00
+;-------------------------------
+IDSpecDel
+         lda   #$00
+         ldx   #$00
+         ldy   #$58
+         jsr   compare
+         !byte 02,$90,$4A,$C6,$27,$BD,$31,09
+         !byte $49,$B0,$48,$C6,$3D,$98,$C8,$48
+         !byte $CE,00,08,$A9,$20,$C6,$27,$48
+         !byte $51,$26,$91,$26,$AA,$A5,$27,$85
+         !byte $32,$CE,00,08,$A8,$B5,$33,$84
+         !byte $29,$84,$21,$8A,$A2,$17,$86,$31
+         !byte $D5,$33,$A6,$2B,$5D,$31,09,$85
+         !byte $29,$5D,$32,09,$C6,$3D,$85,$28
+         !byte $5D,$33,09,$85,$48,$A0,$2B,$84
+         !byte $20,$C6,$40,$30,$3E,$24,$40,$30
+         !byte $33,$24,$24,$24,$24,$40,$40,$40
+         rts
+
+;-------------------------------
+; TraceSpecDel
+; set up boot trace to capture the bootloader and DOS
+; of "Special Delivery" disks (stored in non-sector
+; format on tracks 0-2)
+;-------------------------------
+TraceSpecDel
+         jsr   ClearTSBuffer
+         lda   #$00       ; set a marker to see if entire
+         sta   $3FFF      ; RWTS loads successfully later
+         lda   #$00       ; save zero page before trace
+         ldx   #$0A
+         ldy   #$01
+         jsr   CopyMemory
+
+         lda   #<TraceSpecDel2
+         ldx   #>TraceSpecDel2
+         jmp   Trace
+
+TraceSpecDel2
+         lda   #$4C
+         sta   $0855
+         lda   #<TraceSpecDel3
+         sta   $0856
+         lda   #>TraceSpecDel3
+         sta   $0857
+         lda   #$02
+         sec
+         jmp   $0801
+
+TraceSpecDel3
+         lda   $1212
+         cmp   #$D8
+         bne   SDfail
+         lda   #$4C
+         sta   $10D5
+         lda   #<TraceSpecDel4
+         sta   $10D6
+         lda   #>TraceSpecDel4
+         sta   $10D7
+         lda   #$4C
+         sta   $10F0
+         lda   #<TraceSpecDel4
+         sta   $10F1
+         lda   #>TraceSpecDel4
+         sta   $10F2
+         jmp   $1212
+
+TraceSpecDel4
+         lda   $C0E8      ; turn off source drive
+         lda   #$0A       ; restore zero page from before trace
+         ldx   #$00
+         ldy   #$01
+         jsr   CopyMemory
+
+         lda   $3FFF
+         cmp   #$EA
+         bne   SDfail
+
+         lda   #$0B
+         ldx   #$00
+         ldy   #$03
+         jsr   compare    ; if $1B00 ==
+         !byte $4C,$4D,$2A
+         bcc   SDsuccess
+SDfail
+         jmp   UseUniversal
+
+SDsuccess
+;
+; Restore the original code in memory before writing.
+;
+         lda   #$A2
+         sta   $10D5
+         lda   #$FF
+         sta   $10D6
+         lda   #$9A
+         sta   $10D7
+         lda   #$A5
+         sta   $10F0
+         lda   #$2B
+         sta   $10F1
+         lda   #$4A
+         sta   $10F2
+;
+; move $1000-$13FF to $1100-$14FF to align it as we need it
+; for writing to disk with the Standard Delivery bootloader
+; in T00,S00
+;
+         lda   #$13
+         ldx   #$14
+         ldy   #$01
+         jsr   CopyMemory
+         lda   #$12
+         ldx   #$13
+         ldy   #$01
+         jsr   CopyMemory
+         lda   #$11
+         ldx   #$12
+         ldy   #$01
+         jsr   CopyMemory
+         lda   #$10
+         ldx   #$11
+         ldy   #$01
+         jsr   CopyMemory
+
+; $1B00-$1FFF is real code and in the right place
+; but we should clear the rest of T00 so we're not
+; writing garbage to disk on unused sectors
+
+         lda   #$10
+         ldx   #$00
+         ldy   #$01
+         jsr   ClearMemory
+         lda   #$15
+         ldx   #$00
+         ldy   #$06
+         jsr   ClearMemory
+
+; copy Standard Delivery bootloader into place for T00,S00
+
+         ldy   #$7E       ; _SDboot0-SDboot0, but set here
+                          ; manually to work around Merlin bug
+sdcopy   lda   SDboot0,y
+         sta   $1000,y
+         dey
+         bpl   sdcopy
+
+; now manually write out track 0 with Standard Delivery
+; bootloader
+
+         jsr   IncProgress
+         lda   #$00
+         sta   gTrack
+         jsr   WriteTrackNA
+
+; manually write out track 1
+
+         jsr   IncProgress
+         inc   gTrack
+         lda   #$20
+         ldx   #$10
+         ldy   #$10
+         jsr   CopyMemory
+         jsr   WriteTrackNA
+
+; manually write out track 2 with a patched RWTS
+
+         jsr   IncProgress
+         inc   gTrack
+         lda   #$30
+         ldx   #$10
+         ldy   #$10
+         jsr   CopyMemory
+         lda   #$08
+         ldx   #$B6
+         ldy   #$04
+         jsr   modify
+         !byte $C9,$AD,$90,$E5
+         lda   #$18
+         ldx   #$38
+         ldy   #$01
+         jsr   CopyMemory
+         jsr   WriteTrackNA
+         lda   #$C9
+         sta   $38B6
+         lda   #$AD
+         sta   $38B7
+         lda   #$90
+         sta   $38B8
+         lda   #$E5
+         sta   $38B9
+
+; mark tracks 0-2 as "skip" in sector map
+
+         ldy   #$2F
+         lda   #$00
+skipsectors
+         sta   T00,y
+         dey
+         bpl   skipsectors
+
+; set up RWTS entry point
+
+         lda   #$D5
+         sta   callrwts+1
+         lda   #$36
+         sta   callrwts+2
+
+; read the rest of the disk with the original RWTS
+
+         lda   #$03
+         sta   gLastTrack
+         jmp   ADStyle
+
+; Standard Delivery bootloader with DOS 3.3P support
+; https://github.com/peterferrie/standard-delivery/
+; rev. a5b839d7d0fa21b0ff3a7776d9f6c9750b09ae10 of 2016-11-29
+;
+SDboot0
+         !byte 01,$a8,$ee,06,08,$ad,$4e,08
+         !byte $c9,$c0,$f0,$40,$85,$27,$c8,$c0
+         !byte $10,$90,09,$f0,05,$20,$2f,08
+         !byte $a8,$2c,$a0,01,$84,$3d,$c8,$a5
+         !byte $27,$f0,$df,$8a,$4a,$4a,$4a,$4a
+         !byte 09,$c0,$48,$a9,$5b,$48,$60,$e6
+         !byte $41,06,$40,$20,$37,08,$18,$20
+         !byte $3c,08,$e6,$40,$a5,$40,$29,03
+         !byte $2a,05,$2b,$a8,$b9,$80,$c0,$a9
+         !byte $30,$4c,$a8,$fc,$4c,$b3,$10
+         !byte $1E,$1D,$1C,$1B,00,00,00,00
+         !byte 00,00,$13,$12,$11,$10,$1F,$20
+         !byte $2E,$2D,$2C,$2B,$2A,$29,$28,$27
+         !byte $26,$25,$24,$23,$22,$21,$2F,$30
+         !byte $3E,$3D,$3C,$3B,$3A,$39,$38,$37
+         !byte $36,$35,$34,$33,$32,$31,$3F,$C0
+_SDboot0

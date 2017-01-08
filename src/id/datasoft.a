@@ -1,0 +1,32 @@
+;-------------------------------
+; IDDatasoft
+; identify Datasoft encrypted bootloader
+;
+; in:  track buffer contains T00,S00
+; out: C clear if Datasoft encrypted bootloader found
+;      C set otherwise
+;      all registers clobbered
+;      all other flags clobbered
+;-------------------------------
+IDDatasoft
+         lda   #$00
+         ldx   #$00
+         ldy   #$7E
+         jsr   compare
+         !byte 01,$4C,$7E,08,04,$8A,$0C,$B8
+         !byte 00,$56,$10,$7A,00,00,$1A,$16
+         !byte $12,$0E,$0A,06,$53,$18,$9A,02
+         !byte $10,$1B,02,$10,$4D,$56,$15,$0B
+         !byte $BF,$14,$14,$54,$54,$54,$92,$81
+         !byte $1B,$10,$10,$41,06,$73,$0A,$10
+         !byte $33,$4E,00,$73,$12,$10,$33,$7C
+         !byte 00,$11,$20,$E3,$49,$50,$73,$1A
+         !byte $10,$41,00,$23,$80,$5B,$0A,$10
+         !byte $0B,$4E,$9D,$0A,$10,$9D,$0C,$10
+         !byte $60,$1E,$53,$10,$90,$53,$BC,$90
+         !byte $53,00,$90,$D8,$52,00,$D8,$7C
+         !byte 00,$53,$80,$0B,06,$41,00,09
+         !byte 04,$45,$0C,$63,04,$90,$94,$D0
+         !byte $D4,$23,04,$91,$A1,$EB,$CD,06
+         !byte $95,$A1,$E1,$98,$97,$86
+         rts

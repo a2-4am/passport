@@ -1,0 +1,230 @@
+;-------------------------------
+; IDMECC
+; identify MECC custom bootloader
+; note: there are several MECC RWTSes that share
+; the same bootloader, so further checks will be
+; required to distinguish between them
+;
+; in:  track buffer contains T00,S00
+; out: C clear if MECC bootloader was found
+;      C set if not found
+;      all other flags clobbered
+;      all registers clobbered
+;-------------------------------
+IDMECC
+         lda   #$00
+         ldx   #$00
+         ldy   #$17
+         jsr   compare
+         !byte 01,$4C,$1A,08,$17,$0F,00,00
+         !byte $0D,$0B,09,07,05,03,01,$0E
+         !byte $0C,$0A,08,06,04,02,$0F
+         rts
+
+;-------------------------------
+; IDMECCM8
+; identify MECC "M8" bootloader
+;
+; in:  track buffer contains T00,S00
+; out: C clear if MECC "M8" bootloader was found
+;      C set if not found
+;      all other flags clobbered
+;      all registers clobbered
+;-------------------------------
+IDMECCM8
+         lda   #$00
+         sta   gTrack
+         sta   gAddress
+         lda   #$0B
+         sta   gSector
+         clc
+         adc   #BASEPAGE
+         sta   gAddress+1
+         jsr   ReadSector
+         bcc   +
+mecc_no1
+         rts
++
+         lda   #$0B
+         ldx   #$02
+         ldy   #$06
+         jsr   compare    ; IF T00,S0B,$02 ==
+         !byte $BD,$8C,$C0,$10,$FB,$C9
+         bcs   mecc_no1
+         lda   #$0B
+         ldx   #$09
+         ldy   #$09
+         jsr   compare    ; AND T00,S0B,$09 ==
+         !byte $D0,$EF,$EA,$BD,$8C,$C0,$10,$FB
+         !byte $C9
+         bcs   mecc_no1
+         lda   #$0B
+         ldx   #$13
+         ldy   #$0A
+         jsr   compare    ; AND T00,S0B,$13 ==
+         !byte $D0,$E5,$A0,03,$BD,$8C,$C0,$10
+         !byte $FB,$C9
+         bcs   mecc_no1
+         lda   #$0B
+         ldx   #$89
+         ldy   #$06
+         jsr   compare    ; AND T00,S0B,$89 ==
+         !byte $BD,$8C,$C0,$10,$FB,$C9
+         bcs   mecc_no1
+         lda   #$0B
+         ldx   #$90
+         ldy   #$09
+         jsr   compare    ; AND T00,S0B,$90 ==
+         !byte $D0,$F4,$EA,$BD,$8C,$C0,$10,$FB
+         !byte $C9
+         bcs   mecc_no1
+         lda   #$0B
+         ldx   #$9A
+         ldy   #$09
+         jsr   compare    ; AND T00,S0B,$9A ==
+         !byte $D0,$F2,$EA,$BD,$8C,$C0,$10,$FB
+         !byte $C9
+         rts
+
+foundmeccm8
+;
+; We found an "M8" MECC bootloader. Now we create
+; an RWTS that can read the rest of the disk.
+; Starting with our built-in RWTS, we modify address
+; and data prologues based on the parameters of the
+; original disk.
+;
+         lda   #s_meccb0
+         jsr   PrintByID
+         jsr   CopyUniversal
+         lda   #$00
+         sta   modsrc
+         lda   #$0B
+         clc
+         adc   #BASEPAGE
+         sta   modsrc+1
+         ldy   #$08
+         lda   (modsrc),y
+         lsr
+         sta   $B956
+         ldy   #$12
+         lda   (modsrc),y
+         sta   $B966
+         ldy   #$1D
+         lda   (modsrc),y
+         sta   $B96F
+         ldy   #$8F
+         lda   (modsrc),y
+         sta   $B8E7
+         ldy   #$99
+         lda   (modsrc),y
+         sta   $B8F1
+         ldy   #$A3
+         lda   (modsrc),y
+         sta   $B8FC
+         pla
+         plp
+         jmp   ADStyle
+
+;-------------------------------
+; IDMECCM7
+; identify MECC "M7" bootloader
+;
+; in:  track buffer contains T00,S00
+; out: C clear if MECC "M7" bootloader was found
+;      C set if not found
+;      all other flags clobbered
+;      all registers clobbered
+;-------------------------------
+IDMECCM7
+         lda   #$00
+         sta   gTrack
+         sta   gAddress
+         lda   #$07
+         sta   gSector
+         clc
+         adc   #BASEPAGE
+         sta   gAddress+1
+         jsr   ReadSector
+         bcc   +
+mecc_no2
+         rts
++
+         lda   #$07
+         ldx   #$7D
+         ldy   #$06
+         jsr   compare    ; IF T00,S07,$7D ==
+         !byte $BD,$8C,$C0,$10,$FB,$C9
+         bcs   mecc_no2
+         lda   #$07
+         ldx   #$84
+         ldy   #$09
+         jsr   compare    ; AND T00,S07,$84 ==
+         !byte $D0,$F0,$EA,$BD,$8C,$C0,$10,$FB,$C9
+         bcs   mecc_no2
+         lda   #$07
+         ldx   #$8E
+         ldy   #$0A
+         jsr   compare    ; and T00,S07,$8E ==
+         !byte $D0,$F2,$A0,03,$BD,$8C,$C0,$10,$FB,$C9
+         bcs   mecc_no2
+         lda   #$07
+         ldx   #$0F
+         ldy   #$06
+         jsr   compare    ; and T00,S07,$0F ==
+         !byte $BD,$8C,$C0,$10,$FB,$49
+         bcs   mecc_no2
+         lda   #$07
+         ldx   #$18
+         ldy   #$07
+         jsr   compare    ; and T00,S07,$18 ==
+         !byte $EA,$BD,$8C,$C0,$10,$FB,$C9
+         bcs   mecc_no2
+         lda   #$07
+         ldx   #$20
+         ldy   #$0A
+         jsr   compare    ; and T00,S07,$20 ==
+         !byte $D0,$F2,$A0,$56,$BD,$8C,$C0,$10,$FB,$C9
+         rts
+
+foundmeccm7
+;
+; We found an "M7" MECC bootloader. Now we create
+; an RWTS that can read the rest of the disk.
+; Starting with our built-in RWTS, we modify address
+; and data prologues based on the parameters of the
+; original disk.
+;
+         lda   #s_meccm7
+         jsr   PrintByID
+
+         jsr   CopyUniversal
+
+         lda   #$00
+         sta   modsrc
+         lda   #$07
+         clc
+         adc   #BASEPAGE
+         sta   modsrc+1
+         ldy   #$83
+         lda   (modsrc),y
+         lsr
+         sta   $B956
+         ldy   #$8D
+         lda   (modsrc),y
+         sta   $B966
+         ldy   #$98
+         lda   (modsrc),y
+         sta   $B96F
+         ldy   #$15
+         lda   (modsrc),y
+         sta   $B8E7
+         ldy   #$1F
+         lda   (modsrc),y
+         sta   $B8F1
+         ldy   #$2A
+         lda   (modsrc),y
+         sta   $B8FC
+         pla
+         plp
+         jmp   ADStyle

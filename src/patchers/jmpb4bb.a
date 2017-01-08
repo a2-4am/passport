@@ -1,0 +1,39 @@
+;-------------------------------
+; #JMPB4BB
+; boot2 jumps to $B4BB for a
+; nibble check
+; e.g. Troll's Tale
+;-------------------------------
+_jmpb4bb
+         lda   gIsMaster  ; if DOS 3.3 lomem bootloader
+         bne   jmpb4bb_exit
+         lda   #$0C
+         sta   gDisplayBytes
+         ldx   #$84
+         ldy   #$03
+         jsr   compare    ; and T00,S0C,$84 ==
+         !byte $4C,$BB,$B4
+         bcs   jmpb4bb_exit
+         lda   #s_jmpb4bb
+         lda   #$0C
+         ldx   #$84
+         ldy   #$03
+         jsr   modify     ; then set T00,S0C,$84 =
+         !byte $AD,$E9,$37
+;
+; also check a variant that redirects the DOS input
+; vector through code that is only loaded by the
+; protection check we just bypassed
+;
+         lda   #$0D
+         ldx   #$BA
+         ldy   #$03
+         jsr   compare    ; if T00,S0D,$BA ==
+         !byte $4C,$0B,$37
+         bcs   jmpb4bb_exit
+         lda   #$0D
+         ldx   #$BA
+         ldy   #$03
+         jsr   modify     ; then set T00,S0D,$BA =
+         !byte $6C,$38,00
+jmpb4bb_exit

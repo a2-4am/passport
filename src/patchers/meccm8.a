@@ -1,0 +1,130 @@
+;-------------------------------
+; #MECCM8
+; MECC fastloader with custom
+; address and data prologues
+; e.g. Word Munchers
+;-------------------------------
+_meccm8
+         lda   #$00
+         ldx   #$00
+         ldy   #$17
+         jsr   compare    ; if T00,S00,$00 ==
+         !byte 01,$4C,$1A,08,$17,$0F,00,00
+         !byte $0D,$0B,09,07,05,03,01,$0E
+         !byte $0C,$0A,08,06,04,02,$0F
+         bcs   meccm8_exit
+         lda   #$0B
+         ldx   #$02
+         ldy   #$06
+         jsr   compare    ; and T00,S0B,$02 ==
+         !byte $BD,$8C,$C0,$10,$FB,$C9
+         bcs   meccm8_exit
+         lda   #$0B
+         ldx   #$09
+         ldy   #$09
+         jsr   compare    ; and T00,S0B,$09 ==
+         !byte $D0,$EF,$EA,$BD,$8C,$C0,$10,$FB
+         !byte $C9
+         bcs   meccm8_exit
+         lda   #$0B
+         ldx   #$13
+         ldy   #$0A
+         jsr   compare    ; and T00,S0B,$13 ==
+         !byte $D0,$E5,$A0,$03,$BD,$8C,$C0,$10
+         !byte $FB,$C9
+         bcs   meccm8_exit
+         lda   #$0B
+         ldx   #$89
+         ldy   #$06
+         jsr   compare    ; and T00,S0B,$89 ==
+         !byte $BD,$8C,$C0,$10,$FB,$C9
+         bcs   meccm8_exit
+         lda   #$0B
+         ldx   #$90
+         ldy   #$09
+         jsr   compare    ; and T00,S0B,$90 ==
+         !byte $D0,$F4,$EA,$BD,$8C,$C0,$10,$FB
+         !byte $C9
+         bcs   meccm8_exit
+         lda   #$0B
+         ldx   #$9A
+         ldy   #$09
+         jsr   compare    ; and T00,S0B,$9A ==
+         !byte $D0,$F2,$EA,$BD,$8C,$C0,$10,$FB
+         !byte $C9
+         bcc   meccm8_allclear
+meccm8_exit
+         jmp   meccm8_exit2
+meccm8_allclear
+         lda   #$0B
+         ldx   #$08
+         ldy   #$01
+         jsr   compare    ; if T00,S0B,$08 !=
+         !byte $D5
+         bcc   meccm8_addr2
+         lda   #$0B
+         ldx   #$08
+         ldy   #$01
+         jsr   modify     ; then set T00,S0B,$0B =
+         !byte $D5
+meccm8_addr2
+         lda   #$0B
+         ldx   #$12
+         ldy   #$01
+         jsr   compare    ; if T00,S0B,$12 !=
+         !byte $AA
+         bcc   meccm8_addr3
+         lda   #$0B
+         ldx   #$12
+         ldy   #$01
+         jsr   modify     ; then set T00,S0B,$12 =
+         !byte $AA
+meccm8_addr3
+         lda   #$0B
+         ldx   #$1D
+         ldy   #$01
+         jsr   compare    ; if T00,S0B,$1D !=
+         !byte $96
+         bcc   meccm8_data1
+         lda   #$0B
+         ldx   #$1D
+         ldy   #$01
+         jsr   modify     ; then set T00,S0B,$1D =
+         !byte $96
+meccm8_data1
+         lda   #$0B
+         ldx   #$8F
+         ldy   #$01
+         jsr   compare    ; if T00,S0B,$8F !=
+         !byte $D5
+         bcc   meccm8_data2
+         lda   #$0B
+         ldx   #$8F
+         ldy   #$01
+         jsr   modify     ; then set T00,S0B,$8F =
+         !byte $D5
+meccm8_data2
+         lda   #$0B
+         ldx   #$99
+         ldy   #$01
+         jsr   compare    ; if T00,S0B,$99 !=
+         !byte $AA
+         bcc   meccm8_data3
+         lda   #$0B
+         ldx   #$99
+         ldy   #$01
+         jsr   modify     ; then set T00,S0B,$99 =
+         !byte $AA
+meccm8_data3
+         lda   #$0B
+         ldx   #$A3
+         ldy   #$01
+         jsr   compare    ; if T00,S0B,$A3 !=
+         !byte $AD
+         bcc   meccm8_exit2
+         lda   #$0B
+         ldx   #$A3
+         ldy   #$01
+         jsr   modify     ; then set T00,S0B,$A3 =
+         !byte $AD
+meccm8_exit2

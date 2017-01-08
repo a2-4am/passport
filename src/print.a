@@ -1,0 +1,175 @@
+kForceLower !byte $FF     ; AND mask for lowercase letters
+                          ; (set at program startup)
+gDisplayBytes !fill 10    ; array of ten bytes for use as
+                          ; substitution strings
+
+;-------------------------------
+; PrintByID
+; Print a string from the string table;
+; handles string substitutions and
+; auto-uppercases on older machines
+; in  A = string ID
+; out C clear if string was printed
+;      C set if string ID was invalid
+;      all other flags clobbered
+;      X register preserved, others clobbered
+;-------------------------------
+PrintByID
+         stx   x
+         ldy   #0         ; substitution mode flag
+         cmp   #STRINGCOUNT
+         bcs   error
+         asl
+         tax
+         lda   StringTable,x
+         sta   print+1
+         lda   StringTable+1,x
+         sta   print+2
+print
+         lda   $FFFF      ; modified at runtime
+         beq   print_done
+         cpy   #0         ; are we in substitution mode?
+         beq   nosub      ; no -> branch
+         ldy   #0
+         cmp   #"t"       ; "%t" = current track
+         bne   sub1
+         lda   gTrack
+         bpl   printbyte ; unconditional branch
+sub1
+         cmp   #"s"       ; "%s" = current sector
+         bne   sub2
+         lda   gSector
+         bpl   printbyte ; unconditional branch
+sub2
+         cmp   #"S"       ; write slot
+         bne   sub3
+         lda   SLOT
+         bne   printsd    ; unconditional branch
+sub3
+         cmp   #"D"       ; write drive
+         bne   sub4
+         lda   DRIVE
+printsd
+         ora   #$80
+         jsr   PrintA
+         bvc   next       ; unconditional branch
+sub4
+         cmp   #"0"       ; "%0" through "%9"
+         bcc   nosub
+         cmp   #":"
+         bcs   nosub
+         sec
+         sbc   #"0"
+         tax
+         lda   gDisplayBytes,x
+printbyte
+         jsr   PrintByte
+         bvc   next       ; unconditional branch
+nosub
+         cmp   #"%"
+         bne   stillnosub
+         iny              ; switch to substitution mode
+         bne   next       ; (next character will be interpreted)
+stillnosub
+         cmp   #$E1
+         bcc   noforce
+         and   kForceLower
+noforce
+         jsr   COUT
+next
+         inc   print+1
+         bne   print
+         inc   print+2
+         bne   print
+print_done
+         clc
+error
+         ldx   x
+         rts
+x        !byte 00
+
+;-------------------------------
+; PrintByte
+; print a hexadecimal byte
+; in  A contains byte to print
+; out all registers preserved
+;      all flags clobbered
+;      @tmpa clobbered
+;      @tmpx clobbered
+;      @tmpy clobbered
+;-------------------------------
+PrintByte
+         sta   tmpa
+         stx   tmpx
+         sty   tmpy
+         jsr   PRBYTE
+         lda   tmpa
+         ldx   tmpx
+         ldy   tmpy
+         clv
+         rts
+
+;-------------------------------
+; PrintA
+; print a single character through COUT
+; in  A contains character to print
+; out all registers preserved
+;      all flags clobbered
+;      @tmpa clobbered
+;      @tmpx clobbered
+;      @tmpy clobbered
+;-------------------------------
+PrintA
+         sta   tmpa
+         stx   tmpx
+         sty   tmpy
+         jsr   COUT
+         lda   tmpa
+         ldx   tmpx
+         ldy   tmpy
+         clv
+         rts
+
+;-------------------------------
+; ClearScreen
+;-------------------------------
+ClearScreen
+         jsr   TEXT
+         lda   $C061
+         bpl   home
+         lda   $C062
+         bpl   home
+begin
+         ldx   #$04
+         stx   counter
+         stx   loop+2
+         stx   change+2
+         ldy   #$00
+         sty   flag
+loop
+         lda   $FF00,y    ; modified at runtime
+         cmp   #$A0
+         beq   nochange
+         bcs   down
+         clc
+         adc   #$01
+         bne   change
+down
+         sec
+         sbc   #$01
+change
+         sta   $FF00,y    ; modified at runtime
+         sta   flag
+nochange
+         iny
+         bne   loop
+         inc   loop+2
+         inc   change+2
+         dec   counter
+         bne   loop
+         lda   #$01
+         jsr   WAIT
+         lda   flag
+         bne   begin
+home
+         jmp   HOME

@@ -1,0 +1,509 @@
+; MLI command codes
+CMD_CREATE =   $C0        ; create new file
+CMD_DESTROY =  $C1        ; delete a file
+CMD_SETPREFIX = $C6       ; change default pathname prefix
+CMD_OPEN =     $C8        ; open a file
+CMD_NEWLINE =  $C9        ; set line-by-line read mode
+CMD_READ =     $CA        ; read an open file
+CMD_WRITE =    $CB        ; write to an open file
+CMD_CLOSE =    $CC        ; close an open file
+CMD_SETMARK =  $CE        ; change position in an open file
+
+; MLI parameter counts
+PC_CREATE =    $07
+PC_DESTROY =   $01
+PC_SETPREFIX = $01
+PC_OPEN  =     $03
+PC_NEWLINE =   $03
+PC_READ  =     $04
+PC_WRITE =     $04
+PC_CLOSE =     $01
+PC_SETMARK =   $02
+
+PRODOSMLI =    $BF00      ; [callable] MLI entry point
+
+; MLI error codes
+ERR_FNF  =     $46
+ERR_EOF  =     $4C
+
+;-------------------------------
+; WriteTrackMLI - write the contents of
+;   BASEPAGE data buffer to disk
+; in:  @SLOT contains (slot x 16) + $30
+;      @DRIVE contains drive + $30
+;      @gTrack contains track number
+;      @BASEPAGE contains data to write ($1000 bytes)
+; out: if C set, write failed (A contains MLI error code)
+;      if C clear, write succeeded (A is clobbered)
+;      all other flags clobbered
+;      all registers clobbered
+;-------------------------------
+WriteTrackMLI
+         jsr   SwapProDOS
+         jsr   ReorderBuffer
+         lda   #$81       ; 'write block' command
+         sta   mlicmd
+         lda   DRIVE      ; ProDOS "unit number" is
+         sec
+         sbc   #$30
+         lsr              ; DSSS0000, where D is the
+         asl              ; drive number (0=drive 1,
+         asl              ; 1=drive 2) and SSS is
+         asl              ; the slot number (1-7).
+         asl              ; "Beneath Apple ProDOS"
+         asl              ; page 6-19
+         asl
+         asl
+         sta   mliparam+1
+         lda   SLOT
+         sec
+         sbc   #$30
+         asl
+         asl
+         asl
+         asl
+         clc
+         adc   mliparam+1
+         sta   mliparam+1
+         lda   #$00
+         sta   mliparam+2 ; lo byte of data buffer
+         lda   #$08
+         sta   blockcount
+         lda   gTrack
+         asl
+         asl
+         asl
+         sta   mliparam+4 ; lo byte of block number
+         rol
+         and   #$01
+         sta   mliparam+5 ; hi byte of block number
+         lda   #BASEPAGE  ; hi byte of data buffer
+         sta   mliparam+3
+writeloop
+         lda   mlicmd
+         ldy   #$03       ; parameter count
+         jsr   mli
+         bcs   mli_writeerr
+         inc   mliparam+3 ; 2 pages per block
+         inc   mliparam+3
+         inc   mliparam+4
+         dec   blockcount
+         bne   writeloop
+         clc
+         bcc   writedone
+mli_writeerr
+writedone
+         php
+         pha
+         jsr   ReorderBuffer
+         jsr   SwapProDOS
+         pla
+         plp
+         rts
+
+blockcount !byte $FF
+
+;-------------------------------
+; ReorderBuffer - convert data
+;   buffer between ProDOS and
+;   DOS 3.3 ordering (use after
+;   read or before write under
+;   ProDOS)
+; in:  none
+; out: all flags clobbered
+;      all registers clobbered
+;      @cmp1, @cmp2 clobbered
+;-------------------------------
+ReorderBuffer
+         lda   #$00
+         sta   cmp1
+         sta   cmp2
+         tay
+         lda   #$01
+         clc
+         adc   #BASEPAGE
+         sta   cmp1+1
+         lda   #$0E
+         clc
+         adc   #BASEPAGE
+         sta   cmp2+1
+         ldx   #$07
+L        lda   (cmp1),y
+         pha
+         lda   (cmp2),y
+         sta   (cmp1),y
+         pla
+         sta   (cmp2),y
+         iny
+         bne   L
+         inc   cmp1+1
+         dec   cmp2+1
+         dex
+         bne   L
+         rts
+
+;-------------------------------
+; SaveFile1Shot
+; save a file to disk all at once,
+;   using ProDOS MLI calls
+;
+; in:  stack contains 11 ($0B) bytes of parameters:
+;      +1 address of pathname
+;      +3 [byte] file type
+;      +4 [word] aux file type
+;      +6 address of data buffer
+;      +8 [word] length of data buffer
+;      +A address of ProDOS file buffer
+; out: if C set, save failed and A contains error code
+;        from open or write
+;      if C clear, save succeeded
+;      all other flags clobbered
+;      all registers clobbered
+;      stack set to next instruction after parameters
+;-------------------------------
+SaveFile1Shot
+         pla
+         sta   $00
+         pla
+         sta   $01
+         tax
+         lda   #$0B
+         clc
+         adc   $00
+         bcc   mli_noinc1
+         inx
+mli_noinc1
+         tay
+         txa
+         pha
+         tya
+         pha
+
+         ldy   #$01
+         lda   ($00),y    ; lo byte of pathname
+         sta   mliparam+1
+         iny
+         lda   ($00),y    ; hi byte of pathname
+         sta   mliparam+2
+         jsr   DeleteFile ; don't care if this fails
+         ldy   #$03
+         lda   ($00),y    ; file type
+         sta   mliparam+4
+         iny
+         lda   ($00),y    ; lo byte of aux file type
+         sta   mliparam+5
+         iny
+         lda   ($00),y    ; hi byte of aux file type
+         sta   mliparam+6
+         jsr   CreateFile
+         bcs   savefile1s
+
+         ldy   #$0A
+         lda   ($00),y    ; lo byte of ProDOS file buffer
+         sta   mliparam+3
+         iny
+         lda   ($00),y    ; hi byte of ProDOS file buffer
+         sta   mliparam+4
+         jsr   OpenFile
+         bcs   savefile1s
+
+         pha              ; push file reference number
+         ldy   #$06
+         lda   ($00),y    ; lo address of data buffer
+         sta   mliparam+2
+         iny
+         lda   ($00),y    ; hi address of data buffer
+         sta   mliparam+3
+         iny
+         lda   ($00),y    ; lo data length
+         sta   mliparam+4
+         iny
+         lda   ($00),y    ; hi data length
+         sta   mliparam+5
+         pla              ; pull file reference number
+         jsr   WriteFile
+         php              ; save flags from writefile
+         pha
+         jsr   CloseFile  ; always close whether write worked or not
+         pla
+         plp              ; restore flags from write
+                          ; (so caller gets codes from write attempt,
+                          ; not close)
+
+savefile1s
+         rts
+
+;-------------------------------
+; LoadFile1Shot
+; load a file into memory all at once,
+;   using ProDOS MLI calls
+;
+; in:  stack contains 8 bytes of parameters:
+;      +1 address of pathname
+;      +3 address of data buffer (to receive file contents)
+;      +5 [word] maximum length of data to read
+;      +7 address of ProDOS file buffer
+; out: if C set, load failed and A contains error code
+;        from open or read
+;      if C clear, load succeeded and ($02) contains
+;        data loaded from file
+;      all other flags clobbered
+;      all registers clobbered
+;      stack set to next instruction after parameters
+;-------------------------------
+LoadFile1Shot
+         pla
+         sta   $00
+         pla
+         sta   $01
+         tax
+         lda   #$08
+         clc
+         adc   $00
+         bcc   mli_noinc2
+         inx
+mli_noinc2
+         tay
+         txa
+         pha
+         tya
+         pha
+
+         ldy   #$01
+         lda   ($00),y    ; lo byte of pathname
+         sta   mliparam+1
+         iny
+         lda   ($00),y    ; hi byte of pathname
+         sta   mliparam+2
+         ldy   #$07
+         lda   ($00),y    ; lo byte of ProDOS file buffer
+         sta   mliparam+3
+         iny
+         lda   ($00),y    ; hi byte of ProDOS file buffer
+         sta   mliparam+4
+
+         jsr   OpenFile
+         bcs   loadfile1s ; C set on error
+
+         pha              ; push file reference number
+         ldy   #$03
+         lda   ($00),y    ; lo address of data buffer
+         sta   mliparam+2
+         iny
+         lda   ($00),y    ; hi address of data buffer
+         sta   mliparam+3
+         iny
+         lda   ($00),y    ; lo data length
+         sta   mliparam+4
+         iny
+         lda   ($00),y    ; hi data length
+         sta   mliparam+5
+         pla              ; pull file reference number
+         jsr   ReadFile
+         php              ; save flags from readfile
+         pha
+         jsr   CloseFile  ; always close whether read worked or not
+         pla
+         plp              ; restore flags from readfile
+                          ; (so caller gets codes from read attempt,
+                          ; not close)
+loadfile1s
+         rts
+
+;-------------------------------
+; open file via ProDOS MLI
+;
+; in:  caller has filled @mliparam with address of
+;        pathname, address of data buffer, and maximum
+;        data length
+;      A = file reference number
+; out: if C set, open failed and A contains error code
+;      if C clear, open succeeded and A contains
+;        file reference number
+;-------------------------------
+OpenFile
+         lda   #CMD_OPEN  ; MLI command
+         ldy   #PC_OPEN   ; number of parameters for 'open' command
+         jsr   mli
+         bcs   openfile
+         lda   refnum     ; caller should save file reference number
+                          ; as this memory location may be
+                          ; overwritten by later MLI calls
+openfile
+         rts
+
+;-------------------------------
+; set line-by-line mode via ProDOS MLI
+;
+; in:  A = file reference number
+; out: if C set, set failed and A contains error code
+;      if S clear, set succeeded and A contains the same
+;        file reference number that was passed in
+;-------------------------------
+lbl_mask =     $7F
+lbl_cr   =     $0D
+
+SetLineByLine
+         sta   mliparam+1 ; store file reference number
+         lda   #lbl_mask  ; accept high bit set or clear
+         sta   mliparam+2
+         lda   #lbl_cr    ; carriage return character
+         sta   mliparam+3
+         lda   #CMD_NEWLINE ; MLI 'newline' command to set read mode
+         ldy   #PC_NEWLINE ; number of parameters for 'newline' command
+         jsr   mli
+         bcs   setlinebylin
+         lda   mliparam+1 ; if no error, return file reference number
+setlinebylin
+         rts
+
+;-------------------------------
+; read an open file via ProDOS MLI
+;
+; in:  A = file reference number
+;      caller has filled @mliparam with address of
+;        data buffer and maximum data length
+; out: if C set, read failed and A contains error code
+;      if C clear, read succeeded and A contains the same
+;        file reference number that was passed in
+;-------------------------------
+ReadFile
+         sta   mliparam+1 ; store file reference number
+         lda   #CMD_READ  ; MLI read command
+         ldy   #PC_READ   ; number of parameters for 'read' command
+         jsr   mli
+         bcs   readfile
+         lda   mliparam+1 ; if no error, return file reference number
+readfile
+         rts
+
+;-------------------------------
+; change file position in an open file via ProDOS MLI
+;
+; in:  A = file reference number
+;      caller has filled @mliparam+2/+3/+4 with
+;        new file position
+; out: if C set, set_mark call failed and A contains error code
+;      if C clear, set_mark call succeeded and A contains
+;        the same file reference number that was passed in
+;-------------------------------
+SetMark
+         sta   mliparam+1 ; store file reference number
+         lda   #CMD_SETMARK ; MLI set_mark command
+         ldy   #PC_SETMARK ; number of params for 'set_mark' cmd
+         jsr   mli
+         bcs   mli_exit
+         lda   mliparam+1 ; if no error, return file refnum
+mli_exit rts
+
+;-------------------------------
+; write to an open file via ProDOS MLI
+;
+; in:  A = file reference number
+;      caller has filled @mliparam with address of
+;        data buffer and data length
+; out: if C set, write failed and A contains error code
+;      if C clear, write succeeded and A contains the same
+;        file reference number that was passed in
+;-------------------------------
+WriteFile
+         sta   mliparam+1 ; store file reference number
+         lda   #CMD_WRITE ; MLI write command
+         ldy   #PC_WRITE  ; number of parameters for 'write' command
+         jsr   mli
+         bcs   writefile
+         lda   mliparam+1 ; if no error, return file reference number
+writefile
+         rts
+
+;-------------------------------
+; close an open file
+; in:  A = file reference number
+; out: if error, C set and A contains error code
+;      if success, C clear
+;-------------------------------
+CloseFile
+         sta   mliparam+1 ; store file reference number
+         lda   #CMD_CLOSE ; MLI close command
+         ldy   #PC_CLOSE  ; number of parameters for 'close' command
+         jsr   mli
+         rts
+
+;-------------------------------
+; create a file via ProDOS MLI
+; always sets access bits to $C3 (full access)
+; always sets creation to 0 (current date/time)
+; always sets storage type to 1 (file)
+; in:  caller has filled @mliparam
+;        with address of pathname,
+;        file type, aux file type
+; out: if error, C set and A contains error code
+;      if success, C clear
+;-------------------------------
+accessbits =   $C3        ; full access
+
+CreateFile
+         lda   #accessbits
+         sta   mliparam+3 ; access bits (full access)
+         lda   #1
+         sta   mliparam+7 ; storage type (file)
+         lda   #0
+         sta   mliparam+8 ; creation date (current)
+         sta   mliparam+9
+         sta   mliparam+10 ; creation time (current)
+         sta   mliparam+11
+         lda   #CMD_CREATE ; MLI create command
+         ldy   #PC_CREATE ; number of parameters for 'create' command
+         jsr   mli
+         rts
+
+;-------------------------------
+; delete a file using ProDOS MLI
+; in:  caller has filled @mliparam
+;        with address of pathname
+; out: if error, C set and A contains error code
+;      if success, C clear
+;-------------------------------
+DeleteFile
+         lda   #CMD_DESTROY ; MLI destroy command
+         ldy   #PC_DESTROY ; number of parameters for 'destroy' command
+         jsr   mli
+         rts
+
+;-------------------------------
+; change current directory (set prefix)
+; using ProDOS MLI
+; in:  caller has filled @mliparam
+;        with address of pathname
+; out: if error, C set and A contains error code
+;      if success, C clear
+;-------------------------------
+SetPrefix
+         lda   #CMD_SETPREFIX
+         ldy   #PC_SETPREFIX
+         jsr   mli
+         rts
+
+;-------------------------------
+; low-level MLI wrapper
+; in:  A = MLI command code
+;      Y = number of MLI parameters
+;      caller has filled @mliparam
+;        with all relevant parameters
+; out: returns immediately after
+;        calling MLI, so whatever
+;        state the MLI routine sets,
+;        the caller will see it
+;        verbatim
+;-------------------------------
+mli      sta   mlicmd     ; store command code
+         sty   mliparam   ; number of parameters
+         jsr   PRODOSMLI  ; call ProDOS
+mlicmd   !byte 00         ; command number
+         !word mliparam   ; address of parameter table
+         rts
+mliparam !byte $FE,$FE,$FE,$FE,$FE
+refnum   !byte $FE        ; file refnum (set by MLI open)
+mlilen   !byte $FE,$FE    ; file length (set by MLI read)
+         !byte $FE,$FE,$FE,$FE
+                          ; used by createfile

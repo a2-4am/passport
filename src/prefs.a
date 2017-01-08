@@ -1,0 +1,115 @@
+CURRENTVER =   $30        ; ASCII "0"
+DEFSLOT  =     $36        ; ASCII "6"
+DEFDRIVE =     $32        ; ASCII "2"
+
+PREFSFILE !byte prefs_e-prefs_b
+prefs_b
+          !text "PASSPORT.CONF"
+prefs_e
+PREFSBUFFER =  $B000
+PREFSREADLEN = $0003
+
+PREFSVER !byte $FF
+SLOT     !byte $FF
+DRIVE    !byte $FF
+         !byte $8D
+         !ct "lcase.ct"
+         !text "|||",$8D
+         !text "||+---WRITE DRIVE (1-2)",$8D
+         !text "|+---WRITE SLOT (1-7)",$8D
+         !text "+---PREFS VERSION (DO NOT CHANGE)",$8D
+PREFSWRITELEN = *-PREFSVER
+
+;-------------------------------
+; LoadPrefs
+; load preferences from file
+;
+; in:  ProDOS must be in memory
+;-------------------------------
+LoadPrefs
+         lda   #$FF
+         sta   PREFSVER
+         jsr   LoadFile1Shot
+         !word PREFSFILE
+         !word PREFSVER
+         !word PREFSREADLEN
+         !word PREFSBUFFER
+         jmp   ValidatePrefs
+
+;-------------------------------
+; SavePrefs
+; save preferences to file
+;
+; in:  ProDOS must be in memory
+;-------------------------------
+SavePrefs
+         jsr   ValidatePrefs
+         jsr   SaveFile1Shot
+         !word PREFSFILE
+         !byte 04         ; text file
+         !byte 00,00      ; no aux file type
+         !word PREFSVER
+         !word PREFSWRITELEN
+         !word PREFSBUFFER
+         rts
+
+;-------------------------------
+; ValidatePrefs
+; Sanity-check preferences and reset to
+; default values for any variables that
+; are out of range.
+; If the first value (PREFSVER) is
+; not recognized, all other values are
+; reset to defaults.
+;
+; in:  none
+; out: C set if any prefs were changed
+;      C clear if all prefs were valid
+;      A,X clobbered
+;-------------------------------
+ValidatePrefs
+         ldx   #$00
+         lda   PREFSVER
+         cmp   #CURRENTVER
+         beq   checkslot
+         lda   #CURRENTVER
+         sta   PREFSVER
+         lda   #$FF
+         sta   SLOT
+         sta   DRIVE
+         inx
+checkslot
+         lda   SLOT
+         sec
+         sbc   #$30
+         beq   badslot
+         cmp   #$08
+         bcc   checkdrive
+badslot
+         lda   #DEFSLOT
+         sta   SLOT
+         inx
+checkdrive
+         lda   DRIVE
+         sec
+         sbc   #$30
+         beq   baddrive
+         cmp   #$03
+         bcc   checks6d1
+baddrive
+         lda   #DEFDRIVE
+         sta   DRIVE
+         inx
+checks6d1
+         lda   SLOT
+         cmp   #$36
+         bne   prefs_done
+         lda   DRIVE
+         cmp   #$31
+         bne   prefs_done
+         lda   #$32
+         sta   DRIVE
+         inx
+prefs_done
+         cpx   #$01       ; set carry if anything changed
+         rts

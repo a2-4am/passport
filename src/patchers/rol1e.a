@@ -1,0 +1,35 @@
+;-------------------------------
+; #ROL1E
+; RWTS stores timing bits in $1E
+; e.g. Spellicopter
+;-------------------------------
+_rol1e
+         lda   #$03
+         ldx   #$00
+         ldy   #$2F
+         jsr   compare    ; if T00,S03,$00 ==
+         !byte $86,$1B,$BA,$BD,02,01,$85,03
+         !byte $18,$69,04,$85,05,$A0,00,$84
+         !byte 02,$A0,$40,$84,04,$A0,$39,$A9
+         !byte $93,$91,02,$C8,$A5,03,$91,02
+         !byte $A0,$7F,$B1,04,$99,00,08,$88
+         !byte $10,$F8,$A6,$1B,$4C,00,08
+         bcs   rol1e_exit
+         lda   #$03
+         ldx   #$40
+         ldy   #$28
+         jsr   compare    ; and T00,S03,$40 ==
+         !byte $A9,00,$A0,$EC,$91,02,$C8,$91
+         !byte 02,$A9,09,$A0,$F1,$91,02,$A9
+         !byte 08,$A0,$E1,$91,02,$A9,$4C,$85
+         !byte 01,$A9,$93,$85,02,$20,01,00
+         !byte $A0,00,$84,02,$A5,$1E,$85,08
+         bcs   rol1e_exit
+         lda   #s_rol1e
+         jsr   PrintByID
+         lda   #$03
+         ldx   #$64
+         ldy   #$02
+         jsr   modify     ; then set T00,S03,$64 =
+         !byte $A9,$F7
+rol1e_exit

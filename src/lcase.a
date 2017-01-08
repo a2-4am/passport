@@ -1,0 +1,4 @@
+!to "lcase.ct", plain
+*=0
+!for i, 128 {!byte i+127}
+!for i, 256-128 {!byte i+127}

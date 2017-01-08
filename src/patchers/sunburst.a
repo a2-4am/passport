@@ -1,0 +1,71 @@
+;-------------------------------
+; #SUNBURST
+; RWTS with track-based address
+; and data prologue modifications
+; e.g. The Incredible Laboratory
+; NOTE: must be run before RWTS
+; patchers due to overlapping bytes
+;-------------------------------
+_sunburst
+         sec
+         lda   gIsRWTS    ; if DOS 3.3 RWTS
+         bne   sunburst_exit
+         lda   #$03
+         ldx   #$40
+         ldy   #$01
+         jsr   compare    ; and T00,S03,$40 ==
+         !byte $D0
+         bcs   sunburst_exit
+         lda   #$03
+         ldx   #$9C
+         ldy   #$01
+         jsr   compare    ; and T00,S03,$9C ==
+         !byte $F0
+         bcs   sunburst_exit
+         lda   #$04
+         ldx   #$69
+         ldy   #$2C
+         jsr   compare    ; and T00,S04,$69 ==
+         !byte $48,$A5,$2A,$4A,$A8,$B9,$29,$BA
+         !byte $8D,$6A,$B9,$8D,$84,$BC,$B9,$34
+         !byte $BA,$8D,$FC,$B8,$8D,$5D,$B8,$C0
+         !byte $11,$D0,03,$A9,02,$AC,$A9,$0E
+         !byte $8D,$C0,$BF,$68,$69,00,$48,$AD
+         !byte $78,04,$90,$2B
+         bcs   sunburst_exit
+         lda   #$06
+         ldx   #$69
+         ldy   #$06
+         jsr   compare    ; and T00,S06,$69 ==
+         !byte $4C,$B8,$B6,$EA,$EA,$EA
+         bcs   sunburst_exit
+         lda   #$08
+         ldx   #$8C
+         ldy   #$02
+         jsr   compare    ; and T00,S08,$8C ==
+         !byte $69,$BA
+         bcc   sunburst_yes
+sunburst_exit
+         bcs   sunburst_exit2
+sunburst_yes
+         lda   #$03
+         ldx   #$40
+         ldy   #$01
+         jsr   modify     ; then set T00,S03,$40 =
+         !byte $F0
+         lda   #$03
+         ldx   #$9C
+         ldy   #$01
+         jsr   modify     ; and set T00,S03,$9C =
+         !byte $D0
+         lda   #$06
+         ldx   #$69
+         ldy   #$06
+         jsr   modify     ; and set T00,S06,$69 =
+         !byte $20,$C3,$BC,$20,$C3,$BC
+         lda   #$08
+         ldx   #$8C
+         ldy   #$02
+         jsr   modify     ; and set T00,S08,$8C =
+         !byte $A0,$B9
+sunburst_exit2

@@ -1,0 +1,27 @@
+;-------------------------------
+; #JMPBECA
+; RWTS calls $BECA after reading
+; data prologue to burn cycles
+; e.g. Terrapin Logo 1.2, Starting with Phonics
+; NOTE: must be run before RWTS
+; patchers due to overlapping bytes
+;-------------------------------
+_jmpbeca
+         lda   gIsRWTS    ; if DOS 3.3 RWTS
+         bne   jmpbeca_exit
+         lda   #$02
+         ldx   #$F4
+         ldy   #$0D
+         jsr   compare    ; and T00,S02,$F4 ==
+         !byte $EA,$BD,$8C,$C0,$10,$FB,$C9,$AD
+         !byte $D0,$E8,$4C,$CA,$BE
+         bcs   jmpbeca_exit
+         lda   #s_jmpbeca
+         jsr   PrintByID
+         lda   #$02
+         ldx   #$F4
+         ldy   #$0D
+         jsr   modify     ; and set T00,S02,$F4 =
+         !byte $A0,$56,$BD,$8C,$C0,$10,$FB,$C9
+         !byte $AD,$D0,$E7,$A9,$00
+jmpbeca_exit

@@ -1,0 +1,91 @@
+;-------------------------------
+; IDDOS33
+; identify DOS 3.3 bootloader or some variation
+; that can be safely boot traced
+;
+; in:  $0800..$08FF contains T00,S00
+;      first page of track buffer also contains T00,S00
+; out: C clear if traceable DOS 3.3-style bootloader found
+;      C set otherwise
+;      all registers clobbered
+;      all other flags clobbered
+;-------------------------------
+IDDOS33
+         lda   $08FE      ; $08FE must be either $36 or $B6
+         cmp   #$36       ; (prevents matching on some
+         beq   match0     ; Infocom disks that would
+         cmp   #$B6       ; otherwise match but then load
+         beq   match0     ; boot1 over program space and crash)
+         jmp   notd33boot0
+
+match0
+         lda   #$00       ; match first $1C bytes of T00S00
+         ldx   #$00       ; against standard DOS 3.3 boot0
+         ldy   #$1C
+         jsr   compare
+         !byte 01,$A5,$27,$C9,09,$D0,$18,$A5
+         !byte $2B,$4A,$4A,$4A,$4A,09,$C0,$85
+         !byte $3F,$A9,$5C,$85,$3E,$18,$AD,$FE
+         !byte 08,$6D,$FF,08
+         bcc   maybe_d33_1
+         jmp   notd33boot0
+
+maybe_d33_1
+         lda   #$00       ; match more bytes of T00S00
+         ldx   #$1F       ; against standard DOS 3.3 boot0
+         ldy   #$2B
+         jsr   compare
+         !byte $AE
+         !byte $FF,08,$30,$15,$BD,$4D,08,$85
+         !byte $3D,$CE,$FF,08,$AD,$FE,08,$85
+         !byte $27,$CE,$FE,08,$A6,$2B,$6C,$3E
+         !byte 00,$EE,$FE,08,$EE,$FE,08,$20
+         !byte $89,$FE,$20,$93,$FE,$20,$2F,$FB
+         !byte $A6,$2B
+         bcc   maybe_d33_2
+         jmp   notd33boot0
+
+maybe_d33_2
+         lda   #$00       ; check sector order map
+         ldx   #$4D
+         ldy   #$10
+         jsr   compare
+         !byte 00,$0D,$0B,09,07,05,03,01
+         !byte $0E,$0C,$0A,08,06,04,02,$0F
+         bcc   maybe_d33_3
+         jmp   notd33boot0
+
+maybe_d33_3
+         lda   #$00       ; match 3 final bytes of T00S00
+         ldx   #$1C       ; against standard DOS 3.3 boot0
+         ldy   #$03
+         jsr   compare
+         !byte $8D,$FE,08
+         bcs   maybe_d33_4
+         jmp   founddos33
+
+maybe_d33_4
+         lda   #$00       ; minor variation (e.g. Terrapin
+         ldx   #$1C       ; Logo 3.0) jumps to $08F0 and
+         ldy   #$03       ; back, but still safe to trace
+         jsr   compare
+         !byte $4C,$F0,08
+         bcc   maybe_d33_5
+         jmp   notd33boot0
+
+maybe_d33_5
+         lda   #$00
+         ldx   #$F0
+         ldy   #$09
+         jsr   compare
+         !byte $8D,$FE,08,$EE,$F3,03,$4C,$1F
+         !byte 08
+         bcs   notd33boot0
+
+founddos33
+         clc
+         !byte $24        ; hide next SEC
+
+notd33boot0
+         sec
+         rts

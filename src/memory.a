@@ -1,0 +1,126 @@
+;-------------------------------
+; CopyMemory
+; in:  A = source address (high)
+;      X = destination address (high)
+;      Y = number of pages to copy
+; out: all flags and registers clobbered
+;-------------------------------
+CopyMemory
+         sta   source1+2
+         stx   dest1+2
+         ldx   #$00
+source1  lda   $FF00,x
+dest1    sta   $FF00,x
+         inx
+         bne   source1
+         inc   source1+2
+         inc   dest1+2
+         dey
+         bne   source1
+         rts
+
+;-------------------------------
+; ClearMemory
+; in:  A = source address (high)
+;      X = value to set
+;      Y = number of pages
+; out: all flags and registers clobbered
+;-------------------------------
+ClearMemory
+         sta   dest2+2
+         txa
+         ldx   #$00
+dest2    sta   $FF00,x
+         inx
+         bne   dest2
+         inc   dest2+2
+         dey
+         bne   dest2
+         rts
+
+;-------------------------------
+; ClearTSBuffer
+; clear the $1000 byte memory buffer
+; used to store the current track's data
+; in:  none
+; out: all flags and registers clobbered
+;-------------------------------
+ClearTSBuffer
+         lda   #BASEPAGE
+         ldx   #$00
+         ldy   #$10
+         jmp   ClearMemory
+
+;-------------------------------
+; SwapMemory
+; in:   A = source address (high)
+;       X = destination address (high)
+;       Y = number of pages to copy
+; out:  all flags and registers clobbered
+;-------------------------------
+SwapMemory
+         sta   source11+2
+         sta   source22+2
+         stx   dest11+2
+         stx   dest22+2
+         ldx   #$00
+source11 lda   $FF00,x
+         pha
+dest11   lda   $FF00,x
+source22 sta   $FF00,x
+         pla
+dest22   sta   $FF00,x
+         inx
+         bne   source11
+         inc   source11+2
+         inc   source22+2
+         inc   dest11+2
+         inc   dest22+2
+         dey
+         bne   source11
+         rts
+
+;-------------------------------
+; SaveProDOS
+; saves memory pages used by ProDOS
+; pages $00, $03, $BF
+; in:  none
+; out: all flags and registers clobbered
+;-------------------------------
+SaveProDOS
+         lda   #$00
+         ldx   #$40
+         ldy   #$01
+         jsr   CopyMemory
+         lda   #$03
+         ldx   #$41
+         ldy   #$01
+         jsr   CopyMemory
+         lda   #$BF
+         ldx   #$42
+         ldy   #$01
+         jsr   CopyMemory
+memory_exit
+         rts
+
+;-------------------------------
+; SwapProDOS
+; saves/restores memory pages used by ProDOS
+; pages $00, $03, $BF
+; in:  none
+; out: all flags and registers clobbered
+;-------------------------------
+SwapProDOS
+         lda   #$00
+         ldx   #$40
+         ldy   #$01
+         jsr   SwapMemory
+         lda   #$03
+         ldx   #$41
+         ldy   #$01
+         jsr   SwapMemory
+         lda   #$BF
+         ldx   #$42
+         ldy   #$01
+         jsr   SwapMemory
+         rts

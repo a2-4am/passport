@@ -1,0 +1,146 @@
+;-------------------------------
+; CheckT00S00
+; main entry point to identify the bootloader
+; based on T00,S00 (currently in memory at $0800)
+;-------------------------------
+CheckT00S00
+         lda   #FALSE
+         sta   gIsBoot0
+         sta   gIsBoot1
+         sta   gIsMaster
+         sta   gIsRWTS
+         sta   gIsProDOS
+         sta   gIsPascal
+         sta   gIsDatasoft
+         sta   gIsProtDOS
+         lda   #$00
+         sta   gLastTrack
+
+; Quick sanity check -- only recognized values for $0800
+; are 1 or 2.
+
+         lda   $0800
+         beq   +
+         cmp   #$03
+         bcc   ++
++
+         jmp   UseUniversal
+++
+;
+; Copy the boot sector from $0800 to the track/sector buffer
+; so we can reuse our standard compare functions.
+; (TODO: this is probably unnecessary but I haven't ever
+; refactored it since the Post-Demuffin Patcher days.)
+;
+         lda   #$08
+         ldx   #BASEPAGE
+         ldy   #$01
+         jsr   CopyMemory
+         jsr   ApplyGlobals
+
+;
+; Try to identify DOS 3.3-shaped bootloader, which
+; we can maybe trace to capture the RWTS in memory.
+;
+         jsr   IDDOS33
+         bcs   notdos33
+         lda   #s_dosb0
+         jsr   PrintByID
+         jmp   TraceDOS33
+
+notdos33
+;
+; Try to identify a variant bootloader that calls to $08B3
+; early to munge the nibble tables used by the drive firmware.
+;
+         jsr   ID8b3
+         bcs   not8b3
+         jmp   found8b3
+
+not8b3
+;
+; Try to identify all the different MECC fastloader variants.
+;
+         jsr   IDMECC
+         bcs   notmecc
+         jsr   IDMECCM8
+         bcs   notmeccm8
+         jmp   foundmeccm8
+notmeccm8
+         jsr   IDMECCM7
+         bcs   notmeccm7
+         jmp   foundmeccm7
+
+notmeccm7
+notmecc
+;
+; Try to identify the encrypted Datasoft bootloader.
+;
+         jsr   IDDatasoft
+         bcs   notdatasoft
+         lda   #s_datasoftb0
+         jsr   PrintByID
+         lda   #TRUE
+         sta   gIsDatasoft
+         jmp   useuniv
+
+:notdatasoft
+;
+; Try to identify ProDOS bootloader.
+;
+         lda   gIsProDOS
+         bne   notprodos
+         lda   #s_prodosb0
+         jsr   PrintByID
+         jmp   useuniv
+
+notprodos
+;
+; Try to identify Apple Pascal bootloader (all variants).
+;
+         lda   gIsPascal
+         bne   notpascal
+         lda   #s_pascalb0
+         jsr   PrintByID
+
+notpascal
+         jsr   IDSpecDel
+         bcs   notspecdel
+         lda   #s_specdel
+         jsr   PrintByID
+         jmp   TraceSpecDel
+
+notspecdel
+;
+; Try to detect whether there is code in the boot sector
+; that loads 4-and-4-encoded data. This is an early escape
+; hatch for disks that are guaranteed to fail later anyway.
+;
+         jsr   IDEncoded44
+         bcs   notencoded44
+         lda   #s_encoded44
+         jsr   PrintByID
+         jmp   TheEnd
+
+notencoded44
+;
+; Try to detect whether there is code in the boot sector
+; that loads 5-and-3-encoded data (like DOS 3.2 disks with
+; a hybrid boot sector that loads on 16-sector drives).
+; Passport has no support for converting DOS 3.2 disks, so
+; this serves as an early escape hatch for disks that are
+; guaranteed to fail later anyway.
+;
+         jsr   IDEncoded53
+         bcs   notencoded53
+         lda   #s_encoded53
+         jsr   PrintByID
+         jmp   TheEnd
+
+notencoded53
+useuniv
+;
+; We didn't recognize the boot sector, so use the universal
+; (built-in) RWTS and hope for the best
+;
+         jmp   UseUniversal

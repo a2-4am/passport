@@ -1,0 +1,156 @@
+;-------------------------------
+; TraceDOS33
+; set up 1st-level boot trace on
+; a DOS 3.3-shaped bootloader
+;-------------------------------
+TraceDOS33
+;
+; Before we trace through the drive firmware (which --
+; at least on some machines -- will loop forever looking
+; for each sector), we do a pre-check to ensure that all
+; the sectors we're about to trace are actually readable.
+;
+         lda   #$00
+         sta   gTrack
+         lda   #$09
+         sta   gSector
+precheck
+         ldy   #<gRWTSParams
+         lda   #>gRWTSParams
+         jsr   $BD00
+         bcc   +
+         jmp   FatalError
++
+         dec   gSector
+         bne   precheck
+
+; pre-check passed, do the trace
+
+         lda   #<TraceDOS33b
+         ldx   #>TraceDOS33b
+         jmp   Trace
+
+;-------------------------------
+; TraceDOS33b
+; set up 2nd boot trace at $084A
+;-------------------------------
+TraceDOS33b
+         lda   #$4C
+         sta   $084A
+         lda   #<TraceDOS33c
+         sta   $084B
+         lda   #>TraceDOS33c
+         sta   $084C
+         lda   #$2C       ; disable calls to
+         sta   $083F      ; TEXt/PR0/IN0
+         sta   $0842
+         sta   $0845
+         jmp   $0801
+
+TraceDOS33c
+         lda   $08FE      ; 2nd-level trace callback is here
+         clc
+         adc   #$02
+_Inspect1a
+         sta   x1+1
+         sta   x2+1
+         sta   b4bbmodify+2
+         sta   b4bbmodify2+2
+         clc
+         adc   #$06
+         sta   b4bbcompare+1
+         sec
+         sbc   #$02
+         sta   x3+1
+         sta   x4+1
+         sta   callrwts+2
+         jsr   ProtectedDOS ; check for a specific (encrypted)
+                          ; bootloader called "Protected DOS"
+         bcs   notprotdos
+         jmp   ADStyle
+notprotdos
+         lda   callrwts+2
+         ldx   #$00       ; check for "STY $48;STA $49"
+         ldy   #$04       ; at RWTS entry point
+         jsr   CompareMemory ; (e.g. $BD00 or $3D00)
+         !byte $84,$48,$85,$49
+         bcc   x1
+         jmp   UseUniversal
+x1       lda   #$FF       ; check for "SEC;RTS" at $B942
+         ldx   #$42
+         ldy   #$02
+         jsr   CompareMemory
+         !byte $38,$60
+         bcc   x2
+         jmp   UseUniversal
+x2       lda   #$FF       ; check for "LDA $C08C,X" at $B94F
+         ldx   #$4F
+         ldy   #$03
+         jsr   CompareMemory
+         !byte $BD,$8C,$C0
+         bcc   x3
+         jmp   UseUniversal
+x3       lda   #$FF       ; check for "JSR $xx00" at $BDB9
+         ldx   #$B9
+         ldy   #$02
+         jsr   CompareMemory
+         !byte $20,00
+         bcc   +
+;
+; Check for RWTS variant that has extra code before
+; JSR $B800 e.g. Verb Viper (DLM), Advanced Analogies (Hartley)
+;
+x4       lda   #$FF       ; check for "JSR $xx00" at $BDC5
+         ldx   #$C5
+         ldy   #$02
+         jsr   CompareMemory
+         !byte $20,00
+         bcc   +
+         jmp   UseUniversal ; give up tracing; this RWTS is unsupported
++        jmp   ADStyle    ; use this RWTS to read the disk
+
+; TODO this doesn't belong here
+Inspect1_8b3
+         jsr   WriteTrack
+         lda   $08FE
+         clc
+         adc   #$01
+         jmp   _Inspect1a
+
+;-------------------------------
+; Trace
+; common code for all boot tracers
+; in:  A = lo byte of callback
+;      X = hi byte of callback
+; never returns
+;-------------------------------
+Trace
+         pha
+         txa
+         pha
+         lda   #$C6
+         ldx   #$B6
+         ldy   #$01
+         jsr   CopyMemory
+         pla
+         tax
+         pla
+         ldy   $B6F8
+         cpy   #$4C
+         bne   maybe_gs
+         sty   $B6F8      ; JMP
+         sta   $B6F9      ; lo byte of callback
+         stx   $B6FA      ; hi byte of callback
+         jmp   $B600
+maybe_gs
+         ldy   $B6FB
+         cpy   #$4C
+         bne   unknowndrive
+         sty   $B6FB      ; JMP
+         sta   $B6FC      ; lo byte of callback
+         stx   $B6FD      ; hi byte of callback
+         jmp   $B600
+unknowndrive
+         lda   #s_canttrace
+         jsr   PrintByID
+         jmp   UseUniversal

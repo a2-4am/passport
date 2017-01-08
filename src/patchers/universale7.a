@@ -1,0 +1,67 @@
+;-------------------------------
+; #UNIVERSALE7
+; replace remnants of E7 bitstream
+; with a compatible BYTEstream that
+; fools most E7 protection checks
+; (invented by qkumba, see PoC||GTFO 0x11
+; and 4am crack no. 655 Rocky's Boots 4.0)
+;-------------------------------
+_universale7
+         lda   #$0F
+         sta   sector+1
+sector   lda   #$FF       ; modified at runtime
+         ldx   #$A0
+         ldy   #$60
+         jsr   compare
+         !byte $AC,00,$AC,00,$AC,00,$AC,00
+         !byte $AC,00,$AC,00,$AC,00,$AC,00
+         !byte $AC,00,$AC,00,$AC,00,$AC,00
+         !byte $AC,00,$AC,00,$AC,00,$AC,00
+         !byte $AC,00,$AC,00,$AC,00,$AC,00
+         !byte $AC,00,$AC,00,$AC,00,$AC,00
+         !byte $AC,00,$AC,00,$AC,00,$AC,00
+         !byte $AC,00,$AC,00,$AC,00,$AC,00
+         !byte $AC,00,$AC,00,$AC,00,$AC,00
+         !byte $AC,00,$AC,00,$AC,00,$AC,00
+         !byte $AC,00,$AC,00,$AC,00,$AC,00
+         !byte $AC,00,$AC,00,$AC,00,$AC,00
+         bcc   +
+         jmp   e7nextsector
++
+         lda   sector+1
+         ldx   #$00
+         ldy   #$80
+         jsr   compare
+         !byte 00,00,00,00,00,00,00,00
+         !byte 00,00,00,00,00,00,00,00
+         !byte 00,00,00,00,00,00,00,00
+         !byte 00,00,00,00,00,00,00,00
+         !byte 00,00,00,00,00,00,00,00
+         !byte 00,00,00,00,00,00,00,00
+         !byte 00,00,00,00,00,00,00,00
+         !byte 00,00,00,00,00,00,00,00
+         !byte 00,00,00,00,00,00,00,00
+         !byte 00,00,00,00,00,00,00,00
+         !byte 00,00,00,00,00,00,00,00
+         !byte 00,00,00,00,00,00,00,00
+         !byte 00,00,00,00,00,00,00,00
+         !byte 00,00,00,00,00,00,00,00
+         !byte 00,00,00,00,00,00,00,00
+         !byte 00,00,00,00,00,00,00,00
+         bcc   +
+         jmp   e7nextsector
++
+         lda   sector+1
+         sta   gDisplayBytes
+         lda   #s_e7
+         jsr   PrintByID
+         lda   sector+1
+         ldx   #$A3
+         ldy   #$0C
+         jsr   modify
+         !byte $64,$B4,$44,$80,$2C,$DC,$18,$B4,$44,$80,$44,$B4
+e7nextsector
+         dec   sector+1
+         bmi   universale7_exit
+         jmp   sector
+universale7_exit

@@ -1,0 +1,19 @@
+;-------------------------------
+; IDEncoded44
+; identify bootloader that loads
+; 4-4-encoded data from track 0
+; (these disks are unsupported)
+;
+; in:  track buffer contains T00,S00
+; out: C clear if 4-4-encoding loader found
+;      C set otherwise
+;      all registers clobbered
+;      all other flags clobbered
+;-------------------------------
+IDEncoded44
+         ldy   #$07
+         jsr   SearchTrack
+         !byte $BD,$8C,$C0,$10,$FB,$38,$2A
+         bcs   encoded44_exit
+encoded44_exit
+         rts

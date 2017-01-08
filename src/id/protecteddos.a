@@ -1,0 +1,54 @@
+;-------------------------------
+; ProtectedDOS
+; in:  $0800..$08FF contains boot0
+;      $B600..$BFFF contains boot1
+; out: C clear if "Protected DOS" was found
+;      C set if "Protected DOS" was not found
+;      gProtectedDOS is set to TRUE or FALSE
+;-------------------------------
+ProtectedDOS
+         lda   #$B7
+         ldx   #$00
+         ldy   #$1A
+         jsr   CompareMemory
+         !byte $A0,$1A,$B9,00,$B7,$49,$97,$99
+         !byte 00,$B7,$C8,$D0,$F5,$EE,04,$B7
+         !byte $EE,09,$B7,$AD,09,$B7,$C9,$C0
+         !byte $D0,$E8
+         bcs   protecteddos_exit
+
+         lda   $B706      ; decryption key
+         sta   key+1
+         sta   gDisplayBytes
+         lda   #s_protdos
+         jsr   PrintByID
+
+;
+; decrypt RWTS in memory
+;
+         lda   #$B7
+         sta   decrypt+2
+         sta   store+2
+         ldy   #$1A
+decrypt  lda   $B700,y
+key      eor   #$FF       ; set at runtime
+store    sta   $B700,y
+         iny
+         bne   decrypt
+         inc   decrypt+2
+         inc   store+2
+         lda   store+2
+         cmp   #$C0
+         bne   decrypt
+
+;
+; this RWTS swaps the A/Y hi/lo parameter table address
+; when calling the RWTS entry point, so we need to
+; set a flag so we can call it properly later
+; (in ReadSector)
+;
+         lda   #TRUE
+         sta   gIsProtDOS
+         clc
+protecteddos_exit
+         rts

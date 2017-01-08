@@ -1,0 +1,343 @@
+* French translation by Antoine Vignau
+*
+* Main menu keys
+* (should match the text in :mainmenu below)
+* (these are NOT case-sensitive)
+*
+k_verify = "V"
+k_demuffin = "D"
+k_crack = "C"
+k_slot = "S"
+k_quit = "Q"
+* <Esc> will also quit
+
+*
+* String IDs
+* (pass in accumulator to PrintByID)
+*
+s_header = $00
+s_mainmenu = $01
+s_progbar = $02
+s_reading = $03
+s_diskrwts = $04
+s_bb00 = $05
+s_sunburst = $06
+s_optimum = $07
+s_builtin = $08
+s_switch = $09
+s_writing = $0A
+s_unformat = $0B
+s_f7 = $0C
+s_sync = $0D
+s_optbad = $0E
+s_pass = $0F
+s_passdemuf = $10
+s_passcrack = $11
+s_passcrack0 = $12
+s_fail = $13
+s_fatal0000 = $14
+s_fatal220f = $15
+s_done = $16
+s_noslot6 = $17
+s_writeerr = $18
+s_writeioerr = $19
+s_writenodev = $1A
+s_writeprot = $1B
+s_othermli = $1C
+s_canttrace = $1D
+s_canceled = $1E
+s_bademu = $1F
+s_reset = $20
+s_modify = $21
+s_modifyto = $22
+s_dosb0 = $23
+s_prodosb0 = $24
+s_pascalb0 = $25
+s_meccb0 = $26
+s_sierra = $27
+s_a6bc95 = $28
+s_jmpbcf0 = $29
+s_rol1e = $2A
+s_runhello = $2B
+s_e7 = $2C
+s_jmpb4bb = $2D
+s_jmpb400 = $2E
+s_jmpbeca = $2F
+s_jsrbb03 = $30
+s_thunder = $31
+s_jmpae8e = $32
+s_diskvol = $33
+s_d5d5f7 = $34
+s_meccm7 = $35
+STRINGCOUNT = $36
+
+StringTable
+ da :header
+ da :mainmenu
+ da :progbar
+ da :reading
+ da :diskrwts
+ da :bb00
+ da :sunburst
+ da :optimum
+ da :builtin
+ da :switch
+ da :writing
+ da :unformat
+ da :f7
+ da :sync
+ da :optbad
+ da :passver
+ da :passdemuf
+ da :passcrack
+ da :passcrack0
+ da :fail
+ da :fatal0000
+ da :fatal220f
+ da :done
+ da :noslot6
+ da :writeerr
+ da :writeioerr
+ da :writenodev
+ da :writeprot
+ da :othermli
+ da :canttrace
+ da :canceled
+ da :bademu
+ da :reset
+ da :modify
+ da :modifyto
+ da :dosboot0
+ da :prodosboot0
+ da :pascalboot0
+ da :meccboot0
+ da :sierra
+ da :a6bc95
+ da :jmpbcf0
+ da :rol1e
+ da :runhello
+ da :e7
+ da :jmpb4bb
+ da :jmpb400
+ da :jmpbeca
+ da :jsrbb03
+ da :thunder
+ da :jmpae8e
+ da :diskvol
+ da :d5d5f7
+ da :meccm7
+*
+* Text can contain substitution strings, which
+* are replaced by current values at runtime. Each
+* substitution string is two bytes long. The first
+* byte is always "%", which puts the print routine
+* into substitution mode. The next byte controls
+* which value is printed (see list below), then
+* substitution mode ends automatically. Unknown
+* substitution strings are silently ignored and
+* produce no output.
+*
+* Substitution strings are case-sensitive.
+*
+* Supported substitution strings:
+*   %S  destination (write) slot
+*   %D  destination (write) drive
+*   %t  current track
+*   %s  current sector
+*
+* In addition, it supports "%0" through "%9"
+* for printing arbitrary hexadecimal values.
+* These are stored in the gDisplayBytes array and
+* can be set directly before calling PrintByID.
+*
+:header
+ ASC "Passport par 4am             20160712-fr"00
+:mainmenu
+ ASC "________________________________________"8D8D8D8D8D8D8D
+ ASC "              "
+ INV "V"
+ ASC "{rifier"8D8D
+ ASC "              "
+ INV "D"
+ ASC "{muffiniser"8D8D
+ ASC "              "
+ INV "C"
+ ASC "racker"8D8D
+ ASC "              "
+ INV "Q"
+ ASC "uitter"8D8D8D8D8D8D8D
+ ASC "source: S6,D1         destination: "
+ INV "S"
+ ASC "%S,D%D"00
+:progbar
+ HEX 8D
+ ASC " ______________________________________"8D
+ ASC " "
+ INV " "
+ ASC "____________________________________"
+ INV " "8D8D8D00
+:reading
+ ASC "Lecture depuis S6,D1"8D00
+:diskrwts
+ ASC "Utilisation de la RWTS de la disquette"8D00
+:bb00
+ ASC "V{rif. de protection en $BB00 d{tect{e"8D
+ ASC "P00,S0A probablement illisible"8D00
+:sunburst
+ ASC "Disquette Sunburst d{tect{e"8D
+ ASC "P11,S0F probablement illisible"8D00
+:optimum
+ ASC "Disquette Optimum Resource d{tect{e"8D
+ ASC "P01,S0F probablement illisible"8D00
+:builtin
+ ASC "Utilisation de la RWTS int{gr{e"8D00
+:switch
+ ASC "Bascule vers la RWTS int{gr{e"8D00
+:writing
+ ASC "Ecriture vers S%S,D%D"8D00
+:unformat
+ ASC "P%t non format{e"8D00
+:f7
+ ASC "Protection $F7F6EFEEAB d{tect{e P%t"8D00
+:sync
+ ASC "Protection Nibble count d{tect{e P%t"8D00
+:optbad
+ ASC "P%t,S%s n'est pas lisible (ignor{)"8D00
+:passver
+ ASC "V{rif. termin{e. Disquette lisible."8D00
+:passdemuf
+ ASC "D{muffin termin{."8D00
+:passcrack
+ ASC "Crack termin{."8D00
+:passcrack0
+ HEX 8D
+ ASC "La disquette a {t{ copi{e avec succ}s"8D
+ ASC "mais Passport ne l'a pas modifi{e."8D8D
+ ASC "Causes possibles :"8D
+ ASC "- Disquette source non prot{g{e."8D
+ ASC "- Disquette destination fonctionnelle."8D
+ ASC "- La disquette utilise une protection"8D
+ ASC "  inconnue non g{r{e par Passport."00
+:fail
+ HEX 8D
+ ASC "Erreur fatale de lecture P%t,S%s"8D00
+:fatal0000
+ HEX 8D
+ ASC "Causes possibles :"8D
+ ASC "- Pas de disquette en S6,D1."8D
+ ASC "- Disquette non Apple ][."8D
+ ASC "- Disquette uniquement DOS 3.2."8D
+ ASC "- Disquette non format{e."8D00
+:fatal220f
+ HEX 8D
+ ASC "Passport ne peut g{rer cette disquette."8D8D
+ ASC "Causes possibles :"8D
+ ASC "- Disquette non 16-secteurs."8D
+ ASC "- Disquette modifie sa RWTS et"8D
+ ASC "  Passport ne peut pas le d{tecter."8D00
+:done
+ HEX 8D
+ ASC "Pressez une touche pour continuer "
+ FLS " "00
+:noslot6
+ ASC "Passport requiert un Disk II en S6."8D
+ ASC "Pressez une touche pour quitter "
+ FLS " "00
+:writeerr
+ HEX 8D
+ ASC "Erreur fatale d'{criture P%t"8D8D00
+*
+* MLI error $27
+*
+:writeioerr
+ ASC "Causes possibles :"8D
+ ASC "- Pas de disquette en S%S,D%D."8D
+ ASC "- Secteurs illisibles sur la disquette."8D
+ ASC "- La disquette n'est pas format{e."8D8D00
+*
+* MLI error $28
+*
+:writenodev
+ ASC "S%S,D%D n'existe pas."8D00
+*
+* MLI error $2B
+*
+:writeprot
+ ASC "Disque en S%S,D%D prot{g{ en {criture."8D00
+*
+* other MLI error
+*
+:othermli
+ ASC "Erreur MLI $%0."8D
+ ASC "Veuillez contacter le d{veloppeur."8D00
+:canttrace
+ ASC "Lecteur inconnu, trace d{sactiv{e"8D00
+:canceled
+ ASC "Op{ration annul{e @ votre demande."8D00
+:bademu
+ HEX 8D
+ ASC "ATTENTION ! Vous utilisez Passport avec"8D
+ ASC "un {mulateur qui ne g}re pas bien les"8D
+ ASC "lecteurs de disquettes. Passport tentera"
+ ASC "de contourner le probl}me mais certaines"
+ ASC "disquettes ne seront pas lisibles."8D8D00
+:reset
+ HEX 8D
+ ASC "Pressez <Ctrl-Reset> pour continuer."8D00
+:modify
+ ASC "P%t,S%0,$%1: "00
+:modifyto
+ ASC " -> "00
+:dosboot0
+ ASC "P00,S00 Secteur de boot DOS 3.3 trouv{"8D00
+:prodosboot0
+ ASC "P00,S00 Secteur de boot ProDOS trouv{"8D00
+:pascalboot0
+ ASC "P00,S00 Secteur de boot Pascal trouv{"8D00
+:meccboot0
+ ASC "P00 Secteur de boot MECC M8 trouv{"8D00
+:sierra
+ ASC "P%t,S%0 V{rif. de prot. Sierra trouv{e"8D00
+:a6bc95
+ ASC "P%t,S%0 V{rif. de prot. A6BC95 trouv{e"8D00
+:jmpbcf0
+ ASC "P00,S03 La RWTS requiert un bit de"8D
+ ASC "timing apr}s le premier {pilogue du"8D
+ ASC "champ de donn{es en sautant @ $BCF0."8D00
+:rol1e
+ ASC "P00,S03 La RWTS met les bits de timing"8D
+ ASC "en $1E et v{rifie la valeur plus tard."8D00
+:runhello
+ ASC "P%T,S%0 Le programme de d{marrage"8D
+ ASC "v{rifie la protection avant d'ex{cuter"8D
+ ASC "le vrai programme de d{marrage."8D00
+:e7
+ ASC "P%t,S%0 Flux de bits E7 trouv{"8D00
+:jmpb4bb
+ ASC "P00,S0C Le disque v{rifie la protection"8D
+ ASC "en $B4BB avant d'initialiser le DOS."8D00
+:jmpb400
+ ASC "P00,S01 Le disque v{rifie la protection"8D
+ ASC "en $B400 avant d'initialiser le DOS."8D00
+:jmpbeca
+ ASC "P00,S02 La RWTS requiert des nibbles"8D
+ ASC "suppl{mentaires et des bits de timing"8D
+ ASC "apr}s le prologue de donn{es en $BECA."8D00
+:jsrbb03
+ ASC "P00,S05 V{rification de protection"8D
+ ASC "auto-d{chiffrable trouv{e en $BB03."8D00
+:thunder
+ ASC "P00,S03 La RWTS compte les bits de"8D
+ ASC "timing et les v{rifie plus tard."8D00
+:jmpae8e
+ ASC "P00,S0D Le disque v{rifie la protection"8D
+ ASC "en $AE8E apr}s l'initialisation du DOS."8D00
+:diskvol
+ ASC "P00,S08 La RWTS requiert un num{ro de"8D
+ ASC "volume de disque non standard."8D00
+:d5d5f7
+ ASC "P%t,S%0 V{rif. de prot. D5D5F7 trouv{e"8D00
+:meccm7
+ ASC "P00 Secteur de boot MECC M7 trouv{"8D00
+
+* asc "1234567890123456789012345678901234567890"

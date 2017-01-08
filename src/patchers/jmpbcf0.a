@@ -1,0 +1,25 @@
+;-------------------------------
+; #JMPBCF0
+; $B999 jumps to $BCF0 to count
+; timing bits in data epilogue
+; e.g. Easy as ABC
+; NOTE: must be run before RWTS
+; patchers due to overlapping bytes
+;-------------------------------
+_jmpbcf0
+         lda   gIsRWTS    ; if DOS 3.3 RWTS
+         bne   jmpbcf0_exit
+         lda   #$03
+         ldx   #$94
+         ldy   #$08
+         jsr   compare    ; and T00,S03,$94 ==
+         !byte $DD,$8C,$C0,$D0,$A9,$4C,$F0,$BC
+         bcs   jmpbcf0_exit
+         lda   #s_jmpbcf0
+         jsr   PrintByID
+         lda   #$03
+         ldx   #$94
+         ldy   #$08
+         jsr   modify     ; then set T00,S03,$94 =
+         !byte $EA,$BD,$8C,$C0,$10,$FB,$C9,$AA
+jmpbcf0_exit

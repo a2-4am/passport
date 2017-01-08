@@ -1,0 +1,17 @@
+;-------------------------------
+; #RWTSSWAPMECC
+; post-boot RWTS swapper in MECC
+; disks
+;-------------------------------
+_rwtsswapmecc
+         ldy   #$11
+         jsr   SearchTrack
+         !byte $0A,$18,$69,$FF,$A8,$8D,$8B,$C0
+         !byte $8D,$8B,$C0,$B9,$97,$97,$8D,$AC
+         !byte $D5
+         bcs   rwtsswapmecc_exit
+         sta   gDisplayBytes
+         ldy   #$03
+         jsr   modify
+         !byte $A9,00,$24
+rwtsswapmecc_exit

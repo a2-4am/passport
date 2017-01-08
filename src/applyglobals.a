@@ -1,0 +1,128 @@
+;
+; initialize some variables that are used by many
+; other patchers on track $00
+;
+ApplyGlobals
+         lda   #$00
+         ldx   #$00
+         ldy   #$4A
+         jsr   compare    ; if T00,S00,$00 ==
+
+; This needs to be pretty strict because, if it matches,
+; we're going to patch the sector and trace it to capture
+; the RWTS.
+
+         !byte 01,$A5,$27,$C9,09,$D0,$18,$A5
+         !byte $2B,$4A,$4A,$4A,$4A,09,$C0,$85
+         !byte $3F,$A9,$5C,$85,$3E,$18,$AD,$FE
+         !byte 08,$6D,$FF,08,$8D,$FE,08,$AE
+         !byte $FF,08,$30,$15,$BD,$4D,08,$85
+         !byte $3D,$CE,$FF,08,$AD,$FE,08,$85
+         !byte $27,$CE,$FE,08,$A6,$2B,$6C,$3E
+         !byte 00,$EE,$FE,08,$EE,$FE,08,$20
+         !byte $89,$FE,$20,$93,$FE,$20,$2F,$FB
+         !byte $A6,$2B
+         ldx   #TRUE
+         bcc   boot0
+         ldx   #FALSE
+boot0
+         stx   gIsBoot0
+
+         lda   #$01
+         ldx   #$00
+         ldy   #$38
+         jsr   compare    ; if T00,S01,$00 ==
+         !byte $8E,$E9,$B7,$8E,$F7,$B7,$A9,01
+         !byte $8D,$F8,$B7,$8D,$EA,$B7,$AD,$E0
+         !byte $B7,$8D,$E1,$B7,$A9,02,$8D,$EC
+         !byte $B7,$A9,04,$8D,$ED,$B7,$AC,$E7
+         !byte $B7,$88,$8C,$F1,$B7,$A9,01,$8D
+         !byte $F4,$B7,$8A,$4A,$4A,$4A,$4A,$AA
+         !byte $A9,00,$9D,$F8,04,$9D,$78,04
+         ldx   #TRUE
+         bcc   boot1
+         ldx   #FALSE
+:boot1
+         stx   gIsBoot1
+
+         lda   #$01
+         ldx   #$00
+         ldy   #$38
+         jsr   compare    ; if T00,S01,$00 ==
+         !byte $8E,$E9,$37,$8E,$F7,$37,$A9,01
+         !byte $8D,$F8,$37,$8D,$EA,$37,$AD,$E0
+         !byte $37,$8D,$E1,$37,$A9,02,$8D,$EC
+         !byte $37,$A9,04,$8D,$ED,$37,$AC,$E7
+         !byte $37,$88,$8C,$F1,$37,$A9,01,$8D
+         !byte $F4,$37,$8A,$4A,$4A,$4A,$4A,$AA
+         !byte $A9,00,$9D,$F8,04,$9D,$78,04
+         ldx   #TRUE
+         bcc   master
+         ldx   #FALSE
+master
+         stx   gIsMaster
+
+         lda   #$07
+         ldx   #$00
+         ldy   #$40
+         jsr   compare    ; if T00,S07,$00 ==
+         !byte $84,$48,$85,$49,$A0,02,$8C,$F8
+         !byte 06,$A0,04,$8C,$F8,04,$A0,01
+         !byte $B1,$48,$AA,$A0,$0F,$D1,$48,$F0
+         !byte $1B,$8A,$48,$B1,$48,$AA,$68,$48
+         !byte $91,$48,$BD,$8E,$C0,$A0,08,$BD
+         !byte $8C,$C0,$DD,$8C,$C0,$D0,$F6,$88
+         !byte $D0,$F8,$68,$AA,$BD,$8E,$C0,$BD
+         !byte $8C,$C0,$A0,08,$BD,$8C,$C0,$48
+         ldx   #TRUE
+         bcc   rwts
+         ldx   #FALSE
+rwts
+         stx   gIsRWTS
+
+         lda   #$00
+         ldx   #$00
+         ldy   #$05
+         jsr   compare    ; if T00,S00,$00 ==
+
+; This abbreviated signature matches all ProDOS disks
+; I can find, with no false positives.
+; Some disks jump to $08FF at $0804 (SOS entry point).
+; Others have a modified T00,S00 but eventually load
+; ProDOS (e.g. 1-2-3 Sequence Me, Alge-Blaster Plus,
+; Dazzle Draw, SuperPrint II)
+
+         !byte 01,$38,$B0,$03,$4C
+         ldx   #TRUE
+         bcc   prodos
+         ldx   #FALSE
+prodos
+         stx   gIsProDOS
+
+         lda   #$00
+         ldx   #$00
+         ldy   #$08
+         jsr   compare    ; if T00,S00,$00 ==
+
+; Apple Pascal signature (version < 1.3)
+; The wildcard in 7th position catches alternate jump
+; addresses (e.g. Wizardry I, Sundog Frozen Legacy)
+
+         !byte 01,$E0,$60,$F0,03,$4C,$97,$08
+         ldx   #TRUE
+         bcc   pascal
+         lda   #$00
+         ldx   #$00
+         ldy   #$08
+         jsr   compare    ; or if T00,S00,$00 ==
+
+; Pascal 1.3 signature [thanks Marco V.]
+
+         !byte 01,$E0,$07,$B0,04,$E0,$40,$B0
+         ldx   #TRUE
+         bcc   pascal
+         ldx   #FALSE
+pascal
+         stx   gIsPascal
+
+         rts

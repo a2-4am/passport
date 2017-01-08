@@ -1,0 +1,24 @@
+;-------------------------------
+; #JMPB720
+; RWTS swapper forcibly reinstalls
+; a jump to $B720 instead of writing
+; third data prologue
+; e.g. Analogies Tutorial, Verb Viper
+;-------------------------------
+_jmpb720
+         lda   gIsRWTS    ; if DOS 3.3-shaped RWTS
+         bne   jmpb720_exit
+         lda   #$0B
+         ldx   #$08
+         ldy   #$18
+         jsr   compare    ; and T00,S0B,$08 ==
+         !byte $4C,$20,$B7,$4C,$0E,$A9,$A2,02
+         !byte $BD,$0B,$B7,$9D,$5E,$B8,$BD,08
+         !byte $B7,$9D,$F6,$B8,$CA,$10,$F1,$60
+         bcs   jmpb720_exit
+         lda   #$0B
+         ldx   #$08
+         ldy   #$06
+         jsr   modify     ; then set T00,S0B,$08 =
+         !byte $BD,$8C,$C0,$20,$B8,$B8
+jmpb720_exit

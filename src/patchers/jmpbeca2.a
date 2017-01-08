@@ -1,0 +1,28 @@
+;-------------------------------
+; #JMPBECA2
+; RWTS calls $BECA for funny business
+; instead of checking data prologue
+; (variation #2)
+; e.g. Library Magic
+; NOTE: must be run before RWTS
+; patchers due to overlapping bytes
+;-------------------------------
+_jmpbeca2
+         lda   gIsRWTS    ; if DOS 3.3 RWTS
+         bne   jmpbeca2_exit
+         lda   #$02
+         ldx   #$F4
+         ldy   #$0D
+         jsr   compare    ; and T00,S02,$F4 ==
+         !byte $4C,$CA,$BE,$EA,$BD,$8C,$C0,$10
+         !byte $FB,$49,$AD,$D0,$DD
+         bcs   jmpbeca2_exit
+         lda   #s_jmpbeca
+         jsr   PrintByID
+         lda   #$02
+         ldx   #$F4
+         ldy   #$0D
+         jsr   modify     ; and set T00,S02,$F4 =
+         !byte $A0,$56,$BD,$8C,$C0,$10,$FB,$C9
+         !byte $AD,$D0,$E7,$A9,00
+jmpbeca2_exit

@@ -1,0 +1,24 @@
+;-------------------------------
+; #D5D5F7
+; nibble count with weird bitstream
+; involving $D5 and $F7 as delimiters
+; e.g. NoteCard Maker, many Mindplay titles
+; (Ace Detective, Robomath, Fraction-oids)
+;-------------------------------
+_d5d5f7
+         ldy   #$20
+         jsr   SearchTrack
+         !byte $BD,$8C,$C0,$10,$FB,$48,$68,$C9
+         !byte $D5,$D0,$F5,$A0,00,$8C,$97,$97
+         !byte $BD,$8C,$C0,$10,$FB,$C9,$D5,$F0
+         !byte $0F,$C9,$F7,$D0,01,$C8,$18,$6D
+         bcs   d5d5f7_exit
+         sta   gDisplayBytes
+         pha
+         lda   #s_d5d5f7
+         jsr   PrintByID
+         pla
+         ldy   #$01
+         jsr   modify
+         !byte $60
+d5d5f7_exit

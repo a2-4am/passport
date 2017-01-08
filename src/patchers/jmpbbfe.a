@@ -1,0 +1,21 @@
+;-------------------------------
+; #JMPBBFE
+; boot0 jumps to nibble check at
+; ($BBFE) instead of ($08FD)
+; e.g. Mind Over Matter
+;-------------------------------
+_jmpbbfe
+         lda   gIsBoot0   ; if DOS 3.3 boot0 loader
+         bne   jmpbbfe_exit
+         lda   #$00
+         ldx   #$4A
+         ldy   #$03
+         jsr   compare    ; and T00,S00,$4A ==
+         !byte $6C,$FE,$BB
+         bcs   jmpbbfe_exit
+         lda   #$00
+         ldx   #$4B
+         ldy   #$02
+         jsr   modify     ; then set T00,S00,$4B =
+         !byte $FD,08
+jmpbbfe_exit

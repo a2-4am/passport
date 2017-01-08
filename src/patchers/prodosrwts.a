@@ -1,0 +1,38 @@
+;-------------------------------
+; #PRODOSRWTS
+; patch ProDOS RWTS
+; e.g. ProDOS-based MECC disks
+;-------------------------------
+_prodosrwts
+         lda   gIsProDOS
+         bne   prodosrwts_exit
+         ldy   #$14
+         jsr   SearchTrack
+         !byte $29,$FC,$5D,$97,$97,$D0,$0C,$A6
+         !byte $97,$BD,$8C,$C0,$10,$FB,$C9,$97
+         !byte $18,$F0,01,$38
+         bcs   prodosrwts_exit
+         sta   gDisplayBytes
+         inx
+         inx
+         inx
+         inx
+         inx
+         inx
+         inx
+         inx
+         inx
+         inx
+         inx
+         inx
+         inx
+         inx
+         inx
+         ldy   #$01
+         jsr   compare
+         !byte $DE
+         bcc   prodosrwts_exit
+         ldy   #$01
+         jsr   modify
+         !byte $DE
+prodosrwts_exit

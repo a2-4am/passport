@@ -1,0 +1,767 @@
+!cpu 6502
+*=$2000
+
+;-------------------------------
+; Passport
+; a 4am hack
+; (c) 2016-7 by 4am
+;
+; Permission is hereby granted, free of charge, to any
+; person obtaining a copy of this software and associated
+; documentation files (the "Software"), to deal in the
+; Software without restriction, including without limitation
+; the rights to use, copy, modify, merge, publish,
+; distribute, sublicense, and/or sell copies of the
+; furnished to do so, subject to the following conditions:
+;
+; The above copyright notice and this permission notice
+; shall be included in all copies or substantial portions of
+; the Software.
+;
+; THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY
+; KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE
+; WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
+; PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS
+; OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR
+; OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+; OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+; SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+;
+;-------------------------------
+
+; Supported languages
+; (each has its own localized strings file
+; and its own output filename)
+ENGLISH  =     1          ; src/strings/en, PASSPORT.SYSTEM
+FRENCH   =     2          ; src/strings/fr, PASSPORT.FR
+SPANISH  =     3          ; src/strings/es, PASSPORT.ES
+ITALIAN  =     4          ; src/strings/it, PASSPORT.IT
+FINNISH  =     5          ; src/strings/fi, PASSPORT.FI
+
+; Current language for this assembly
+LANG     =     ENGLISH
+
+         !if LANG=ENGLISH {
+                !to "../build/PASSPORT.SYSTEM",plain
+         }
+         !if LANG=FRENCH {
+                !to "../build/PASSPORT.FR",plain
+         }
+         !if LANG=SPANISH {
+                !to "../build/PASSPORT.SP",plain
+         }
+         !if LANG=ITALIAN {
+                !to "../build/PASSPORT.IT",plain
+         }
+         !if LANG=FINNISH {
+                !to "../build/PASSPORT.FI",plain
+         }
+
+;-------------------------------
+; Addresses we read/call
+TEXTTOP  =     $22
+VPOS     =     $25
+MLI      =     $BF00
+REBOOT   =     $FAA6
+TEXT     =     $FB2F
+MACHINEID =    $FBB3
+HOME     =     $FC58
+WAIT     =     $FCA8
+PRBYTE   =     $FDDA
+COUT     =     $FDED
+PR0      =     $FE89
+IN0      =     $FE93
+
+; Zero-page addresses we use for variables
+nibsrcindex =  $EC        ; byte
+nibdestindex = $ED        ; byte
+prbuf    =     $EE        ; word
+unform   =     $F0        ; word
+nibcount =     $F2        ; byte
+modtmp   =     $F3        ; byte
+modsrc   =     $F4        ; word
+moddest  =     $F6        ; word
+cmp1     =     $F8        ; word
+cmp2     =     $FA        ; word
+counter  =     $FC        ; byte
+tmp      =     $FC        ; byte
+tmpa     =     $FC        ; byte
+tmpx     =     $FD        ; byte
+tmpy     =     $FE        ; byte
+flag     =     $FF        ; byte
+
+; Application constants (not zero addresses)
+BASEPAGE =     $10        ; Special Delivery tracer assumes
+                          ; this is $10, so don't change it!
+TRUE     =     $00        ; Lots of code assumes this is $00
+                          ; so it can branch with BEQ, so
+                          ; don't change it either!
+FALSE    =     $01
+
+FirstMover
+         ldy   #>LastMover-FirstMover
+         ldx   #$00
+FM       lda   $2000,x
+         sta   $6800,x
+         inx
+         bne   FM
+         inc   FM+2
+         inc   FM+5
+         dey
+         cpy   #$48
+         bne   FM
+         jmp   OneTimeSetup
+
+         !pseudopc *+$4800 {
+
+; use localized strings based on current language
+
+         !if LANG=ENGLISH {
+                !source "strings/en.a"
+         }
+         !if LANG=FRENCH {
+                !source "strings/fr.a"
+         }
+         !if LANG=SPANISH {
+                !source "strings/es.a"
+         }
+         !if LANG=ITALIAN {
+                !source "strings/it.a"
+         }
+         !if LANG=FINNISH {
+                !source "strings/fi.a"
+         }
+
+         !source "analyze.a"
+         !source "id/inspect0.a"
+         !source "id/trace.a"
+         !source "id/dos33.a"
+         !source "id/jsr8b3.a"
+         !source "id/mecc.a"
+         !source "id/datasoft.a"
+         !source "id/protecteddos.a"
+         !source "id/specdelivery.a"
+         !source "id/encode44.a"
+         !source "id/encode53.a"
+         !source "print.a"
+         !source "compare.a"
+         !source "modify.a"
+         !source "memory.a"
+         !source "sectormap.a"
+         !source "mli.a"
+         !source "slots.a"
+         !source "prefs.a"
+         !source "keys.a"
+         !source "rwts.a"
+
+OneTimeSetup
+         lda   $C0E8
+         jsr   SaveProDOS
+         ldx   MACHINEID
+         cpx   #$EA
+         bne   slotscan
+         lda   #$DF
+         sta   kForceLower
+slotscan
+         jsr   ScanForDiskII
+         lda   DiskIIArray+5
+         bne   founds6
+         jmp   FatalNoSlot6
+founds6
+         jsr   LoadPrefs  ; load preferences (if available)
+         bcc   ResetVector
+         jsr   SavePrefs  ; save preferences (if possible)
+ResetVector
+         lda   #<ResetVector
+         sta   $03F2
+         lda   #>ResetVector
+         sta   $03F3
+         eor   #$A5
+         sta   $03F4
+         lda   $C0E8
+         jsr   PR0
+         jsr   IN0
+         sta   $C000
+         sta   $C002
+         sta   $C004
+         sta   $C00C
+         sta   $C00E
+MainMenu
+         ldx   #$FF
+         txs
+         jsr   TEXT
+         jsr   ClearScreen
+         lda   #s_header
+         jsr   PrintByID
+         lda   #s_mainmenu
+         jsr   PrintByID
+:getkey
+         jsr   WaitForKey
+         cmp   #$9B
+         beq   jmptoexit
+         cmp   #k_quit
+         bne   +
+jmptoexit
+         jmp   CleanExit
++
+         cmp   #k_slot
+         bne   +
+         jsr   NextSlot
+         lda   #TRUE
+         sta   gChangedPrefs
+         jmp   MainMenu
++
+         cmp   #k_verify
+         bne   +
+         lda   #%00000000
+         beq   Action     ; unconditional branch
++
+         cmp   #k_demuffin
+         bne   +
+         lda   #%10000000
+         bne   Action     ; unconditional branch
++
+         cmp   #k_crack
+         bne   getkey
+         lda   #%11000000
+
+; note: execution falls through here
+
+Action
+         sta   gMode
+         jsr   ResetProgress
+         jsr   InitSectorMap
+         jsr   CopyUniversal
+         lda   #FALSE
+         sta   gTriedUniv
+         sta   gSaidWriting
+         lda   #$00
+         sta   gTrack
+         sta   gSector
+         sta   gPatchCount
+         sta   callrwts+1
+         lda   #$08
+         sta   gAddress+1
+         jsr   ClearScreen
+         lda   #s_header
+         jsr   PrintByID
+         lda   #s_progbar
+         jsr   PrintByID
+         lda   VPOS
+         sta   TEXTTOP
+         lda   #s_reading
+         jsr   PrintByID
+;
+; For the initial T00,S00 check, we need to wait much longer
+; than usual to find the address prologue, because sector 0
+; might literally be the only standard sector on the track.
+; This will get overridden as soon as we either trace the
+; disk's RWTS or copy the universal RWTS again. (One of these
+; is guaranteed to happen before we read the rest of the disk.)
+;
+         lda   #$E7
+         sta   $B945
+         ldy   #<gRWTSParams ; call universal RWTS to see
+         lda   #>gRWTSParams ; if T00,S00 is readable
+         jsr   $BD00      ; (only care about the return code)
+         bcs   fatalt00s00
+         jmp   checkt00s00
+:fatalt00s00
+         lda   #$F0
+         sta   $B959
+         lda   #$05
+         sta   $B95A
+         ldy   #<gRWTSParams
+         lda   #>gRWTSParams
+         jsr   $BD00
+         bcs   reallyfatal
+;
+; Bad emulator detected (disk controller presents nibbles
+; immediately instead of based on cycle count). Patch the
+; universal RWTS to compensate.
+;
+         lda   #$F0
+         sta   _B959
+         lda   #$05
+         sta   _B95A
+         bne   checkt00s00  ; unconditional branch
+reallyfatal
+         lda   #s_fail
+         jsr   PrintByID
+         lda   #s_fatal0000
+         jsr   PrintByID
+         jmp   TheEnd
+checkt00s00
+         jmp   CheckT00S00 ; /src/id/inspect0
+
+
+
+
+
+
+;
+; We are now fairly confident that the RWTS in memory
+; is normal enough to call, Advanced Demuffin style.
+;
+ADStyle
+         jsr   IncProgress
+         lda   #s_diskrwts
+         jsr   PrintByID
+;
+; Check for protections in early boot that
+; might indicate intentional bad sectors
+; elsewhere in the disk that we should skip,
+; or changes we need to make to the RWTS
+; before we start.
+;
+         jsr   xHeredityDog
+         bcs   noDog
+         lda   #s_bb00
+         jsr   PrintByID
+noDog
+         jsr   xSunburst
+         bcs   noSun
+         lda   #s_sunburst
+         jsr   PrintByID
+noSun
+         jsr   xOptimumRes
+         bcs   noOptimum
+         lda   #s_optimum
+         jsr   PrintByID
+noOptimum
+         jsr   xB660
+         jsr   xB4BB
+         jmp   ReadWithRWTS
+
+UseUniversal
+         jsr   IncProgress
+         jsr   StartWithUniv
+
+; note: execution falls through here
+
+ReadWithRWTS
+         lda   #$22
+         jsr   ChangeTrackNW
+         lda   #$0F
+         jsr   ChangeSector
+         lda   #<T22S0F
+         sta   checksector+1
+         lda   #>T22S0F
+         sta   checksector+2
+read
+         lda   KEY
+         bpl   checksector
+         jmp   Cancel
+checksector
+         lda   $FFFF      ; current sector in sector map
+         pha
+         beq   nextsector ; #$00 = skip this sector
+         cmp   #$FE       ; #$FE = switch to built-in RWTS
+         bne   +          ;        to read this sector
+         lda   gTriedUniv
+         beq   +
+         jsr   SwitchToUniv
++
+         jsr   ReadSector
+         bcc   nextsector
+         pla
+         pha
+;
+; Uh oh, we got a read error. But do we care?
+; Maybe we marked this sector as optional based
+; on markers in the bootloader.
+;
+         cmp   #$80
+         beq   optional
+;
+; If we're in the middle of a track, try switching to the
+; universal RWTS and see if that helps. (Many disks contain
+; an RWTS that can't read the early tracks or sectors that
+; contain the RWTS code, since those are loaded by the
+; disk controller firmware.)
+;
+         lda   gSector
+         cmp   #$0F
+         bne   tryuniversal
+;
+; We just got to this track, so check for a variety
+; of whole-track conditions
+;
+; 1) unformatted track
+;
+         jsr   IsUnformatted
+         bcs   checkf7
+         lda   #s_unformat
+         jsr   PrintByID
+         jmp   skiptrack
+;
+; 2) $F7 protection track (F7F6EFEAAB nibble sequence)
+;
+checkf7
+         jsr   IsF7
+         bcs   checksync
+         lda   #s_f7
+         jsr   PrintByID
+         jmp   skiptrack
+;
+; 3) nibble count track (mostly $FF sync bytes)
+;
+:checksync
+         jsr   IsSyncBytes
+         bcs   tryuniversal
+         lda   #s_sync
+         jsr   PrintByID
+
+; note: execution falls through here
+
+skiptrack
+         lda   #$00       ; skip rest of track
+         jsr   ChangeSector
+         lda   checksector+1
+         sec
+         sbc   #$0F
+         sta   checksector+1
+         bcs   notrackdec
+         dec   checksector+2
+notrackdec
+         jmp   nextsector
+
+:tryuniversal
+         lda   gTriedUniv ; have we tried the universal RWTS?
+         beq   fatal      ; yes, so read error is fatal
+         jsr   SwitchToUniv ; no, switch it in now
+         jmp   read       ; and re-read this sector
+
+fatal    pla              ; if we get to here, we've
+         jmp   FatalError ; decided the read error is fatal
+
+optional
+         lda   #s_optbad  ; say we're skipping this
+         jsr   PrintByID  ; optional sector
+
+; note: execution falls through here
+
+nextsector
+         pla
+         dec   checksector+1
+         lda   checksector+1
+         cmp   #$FF
+         bne   nodec
+         dec   checksector+2
+nodec
+         lda   gSector
+         sec
+         sbc   #$01
+         jsr   ChangeSector
+         lda   gSector
+         bmi   prevtrack
+         jmp   read
+prevtrack
+         lda   #$0F
+         jsr   ChangeSector
+         lda   gTrack
+         sec
+         sbc   #$01
+         jsr   ChangeTrack
+         jsr   IncProgress
+         lda   gTrack
+         bmi   pass
+         cmp   gLastTrack
+         bcc   pass
+         jmp   read
+pass
+         bit   gMode
+         bmi   passwrite
+         lda   #s_pass
+         bne   passprint  ; always branches
+passwrite
+         bvs   ppasscrack
+         lda   #s_passdemuf
+         bne   passprint  ; always branches
+ppasscrack
+         lda   gPatchCount
+         beq   ppasscrack0
+         lda   #s_passcrack
+         !byte $2C        ; hide next LDA
+ppasscrack0
+         lda   #s_passcrack0
+passprint
+         jsr   PrintByID
+         jmp   TheEnd
+
+SwitchToUniv
+         lda   #s_switch
+         !byte $2C        ; hide next LDA
+StartWithUniv
+         lda   #s_builtin
+         jsr   PrintByID
+         lda   #TRUE
+         sta   gTriedUniv
+         lda   #FALSE
+         sta   gIsProtDOS
+
+; note: execution falls through here
+
+CopyUniversal
+         lda   #>universalrwts
+         ldx   #$B8
+         ldy   #$08
+         jsr   CopyMemory
+         lda   #$00
+         sta   callrwts+1
+         lda   #$BD
+         sta   callrwts+2
+         rts
+
+Cancel
+         lda   #s_canceled
+         jsr   PrintByID
+         jmp   TheEnd
+
+FatalError
+         lda   #s_fail
+         jsr   PrintByID
+         lda   gTrack
+         cmp   #$22
+         beq   failont22
+         jmp   TheEnd
+failont22
+         lda   gSector
+         cmp   #$0F
+         beq   failont22s0f
+         jmp   TheEnd
+failont22s0f
+         lda   #s_fatal220f
+         jsr   PrintByID
+
+; note: execution falls through here
+
+TheEnd
+         lda   $C0E8
+         lda   #s_done
+         jsr   PrintByID
+         jsr   WaitForKey
+         cmp   #$9B
+         beq   CleanExit
+         jmp   MainMenu
+
+CleanExit
+         jsr   SwapProDOS
+         lda   gChangedPrefs
+         bne   doquit
+         jsr   SavePrefs
+doquit
+         jsr   MLI
+         !byte $65
+         !word quitparm
+quitparm
+         !byte 04,00,00,00,00,00,00
+
+FatalNoSlot6
+         lda   #s_noslot6
+         jsr   PrintByID
+         jsr   WaitForKey
+         jmp   CleanExit
+
+ResetProgress
+         lda   #$82       ; reset progress indicator
+         sta   progressind+1
+         lda   #$05
+         sta   progressind+2
+         rts
+
+IncProgress
+         lda   #$20       ; display minimal progress indicator
+progressind
+         sta   $FFFF      ; set at runtime
+         inc   progressind+1
+         rts
+
+;-------------------------------
+; WriteTrack
+;-------------------------------
+MLI_IOERR =    $27
+MLI_NODEV =    $28
+MLI_WRITEPROT = $2B
+
+WriteTrack
+         jsr   AnalyzeTrack
+WriteTrackNA              ; entry point used by Special Delivery tracer
+                          ; to write track with "N"o "A"nalysis
+         bit   gMode
+         bpl   pdone      ; verify mode -> no write
+         lda   gSaidWriting
+         beq   write
+         lda   #s_writing ; only print "writing to" message once
+         jsr   PrintByID
+         lda   #TRUE
+         sta   gSaidWriting
+write
+         jsr   WriteTrackMLI
+         bcc   pdone
+         sta   gDisplayBytes ; for use in error messages, if any
+         cmp   #MLI_IOERR
+         beq   ioerr
+         cmp   #MLI_NODEV
+         beq   nodev
+         cmp   #MLI_WRITEPROT
+         beq   pwriteprot
+         lda   #s_othermli
+         !byte $2C      ; hide next LDA
+ioerr
+         lda   #s_writeioerr
+         !byte $2C      ; hide next LDA
+nodev
+         lda   #s_writenodev
+         !byte $2C      ; hide next LDA
+pwriteprot
+         lda   #s_writeprot
+         pha
+         lda   #s_writeerr
+         jsr   PrintByID
+         pla
+         jsr   PrintByID
+         jmp   TheEnd
+pdone
+         rts
+
+;-------------------------------
+; ChangeTrack
+; in:  A = new track
+;-------------------------------
+ChangeTrack
+         pha
+         jsr   WriteTrack
+         pla
+
+; note: execution falls through here
+
+ChangeTrackNW             ; "N"o "W"rite
+         sta   gTrack
+         jsr   ClearTSBuffer
+         rts
+
+;-------------------------------
+; ChangeSector
+; in:  A = new sector
+;-------------------------------
+ChangeSector
+         sta   gSector
+         clc
+         adc   #BASEPAGE
+         sta   gAddress+1
+         rts
+
+;-------------------------------
+; AnalyzeTrack routine
+; Looks at buffer in memory to detect known
+; copy protections and disable/revert/modify them
+; to work on standard disks.
+; Prints through COUT as it finds and makes
+; modifications in memory only.
+; in:  $BASEPAGE page contains one track worth of data
+; out: if C set, no known protections were found and
+;        no modifications were made
+;      if C clear, at least one modification was made
+;-------------------------------
+AnalyzeTrack
+         lda   gTrack
+         beq   _applyToT00
+         jmp   _applyToAll
+_applyToT00
+         jsr   ApplyGlobals
+         !source "patchers/sunburst.a"
+         !source "patchers/jmpbcf0.a"
+         !source "patchers/jmpbeb1.a"
+         !source "patchers/jmpbeca.a"
+         !source "patchers/jmpbeca2.a"
+         !source "patchers/jmpb660.a"
+         !source "patchers/jmpb720.a"
+         !source "patchers/bademu.a"
+         !source "patchers/bademu2.a"
+         !source "patchers/rwts.a"
+         !source "patchers/meccm8.a"
+         !source "patchers/meccm7.a"
+         !source "patchers/rol1e.a"
+         !source "patchers/jmpb4bb.a"
+         !source "patchers/jmpb4bbhi.a"
+         !source "patchers/jmpb400.a"
+         !source "patchers/thunder.a"
+         !source "patchers/jsrbb03.a"
+         !source "patchers/davidbb03.a"
+         !source "patchers/rwtsswap.a"
+         !source "patchers/rwtsswap2.a"
+         !source "patchers/jmpae8e.a"
+         !source "patchers/jmpbbfe.a"
+         !source "patchers/datasoft.a"
+         !source "patchers/nibtable.a"
+         !source "patchers/diskvol.a"
+_applyToAll
+         !source "patchers/universale7.a"
+         !source "patchers/runhello.a"
+         !source "patchers/a6bc95.a"
+         !source "patchers/d5d5f7.a"
+         !source "patchers/prodosrwts.a"
+         !source "patchers/prodosmecc.a"
+         !source "patchers/rwtsswapmecc.a"
+         !source "patchers/protecteddos.a"
+
+         lda   gPatchCount
+         beq   nopatches
+         clc
+         !byte $24        ; hide next SEC
+nopatches
+         sec              ; set carry if nothing happened
+         rts
+
+;
+; Global variables
+;
+gTriedUniv
+         !byte FALSE      ; 0=true, 1=false
+                          ; reset to #FALSE before each operation
+gMode
+         !byte %00000000  ; bit 7 0=verify, 1=see bit 6
+                          ; bit 6 0=demuffin, 1=crack
+                          ; set based on main menu choice
+gPatchCount
+         !byte 00         ; int
+                          ; reset before each operation
+gSaidWriting
+         !byte FALSE      ; 0=true, 1=false
+                          ; reset before each operation
+gChangedPrefs
+         !byte FALSE      ; 0=true, 1=false
+                          ; set to #TRUE when changing slots
+gLastTrack
+         !byte 00         ; int
+                          ; set after reading T00
+gIsBoot0
+         !byte FALSE      ; 0=true, 1=false
+                          ; set after reading T00
+gIsBoot1
+         !byte FALSE      ; 0=true, 1=false
+                          ; set after reading T00
+gIsMaster
+         !byte FALSE      ; 0=true, 1=false
+                          ; set after reading T00
+gIsRWTS
+         !byte FALSE      ; 0=true, 1=false
+                          ; set after reading T00
+gIsProDOS
+         !byte FALSE      ; 0=true, 1=false
+                          ; set after reading T00
+gIsPascal
+         !byte FALSE      ; 0=true, 1=false
+                          ; set after reading T00
+gIsDatasoft
+         !byte FALSE      ; 0=true, 1=false
+                          ; set after reading T00
+gIsProtDOS
+         !byte FALSE      ; 0=true, 1=false
+                          ; set after reading T00
+
+         !source "applyglobals.a"
+         !source "universalrwts.a"
+LastMover
+         }
