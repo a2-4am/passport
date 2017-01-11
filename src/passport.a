@@ -691,6 +691,7 @@ _applyToT00
          !source "patchers/davidbb03.a"
          !source "patchers/rwtsswap.a"
          !source "patchers/rwtsswap2.a"
+         !source "patchers/border.a"
          !source "patchers/jmpae8e.a"
          !source "patchers/jmpbbfe.a"
          !source "patchers/datasoft.a"

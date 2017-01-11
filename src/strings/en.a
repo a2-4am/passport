@@ -81,7 +81,8 @@ s_fbff   =     $3E
 s_encoded44 =  $3F
 s_encoded53 =  $40
 s_specdel =    $41
-STRINGCOUNT =  $42
+s_bytrack =    $42
+STRINGCOUNT =  $43
 
 StringTable
          !word header
@@ -150,6 +151,7 @@ StringTable
          !word encoded44
          !word encoded53
          !word specdel
+         !word bytrack
 ;
 ; Text can contain substitution strings, which
 ; are replaced by current values at runtime. Each
@@ -175,7 +177,7 @@ StringTable
 ; can be set directly before calling PrintByID.
 ;
 header
-         !text "Passport by 4am              20161230-en",00
+         !text "Passport by 4am               2017-01-11",00
 mainmenu
          !text "________________________________________",$8D,$8D,$8D,$8D,$8D,$8D,$8D
          !text "              "
@@ -392,3 +394,5 @@ encoded53
          !text "because it uses a 5-and-3 encoding.",$8D,00
 specdel
          !text "T00,S00 Found DOS 3.3P bootloader",$8D,00
+bytrack
+         !text "T%t,S%0 RWTS changes based on track",$8D,$00
