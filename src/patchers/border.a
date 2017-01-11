@@ -8,9 +8,9 @@
 ;-------------------------------
 _border
          lda   gIsBoot0   ; if DOS 3.3 boot0 loader
-         bne   rwtsswap_exit
+         bne   border_exit
          lda   gIsBoot1   ; and DOS 3.3 boot1 loader
-         bne   rwtsswap_exit
+         bne   border_exit
          lda   #$08
          ldx   #$5A
          ldy   #$0A

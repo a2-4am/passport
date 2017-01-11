@@ -82,7 +82,8 @@ s_encoded44 =  $3F
 s_encoded53 =  $40
 s_specdel =    $41
 s_bytrack =    $42
-STRINGCOUNT =  $43
+s_a5count =    $43
+STRINGCOUNT =  $44
 
 StringTable
          !word header
@@ -152,6 +153,7 @@ StringTable
          !word encoded53
          !word specdel
          !word bytrack
+         !word a5count
 ;
 ; Text can contain substitution strings, which
 ; are replaced by current values at runtime. Each
@@ -396,3 +398,5 @@ specdel
          !text "T00,S00 Found DOS 3.3P bootloader",$8D,00
 bytrack
          !text "T%t,S%0 RWTS changes based on track",$8D,$00
+a5count
+         !text "T%t,S%0 Found A5 nibble count",$8D,$00

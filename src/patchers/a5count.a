@@ -1,0 +1,28 @@
+;-------------------------------
+; #A5COUNT
+; nibble count between $A5 and
+; address prologue
+; e.g. Game Frame One, Game Frame Two
+;-------------------------------
+_a5count
+         lda   gIsPascal  ; only ever seen this protection
+         bne   a5count_exit      ; on Pascal disks
+
+         ldy   #$0A
+         jsr   SearchTrack
+         !byte $07,$E6,$02,$D0,$03,$4C,$A5,$00
+         !byte $C9,$A5
+         bcs   a5count_exit
+         sta   gDisplayBytes
+         pha
+         lda   #s_a5count
+         jsr   PrintByID
+         txa
+         clc
+         adc   #$08
+         tax
+         pla
+         ldy   #$02
+         jsr   modify
+         !byte $D0,$7B
+a5count_exit

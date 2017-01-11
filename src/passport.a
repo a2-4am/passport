@@ -701,6 +701,7 @@ _applyToAll
          !source "patchers/universale7.a"
          !source "patchers/runhello.a"
          !source "patchers/a6bc95.a"
+         !source "patchers/a5count.a"
          !source "patchers/d5d5f7.a"
          !source "patchers/prodosrwts.a"
          !source "patchers/prodosmecc.a"
