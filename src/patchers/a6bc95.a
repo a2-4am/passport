@@ -7,15 +7,13 @@ _a6bc95
          lda   gIsPascal  ; only ever seen this protection
          bne   a6bc95_exit      ; on Pascal disks
 
-         ldy   #$33
+         ldy   #$28
          jsr   SearchTrack
-         !byte $AE,$F8,01,$A9,$0A,$8D,$FE,01
+         !byte $AE,$F8,$01,$A9,$0A,$8D,$FE,$01
          !byte $BD,$8E,$C0,$BD,$89,$C0,$A9,$3A
-         !byte $8D,$DF,01,$A0,$20,$84,02,$88
-         !byte $D0,07,$C6,02,$D0,03,$4C,$F8
-         !byte 00,$BD,$8C,$C0,$10,$FB,$C9,$A6
-         !byte $D0,$ED,$BD,$8C,$C0,$10,$FB,$C9
-         !byte $BC,$D0,$E4
+         !byte $8D,$DF,$01,$A0,$20,$84,$02,$88
+         !byte $D0,$07,$C6,$02,$D0,$03,$4C,$F8
+         !byte $00,$BD,$8C,$C0,$10,$FB,$C9,$A6
          bcs   a6bc95_exit
          sta   gDisplayBytes
          pha
