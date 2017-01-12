@@ -697,6 +697,7 @@ _applyToT00
          !source "patchers/datasoft.a"
          !source "patchers/nibtable.a"
          !source "patchers/diskvol.a"
+         !source "patchers/c9ff.a"
 _applyToAll
          !source "patchers/universale7.a"
          !source "patchers/runhello.a"

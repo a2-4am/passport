@@ -1,0 +1,43 @@
+;-------------------------------
+; #C9FF
+; a custom RWTS-like routine to
+; position the disk for an E7
+; protection check
+; e.g. Bank Street Writer II,
+; Story Maker
+; NOTE: I've only ever seen this on
+; track 0, so as a speed optimization
+; that's the only track where this
+; runs. It needs to search the entire
+; track because there is no fixed
+; position for it to start.
+;-------------------------------
+_c9ff
+         ldy   #$1A
+         jsr   SearchTrack
+         !byte $A8,$D0,$15,$BD,$8C,$C0,$10,$FB
+         !byte $C9,$FF,$D0,$0C,$EA,$BD,$8C,$C0
+         !byte $10,$FB,$C9,$FF,$D0,$02,$18,$60
+         !byte $38,$60
+         bcs   c9ff_exit
+         sta   gDisplayBytes
+         pha
+         txa
+         clc
+         adc   #$09
+         tax
+         stx   gDisplayBytes+1
+         pla
+         pha
+         ldy   #$01
+         jsr   modify
+         !byte $DE
+         lda   gDisplayBytes+1
+         clc
+         adc   #$0A
+         tax
+         pla
+         ldy   #$01
+         jsr   modify
+         !byte $AA
+c9ff_exit
