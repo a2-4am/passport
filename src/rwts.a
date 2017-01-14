@@ -19,9 +19,14 @@ ReadSector
          lda   gIsProtDOS
          beq   _protread
 
+setuprwts
          ldy   #<gRWTSParams
          lda   #>gRWTSParams
 callrwts jsr   $FF00      ; modified at runtime (see Inspect1)
+         bcc   endread
+         lda   gOnAClearDayYouCanReadForever
+         beq   setuprwts
+endread
          rts
 
 ;
@@ -54,6 +59,10 @@ go
          lda   #<gRWTSParams
          ldy   #>gRWTSParams
          jsr   $BA00      ; note non-standard entry point
+         bcc   endprotread
+         lda   gOnAClearDayYouCanReadForever
+         beq   go
+endprotread
          rts
 
 gRWTSParams               ; used to read each sector

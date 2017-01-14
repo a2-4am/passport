@@ -764,6 +764,10 @@ gIsProtDOS
          !byte FALSE      ; 0=true, 1=false
                           ; set after reading T00
 
+gOnAClearDayYouCanReadForever
+         !byte FALSE      ; 0=true, 1=false
+                          ; compile-time flag, no way to change at runtime
+
          !source "applyglobals.a"
          !source "universalrwts.a"
 LastMover
