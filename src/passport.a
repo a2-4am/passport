@@ -698,7 +698,6 @@ _applyToT00
          !source "patchers/nibtable.a"
          !source "patchers/diskvol.a"
          !source "patchers/c9ff.a"
-         !source "patchers/fbff.a"
 _applyToAll
          !source "patchers/universale7.a"
          !source "patchers/runhello.a"
@@ -709,6 +708,7 @@ _applyToAll
          !source "patchers/prodosmecc.a"
          !source "patchers/rwtsswapmecc.a"
          !source "patchers/protecteddos.a"
+         !source "patchers/fbff.a"
 
          lda   gPatchCount
          beq   .nopatches
