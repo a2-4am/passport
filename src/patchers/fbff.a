@@ -14,7 +14,7 @@ _fbff
          jsr   SearchTrack
          !byte $BD,$89,$C0,$A9,$56,$85,$FD,$A9
          !byte $08,$C6,$FC,$D0,$04,$C6,$FD,$F0
-         !byte $34,$BC,$8C,$C0,$10,$FB,$C0,$FB
+         !byte WILDCARD,$BC,$8C,$C0,$10,$FB,$C0,$FB
          !byte $D0,$ED,$F0,$00,$EA,$EA,$BC,$8C
          !byte $C0,$C0,$08,$2A,$B0,$0B,$BC,$8C
          !byte $C0,$10,$FB,$C0,$FF,$D0,$D8,$F0
