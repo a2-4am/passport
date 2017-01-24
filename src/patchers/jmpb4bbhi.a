@@ -4,16 +4,17 @@
 ; nibble check
 ; e.g. Snooper Troops 2
 ;-------------------------------
+!zone {
 _jmpb4bbhi
          lda   gIsBoot1   ; if DOS 3.3 bootloader
-         bne   jmpb4bbhi_exit
+         bne   .exit
          lda   #$0C
          sta   gDisplayBytes
          ldx   #$84
          ldy   #$03
          jsr   compare    ; and T00,S0C,$84 ==
          !byte $4C,$BB,$B4
-         bcs   jmpb4bbhi_exit
+         bcs   .exit
          lda   #s_jmpb4bb
          jsr   PrintByID
          lda   #$0C
@@ -21,4 +22,5 @@ _jmpb4bbhi
          ldy   #$03
          jsr   modify     ; then set T00,S0C,$84 =
          !byte $AD,$E9,$B7
-jmpb4bbhi_exit
+.exit
+}

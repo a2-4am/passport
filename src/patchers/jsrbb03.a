@@ -6,27 +6,28 @@
 ; e.g. Classifying Animals with
 ; Backbones, EduCalc
 ;-------------------------------
+!zone {
 _jsrbb03
          lda   gIsBoot0   ; if DOS 3.3 boot0 loader
-         bne   jsrbb03_exit
+         bne   .exit
          lda   gIsBoot1   ; and DOS 3.3 boot1 loader
-         bne   jsrbb03_exit
+         bne   .exit
          lda   #$01
          ldx   #$38
          ldy   #$03
          jsr   compare    ; and T00,S01,$38 ==
-         !byte $20,03,$BB
-         bcs   jsrbb03_exit
+         !byte $20,$03,$BB
+         bcs   .exit
          lda   #$05
          ldx   #$03
          ldy   #$25
          jsr   compare    ; and T00,S05,$03 ==
-         !byte $4E,06,$BB,$71,$6E
+         !byte $4E,$06,$BB,$71,$6E
          !byte $0A,$BB,$40,$27,$6E,$0F,$BB,$DD
          !byte $1B,$BB,$6E,$15,$BB,$DC,$1E,$BB
-         !byte $6E,$25,$BB,$72,00,$BB,$B3,00
-         !byte $B8,$99,00,$BB,$C8,$A0,$F4,$B0
-         bcs   jsrbb03_exit
+         !byte $6E,$25,$BB,$72,$00,$BB,$B3,$00
+         !byte $B8,$99,$00,$BB,$C8,$A0,$F4,$B0
+         bcs   .exit
          lda   #s_jsrbb03
          jsr   PrintByID
          lda   #$05
@@ -34,4 +35,5 @@ _jsrbb03
          ldy   #$09
          jsr   modify     ; then set T00,S05,$03 =
          !byte $A9,$B5,$48,$A9,$18,$48,$4C,$93,$B7
-jsrbb03_exit
+.exit
+}

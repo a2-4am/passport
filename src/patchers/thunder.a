@@ -7,36 +7,37 @@
 ; e.g. Thunder Mountain versions of
 ; Dig Dug, Pac-Man, Galaxian
 ;-------------------------------
+!zone {
 _thunder
          lda   gIsBoot0   ; if DOS 3.3 boot0 loader
-         bne   thunder_no
+         bne   .no
          lda   gIsBoot1   ; and DOS 3.3 boot1 loader
-         bne   thunder_no
+         bne   .no
          lda   #$03
          ldx   #$3E
          ldy   #$04
          jsr   compare    ; and T00,S03,$3E ==
          !byte $4C,$B3,$B6,$EA
          bcc   +
-thunder_no
-         jmp   thunder_exit
+.no
+         jmp   .exit
 +
          lda   #$01
          ldx   #$47
          ldy   #$4C
          jsr   compare    ; and T00,S01,$47 ==
          !byte $4C
-         !byte $C1,$B3,$60,$48,$A9,02,$8D,$EC
-         !byte $B7,$A9,00,$8D,$EB,$B7,$8D,$F2
-         !byte $B7,$A9,05,$8D,$ED,$B7,$A9,$36
+         !byte $C1,$B3,$60,$48,$A9,$02,$8D,$EC
+         !byte $B7,$A9,$00,$8D,$EB,$B7,$8D,$F2
+         !byte $B7,$A9,$05,$8D,$ED,$B7,$A9,$36
          !byte $8D,$F0,$B7,$A9,$B4,$8D,$F1,$B7
-         !byte $A9,01,$8D,$E1,$B7,$8D,$F4,$B7
-         !byte $20,$93,$B7,$90,09,$4C,$62,$FA
+         !byte $A9,$01,$8D,$E1,$B7,$8D,$F4,$B7
+         !byte $20,$93,$B7,$90,$09,$4C,$62,$FA
          !byte $EA,$EA,$EA,$EA,$EA,$EA,$20,$36
-         !byte $B4,$68,$F0,03,$6C,$72,$AA,$6C
-         !byte $58,$9D,00,$A9,00,$F0,$BC,$A9
-         !byte 01,$D0,$B8
-         bcs   thunder_exit
+         !byte $B4,$68,$F0,$03,$6C,$72,$AA,$6C
+         !byte $58,$9D,$00,$A9,$00,$F0,$BC,$A9
+         !byte $01,$D0,$B8
+         bcs   .exit
          lda   #s_thunder
          jsr   PrintByID
          lda   #$01
@@ -54,4 +55,5 @@ thunder_no
          ldy   #$04
          jsr   modify     ; and set T00,S03,$3E =
          !byte $C9,$AA,$F0,$5C
-thunder_exit
+.exit
+}

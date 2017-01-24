@@ -5,48 +5,50 @@
 ; startup program after succeeding
 ; e.g. Microzine 15, Alpine Tram Ride
 ;-------------------------------
+!zone {
 _runhello
          lda   gIsProDOS  ; this exact protection is only
-         beq   runhello_exit    ; on DOS 3.3 disks (other patchers
+         beq   .exit      ; on DOS 3.3 disks (other patchers
          lda   gIsPascal  ; will catch other variations)
-         beq   runhello_exit
+         beq   .exit
          lda   #$0F
-         sta   rhsector+1
-rhsector lda   #$FF       ; modified at runtime
+         sta   .sector+1
+.sector  lda   #$FF       ; modified at runtime
          ldx   #$04
          ldy   #$05
          jsr   compare
-         !byte $20,$E3,03,$85,$FB
+         !byte $20,$E3,$03,$85,$FB
          bcc   +
-         jmp   rhnextsector
+         jmp   .nextsector
 +
-         lda   rhsector+1
+         lda   .sector+1
          ldx   #$19
          ldy   #$06
          jsr   compare
          !byte $CA,$10,$F8,$8A,$48,$20
          bcc   +
-         jmp   rhnextsector
+         jmp   .nextsector
 +
-         lda   rhsector+1
+         lda   .sector+1
          ldx   #$21
          ldy   #$06
          jsr   compare
-         !byte $A0,01,$B1,$FA,$AA,$20
+         !byte $A0,$01,$B1,$FA,$AA,$20
          bcc   +
-         jmp   rhnextsector
+         jmp   .nextsector
 +
-         lda   rhsector+1
+         lda   .sector+1
          sta   gDisplayBytes
          lda   #s_runhello
          jsr   PrintByID
-         lda   rhsector+1
+         lda   .sector+1
          ldx   #$26
          ldy   #$01
          jsr   modify
          !byte $2C
-rhnextsector
-         dec   rhsector+1
-         bmi   runhello_exit
-         jmp   rhsector
-runhello_exit
+.nextsector
+         dec   .sector+1
+         bmi   .exit
+         jmp   .sector
+.exit
+}

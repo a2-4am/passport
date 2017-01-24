@@ -161,6 +161,7 @@ all_done_set
 ;      $cmp2 zero page clobbered
 ;      stack set to first instruction after string
 ;-------------------------------
+!zone {
 compare
          clc
          adc   #BASEPAGE
@@ -182,17 +183,17 @@ CompareMemory
          pha
          lda   tmp
          pha
-xcmp
+.cmp
          lda   (cmp2),y
          dey
-         bmi   success
+         bmi   .success
          cmp   (cmp1),y
-         beq   xcmp
+         beq   .cmp
          cmp   #WILDCARD
-         beq   xcmp
+         beq   .cmp
          sec
          !byte $24        ; hide CLC
-success  clc
+.success clc
          php
          lda   cmp1+1
          sec
@@ -200,3 +201,4 @@ success  clc
          ldx   cmp1
          plp
          rts
+}

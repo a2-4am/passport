@@ -8,91 +8,92 @@ gDisplayBytes !fill 10    ; array of ten bytes for use as
 ; Print a string from the string table;
 ; handles string substitutions and
 ; auto-uppercases on older machines
-; in  A = string ID
-; out C clear if string was printed
+; in:  A = string ID
+; out: C clear if string was printed
 ;      C set if string ID was invalid
 ;      all other flags clobbered
 ;      X register preserved, others clobbered
 ;-------------------------------
+!zone {
 PrintByID
-         stx   x
+         stx   .x
          ldy   #0         ; substitution mode flag
          cmp   #STRINGCOUNT
-         bcs   error
+         bcs   .error
          asl
          tax
          lda   StringTable,x
-         sta   print+1
+         sta   .print+1
          lda   StringTable+1,x
-         sta   print+2
-print
+         sta   .print+2
+.print
          lda   $FFFF      ; modified at runtime
-         beq   print_done
+         beq   .done
          cpy   #0         ; are we in substitution mode?
-         beq   nosub      ; no -> branch
+         beq   .nosub     ; no -> branch
          ldy   #0
          cmp   #"t"       ; "%t" = current track
-         bne   sub1
+         bne   .sub1
          lda   gTrack
-         bpl   printbyte ; unconditional branch
-sub1
+         bpl   .printbyte ; unconditional branch
+.sub1
          cmp   #"s"       ; "%s" = current sector
-         bne   sub2
+         bne   .sub2
          lda   gSector
-         bpl   printbyte ; unconditional branch
-sub2
+         bpl   .printbyte ; unconditional branch
+.sub2
          cmp   #"S"       ; write slot
-         bne   sub3
+         bne   .sub3
          lda   SLOT
-         bne   printsd    ; unconditional branch
-sub3
+         bne   .printsd   ; unconditional branch
+.sub3
          cmp   #"D"       ; write drive
-         bne   sub4
+         bne   .sub4
          lda   DRIVE
-printsd
+.printsd
          ora   #$80
          jsr   PrintA
-         bvc   next       ; unconditional branch
-sub4
+         bvc   .next      ; unconditional branch
+.sub4
          cmp   #"0"       ; "%0" through "%9"
-         bcc   nosub
+         bcc   .nosub
          cmp   #":"
-         bcs   nosub
+         bcs   .nosub
          sec
          sbc   #"0"
          tax
          lda   gDisplayBytes,x
-printbyte
+.printbyte
          jsr   PrintByte
-         bvc   next       ; unconditional branch
-nosub
+         bvc   .next      ; unconditional branch
+.nosub
          cmp   #"%"
-         bne   stillnosub
+         bne   .stillnosub
          iny              ; switch to substitution mode
-         bne   next       ; (next character will be interpreted)
-stillnosub
+         bne   .next      ; (next character will be interpreted)
+.stillnosub
          cmp   #$E1
-         bcc   noforce
+         bcc   .noforce
          and   kForceLower
-noforce
+.noforce
          jsr   COUT
-next
-         inc   print+1
-         bne   print
-         inc   print+2
-         bne   print
-print_done
+.next
+         inc   .print+1
+         bne   .print
+         inc   .print+2
+         bne   .print
+.done
          clc
-error
-         ldx   x
+.error
+         ldx   .x
          rts
-x        !byte 00
+.x       !byte 00
 
 ;-------------------------------
 ; PrintByte
 ; print a hexadecimal byte
-; in  A contains byte to print
-; out all registers preserved
+; in:  A contains byte to print
+; out: all registers preserved
 ;      all flags clobbered
 ;      @tmpa clobbered
 ;      @tmpx clobbered
@@ -112,8 +113,8 @@ PrintByte
 ;-------------------------------
 ; PrintA
 ; print a single character through COUT
-; in  A contains character to print
-; out all registers preserved
+; in:  A contains character to print
+; out: all registers preserved
 ;      all flags clobbered
 ;      @tmpa clobbered
 ;      @tmpx clobbered
@@ -136,40 +137,41 @@ PrintA
 ClearScreen
          jsr   TEXT
          lda   $C061
-         bpl   home
+         bpl   .home
          lda   $C062
-         bpl   home
-begin
+         bpl   .home
+.begin
          ldx   #$04
          stx   counter
-         stx   loop+2
-         stx   change+2
+         stx   .loop+2
+         stx   .change+2
          ldy   #$00
          sty   flag
-loop
+.loop
          lda   $FF00,y    ; modified at runtime
          cmp   #$A0
-         beq   nochange
-         bcs   down
+         beq   .nochange
+         bcs   .down
          clc
          adc   #$01
-         bne   change
-down
+         bne   .change
+.down
          sec
          sbc   #$01
-change
+.change
          sta   $FF00,y    ; modified at runtime
          sta   flag
-nochange
+.nochange
          iny
-         bne   loop
-         inc   loop+2
-         inc   change+2
+         bne   .loop
+         inc   .loop+2
+         inc   .change+2
          dec   counter
-         bne   loop
+         bne   .loop
          lda   #$01
          jsr   WAIT
          lda   flag
-         bne   begin
-home
+         bne   .begin
+.home
          jmp   HOME
+}

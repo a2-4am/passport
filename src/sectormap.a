@@ -1,20 +1,22 @@
+!zone {
 InitSectorMap
  lda #<sectormap
- sta B+1
+ sta .B+1
  lda #>sectormap
- sta B+2
+ sta .B+2
  lda #$FF
  ldx #$22
-A ldy #$0F
-B sta $FFFF
- inc B+1
+.A ldy #$0F
+.B sta $FFFF
+ inc .B+1
  bne +
- inc B+2
+ inc .B+2
 + dey
- bpl B
+ bpl .B
  dex
- bpl A
+ bpl .A
  rts
+}
 
 ;-------------------------------
 ; This is a map of how much we care about each sector
@@ -31,7 +33,7 @@ B sta $FFFF
 ; 80 = sector is optional -- read, but ignore any errors
 ; FE = sector is required, and switch to the built-in RWTS
 ;      after reading it (if we haven't already)
-; $FF = sector is required -- read, and any error is fatal
+; FF = sector is required -- read, and any error is fatal
 ;      (this is the default value for all sectors)
 ;-------------------------------
 sectormap

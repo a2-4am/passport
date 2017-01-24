@@ -4,9 +4,10 @@
 ; checking third data prologue
 ; e.g. Analogies Tutorial, Verb Viper
 ;-------------------------------
+!zone {
 _jmpb660
          lda   gIsRWTS    ; if DOS 3.3-shaped RWTS
-         bne   jmpb660_exit
+         bne   .exit
          lda   #$02
          ldx   #$DC
          ldy   #$1D
@@ -15,7 +16,7 @@ _jmpb660
          !byte $10,$FB,$49,$97,$D0,$F4,$EA,$BD
          !byte $8C,$C0,$10,$FB,$C9,$97,$D0,$F2
          !byte $A0,$56,$4C,$60,$B6
-         bcs   jmpb660_exit
+         bcs   .exit
          lda   #s_jmpb660
          jsr   PrintByID
          lda   #$02
@@ -23,4 +24,5 @@ _jmpb660
          ldy   #$03
          jsr   modify     ; then set T00,S02,$F6 =
          !byte $BD,$8C,$C0
-jmpb660_exit
+.exit
+}

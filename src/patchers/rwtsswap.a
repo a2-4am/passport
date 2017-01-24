@@ -6,25 +6,26 @@
 ; fly
 ; e.g. Puzzle Master
 ;-------------------------------
+!zone {
 _rwtsswap
          lda   gIsBoot0   ; if DOS 3.3 boot0 loader
-         bne   rwtsswap_exit
+         bne   .exit
          lda   gIsBoot1   ; and DOS 3.3 boot1 loader
-         bne   rwtsswap_exit
+         bne   .exit
          lda   #$04
          ldx   #$69
          ldy   #$0B
          jsr   compare    ; and T00,S04,$69 ==
-         !byte $A0,07,$B9,$DF,$BC,$99,$94,$B9
+         !byte $A0,$07,$B9,$DF,$BC,$99,$94,$B9
          !byte $88,$10,$F7
-         bcs   rwtsswap_exit
+         bcs   .exit
          lda   #$04
          ldx   #$7F
          ldy   #$0B
          jsr   compare    ; and T00,S04,$7F ==
-         !byte $A0,07,$B9,$E7,$BC,$99,$94,$B9
+         !byte $A0,$07,$B9,$E7,$BC,$99,$94,$B9
          !byte $88,$10,$F7
-         bcs   rwtsswap_exit
+         bcs   .exit
          lda   #$04
          ldx   #$69
          ldy   #$01
@@ -35,4 +36,5 @@ _rwtsswap
          ldy   #$01
          jsr   modify     ; and set T00,S04,$7F =
          !byte $60
-rwtsswap_exit
+.exit
+}

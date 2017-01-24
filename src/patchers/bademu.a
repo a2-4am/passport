@@ -8,9 +8,10 @@
 ; so we patch it for compatibility
 ; e.g. Dino Dig, Make A Face
 ;-------------------------------
+!zone {
 _bademu
          lda   gIsRWTS    ; if DOS 3.3 RWTS
-         bne   bademu_exit
+         bne   .exit
          lda   #$03
          ldx   #$4F
          ldy   #$11
@@ -18,10 +19,11 @@ _bademu
          !byte $BD,$8C,$C0,$10,$FB,$C9,$D5,$D0
          !byte $F0,$EA,$BD,$8C,$C0,$C9,$D5,$F0
          !byte $12
-         bcs   bademu_exit
+         bcs   .exit
          lda   #$03
          ldx   #$58
          ldy   #$02
          jsr   modify     ; and set T00,S03,$58 =
          !byte $F0,06
-bademu_exit
+.exit
+}

@@ -38,6 +38,7 @@ ERR_EOF  =     $4C
 ;      all other flags clobbered
 ;      all registers clobbered
 ;-------------------------------
+!zone {
 WriteTrackMLI
          jsr   SwapProDOS
          jsr   ReorderBuffer
@@ -68,7 +69,7 @@ WriteTrackMLI
          lda   #$00
          sta   mliparam+2 ; lo byte of data buffer
          lda   #$08
-         sta   blockcount
+         sta   .blockcount
          lda   gTrack
          asl
          asl
@@ -79,20 +80,20 @@ WriteTrackMLI
          sta   mliparam+5 ; hi byte of block number
          lda   #BASEPAGE  ; hi byte of data buffer
          sta   mliparam+3
-writeloop
+.writeloop
          lda   mlicmd
          ldy   #$03       ; parameter count
          jsr   mli
-         bcs   mli_writeerr
+         bcs   .writeerr
          inc   mliparam+3 ; 2 pages per block
          inc   mliparam+3
          inc   mliparam+4
-         dec   blockcount
-         bne   writeloop
+         dec   .blockcount
+         bne   .writeloop
          clc
-         bcc   writedone
-mli_writeerr
-writedone
+         bcc   .writedone
+.writeerr
+.writedone
          php
          pha
          jsr   ReorderBuffer
@@ -101,8 +102,8 @@ writedone
          plp
          rts
 
-blockcount !byte $FF
-
+.blockcount !byte $FF
+}
 ;-------------------------------
 ; ReorderBuffer - convert data
 ;   buffer between ProDOS and
@@ -114,6 +115,7 @@ blockcount !byte $FF
 ;      all registers clobbered
 ;      @cmp1, @cmp2 clobbered
 ;-------------------------------
+!zone {
 ReorderBuffer
          lda   #$00
          sta   cmp1
@@ -128,19 +130,20 @@ ReorderBuffer
          adc   #BASEPAGE
          sta   cmp2+1
          ldx   #$07
-L        lda   (cmp1),y
+.L       lda   (cmp1),y
          pha
          lda   (cmp2),y
          sta   (cmp1),y
          pla
          sta   (cmp2),y
          iny
-         bne   L
+         bne   .L
          inc   cmp1+1
          dec   cmp2+1
          dex
-         bne   L
+         bne   .L
          rts
+}
 
 ;-------------------------------
 ; SaveFile1Shot
@@ -161,6 +164,7 @@ L        lda   (cmp1),y
 ;      all registers clobbered
 ;      stack set to next instruction after parameters
 ;-------------------------------
+!zone {
 SaveFile1Shot
          pla
          sta   $00
@@ -170,9 +174,9 @@ SaveFile1Shot
          lda   #$0B
          clc
          adc   $00
-         bcc   mli_noinc1
+         bcc   .noinc
          inx
-mli_noinc1
+.noinc
          tay
          txa
          pha
@@ -196,7 +200,7 @@ mli_noinc1
          lda   ($00),y    ; hi byte of aux file type
          sta   mliparam+6
          jsr   CreateFile
-         bcs   savefile1s
+         bcs   .savefile1s
 
          ldy   #$0A
          lda   ($00),y    ; lo byte of ProDOS file buffer
@@ -205,7 +209,7 @@ mli_noinc1
          lda   ($00),y    ; hi byte of ProDOS file buffer
          sta   mliparam+4
          jsr   OpenFile
-         bcs   savefile1s
+         bcs   .savefile1s
 
          pha              ; push file reference number
          ldy   #$06
@@ -230,8 +234,9 @@ mli_noinc1
                           ; (so caller gets codes from write attempt,
                           ; not close)
 
-savefile1s
+.savefile1s
          rts
+}
 
 ;-------------------------------
 ; LoadFile1Shot
@@ -251,6 +256,7 @@ savefile1s
 ;      all registers clobbered
 ;      stack set to next instruction after parameters
 ;-------------------------------
+!zone {
 LoadFile1Shot
          pla
          sta   $00
@@ -260,9 +266,9 @@ LoadFile1Shot
          lda   #$08
          clc
          adc   $00
-         bcc   mli_noinc2
+         bcc   .noinc
          inx
-mli_noinc2
+.noinc
          tay
          txa
          pha
@@ -283,7 +289,7 @@ mli_noinc2
          sta   mliparam+4
 
          jsr   OpenFile
-         bcs   loadfile1s ; C set on error
+         bcs   .loadfile1s ; C set on error
 
          pha              ; push file reference number
          ldy   #$03
@@ -307,8 +313,9 @@ mli_noinc2
          plp              ; restore flags from readfile
                           ; (so caller gets codes from read attempt,
                           ; not close)
-loadfile1s
+.loadfile1s
          rts
+}
 
 ;-------------------------------
 ; open file via ProDOS MLI
@@ -321,16 +328,18 @@ loadfile1s
 ;      if C clear, open succeeded and A contains
 ;        file reference number
 ;-------------------------------
+!zone {
 OpenFile
          lda   #CMD_OPEN  ; MLI command
          ldy   #PC_OPEN   ; number of parameters for 'open' command
          jsr   mli
-         bcs   openfile
+         bcs   .openfile
          lda   refnum     ; caller should save file reference number
                           ; as this memory location may be
                           ; overwritten by later MLI calls
-openfile
+.openfile
          rts
+}
 
 ;-------------------------------
 ; set line-by-line mode via ProDOS MLI
@@ -343,6 +352,7 @@ openfile
 lbl_mask =     $7F
 lbl_cr   =     $0D
 
+!zone {
 SetLineByLine
          sta   mliparam+1 ; store file reference number
          lda   #lbl_mask  ; accept high bit set or clear
@@ -352,10 +362,11 @@ SetLineByLine
          lda   #CMD_NEWLINE ; MLI 'newline' command to set read mode
          ldy   #PC_NEWLINE ; number of parameters for 'newline' command
          jsr   mli
-         bcs   setlinebylin
+         bcs   .setlinebylin
          lda   mliparam+1 ; if no error, return file reference number
-setlinebylin
+.setlinebylin
          rts
+}
 
 ;-------------------------------
 ; read an open file via ProDOS MLI
@@ -367,15 +378,17 @@ setlinebylin
 ;      if C clear, read succeeded and A contains the same
 ;        file reference number that was passed in
 ;-------------------------------
+!zone {
 ReadFile
          sta   mliparam+1 ; store file reference number
          lda   #CMD_READ  ; MLI read command
          ldy   #PC_READ   ; number of parameters for 'read' command
          jsr   mli
-         bcs   readfile
+         bcs   .readfile
          lda   mliparam+1 ; if no error, return file reference number
-readfile
+.readfile
          rts
+}
 
 ;-------------------------------
 ; change file position in an open file via ProDOS MLI
@@ -387,14 +400,16 @@ readfile
 ;      if C clear, set_mark call succeeded and A contains
 ;        the same file reference number that was passed in
 ;-------------------------------
+!zone {
 SetMark
          sta   mliparam+1 ; store file reference number
          lda   #CMD_SETMARK ; MLI set_mark command
          ldy   #PC_SETMARK ; number of params for 'set_mark' cmd
          jsr   mli
-         bcs   mli_exit
+         bcs   .exit
          lda   mliparam+1 ; if no error, return file refnum
-mli_exit rts
+.exit    rts
+}
 
 ;-------------------------------
 ; write to an open file via ProDOS MLI
@@ -406,15 +421,17 @@ mli_exit rts
 ;      if C clear, write succeeded and A contains the same
 ;        file reference number that was passed in
 ;-------------------------------
+!zone {
 WriteFile
          sta   mliparam+1 ; store file reference number
          lda   #CMD_WRITE ; MLI write command
          ldy   #PC_WRITE  ; number of parameters for 'write' command
          jsr   mli
-         bcs   writefile
+         bcs   .writefile
          lda   mliparam+1 ; if no error, return file reference number
-writefile
+.writefile
          rts
+}
 
 ;-------------------------------
 ; close an open file

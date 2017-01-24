@@ -6,17 +6,18 @@
 ; e.g. Arena, Early Bird by
 ; Border Software
 ;-------------------------------
+!zone {
 _border
          lda   gIsBoot0   ; if DOS 3.3 boot0 loader
-         bne   border_exit
+         bne   .exit
          lda   gIsBoot1   ; and DOS 3.3 boot1 loader
-         bne   border_exit
+         bne   .exit
          lda   #$08
          ldx   #$5A
          ldy   #$0A
          jsr   compare    ; and T00,S08,$5A ==
          !byte $C9,$23,$B0,$EB,$0A,$20,$6C,$BF,$EA,$EA
-         bcs   border_exit
+         bcs   .exit
          sta   gDisplayBytes
          pha
          lda   #s_bytrack
@@ -25,4 +26,5 @@ _border
          ldy   #$0A
          jsr   modify     ; then set T00,S08,$5A =
          !byte $48,$A0,$01,$B1,$3C,$6A,$68,$90,$08,$0A
-border_exit
+.exit
+}

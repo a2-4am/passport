@@ -10,11 +10,13 @@
 ;      all registers clobbered
 ;      all other flags clobbered
 ;-------------------------------
+!zone {
 IDEncoded53
          ldy   #$10
          jsr   SearchTrack
          !byte $BD,$8C,$C0,$10,$FB,$C9,$B5,$F0
-         !byte 09,$28,$90,$DF,$49,$AD,$F0,$1F
-         bcs   encoded53_exit
-encoded53_exit
+         !byte $09,$28,$90,$DF,$49,$AD,$F0,$1F
+         bcs   .exit
+.exit
          rts
+}

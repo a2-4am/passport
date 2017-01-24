@@ -1,6 +1,6 @@
 ;
 ; Main menu keys
-; (should match the text in mainmenu below)
+; (should match the text in .mainmenu below)
 ; (these are NOT case-sensitive)
 ;
 !ct "lcase.ct"
@@ -85,75 +85,76 @@ s_bytrack =    $42
 s_a5count =    $43
 STRINGCOUNT =  $44
 
+!zone {
 StringTable
-         !word header
-         !word mainmenu
-         !word progbar
-         !word reading
-         !word diskrwts
-         !word bb00
-         !word sunburst
-         !word optimum
-         !word builtin
-         !word switch
-         !word writing
-         !word unformat
-         !word f7
-         !word sync
-         !word optbad
-         !word passver
-         !word passdemuf
-         !word passcrack
-         !word passcrack0
-         !word fail
-         !word fatal0000
-         !word fatal220f
-         !word done
-         !word noslot6
-         !word writeerr
-         !word writeioerr
-         !word writenodev
-         !word writeprot
-         !word othermli
-         !word canttrace
-         !word canceled
-         !word bademu
-         !word reset
-         !word smodify
-         !word modifyto
-         !word dosboot0
-         !word prodosboot0
-         !word pascalboot0
-         !word meccboot0
-         !word sierra
-         !word a6bc95
-         !word jmpbcf0
-         !word rol1e
-         !word runhello
-         !word e7
-         !word jmpb4bb
-         !word jmpb400
-         !word jmpbeca
-         !word jsrbb03
-         !word thunder
-         !word jmpae8e
-         !word diskvol
-         !word d5d5f7
-         !word meccm7
-         !word datasoftb0
-         !word datasoft
-         !word lsr6a
-         !word bcs08
-         !word jmpb660
-         !word protdos
-         !word protdosw
-         !word protserial
-         !word fbff
-         !word encoded44
-         !word encoded53
-         !word specdel
-         !word bytrack
-         !word a5count
+         !word .header
+         !word .mainmenu
+         !word .progbar
+         !word .reading
+         !word .diskrwts
+         !word .bb00
+         !word .sunburst
+         !word .optimum
+         !word .builtin
+         !word .switch
+         !word .writing
+         !word .unformat
+         !word .f7
+         !word .sync
+         !word .optbad
+         !word .passver
+         !word .passdemuf
+         !word .passcrack
+         !word .passcrack0
+         !word .fail
+         !word .fatal0000
+         !word .fatal220f
+         !word .done
+         !word .noslot6
+         !word .writeerr
+         !word .writeioerr
+         !word .writenodev
+         !word .writeprot
+         !word .othermli
+         !word .canttrace
+         !word .canceled
+         !word .bademu
+         !word .reset
+         !word .modify
+         !word .modifyto
+         !word .dosboot0
+         !word .prodosboot0
+         !word .pascalboot0
+         !word .meccboot0
+         !word .sierra
+         !word .a6bc95
+         !word .jmpbcf0
+         !word .rol1e
+         !word .runhello
+         !word .e7
+         !word .jmpb4bb
+         !word .jmpb400
+         !word .jmpbeca
+         !word .jsrbb03
+         !word .thunder
+         !word .jmpae8e
+         !word .diskvol
+         !word .d5d5f7
+         !word .meccm7
+         !word .datasoftb0
+         !word .datasoft
+         !word .lsr6a
+         !word .bcs08
+         !word .jmpb660
+         !word .protdos
+         !word .protdosw
+         !word .protserial
+         !word .fbff
+         !word .encoded44
+         !word .encoded53
+         !word .specdel
+         !word .bytrack
+         !word .a5count
 ;
 ; Text can contain substitution strings, which
 ; are replaced by current values at runtime. Each
@@ -167,7 +168,7 @@ StringTable
 ;
 ; Substitution strings are case-sensitive.
 ;
-; Supported substitution strings
+; Supported substitution strings:
 ;   %S  destination (write) slot
 ;   %D  destination (write) drive
 ;   %t  current track (during read and patch)
@@ -178,9 +179,9 @@ StringTable
 ; These are stored in the gDisplayBytes array and
 ; can be set directly before calling PrintByID.
 ;
-header
-         !text "Passport by 4am               2017-01-17",00
-mainmenu
+.header
+         !text "Passport by 4am               2017-01-23",00
+.mainmenu
          !text "________________________________________",$8D,$8D,$8D,$8D,$8D,$8D,$8D
          !text "              "
          !scrxor $40, "V"
@@ -197,47 +198,47 @@ mainmenu
          !text "source: S6,D1              target: "
          !scrxor $40, "S"
          !text "%S,D%D",00
-progbar
+.progbar
          !byte $8D
          !text " ______________________________________",$8D
          !text " "
          !scrxor $00, " "
          !text "____________________________________"
          !scrxor $00, " ",$8D,$8D,$8D,00
-reading
+.reading
          !text "Reading from S6,D1",$8D,00
-diskrwts
+.diskrwts
          !text "Using disk's own RWTS",$8D,00
-bb00
+.bb00
          !text "T00,S05 Found $BB00 protection check",$8D
          !text "T00,S0A might be unreadable",$8D,00
-sunburst
+.sunburst
          !text "T00,S04 Found Sunburst disk",$8D
          !text "T11,S0F might be unreadable",$8D,00
-optimum
+.optimum
          !text "T00,S00 Found Optimum Resource disk",$8D
          !text "T01,S0F might be unreadable",$8D,00
-builtin
+.builtin
          !text "Using built-in RWTS",$8D,00
-switch
+.switch
          !text "Switching to built-in RWTS",$8D,00
-writing
+.writing
          !text "Writing to S%S,D%D",$8D,00
-unformat
+.unformat
          !text "T%t is unformatted",$8D,00
-f7
+.f7
          !text "T%t Found $F7F6EFEEAB protection",$8D,00
-sync
+.sync
          !text "T%t Found nibble count protection",$8D,00
-optbad
+.optbad
          !text "T%t,S%s is unreadable (ignoring)",$8D,00
-passver
+.passver
          !text "Verification complete. The disk is good.",00
-passdemuf
+.passdemuf
          !text "Demuffin complete.",$8D,00
-passcrack
+.passcrack
          !text "Crack complete.",$8D,00
-passcrack0
+.passcrack0
          !byte $8D
          !text "The disk was copied successfully, but",$8D
          !text "Passport did not apply any patches.",$8D,$8D
@@ -246,38 +247,38 @@ passcrack0
          !text "- The target disk works without patches."
          !text "- The disk uses an unknown protection,",$8D
          !text "  and Passport can not help any further.",00
-fail
+.fail
          !byte $8D
          !text "T%t,S%s Fatal read error",$8D,00
-fatal0000
+.fatal0000
          !byte $8D
          !text "Possible reasons:",$8D
          !text "- There is no disk in S6,D1.",$8D
          !text "- It is not an Apple ][ disk.",$8D
          !text "- The disk is DOS 3.2-only.",$8D
          !text "- The disk is unformatted.",$8D,00
-fatal220f
+.fatal220f
          !byte $8D
          !text "Passport does not work on this disk.",$8D,$8D
          !text "Possible reasons:",$8D
          !text "- This is not a 16-sector disk.",$8D
          !text "- The disk modifies its RWTS in ways",$8D
          !text "  that Passport is not able to detect.",$8D,00
-done
+.done
          !byte $8D
          !text "Press any key to continue "
          !scrxor $40, " ",00
-noslot6
+.noslot6
          !text "Passport requires a Disk II drive in S6.",$8D
          !text "Press any key to quit "
          !scrxor $40, " ",00
-writeerr
+.writeerr
          !byte $8D
          !text "T%t Fatal write error",$8D,$8D,00
 ;
 ; MLI error $27
 ;
-writeioerr
+.writeioerr
          !text "Possible reasons:",$8D
          !text "- There is no disk in S%S,D%D.",$8D
          !text "- The disk has bad sectors.",$8D
@@ -285,118 +286,119 @@ writeioerr
 ;
 ; MLI error $28
 ;
-writenodev
+.writenodev
          !text "S%S,D%D does not exist.",$8D,00
 ;
 ; MLI error $2B
 ;
-writeprot
+.writeprot
          !text "The disk in S%S,D%D is write-protected.",$8D,00
 ;
 ; other MLI error
 ;
-othermli
+.othermli
          !text "MLI error $%0.",$8D
          !text "Please contact the developer.",$8D,00
 
-canttrace
+.canttrace
          !text "Unrecognized drive, tracing is disabled",$8D,00
-canceled
+.canceled
          !text "Canceled at your request.",$8D,00
-bademu
+.bademu
          !byte 00
-reset
+.reset
          !byte $8D
          !text "Press <Ctrl-Reset> to continue.",$8D,00
-smodify
+.modify
          !text "T%t,S%0,$%1: ",00
-modifyto
+.modifyto
          !text " -> ",00
-dosboot0
+.dosboot0
          !text "T00,S00 Found DOS 3.3 bootloader",$8D,00
-prodosboot0
+.prodosboot0
          !text "T00,S00 Found ProDOS bootloader",$8D,00
-pascalboot0
+.pascalboot0
          !text "T00,S00 Found Pascal bootloader",$8D,00
-meccboot0
+.meccboot0
          !text "T00 Found MECC M8 bootloader",$8D,00
-sierra
+.sierra
          !text "T%t,S%0 Found Sierra protection check",$8D,00
-a6bc95
+.a6bc95
          !text "T%t,S%0 Found A6BC95 protection check",$8D,00
-jmpbcf0
+.jmpbcf0
          !text "T00,S03 RWTS requires a timing bit after"
          !text "the first data epilogue by jumping to",$8D
          !text "$BCF0.",$8D,00
-rol1e
+.rol1e
          !text "T00,S03 RWTS accumulates timing bits in",$8D
          !text "$1E and checks its value later.",$8D,00
-runhello
+.runhello
          !text "T%t,S%0 Startup program executes a",$8D
          !text "protection check before running the real"
          !text "startup program.",$8D,00
-e7
+.e7
          !text "T%t,S%0 Found E7 bitstream",$8D,00
-jmpb4bb
+.jmpb4bb
          !text "T00,S0C Disk calls a protection check at"
          !text "$B4BB before initializing DOS.",$8D,00
-jmpb400
+.jmpb400
          !text "T00,S01 Disk calls a protection check at"
          !text "$B400 before initializing DOS.",$8D,00
-jmpbeca
+.jmpbeca
          !text "T00,S02 RWTS requires extra nibbles and",$8D
          !text "timing bits after the data prologue by",$8D
          !text "jumping to $BECA.",$8D,00
-jsrbb03
+.jsrbb03
          !text "T00,S05 Found a self-decrypting",$8D
          !text "protection check at $BB03.",$8D,00
-thunder
+.thunder
          !text "T00,S03 RWTS counts timing bits and",$8D
          !text "checks them later.",$8D,00
-jmpae8e
+.jmpae8e
          !text "T00,S0D Disk calls a protection check at"
          !text "$AE8E after initializing DOS.",$8D,00
-diskvol
+.diskvol
          !text "T00,S08 RWTS requires a non-standard",$8D
          !text "disk volume number.",$8D,00
-d5d5f7
+.d5d5f7
          !text "T%t,S%0 Found D5D5F7 protection check",$8D,00
-meccm7
+.meccm7
          !text "T00 Found MECC M7 bootloader",$8D,00
-datasoftb0
+.datasoftb0
          !text "T00,S00 Found Datasoft bootloader",$8D,00
-datasoft
+.datasoft
          !text "T%t,S%0 Found Datasoft protection check",$8D,00
-lsr6a
+.lsr6a
          !text "T00,S03 RWTS accepts $D4 or $D5 for the",$8D
          !text "first address prologue nibble.",$8D,00
-bcs08
+.bcs08
          !text "T00,S03 RWTS accepts $DE or a timing bit"
          !text "for the first address epilogue nibble.",$8D,00
-jmpb660
+.jmpb660
          !text "T00,S02 RWTS requires timing bits after",$8D
          !text "the data prologue by jumping to $B660.",$8D,00
-protdos
+.protdos
          !text "T00,S01 Found encrypted RWTS, key=$%0",$8D,00
-protdosw
+.protdosw
          !text "T00 Decrypting RWTS before writing",$8D,00
-protserial
+.protserial
          !text "T%t,S%3 Erasing serial number %0%1%2",$8D,00
-fbff
+.fbff
          !text "T%t,S%0 Found FBFF protection check",$8D,00
-encoded44
+.encoded44
          !byte $8D
          !text "T00,S00 Fatal error",$8D,$8D
          !text "Passport does not work on this disk,",$8D
          !text "because it uses a 4-and-4 encoding.",$8D,00
-encoded53
+.encoded53
          !byte $8D
          !text "T00,S00 Fatal error",$8D,$8D
          !text "Passport does not work on this disk,",$8D
          !text "because it uses a 5-and-3 encoding.",$8D,00
-specdel
+.specdel
          !text "T00,S00 Found DOS 3.3P bootloader",$8D,00
-bytrack
+.bytrack
          !text "T%t,S%0 RWTS changes based on track",$8D,$00
-a5count
+.a5count
          !text "T%t,S%0 Found A5 nibble count",$8D,$00
+}

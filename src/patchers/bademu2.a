@@ -8,9 +8,10 @@
 ; so we patch it for compatibility
 ; e.g. Dinosaur Days
 ;-------------------------------
+!zone {
 _bademu2
          lda   gIsRWTS    ; if DOS 3.3 RWTS
-         bne   bademu2_exit
+         bne   .exit
          lda   #$03
          ldx   #$4F
          ldy   #$11
@@ -18,10 +19,11 @@ _bademu2
          !byte $BD,$8C,$C0,$10,$FB,$4A,$C9,$6A
          !byte $D0,$EF,$BD,$8C,$C0,$C9,$D5,$F0
          !byte $12
-         bcs   bademu2_exit
+         bcs   .exit
          lda   #$03
          ldx   #$59
          ldy   #$02
          jsr   modify     ; and set T00,S03,$59 =
-         !byte $F0,05
-bademu2_exit
+         !byte $F0,$05
+.exit
+}

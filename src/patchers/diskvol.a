@@ -3,44 +3,46 @@
 ; non-standard disk volume prevents
 ; DOS from loading
 ;-------------------------------
+!zone {
 _diskvol
          lda   gIsRWTS    ; if DOS 3.3 RWTS
-         bne   diskvol_exit
+         bne   .exit
          lda   #$01
          ldx   #$EE
          ldy   #$01
          jsr   compare    ; and T00,S01,$EE ==
          !byte $FB
-         bcs   diskvol_exit
+         bcs   .exit
          lda   #$01
          ldx   #$FB
          ldy   #$04
          jsr   compare    ; and T00,S01,$FB ==
-         !byte 00,01,$EF,$D8
-         bcs   diskvol_exit
+         !byte $00,$01,$EF,$D8
+         bcs   .exit
          lda   #$08
          ldx   #$10
          ldy   #$05
          jsr   compare    ; and T00,S08,$10 ==
-         !byte $A0,03,$B1,$48,$48
-         bcs   diskvol_exit
+         !byte $A0,$03,$B1,$48,$48
+         bcs   .exit
          lda   #$01
          ldx   #$EB
          ldy   #$01
          jsr   compare    ; and T00,S01,$EB !=
          !byte $FE
-         bcc   diskvol_exit
+         bcc   .exit
          lda   #$01
          ldx   #$EB
          ldy   #$01
          jsr   compare    ; and T00,S01,$EB !=
-         !byte 00
-         bcc   diskvol_exit
+         !byte $00
+         bcc   .exit
          lda   #s_diskvol
          jsr   PrintByID
          lda   #$08
          ldx   #$12
          ldy   #$02
          jsr   modify     ; then set T00,S08,$12 =
-         !byte $A9,00
-diskvol_exit
+         !byte $A9,$00
+.exit
+}

@@ -2,598 +2,599 @@
 ; RWTS fixup #AP1R
 ; address prologue byte 1 (read)
 ;-------------------------------
+!zone {
 rwtspatcher
          lda   gIsRWTS    ; if DOS 3.3 RWTS
-         bne   ap1r
+         bne   .ap1r
          lda   #$03
          ldx   #$4F
          ldy   #$06
          jsr   compare    ; and T00,S03,$4F ==
          !byte $BD,$8C,$C0,$10,$FB,$C9
-         bcs   ap1r
+         bcs   .ap1r
          ldx   #$56
          ldy   #$03
          jsr   compare    ; and T00,S03,$56 ==
          !byte $D0,$F0,$EA
-         bcs   ap1r
+         bcs   .ap1r
          ldx   #$55
          ldy   #$01
          jsr   compare    ; and T00,S03,$55 !=
          !byte $D5
-         bcc   ap1r
+         bcc   .ap1r
          ldy   #$01
          jsr   modify     ; then set T00,S03,$55 =
          !byte $D5
-ap1r
+.ap1r
 
 ;-------------------------------
 ; RWTS fixup #AP2R
 ; address prologue byte 2 (read)
 ;-------------------------------
          lda   gIsRWTS    ; if DOS 3.3 RWTS
-         bne   ap2r
+         bne   .ap2r
          lda   #$03
          ldx   #$59
          ldy   #$06
          jsr   compare    ; and T00,S03,$59 ==
          !byte $BD,$8C,$C0,$10,$FB,$C9
-         bcs   ap2r
+         bcs   .ap2r
          ldx   #$60
          ldy   #$04
          jsr   compare    ; and T00,S03,$60 ==
          !byte $D0,$F2,$A0,$03
-         bcs   ap2r
+         bcs   .ap2r
          ldx   #$5F
          ldy   #$01
          jsr   compare    ; and T00,S03,$5F !=
          !byte $AA
-         bcc   ap2r
+         bcc   .ap2r
          ldy   #$01
          jsr   modify     ; then set T00,S03,$5F =
          !byte $AA
-ap2r
+.ap2r
 
 ;-------------------------------
 ; RWTS fixup #AP3R
 ; address prologue byte 3 (read)
 ;-------------------------------
          lda   gIsRWTS    ; if DOS 3.3 RWTS
-         bne   ap3r
+         bne   .ap3r
          lda   #$03
          ldx   #$64
          ldy   #$06
          jsr   compare    ; and T00,S03,$64 ==
          !byte $BD,$8C,$C0,$10,$FB,$C9
-         bcs   ap3r
+         bcs   .ap3r
          ldx   #$6B
          ldy   #$02
          jsr   compare    ; and T00,S03,$6B ==
          !byte $D0,$E7
-         bcs   ap3r
+         bcs   .ap3r
          ldx   #$6A
          ldy   #$01
          jsr   compare    ; and T00,S03,$6A !=
          !byte $96
-         bcc   ap3r
+         bcc   .ap3r
          ldy   #$01
          jsr   modify     ; then set T00,S03,$6A =
          !byte $96
-ap3r
+.ap3r
 
 ;-------------------------------
 ; RWTS fixup #AE1R
 ; address epilogue byte 1 (read)
 ;-------------------------------
          lda   gIsRWTS    ; if DOS 3.3 RWTS
-         bne   ae1r
+         bne   .ae1r
          lda   #$03
          ldx   #$8B
          ldy   #$06
          jsr   compare    ; and T00,S03,$8B ==
          !byte $BD,$8C,$C0,$10,$FB,$C9
-         bcs   ae1r
+         bcs   .ae1r
          ldx   #$92
          ldy   #$03
          jsr   compare    ; and T00,S03,$92 ==
          !byte $D0,$AE,$EA
-         bcs   ae1r
+         bcs   .ae1r
          ldx   #$91
          ldy   #$01
          jsr   compare    ; and T00,S03,$91 !=
          !byte $DE
-         bcc   ae1r
+         bcc   .ae1r
          ldy   #$01
          jsr   modify     ; then set T00,S03,$91 =
          !byte $DE
-ae1r
+.ae1r
 
 ;-------------------------------
 ; RWTS fixup #AE2R
 ; address epilogue byte 2 (read)
 ;-------------------------------
          lda   gIsRWTS    ; if DOS 3.3 RWTS
-         bne   ae2r
+         bne   .ae2r
          lda   #$03
          ldx   #$95
          ldy   #$06
          jsr   compare    ; and T00,S03,$95 ==
          !byte $BD,$8C,$C0,$10,$FB,$C9
-         bcs   ae2r
+         bcs   .ae2r
          ldx   #$9C
          ldy   #$03
          jsr   compare    ; and T00,S03,$9C ==
          !byte $D0,$A4,$18
-         bcs   ae2r
+         bcs   .ae2r
          ldx   #$9B
          ldy   #$01
          jsr   compare    ; and T00,S03,$9B !=
          !byte $AA
-         bcc   ae2r
+         bcc   .ae2r
          ldy   #$01
          jsr   modify     ; then set T00,S03,$9B =
          !byte $AA
-ae2r
+.ae2r
 
 ;-------------------------------
 ; RWTS fixus #DP1R
 ; data prologue byte 1 (read)
 ;-------------------------------
          lda   gIsRWTS    ; if DOS 3.3 RWTS
-         bne   dp1r
+         bne   .dp1r
          lda   #$02
          ldx   #$E1
          ldy   #$06
          jsr   compare    ; and T00,S02,$E1 ==
          !byte $BD,$8C,$C0,$10,$FB,$49
-         bcs   dp1r
+         bcs   .dp1r
          ldx   #$E8
          ldy   #$03
          jsr   compare    ; and T00,S02,$E8 ==
          !byte $D0,$F4,$EA
-         bcs   dp1r
+         bcs   .dp1r
          ldx   #$E7
          ldy   #$01
          jsr   compare    ; and T00,S02,$E7 !=
          !byte $D5
-         bcc   dp1r
+         bcc   .dp1r
          ldy   #$01
          jsr   modify     ; then set T00,S02,$E7 =
          !byte $D5
-dp1r
+.dp1r
 
 ;-------------------------------
 ; RWTS fixup #DP2R
 ; data prologue byte 2 (read)
 ;-------------------------------
          lda   gIsRWTS    ; if DOS 3.3 RWTS
-         bne   dp2r
+         bne   .dp2r
          lda   #$02
          ldx   #$EB
          ldy   #$06
          jsr   compare    ; and T00,S02,$EB ==
          !byte $BD,$8C,$C0,$10,$FB,$C9
-         bcs   dp2r
+         bcs   .dp2r
          ldx   #$F2
          ldy   #$04
          jsr   compare    ; and T00,S02,$F2 ==
          !byte $D0,$F2,$A0,$56
-         bcs   dp2r
+         bcs   .dp2r
          ldx   #$F1
          ldy   #$01
          jsr   compare    ; and T00,S02,$F1 !=
          !byte $AA
-         bcc   dp2r
+         bcc   .dp2r
          ldy   #$01
          jsr   modify     ; then set T00,S02,$F1 =
          !byte $AA
-dp2r
+.dp2r
 
 ;-------------------------------
 ; RWTS fixup #DP3R
 ; data prologue byte 3 (read)
 ;-------------------------------
          lda   gIsRWTS    ; if DOS 3.3 RWTS
-         bne   dp3r
+         bne   .dp3r
          lda   #$02
          ldx   #$F6
          ldy   #$06
          jsr   compare    ; and T00,S02,$F6 ==
          !byte $BD,$8C,$C0,$10,$FB,$C9
-         bcs   dp3r
+         bcs   .dp3r
          ldx   #$FD
          ldy   #$02
          jsr   compare    ; and T00,S02,$FD ==
          !byte $D0,$E7
-         bcs   dp3r
+         bcs   .dp3r
          ldx   #$FC
          ldy   #$01
          jsr   compare    ; and T00,S02,$FC !=
          !byte $AD
-         bcc   dp3r
+         bcc   .dp3r
          ldy   #$01
          jsr   modify     ; then set T00,S02,$FC =
          !byte $AD
-dp3r
+.dp3r
 
 ;-------------------------------
 ; RWTS fixup #DE1R
 ; data epilogue byte 1 (read)
 ;-------------------------------
          lda   gIsRWTS    ; if DOS 3.3 RWTS
-         bne   de1r
+         bne   .de1r
          lda   #$03
          ldx   #$2F
          ldy   #$06
          jsr   compare    ; and T00,S03,$2F ==
          !byte $BD,$8C,$C0,$10,$FB,$C9
-         bcs   de1r
+         bcs   .de1r
          ldx   #$36
          ldy   #$03
          jsr   compare    ; and T00,S03,$36 ==
          !byte $D0,$0A,$EA
-         bcs   de1r
+         bcs   .de1r
          ldx   #$35
          ldy   #$01
          jsr   compare    ; and T00,S03,$35 !=
          !byte $DE
-         bcc   de1r
+         bcc   .de1r
          ldy   #$01
          jsr   modify     ; then set T00,S03,$35 =
          !byte $DE
-de1r
+.de1r
 
 ;-------------------------------
 ; RWTS fixup #DE2R
 ; data epilogue byte 2 (read)
 ;-------------------------------
          lda   gIsRWTS    ; if DOS 3.3 RWTS
-         bne   de2r
+         bne   .de2r
          lda   #$03
          ldx   #$39
          ldy   #$06
          jsr   compare    ; and T00,S03,$39 ==
          !byte $BD,$8C,$C0,$10,$FB,$C9
-         bcs   de2r
+         bcs   .de2r
          ldx   #$40
          ldy   #$03
          jsr   compare    ; and T00,S03,$40 ==
          !byte $F0,$5C,$38
-         bcs   de2r
+         bcs   .de2r
          ldx   #$3F
          ldy   #$01
          jsr   compare    ; and T00,S03,$3F !=
          !byte $AA
-         bcc   de2r
+         bcc   .de2r
          ldy   #$01
          jsr   modify     ; then set T00,S03,$3F =
          !byte $AA
-de2r
+.de2r
 
 ;-------------------------------
 ; RWTS fixup #AP1W
 ; address prologue byte 1 (write)
 ;-------------------------------
          lda   gIsRWTS    ; if DOS 3.3 RWTS
-         bne   ap1w
+         bne   .ap1w
          lda   #$06
          ldx   #$79
          ldy   #$01
          jsr   compare    ; and T00,S06,$79 ==
          !byte $A9
-         bcs   ap1w
+         bcs   .ap1w
          ldx   #$7B
          ldy   #$02
          jsr   compare    ; and T00,S06,$7B ==
          !byte $20,$D5
-         bcs   ap1w
+         bcs   .ap1w
          ldx   #$7A
          ldy   #$01
          jsr   compare    ; and T00,S06,$7A !=
          !byte $D5
-         bcc   ap1w
+         bcc   .ap1w
          ldy   #$01
          jsr   modify     ; then set T00,S06,$7A =
          !byte $D5
-ap1w
+.ap1w
 
 ;-------------------------------
 ; RWTS fixup #AP2W
 ; address prologue byte 2 (write)
 ;-------------------------------
          lda   gIsRWTS    ; if DOS 3.3 RWTS
-         bne   ap2w
+         bne   .ap2w
          lda   #$06
          ldx   #$7E
          ldy   #$01
          jsr   compare    ; and T00,S06,$7E ==
          !byte $A9
-         bcs   ap2w
+         bcs   .ap2w
          ldx   #$80
          ldy   #$02
          jsr   compare    ; and T00,S06,$80 ==
          !byte $20,$D5
-         bcs   ap2w
+         bcs   .ap2w
          ldx   #$7F
          ldy   #$01
          jsr   compare    ; and T00,S06,$7F !=
          !byte $AA
-         bcc   ap2w
+         bcc   .ap2w
          ldy   #$01
          jsr   modify     ; then set T00,S06,$7F =
          !byte $AA
-ap2w
+.ap2w
 
 ;-------------------------------
 ; RWTS fixup #AP3W
 ; address prologue byte 3 (write)
 ;-------------------------------
          lda   gIsRWTS    ; if DOS 3.3 RWTS
-         bne   ap3w
+         bne   .ap3w
          lda   #$06
          ldx   #$83
          ldy   #$01
          jsr   compare    ; and T00,S06,$83 ==
          !byte $A9
-         bcs   ap3w
+         bcs   .ap3w
          ldx   #$85
          ldy   #$02
          jsr   compare    ; and T00,S06,$85 ==
          !byte $20,$D5
-         bcs   ap3w
+         bcs   .ap3w
          ldx   #$84
          ldy   #$01
          jsr   compare    ; and T00,S06,$84 !=
          !byte $96
-         bcc   ap3w
+         bcc   .ap3w
          ldy   #$01
          jsr   modify     ; then set T00,S06,$84 =
          !byte $96
-ap3w
+.ap3w
 
 ;-------------------------------
 ; RWTS fixup #AE1W
 ; address epilogue byte 1 (write)
 ;-------------------------------
          lda   gIsRWTS    ; if DOS 3.3 RWTS
-         bne   ae1w
+         bne   .ae1w
          lda   #$06
          ldx   #$AD
          ldy   #$01
          jsr   compare    ; and T00,S06,$AD ==
          !byte $A9
-         bcs   ae1w
+         bcs   .ae1w
          ldx   #$AF
          ldy   #$02
          jsr   compare    ; and T00,S06,$AF ==
          !byte $20,$D5
-         bcs   ae1w
+         bcs   .ae1w
          ldx   #$AE
          ldy   #$01
          jsr   compare    ; and T00,S06,$AE !=
          !byte $DE
-         bcc   ae1w
+         bcc   .ae1w
          ldy   #$01
          jsr   modify     ; then set T00,S06,$AE =
          !byte $DE
-ae1w
+.ae1w
 
 ;-------------------------------
 ; RWTS fixup #AE2W
 ; address epilogue byte 2 (write)
 ;-------------------------------
          lda   gIsRWTS    ; if DOS 3.3 RWTS
-         bne   ae2w
+         bne   .ae2w
          lda   #$06
          ldx   #$B2
          ldy   #$01
          jsr   compare    ; and T00,S06,$B2 ==
          !byte $A9
-         bcs   ae2w
+         bcs   .ae2w
          ldx   #$B4
          ldy   #$02
          jsr   compare    ; and T00,S06,$B4 ==
          !byte $20,$D5
-         bcs   ae2w
+         bcs   .ae2w
          ldx   #$B3
          ldy   #$01
          jsr   compare    ; and T00,S06,$B3 !=
          !byte $AA
-         bcc   ae2w
+         bcc   .ae2w
          ldy   #$01
          jsr   modify     ; then set T00,S06,$B3 =
          !byte $AA
-ae2w
+.ae2w
 
 ;-------------------------------
 ; RWTS fixup #AE3W
 ; address epilogue byte 3 (write)
 ;-------------------------------
          lda   gIsRWTS    ; if DOS 3.3 RWTS
-         bne   ae3w
+         bne   .ae3w
          lda   #$06
          ldx   #$B7
          ldy   #$01
          jsr   compare    ; and T00,S06,$B7 ==
          !byte $A9
-         bcs   ae3w
+         bcs   .ae3w
          ldx   #$B9
          ldy   #$02
          jsr   compare    ; and T00,S06,$B9 ==
          !byte $20,$D5
-         bcs   ae3w
+         bcs   .ae3w
          ldx   #$B8
          ldy   #$01
          jsr   compare    ; and T00,S06,$B8 !=
          !byte $EB
-         bcc   ae3w
+         bcc   .ae3w
          ldy   #$01
          jsr   modify     ; then set T00,S06,$B8 =
          !byte $EB
-ae3w
+.ae3w
 
 ;-------------------------------
 ; RWTS fixup #DP1W
 ; data prologue byte 1 (write)
 ;-------------------------------
          lda   gIsRWTS    ; if DOS 3.3 RWTS
-         bne   dp1w
+         bne   .dp1w
          lda   #$02
          ldx   #$52
          ldy   #$01
          jsr   compare    ; and T00,S02,$52 ==
          !byte $A9
-         bcs   dp1w
+         bcs   .dp1w
          ldx   #$54
          ldy   #$02
          jsr   compare    ; and T00,S02,$54 ==
          !byte $20,$B8
-         bcs   dp1w
+         bcs   .dp1w
          ldx   #$53
          ldy   #$01
          jsr   compare    ; and T00,S02,$53 !=
          !byte $D5
-         bcc   dp1w
+         bcc   .dp1w
          ldy   #$01
          jsr   modify     ; then set T00,S02,$53 =
          !byte $D5
-dp1w
+.dp1w
 
 ;-------------------------------
 ; RWTS fixup #DP2W
 ; data prologue byte 2 (write)
 ;-------------------------------
          lda   gIsRWTS    ; if DOS 3.3 RWTS
-         bne   dp2w
+         bne   .dp2w
          lda   #$02
          ldx   #$57
          ldy   #$01
          jsr   compare    ; and T00,S02,$57 ==
          !byte $A9
-         bcs   dp2w
+         bcs   .dp2w
          ldx   #$59
          ldy   #$02
          jsr   compare    ; and T00,S02,$59 ==
          !byte $20,$B8
-         bcs   dp2w
+         bcs   .dp2w
          ldx   #$58
          ldy   #$01
          jsr   compare    ; and T00,S02,$58 ==
          !byte $AA
-         bcc   dp2w
+         bcc   .dp2w
          ldy   #$01
          jsr   modify     ; then set T00,S02,$58 =
          !byte $AA
-dp2w
+.dp2w
 
 ;-------------------------------
 ; RWTS fixup #DP3W
 ; data prologue byte 3 (write)
 ;-------------------------------
          lda   gIsRWTS    ; if DOS 3.3 RWTS
-         bne   dp3w
+         bne   .dp3w
          lda   #$02
          ldx   #$5C
          ldy   #$01
          jsr   compare    ; and T00,S02,$5C ==
          !byte $A9
-         bcs   dp3w
+         bcs   .dp3w
          ldx   #$5E
          ldy   #$02
          jsr   compare    ; and T00,S02,$5E ==
          !byte $20,$B8
-         bcs   dp3w
+         bcs   .dp3w
          ldx   #$5D
          ldy   #$01
          jsr   compare    ; and T00,S02,$5D !=
          !byte $AD
-         bcc   dp3w
+         bcc   .dp3w
          ldy   #$01
          jsr   modify     ; then set T00,S02,$5D =
          !byte $AD
-dp3w
+.dp3w
 
 ;-------------------------------
 ; RWTS fixup #DE1W
 ; data epilogue byte 1 (write)
 ;-------------------------------
          lda   gIsRWTS    ; if DOS 3.3 RWTS
-         bne   de1w
+         bne   .de1w
          lda   #$02
          ldx   #$9D
          ldy   #$01
          jsr   compare    ; and T00,S02,$9D ==
          !byte $A9
-         bcs   de1w
+         bcs   .de1w
          ldx   #$9F
          ldy   #$02
          jsr   compare    ; and T00,S02,$9F ==
          !byte $20,$B8
-         bcs   de1w
+         bcs   .de1w
          ldx   #$9E
          ldy   #$01
          jsr   compare    ; and T00,S02,$9E !=
          !byte $DE
-         bcc   de1w
+         bcc   .de1w
          ldy   #$01
          jsr   modify     ; then set T00,S02,$9E =
          !byte $DE
 
-de1w
+.de1w
 
 ;-------------------------------
 ; RWTS fixup #DE2W
 ; data epilogue byte 2 (write)
 ;-------------------------------
          lda   gIsRWTS    ; if DOS 3.3 RWTS
-         bne   de2w
+         bne   .de2w
          lda   #$02
          ldx   #$A2
          ldy   #$01
          jsr   compare    ; and T00,S02,$A2 ==
          !byte $A9
-         bcs   de2w
+         bcs   .de2w
          ldx   #$A4
          ldy   #$02
          jsr   compare    ; and T00,S02,$A4 ==
          !byte $20,$B8
-         bcs   de2w
+         bcs   .de2w
          ldx   #$A3
          ldy   #$01
          jsr   compare    ; and T00,S02,$A3 !=
          !byte $AA
-         bcc   de2w
+         bcc   .de2w
          ldy   #$01
          jsr   modify     ; then set T00,S02,$A3 =
          !byte $AA
 
-de2w
+.de2w
 
 ;-------------------------------
 ; RWTS fixup #DE3W
 ; data epilogue byte 3 (write)
 ;-------------------------------
          lda   gIsRWTS    ; if DOS 3.3 RWTS
-         bne   de3w
+         bne   .de3w
          lda   #$02
          ldx   #$A7
          ldy   #$01
          jsr   compare    ; and T00,S02,$A7 ==
          !byte $A9
-         bcs   de3w
+         bcs   .de3w
          ldx   #$A9
          ldy   #$02
          jsr   compare    ; and T00,S02,$A9 ==
          !byte $20,$B8
-         bcs   de3w
+         bcs   .de3w
          ldx   #$A8
          ldy   #$01
          jsr   compare    ; and T00,S02,$A8 !=
          !byte $EB
-         bcc   de3w
+         bcc   .de3w
          ldy   #$01
          jsr   modify     ; then set T00,S02,$A8 =
          !byte $EB
-de3w
+.de3w
 
 ;-------------------------------
 ; RWTS fixup #DE4W
@@ -601,27 +602,27 @@ de3w
 ; needed by some Sunburst disks
 ;-------------------------------
          lda   gIsRWTS    ; if DOS 3.3 RWTS
-         bne   de4w
+         bne   .de4w
          lda   #$02
          ldx   #$AC
          ldy   #$01
          jsr   compare    ; and T00,S02,$AC ==
          !byte $A9
-         bcs   de4w
+         bcs   .de4w
          ldx   #$AE
          ldy   #$02
          jsr   compare    ; and T00,S02,$AE ==
          !byte $20,$B8
-         bcs   de4w
+         bcs   .de4w
          ldx   #$AD
          ldy   #$01
          jsr   compare    ; and T00,S02,$AD !=
          !byte $FF
-         bcc   de4w
+         bcc   .de4w
          ldy   #$01
          jsr   modify     ; then set T00,S02,$AD =
          !byte $FF
-de4w
+.de4w
 
 ;-------------------------------
 ; RWTS "LSR $6A" identification
@@ -631,17 +632,17 @@ de4w
 ; log it)
 ;-------------------------------
          lda   gIsRWTS    ; if DOS 3.3 RWTS
-         bne   rwts_lsr6a
+         bne   .lsr6a
          lda   #$03
          ldx   #$4F
          ldy   #$0A
          jsr   compare    ; and T00,S03,$4F ==
          !byte $BD,$8C,$C0,$10,$FB,$4A,$97,$6A,$D0,$EF
-         bcs   rwts_lsr6a
+         bcs   .lsr6a
          lda   #s_lsr6a
          jsr   PrintByID
          inc   gPatchCount
-rwts_lsr6a
+.lsr6a
 
 ;-------------------------------
 ; RWTS "CMP #$08 / BCS" identification
@@ -651,14 +652,15 @@ rwts_lsr6a
 ; log it)
 ;-------------------------------
          lda   gIsRWTS    ; if DOS 3.3 RWTS
-         bne   rwts_bcs08
+         bne   .bcs08
          lda   #$03
          ldx   #$8B
          ldy   #$15
          jsr   compare    ; and T00,S03,$8B ==
-         !byte $BD,$8C,$C0,$10,$FB,$C9,$DE,$F0,$0A,$48,$68,$BD,$8C,$C0,$C9,08,$B0,$A5,$EA,$18,$60
-         bcs   rwts_bcs08
+         !byte $BD,$8C,$C0,$10,$FB,$C9,$DE,$F0,$0A,$48,$68,$BD,$8C,$C0,$C9,$08,$B0,$A5,$EA,$18,$60
+         bcs   .bcs08
          lda   #s_bcs08
          jsr   PrintByID
          inc   gPatchCount
-rwts_bcs08
+.bcs08
+}

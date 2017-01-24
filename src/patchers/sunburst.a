@@ -6,22 +6,23 @@
 ; NOTE: must be run before RWTS
 ; patchers due to overlapping bytes
 ;-------------------------------
+!zone {
 _sunburst
          sec
          lda   gIsRWTS    ; if DOS 3.3 RWTS
-         bne   sunburst_exit
+         bne   .exit
          lda   #$03
          ldx   #$40
          ldy   #$01
          jsr   compare    ; and T00,S03,$40 ==
          !byte $D0
-         bcs   sunburst_exit
+         bcs   .exit
          lda   #$03
          ldx   #$9C
          ldy   #$01
          jsr   compare    ; and T00,S03,$9C ==
          !byte $F0
-         bcs   sunburst_exit
+         bcs   .exit
          lda   #$04
          ldx   #$69
          ldy   #$2C
@@ -32,22 +33,22 @@ _sunburst
          !byte $11,$D0,03,$A9,02,$AC,$A9,$0E
          !byte $8D,$C0,$BF,$68,$69,00,$48,$AD
          !byte $78,04,$90,$2B
-         bcs   sunburst_exit
+         bcs   .exit
          lda   #$06
          ldx   #$69
          ldy   #$06
          jsr   compare    ; and T00,S06,$69 ==
          !byte $4C,$B8,$B6,$EA,$EA,$EA
-         bcs   sunburst_exit
+         bcs   .exit
          lda   #$08
          ldx   #$8C
          ldy   #$02
          jsr   compare    ; and T00,S08,$8C ==
          !byte $69,$BA
-         bcc   sunburst_yes
-sunburst_exit
-         bcs   sunburst_exit2
-sunburst_yes
+         bcc   .yes
+.exit
+         bcs   .exit2
+.yes
          lda   #$03
          ldx   #$40
          ldy   #$01
@@ -68,4 +69,5 @@ sunburst_yes
          ldy   #$02
          jsr   modify     ; and set T00,S08,$8C =
          !byte $A0,$B9
-sunburst_exit2
+.exit2
+}

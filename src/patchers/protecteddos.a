@@ -8,10 +8,11 @@
 ; (Home Alone / Outdoor Safety / Famous People),
 ; Math Blaster, Moebius
 ;-------------------------------
+!zone {
 _protdos
          lda   gIsProtDOS
          beq   +
-         jmp   protdos_exit
+         jmp   .exit
 +
 ;
 ; Find secondary/tertiary RWTS swappers on any track
@@ -21,30 +22,30 @@ _protdos
          jsr   SearchTrack
          !byte $A9,$B5,$85,$4E,$8D,$5D,$BD,$A9
          !byte $D5,$8D,$2C,$BF
-         bcs   specific
-         sta   swapper2+1
+         bcs   .specific
+         sta   .swapper2+1
          inx
-         stx   swapper1+1
+         stx   .swapper1+1
          ldy   #$01
-         jsr   modify     ; offset $01: $B5 -> $AD
+         jsr   modify     ; offset $01. $B5 -> $AD
          !byte $AD
-swapper1
+.swapper1
          lda   #$FF       ; modified at runtime
          clc
          adc   #$07
          tax
-swapper2
+.swapper2
          lda   #$FF       ; modified at runtime
          ldy   #$01
-         jsr   modify     ; offset $08: $D5 -> 9B
+         jsr   modify     ; offset $08. $D5 -> 9B
          !byte $9B
 
-specific
+.specific
          lda   gTrack
          cmp   #$02
-         bcc   strip
-         jmp   protdos_exit
-strip
+         bcc   .strip
+         jmp   .exit
+.strip
 ;
 ; strip 6-digit numeric serial number
 ; (appears on both track 0 and 1, but
@@ -64,27 +65,27 @@ strip
          inx
          lda   #$02
 ++
-         stx   serial+2
-         stx   serialb+2
+         stx   .serial+2
+         stx   .serialb+2
          sta   gDisplayBytes+3
          lda   #$C5
-         sta   serial+1
-         sta   serialb+1
+         sta   .serial+1
+         sta   .serialb+1
          ldy   #$00
-serialloop
-         jsr   serial
+.serialloop
+         jsr   .serial
          tax
-         jsr   serial
-         jsr   XA2byte
+         jsr   .serial
+         jsr   .XA2byte
          sta   gDisplayBytes,y
          iny
          cpy   #$03
-         bne   serialloop
+         bne   .serialloop
          lda   #s_protserial
          jsr   PrintByID
 
          lda   gTrack
-         beq   track0
+         beq   .track0
 
 ;
 ; disable RWTS swapper (technically make the
@@ -97,7 +98,7 @@ serialloop
          jsr   compare    ; if T01,S02,$AF ==
          !byte $A2,$B5,$86,$4E,$8E,$5D,$BD,$A2
          !byte $D5,$8E,$2C,$BF
-         bcs   exitt1
+         bcs   .exitt1
          lda   #$02
          ldx   #$B0
          ldy   #$01
@@ -109,10 +110,10 @@ serialloop
          jsr   modify     ; and set T01,S02,$B7 =
          !byte $9B
 
-exitt1
-         jmp   protdos_exit
+.exitt1
+         jmp   .exit
 
-:track0
+.track0
 ;
 ; decrypt RWTS in track buffer
 ;
@@ -120,22 +121,22 @@ exitt1
          jsr   PrintByID
          ldx   #BASEPAGE
          inx
-         stx   a+2
-         stx   b+2
-         stx   c+2
-a        lda   $FF06      ; modified at runtime
-         sta   pdkey+1
+         stx   .a+2
+         stx   .b+2
+         stx   .c+2
+.a       lda   $FF06      ; modified at runtime
+         sta   .key+1
          ldx   #$09
          ldy   #$1A
-b        lda   $FF00,Y    ; modified at runtime
-pdkey    eor   #$FF       ; modified at runtime
-c        sta   $FF00,Y    ; modified at runtime
+.b       lda   $FF00,Y    ; modified at runtime
+.key     eor   #$FF       ; modified at runtime
+.c       sta   $FF00,Y    ; modified at runtime
          iny
-         bne   b
-         inc   b+2
-         inc   c+2
+         bne   .b
+         inc   .b+2
+         inc   .c+2
          dex
-         bne   b
+         bne   .b
 
 ;
 ; disable decryption loop
@@ -153,12 +154,12 @@ c        sta   $FF00,Y    ; modified at runtime
          ldx   #$93
          ldy   #$03
          jsr   compare    ; if T00,S01,$93 ==
-         !byte $4C,00,$B8
-         bcs   skipcheck
+         !byte $4C,$00,$B8
+         bcs   .skipcheck
          ldy   #$03
          jsr   modify     ; then set T00,S01,$93 =
          !byte $AC,$E5,$B7
-skipcheck
+.skipcheck
 
 ;
 ; fake "found disk volume" in RWTS parameter table
@@ -170,10 +171,10 @@ skipcheck
          ldy   #$02
          jsr   compare    ; if T00,S05,$15 ==
          !byte $A5,$2F
-         bcs   protdos_exit
+         bcs   .exit
          ldy   #$02
          jsr   modify     ; then set T00,S05,$15 =
-         !byte $A9,00
+         !byte $A9,$00
 
 ;
 ; re-enable write mode if it was disabled
@@ -182,34 +183,34 @@ skipcheck
          ldx   #$48
          ldy   #$19
          jsr   compare    ; if T00,S07,$48 ==
-         !byte $A0,04,$48,$68,$A0,$B9,$BD,$88
+         !byte $A0,$04,$48,$68,$A0,$B9,$BD,$88
          !byte $D0,$F8,$A9,$97,$20,$B8,$BD,$A9
          !byte $97,$20,$B8,$BD,$A9,$97,$20,$B8
          !byte $BD
-         bcs   writeIsOK
+         bcs   .writeIsOK
          ldx   #$4C
          ldy   #$01
          jsr   modify     ; then set T00,S07,$4C =
          !byte $20
-writeIsOK
-         jmp   protdos_exit
+.writeIsOK
+         jmp   .exit
 
 ; subroutines for getting (and erasing) the embedded
 ; 6-digit serial number and converting them to bytes
 ; for printing
-serial
+.serial
          lda   $FFFF      ; modified at runtime
          pha
          lda   #$B0
-serialb
+.serialb
          sta   $FFFF      ; modified at runtime
          pla
-         inc   serial+1
-         inc   serialb+1
+         inc   .serial+1
+         inc   .serialb+1
          inc   gPatchCount
          rts
 
-XA2byte
+.XA2byte
          and   #$0F
          sta   tmp
          txa
@@ -220,4 +221,5 @@ XA2byte
          ora   tmp
          rts
 
-protdos_exit
+.exit
+}

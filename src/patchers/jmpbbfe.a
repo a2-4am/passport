@@ -4,18 +4,20 @@
 ; ($BBFE) instead of ($08FD)
 ; e.g. Mind Over Matter
 ;-------------------------------
+!zone {
 _jmpbbfe
          lda   gIsBoot0   ; if DOS 3.3 boot0 loader
-         bne   jmpbbfe_exit
+         bne   .exit
          lda   #$00
          ldx   #$4A
          ldy   #$03
          jsr   compare    ; and T00,S00,$4A ==
          !byte $6C,$FE,$BB
-         bcs   jmpbbfe_exit
+         bcs   .exit
          lda   #$00
          ldx   #$4B
          ldy   #$02
          jsr   modify     ; then set T00,S00,$4B =
          !byte $FD,08
-jmpbbfe_exit
+.exit
+}

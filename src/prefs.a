@@ -46,8 +46,8 @@ SavePrefs
          jsr   ValidatePrefs
          jsr   SaveFile1Shot
          !word PREFSFILE
-         !byte 04         ; text file
-         !byte 00,00      ; no aux file type
+         !byte $04        ; text file
+         !byte $00,$00    ; no aux file type
          !word PREFSVER
          !word PREFSWRITELEN
          !word PREFSBUFFER
@@ -67,49 +67,51 @@ SavePrefs
 ;      C clear if all prefs were valid
 ;      A,X clobbered
 ;-------------------------------
+!zone {
 ValidatePrefs
          ldx   #$00
          lda   PREFSVER
          cmp   #CURRENTVER
-         beq   checkslot
+         beq   .checkslot
          lda   #CURRENTVER
          sta   PREFSVER
          lda   #$FF
          sta   SLOT
          sta   DRIVE
          inx
-checkslot
+.checkslot
          lda   SLOT
          sec
          sbc   #$30
-         beq   badslot
+         beq   .badslot
          cmp   #$08
-         bcc   checkdrive
-badslot
+         bcc   .checkdrive
+.badslot
          lda   #DEFSLOT
          sta   SLOT
          inx
-checkdrive
+.checkdrive
          lda   DRIVE
          sec
          sbc   #$30
-         beq   baddrive
+         beq   .baddrive
          cmp   #$03
-         bcc   checks6d1
-baddrive
+         bcc   .checks6d1
+.baddrive
          lda   #DEFDRIVE
          sta   DRIVE
          inx
-checks6d1
+.checks6d1
          lda   SLOT
          cmp   #$36
-         bne   prefs_done
+         bne   .done
          lda   DRIVE
          cmp   #$31
-         bne   prefs_done
+         bne   .done
          lda   #$32
          sta   DRIVE
          inx
-prefs_done
+.done
          cpx   #$01       ; set carry if anything changed
          rts
+}

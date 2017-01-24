@@ -6,9 +6,10 @@
 ; fly
 ; e.g. Mask Parade
 ;-------------------------------
+!zone {
 _rwtsswap2
          lda   gIsBoot0   ; if DOS 3.3 boot0 loader
-         bne   rwtsswap2_exit
+         bne   .exit
          lda   #$04
          ldx   #$69
          ldy   #$13
@@ -16,7 +17,7 @@ _rwtsswap2
          !byte $A9,$AB,$8D,$4B,$B8,$A9,$FF,$20
          !byte $DF,$BC,$20,$EC,$BC,$A9,$AA,$8D
          !byte $29,$BA,$60
-         bcs   rwtsswap2_exit
+         bcs   .exit
          lda   #$04
          ldx   #$7D
          ldy   #$15
@@ -24,7 +25,7 @@ _rwtsswap2
          !byte $A9,$FF,$8D,$4B,$B8,$A9,$DE,$20
          !byte $DF,$BC,$A9,$AA,$20,$EC,$BC,$A9
          !byte $96,$8D,$29,$BA,$60
-         bcs   rwtsswap2_exit
+         bcs   .exit
          lda   #$04
          ldx   #$69
          ldy   #$01
@@ -35,4 +36,5 @@ _rwtsswap2
          ldy   #$01
          jsr   modify     ; and set T00,S04,$7D =
          !byte $60
-rwtsswap2_exit
+.exit
+}
