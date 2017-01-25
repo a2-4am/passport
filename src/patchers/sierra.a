@@ -1,1 +1,327 @@
-ª­­­­­­­­­­­­­­­­­­­­­­­­­­­­­­­ª £ΣΙΕÒÒΑª σεαςγθ αξδ δεστςοω α σεμζ­δεγςωπτιξηª πςοτεγτιοξ γθεγλ υσεδ οξ ναξω Σιεςςαª δισλσ ιξ α χαω τθατ δοεσξ§τ τςιπ τθεª τανπες γθεγλ τθατ γθεγλσυνσ τθε γοδεª ε®η® Σαννω Μιηθτζοοτ¬ Γςοσσζιςεª­­­­­­­­­­­­­­­­­­­­­­­­­­­­­­­ίσιεςςα μδα £¤°Ζ στα Ίσεγτος«±Ίσεγτος μδα £¤ΖΖ » νοδιζιεδ ατ ςυξτινε μδψ £¤°° μδω £¤°² κσς γονπαςε ΘΕΨ ΓΕ°³ βγγ Ί° κνπ ΊξεψτσεγτοςΊ° μδα Ίσεγτος«± μδψ £¤°³ μδω £¤°² κσς γονπαςε ΘΕΨ ΕΖ°³ βγγ Ί± κνπ ΊξεψτσεγτοςΊ± μδα Ίσεγτος«± μδψ £¤°¶ μδω £¤°² κσς γονπαςε ΘΕΨ ΑΔ²Έ βγγ Ί² μδα Ίσεγτος«± μδψ £¤°¶ μδω £¤°² κσς γονπαςε ΘΕΨ ΑΔ²΄ βγγ Ί² κνπ ΊξεψτσεγτοςΊ² μδα Ίσεγτος«± γμγ αδγ £ΒΑΣΕΠΑΗΕ στα Ίγθεγλα«² στα Ίγθεγλβ«²Ίγθεγλα μδα ¤ΖΖ°² » νοδιζιεδ αβοφεΊγθεγλβ γνπ ¤ΖΖ°µ » νοδιζιεδ αβοφε βερ Ίωεσ κνπ ΊξεψτσεγτοςΊωεσ μδα Ίσεγτος«± στα ηΔισπμαωΒωτεσ μδα £σίσιεςςα κσς ΠςιξτΒωΙΔ μδα Ίσεγτος«± μδψ £¤°° μδω £¤°² κσς νοδιζω ΘΕΨ ¶°ΑΔΊξεψτσεγτος δεγ Ίσεγτος«± βνι Ίεψιτ κνπ ΊσεγτοςΊεψιτ
+;-------------------------------
+; #SIERRA
+; search and disable a self-decrypting
+; protection check used on many Sierra
+; disks in a way that doesn't trip the
+; tamper check that checksums the code
+; e.g. Sammy Lightfoot, Crossfire
+;
+; module by qkumba
+;-------------------------------
+!zone {
+_sierra
+         lda   .foundsierra
+         bne   +
+         jmp   .dosearch
++        lda   gTrack
+         bne   +
+         dec   .foundsierra
++        ldy   #3
+         jsr   SearchTrack
+.call
+         !byte $20,$D1,$D1
+         bcs   +
+         ldy   #$01
+         jsr   modify
+         !byte $2C
++        ldy   #3
+         jsr   SearchTrack
+.load
+         !byte $AD,$D1,$D1
+         bcs   +
+         sta   .cmp7+1
+         adc   #BASEPAGE
+         sta   .page11+2
+         inx
+         inx
+         inx
+.page11
+         lda   $D100,x
+         cmp   #$F0
+         bne   .cmp7
+         inx
+         inx
+.cmp7
+         lda   #$D1
+         ldy   #3
+         jsr   compare
+         !byte $C9,$1D,$B0
+         bcs   +
+         inx
+         inx
+         inx
+         ldy   #$01
+         jsr   modify
+         !byte $00
++        ldy   #12
+         jsr   SearchTrack
+         !byte $AD,WILDCARD,WILDCARD,$85,$C1,$A9,$00,$85,$C0,$6C,$C0,$00
+         bcs   +
+         pha
+         txa
+         adc   #9
+         tax
+         pla
+         ldy   #$01
+         jsr   modify
+         !byte $60
++        ldy   #14
+         jsr   SearchTrack
+         !byte $85,$11,$49,WILDCARD,$48,$A5,$10,$49,WILDCARD,$48,$D0,$01,$4C,$60
+         bcs   +
+         pha
+         tay
+         inx
+         inx
+         inx
+         inx
+         txa
+         pha
+         tya
+         ldy   #1
+         jsr   modify
+         !byte $EA
+         pla
+         clc
+         adc #5
+         tax
+         pla
+         ldy   #1
+         jsr   modify
+         !byte $EA
++        ldy   #10
+         jsr   SearchTrack
+         !byte $A9,$20,$8D,$DC,$4D,$A9,$60,$8D,$DF,$4D
+         bcs   +
+         inx
+         ldy   #$01
+         jsr   modify
+         !byte $2C
++        ldy   #6
+         jsr   SearchTrack
+         !byte $20,$0A,$14,$6C,$C6,$03
+         bcs   +
+         inx
+         inx
+         inx
+         ldy   #$01
+         jsr   modify
+         !byte $60
++        jmp   .exit
+.foundsierra
+         !byte $00
+
+.trybox
+         ldy   #17
+         jsr   SearchTrack
+         !byte $20,$00,$1D,$20,$C0,$1D,$A9,$16,$85,$56,$A9,$15,$85,$57,$20,$93,$15
+         bcs   .bcsexit1
+         sta   gDisplayBytes
+         pha
+         lda   #s_sierra
+         jsr   PrintByID
+         pla
+         ldy   #$01
+         jsr   modify
+         !byte $2C
+         jmp   .exit
+
+.dosearch
+         ldy   #15
+         jsr   SearchTrack
+         !byte $CE,WILDCARD,WILDCARD,$EF,WILDCARD,WILDCARD,$AD
+         !byte WILDCARD,WILDCARD,$49,WILDCARD,$D0,01,$20,$8D
+         bcs   .trybox
+         sta   .cmp1+1
+         sta   .cmp2+1
+         sta   .cmp3+1
+         sta   .cmp4+1
+         sta   .cmp5+1
+         sta   .cmp6+1
+         pha
+         adc   #BASEPAGE
+         sta   .page1+2
+         sta   .page2+2
+         sta   .page3+2
+         sta   .page4+2
+         sta   .page5+2
+         sta   .page6+2
+         sta   .page7+2
+         sta   .page8+2
+         sta   .page9+2
+         sta   .page10+2
+         stx   .adj+1
+         txa
+         adc   #17
+         tax
+.page1
+         lda   $D100,x
+         cmp   #$18
+         bne   +
+         inx
++        pla
+         ldy   #6
+         jsr   compare
+         !byte $D0,$01,$4C,$A0,WILDCARD,$98
+.bcsexit1
+         bcs   .bcsexit2
+.page2
+         lda   $D104,x
+         sta   .key+1
+         txa
+         adc   #6
+         tax
+.cmp1
+         lda   #$D1
+         pha
+         ldy   #3
+         jsr   compare
+         !byte $90,$01,$20
+         bcs   +
+         inx
+         inx
+         inx
++        pla
+         ldy   #8
+         jsr   compare
+         !byte $59,WILDCARD,WILDCARD,$99,WILDCARD,WILDCARD,$C8,$D0
+.bcsexit2
+         bcs   .bcsexit3
+.page3
+         lda   $D101,x
+         sta   .call+1
+.page4
+         lda   $D102,x
+         sta   .call+2
+         txa
+         adc   #9
+         tax
+.cmp2
+         lda   #$D1
+         pha
+         ldy   #5
+         jsr   compare
+         !byte $88,$30,$01,$4C,$60
+         pla
+         bcc   +
+         ldy   #5
+         jsr   compare
+         !byte $98,$10,$01,$4C,$60
+.bcsexit3
+         bcs   .bcsexit4
++        txa
+         adc   #5
+         pha
+         tax
+.key     ldy   #$D1
+-        tya
+.page5
+         eor   $D100, x
+.page6
+         sta   $D100, x
+         iny
+         inx
+         bne   -
+         pla
+         tax
+.page7
+         lda   $D100, x
+         beq   +
+         cmp   #$C8
+         sec
+         bne   .bcsexit4
++        inx
+.cmp3
+         lda   #$D1
+         ldy   #11
+         jsr   compare
+         !byte $8C,$F4,$B7,WILDCARD,$EC,$B7,$A9,$B7,$A0,$E8,$20
+.bcsexit4
+         bcs   .bcsexit5
+         txa
+         adc   #11
+         tax
+.cmp4
+         lda   #$D1
+         pha
+         ldy   #2
+         jsr   compare
+         !byte $B5,$B7
+         pla
+         bcc   +
+         pha
+         ldy   #2
+         jsr   compare
+         !byte $D9,$03
+         pla
+         bcc   +
+         ldy   #2
+         jsr   compare
+         !byte $00,$BD
+.bcsexit5
+         bcs   .bcsexit6
++        inx
+         inx
+.cmp5
+         lda   #$D1
+         pha
+         ldy   #3
+         jsr   compare
+         !byte $AE,$E9,$B7
+         bcs   +
+         inx
+         inx
+         inx
++        pla
+         ldy   #9
+         jsr   compare
+         !byte $BD,$89,$C0,$A9,WILDCARD,$8D,WILDCARD,WILDCARD,$20
+.bcsexit6
+         bcs   .exit
+.page8
+         lda   $D109,x
+.adj
+         adc   #$D1
+         tax
+.cmp6
+         lda   #$D1
+         pha
+         ldy   #3
+         jsr   compare
+         !byte $A9,$1C,$8D
+         pla
+         bcs   .exit
+
+.yes
+         sta   gDisplayBytes
+         lda   #s_sierra
+         jsr   PrintByID
+.page9
+         lda   $D103,x
+         sta   .load+1
+.page10
+         lda   $D104,x
+         sta   .load+2
+
+         bit   gMode
+         bpl   .exit
+         bvc   .exit
+         lda   #s_restart
+         jsr   PrintByID
+         inc   .foundsierra
+         lda   VPOS
+         pha
+         lda   #1
+         sta   VPOS
+         lda   #s_progbar
+         jsr   PrintByID
+         pla
+         sta   VPOS
+         jsr   $FC22
+         jsr   ResetProgress
+         jsr   IncProgress
+         ldx   #$FF
+         txs
+         jmp   ReadWithRWTS
+.exit
+}

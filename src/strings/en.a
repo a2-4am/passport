@@ -83,7 +83,8 @@ s_encoded53 =  $40
 s_specdel =    $41
 s_bytrack =    $42
 s_a5count =    $43
-STRINGCOUNT =  $44
+s_restart =    $44
+STRINGCOUNT =  $45
 
 !zone {
 StringTable
@@ -155,6 +156,7 @@ StringTable
          !word .specdel
          !word .bytrack
          !word .a5count
+         !word .restart
 ;
 ; Text can contain substitution strings, which
 ; are replaced by current values at runtime. Each
@@ -180,7 +182,7 @@ StringTable
 ; can be set directly before calling PrintByID.
 ;
 .header
-         !text "Passport by 4am               2017-01-23",00
+         !text "Passport by 4am               2017-01-25",00
 .mainmenu
          !text "________________________________________",$8D,$8D,$8D,$8D,$8D,$8D,$8D
          !text "              "
@@ -401,4 +403,6 @@ StringTable
          !text "T%t,S%0 RWTS changes based on track",$8D,$00
 .a5count
          !text "T%t,S%0 Found A5 nibble count",$8D,$00
+.restart
+         !text "Restarting scan",$8D,$00
 }

@@ -709,6 +709,7 @@ _applyToAll
          !source "patchers/rwtsswapmecc.a"
          !source "patchers/protecteddos.a"
          !source "patchers/fbff.a"
+         !source "patchers/sierra.a"
 
          lda   gPatchCount
          beq   .nopatches
