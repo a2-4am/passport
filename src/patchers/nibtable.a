@@ -4,14 +4,15 @@
 ; nibble-to-byte translation
 ; e.g. Travels with Za-Zoom
 ;-------------------------------
+!zone {
 _nibtable
-         jmp   checkread
+         jmp   .checkread
 
-readdata
-         !byte 00,01
-         !byte $98,$99,02,03,$9C,04,05,06
-         !byte $A0,$A1,$A2,$A3,$A4,$A5,07,08
-         !byte $A8,$A9,$AA,09,$0A,$0B,$0C,$0D
+.readdata
+         !byte $00,$01
+         !byte $98,$99,$02,$03,$9C,$04,$05,$06
+         !byte $A0,$A1,$A2,$A3,$A4,$A5,$07,$08
+         !byte $A8,$A9,$AA,$09,$0A,$0B,$0C,$0D
          !byte $B0,$B1,$0E,$0F,$10,$11,$12,$13
          !byte $B8,$14,$15,$16,$17,$18,$19,$1A
          !byte $C0,$C1,$C2,$C3,$C4,$C5,$C6,$C7
@@ -23,7 +24,7 @@ readdata
          !byte $F0,$F1,$33,$34,$35,$36,$37,$38
          !byte $F8,$39,$3A,$3B,$3C,$3D,$3E,$3F
 
-writedata
+.writedata
          !byte $96,$97,$9A,$9B,$9D,$9E,$9F,$A6
          !byte $A7,$AB,$AC,$AD,$AE,$AF,$B2,$B3
          !byte $B4,$B5,$B6,$B7,$B9,$BA,$BB,$BC
@@ -33,104 +34,105 @@ writedata
          !byte $ED,$EE,$EF,$F2,$F3,$F4,$F5,$F6
          !byte $F7,$F9,$FA,$FB,$FC,$FD,$FE,$FF
 
-checkread
+.checkread
          lda   gIsRWTS    ; if DOS 3.3 RWTS
-         bne   nibtable_exit
+         bne   .exit
          lda   #$02
          ldx   #$6D
          ldy   #$03
          jsr   compare    ; and T00,S02,$6D ==
          !byte $BD,$29,$BA
-         bcs   checkwrite
+         bcs   .checkwrite
          lda   #$02
          ldx   #$82
          ldy   #$03
          jsr   compare    ; and T00,S02,$82 ==
          !byte $BD,$29,$BA
-         bcs   checkwrite
+         bcs   .checkwrite
          lda   #$02
          ldx   #$95
          ldy   #$03
          jsr   compare    ; and T00,S02,$95 ==
          !byte $BD,$29,$BA
-         bcs   checkwrite
-         jsr   fixwrite
-checkwrite
+         bcs   .checkwrite
+         jsr   .fixwrite
+.checkwrite
          lda   #$03
          ldx   #$09
          ldy   #$03
          jsr   compare    ; if T00,S03,$09 ==
-         !byte $59,00,$BA
-         bcs   nibtable_exit
+         !byte $59,$00,$BA
+         bcs   .exit
          lda   #$03
          ldx   #$1A
          ldy   #$03
          jsr   compare    ; and T00,S03,$1A ==
-         !byte $59,00,$BA
-         bcs   nibtable_exit
+         !byte $59,$00,$BA
+         bcs   .exit
          lda   #$03
          ldx   #$2A
          ldy   #$03
          jsr   compare    ; and T00,S03,$2A ==
-         !byte $D9,00,$BA
-         bcs   nibtable_exit
-         jsr   fixread
-nibtable_exit
-         jmp   nibtable_exit2
+         !byte $D9,$00,$BA
+         bcs   .exit
+         jsr   .fixread
+.exit
+         jmp   .exit2
 
-fixread
+.fixread
          lda   #$00
          sta   nibsrcindex
          lda   #$96
          sta   nibdestindex
-nibtable_read
+.read
          ldx   nibsrcindex
-         lda   readdata,x
-         sta   nibcmpr
-         sta   nibmodr
+         lda   .readdata,x
+         sta   .nibcmpr
+         sta   .nibmodr
          lda   #$04
          ldx   nibdestindex
          ldy   #$01
          jsr   compare
-nibcmpr  !byte $FF
-         bcc   nomodr
+.nibcmpr !byte $FF
+         bcc   .nomodr
          lda   #$04
          ldx   nibdestindex
          ldy   #$01
          jsr   modify
-nibmodr  !byte $FF
-nomodr
+.nibmodr !byte $FF
+.nomodr
          inc   nibsrcindex
          inc   nibdestindex
-         bne   nibtable_read
+         bne   .read
          rts
 
-fixwrite
+.fixwrite
          lda   #$00
          sta   nibsrcindex
          lda   #$29
          sta   nibdestindex
-nibtable_write
+.write
          ldx   nibsrcindex
-         lda   writedata,x
-         sta   nibcmpw
-         sta   nibmodw
+         lda   .writedata,x
+         sta   .nibcmpw
+         sta   .nibmodw
          lda   #$04
          ldx   nibdestindex
          ldy   #$01
          jsr   compare
-nibcmpw  !byte $FF
-         bcc   nomodw
+.nibcmpw !byte $FF
+         bcc   .nomodw
          lda   #$04
          ldx   nibdestindex
          ldy   #$01
          jsr   modify
-nibmodw  !byte $FF
-nomodw
+.nibmodw !byte $FF
+.nomodw
          inc   nibsrcindex
          inc   nibdestindex
          lda   nibsrcindex
          cmp   #$40
-         bne   nibtable_write
+         bne   .write
          rts
-nibtable_exit2
+.exit2
+}

@@ -10,65 +10,69 @@ DiskIIArray
 ;      all flags clobbered
 ;      DiskIIArray filled with 00 or FF
 ;-------------------------------
+!zone {
 ScanForDiskII
          lda   #$00
          sta   cmp1
          ldx   #$07
-fingerprint
+.fingerprint
          txa
          ora   #$C0
          sta   cmp1+1
          ldy   #$01
          lda   (cmp1),y
          cmp   #$20
-         bne   slots_next
+         bne   .next
          ldy   #$03
          lda   (cmp1),y
-         bne   slots_next
+         bne   .next
          ldy   #$05
          lda   (cmp1),y
          cmp   #$03
-         bne   slots_next
+         bne   .next
          ldy   #$FF
          lda   (cmp1),y
-         bne   slots_next
+         bne   .next
          tya
          sta   DiskIIArray-1,x
-slots_next
+.next
          dex
-         bne   fingerprint
+         bne   .fingerprint
          rts
+}
 
 ;-------------------------------
 ; NextSlot
 ;-------------------------------
+!zone {
 NextSlot
          lda   DRIVE
          cmp   #$31
-         bne   incslot
+         bne   .incslot
          lda   #$32
          sta   DRIVE
-         bne   slots_done       ; unconditional branch
-incslot
+         bne   .done      ; unconditional branch
+.incslot
          lda   #$31
          sta   DRIVE
          inc   SLOT
          lda   SLOT
          cmp   #$38
-         bne   nowrap
+         bne   .nowrap
          lda   #$31
          sta   SLOT
-nowrap
+.nowrap
          sec
          sbc   #$30
          tax
          lda   DiskIIArray-1,x
-         beq   incslot
-slots_done
+         beq   .incslot
+.done
          lda   SLOT
          cmp   #$36
-         bne   reallydone
+         bne   .reallydone
          lda   #$32
          sta   DRIVE
-reallydone
+.reallydone
          rts
+}

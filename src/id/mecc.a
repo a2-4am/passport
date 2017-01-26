@@ -16,9 +16,9 @@ IDMECC
          ldx   #$00
          ldy   #$17
          jsr   compare
-         !byte 01,$4C,$1A,08,$17,$0F,00,00
-         !byte $0D,$0B,09,07,05,03,01,$0E
-         !byte $0C,$0A,08,06,04,02,$0F
+         !byte $01,$4C,$1A,$08,$17,$0F,$00,$00
+         !byte $0D,$0B,$09,$07,$05,$03,$01,$0E
+         !byte $0C,$0A,$08,$06,$04,$02,$0F
          rts
 
 ;-------------------------------
@@ -31,6 +31,7 @@ IDMECC
 ;      all other flags clobbered
 ;      all registers clobbered
 ;-------------------------------
+!zone {
 IDMECCM8
          lda   #$00
          sta   gTrack
@@ -42,7 +43,7 @@ IDMECCM8
          sta   gAddress+1
          jsr   ReadSector
          bcc   +
-mecc_no1
+.no
          rts
 +
          lda   #$0B
@@ -50,34 +51,34 @@ mecc_no1
          ldy   #$06
          jsr   compare    ; IF T00,S0B,$02 ==
          !byte $BD,$8C,$C0,$10,$FB,$C9
-         bcs   mecc_no1
+         bcs   .no
          lda   #$0B
          ldx   #$09
          ldy   #$09
          jsr   compare    ; AND T00,S0B,$09 ==
          !byte $D0,$EF,$EA,$BD,$8C,$C0,$10,$FB
          !byte $C9
-         bcs   mecc_no1
+         bcs   .no
          lda   #$0B
          ldx   #$13
          ldy   #$0A
          jsr   compare    ; AND T00,S0B,$13 ==
-         !byte $D0,$E5,$A0,03,$BD,$8C,$C0,$10
+         !byte $D0,$E5,$A0,$03,$BD,$8C,$C0,$10
          !byte $FB,$C9
-         bcs   mecc_no1
+         bcs   .no
          lda   #$0B
          ldx   #$89
          ldy   #$06
          jsr   compare    ; AND T00,S0B,$89 ==
          !byte $BD,$8C,$C0,$10,$FB,$C9
-         bcs   mecc_no1
+         bcs   .no
          lda   #$0B
          ldx   #$90
          ldy   #$09
          jsr   compare    ; AND T00,S0B,$90 ==
          !byte $D0,$F4,$EA,$BD,$8C,$C0,$10,$FB
          !byte $C9
-         bcs   mecc_no1
+         bcs   .no
          lda   #$0B
          ldx   #$9A
          ldy   #$09
@@ -125,6 +126,7 @@ foundmeccm8
          pla
          plp
          jmp   ADStyle
+}
 
 ;-------------------------------
 ; IDMECCM7
@@ -136,6 +138,7 @@ foundmeccm8
 ;      all other flags clobbered
 ;      all registers clobbered
 ;-------------------------------
+!zone {
 IDMECCM7
          lda   #$00
          sta   gTrack
@@ -147,7 +150,7 @@ IDMECCM7
          sta   gAddress+1
          jsr   ReadSector
          bcc   +
-mecc_no2
+.no
          rts
 +
          lda   #$07
@@ -155,31 +158,31 @@ mecc_no2
          ldy   #$06
          jsr   compare    ; IF T00,S07,$7D ==
          !byte $BD,$8C,$C0,$10,$FB,$C9
-         bcs   mecc_no2
+         bcs   .no
          lda   #$07
          ldx   #$84
          ldy   #$09
          jsr   compare    ; AND T00,S07,$84 ==
          !byte $D0,$F0,$EA,$BD,$8C,$C0,$10,$FB,$C9
-         bcs   mecc_no2
+         bcs   .no
          lda   #$07
          ldx   #$8E
          ldy   #$0A
          jsr   compare    ; and T00,S07,$8E ==
-         !byte $D0,$F2,$A0,03,$BD,$8C,$C0,$10,$FB,$C9
-         bcs   mecc_no2
+         !byte $D0,$F2,$A0,$03,$BD,$8C,$C0,$10,$FB,$C9
+         bcs   .no
          lda   #$07
          ldx   #$0F
          ldy   #$06
          jsr   compare    ; and T00,S07,$0F ==
          !byte $BD,$8C,$C0,$10,$FB,$49
-         bcs   mecc_no2
+         bcs   .no
          lda   #$07
          ldx   #$18
          ldy   #$07
          jsr   compare    ; and T00,S07,$18 ==
          !byte $EA,$BD,$8C,$C0,$10,$FB,$C9
-         bcs   mecc_no2
+         bcs   .no
          lda   #$07
          ldx   #$20
          ldy   #$0A
@@ -228,3 +231,4 @@ foundmeccm7
          pla
          plp
          jmp   ADStyle
+}

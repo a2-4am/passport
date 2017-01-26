@@ -4,15 +4,16 @@
 ; address prologue
 ; e.g. Game Frame One, Game Frame Two
 ;-------------------------------
+!zone {
 _a5count
          lda   gIsPascal  ; only ever seen this protection
-         bne   a5count_exit      ; on Pascal disks
+         bne   .exit      ; on Pascal disks
 
          ldy   #$0A
          jsr   SearchTrack
          !byte $07,$E6,$02,$D0,$03,$4C,$A5,$00
          !byte $C9,$A5
-         bcs   a5count_exit
+         bcs   .exit
          sta   gDisplayBytes
          pha
          lda   #s_a5count
@@ -25,4 +26,5 @@ _a5count
          ldy   #$02
          jsr   modify
          !byte $D0,$7B
-a5count_exit
+.exit
+}

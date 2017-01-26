@@ -12,6 +12,7 @@
 ; track because there is no fixed
 ; position for it to start.
 ;-------------------------------
+!zone {
 _c9ff
          ldy   #$1A
          jsr   SearchTrack
@@ -19,7 +20,7 @@ _c9ff
          !byte $C9,$FF,$D0,$0C,$EA,$BD,$8C,$C0
          !byte $10,$FB,$C9,$FF,$D0,$02,$18,$60
          !byte $38,$60
-         bcs   c9ff_exit
+         bcs   .exit
          sta   gDisplayBytes
          pha
          txa
@@ -40,4 +41,5 @@ _c9ff
          ldy   #$01
          jsr   modify
          !byte $AA
-c9ff_exit
+.exit
+}

@@ -1,20 +1,22 @@
 KEY      =     $C000
 STROBE   =     $C010
 
+!zone {
 WaitForKey
          bit   STROBE
-k        lda   KEY
-         bpl   k
+.k       lda   KEY
+         bpl   .k
          bit   STROBE
          cmp   #"*"
-         bne   noast
+         bne   .noast
          jsr   TEXT
          lda   #s_reset
          jsr   PrintByID
          jmp   $FF59
-noast
+.noast
          cmp   #$E1
          bcc   +
          and   #$DF       ; force uppercase
 +
          rts
+}

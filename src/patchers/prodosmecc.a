@@ -4,14 +4,15 @@
 ; ProDOS-based MECC disks
 ; [thanks LoGo]
 ;-------------------------------
+!zone {
 _prodosmecc
          lda   gIsProDOS
          beq   +
-         jmp   prodosmecc_exit
+         jmp   .exit
 +
          ldy   #$0E
          jsr   SearchTrack
-         !byte $50,$54,$58,$5C,$60,$64,$68,00
+         !byte $50,$54,$58,$5C,$60,$64,$68,$00
          !byte $20,$10,$30,$97,$AA,$EB
          bcs   +
          sta   gDisplayBytes
@@ -36,9 +37,9 @@ _prodosmecc
 +
          ldy   #$15
          jsr   SearchTrack
-         !byte $AD,$C4,$D1,$CD,$C8,$D4,08,$2C
-         !byte $81,$C0,$28,$D0,06,$C9,$DE,$F0
-         !byte 02,$18,$24,$38,$60
+         !byte $AD,$C4,$D1,$CD,$C8,$D4,$08,$2C
+         !byte $81,$C0,$28,$D0,$06,$C9,$DE,$F0
+         !byte $02,$18,$24,$38,$60
          bcs   +
          sta   gDisplayBytes
          inx
@@ -73,9 +74,9 @@ _prodosmecc
 
 ; variation seen in e.g. A-232 Spelling Press
 
-         !byte $AD,$C4,$D1,$CD,$C8,$D4,08,$2C
-         !byte $81,$C0,$28,$D0,09,$8D,$97,$97
-         !byte $C9,$DE,$F0,02,$18,$24,$38,$60
+         !byte $AD,$C4,$D1,$CD,$C8,$D4,$08,$2C
+         !byte $81,$C0,$28,$D0,$09,$8D,$97,$97
+         !byte $C9,$DE,$F0,$02,$18,$24,$38,$60
          bcs   +
          sta   gDisplayBytes
          inx
@@ -110,7 +111,7 @@ _prodosmecc
 +
          ldy   #$0C
          jsr   SearchTrack
-         !byte $30,$A2,$20,00,$BF,$80,$97,$97,$B0,$98,$38,$60
+         !byte $30,$A2,$20,$00,$BF,$80,$97,$97,$B0,$98,$38,$60
          bcs   +
          inx
          inx
@@ -133,14 +134,15 @@ _prodosmecc
          ldy   #$0B
          jsr   SearchTrack
          !byte $30,$91,$38,$60,00,$20,00,03,00,03,00
-         bcs   prodosmecc_exit
+         bcs   .exit
          inx
          inx
          ldy   #$01
          jsr   compare
          !byte $38
-         bcs   prodosmecc_exit
+         bcs   .exit
          ldy   #$01
          jsr   modify
          !byte $18
-prodosmecc_exit
+.exit
+}

@@ -113,7 +113,7 @@ FM       lda   $2000,x
          jmp   OneTimeSetup
 
          !pseudopc *+$4800 {
-
+!zone
 ; use localized strings based on current language
 
          !if LANG=ENGLISH {
@@ -159,15 +159,15 @@ OneTimeSetup
          jsr   SaveProDOS
          ldx   MACHINEID
          cpx   #$EA
-         bne   slotscan
+         bne   .slotscan
          lda   #$DF
          sta   kForceLower
-slotscan
+.slotscan
          jsr   ScanForDiskII
          lda   DiskIIArray+5
-         bne   founds6
+         bne   .founds6
          jmp   FatalNoSlot6
-founds6
+.founds6
          jsr   LoadPrefs  ; load preferences (if available)
          bcc   ResetVector
          jsr   SavePrefs  ; save preferences (if possible)
@@ -195,13 +195,13 @@ MainMenu
          jsr   PrintByID
          lda   #s_mainmenu
          jsr   PrintByID
-:getkey
+.getkey
          jsr   WaitForKey
          cmp   #$9B
-         beq   jmptoexit
+         beq   .jmptoexit
          cmp   #k_quit
          bne   +
-jmptoexit
+.jmptoexit
          jmp   CleanExit
 +
          cmp   #k_slot
@@ -222,7 +222,7 @@ jmptoexit
          bne   Action     ; unconditional branch
 +
          cmp   #k_crack
-         bne   getkey
+         bne   .getkey
          lda   #%11000000
 
 ; note: execution falls through here
@@ -264,9 +264,9 @@ Action
          ldy   #<gRWTSParams ; call universal RWTS to see
          lda   #>gRWTSParams ; if T00,S00 is readable
          jsr   $BD00      ; (only care about the return code)
-         bcs   fatalt00s00
-         jmp   checkt00s00
-:fatalt00s00
+         bcs   .fatalt00s00
+         jmp   .checkt00s00
+.fatalt00s00
          lda   #$F0
          sta   $B959
          lda   #$05
@@ -274,7 +274,7 @@ Action
          ldy   #<gRWTSParams
          lda   #>gRWTSParams
          jsr   $BD00
-         bcs   reallyfatal
+         bcs   .reallyfatal
 ;
 ; Bad emulator detected (disk controller presents nibbles
 ; immediately instead of based on cycle count). Patch the
@@ -284,14 +284,14 @@ Action
          sta   _B959
          lda   #$05
          sta   _B95A
-         bne   checkt00s00  ; unconditional branch
-reallyfatal
+         bne   .checkt00s00 ; unconditional branch
+.reallyfatal
          lda   #s_fail
          jsr   PrintByID
          lda   #s_fatal0000
          jsr   PrintByID
          jmp   TheEnd
-checkt00s00
+.checkt00s00
          jmp   CheckT00S00 ; /src/id/inspect0
 
 
@@ -315,20 +315,20 @@ ADStyle
 ; before we start.
 ;
          jsr   xHeredityDog
-         bcs   noDog
+         bcs   .noDog
          lda   #s_bb00
          jsr   PrintByID
-noDog
+.noDog
          jsr   xSunburst
-         bcs   noSun
+         bcs   .noSun
          lda   #s_sunburst
          jsr   PrintByID
-noSun
+.noSun
          jsr   xOptimumRes
-         bcs   noOptimum
+         bcs   .noOptimum
          lda   #s_optimum
          jsr   PrintByID
-noOptimum
+.noOptimum
          jsr   xB660
          jsr   xB4BB
          jmp   ReadWithRWTS
@@ -348,7 +348,7 @@ ReadWithRWTS
          sta   checksector+1
          lda   #>T22S0F
          sta   checksector+2
-read
+.read
          lda   KEY
          bpl   checksector
          jmp   Cancel
@@ -372,7 +372,7 @@ checksector
 ; on markers in the bootloader.
 ;
          cmp   #$80
-         beq   optional
+         beq   .optional
 ;
 ; If we're in the middle of a track, try switching to the
 ; universal RWTS and see if that helps. (Many disks contain
@@ -382,7 +382,7 @@ checksector
 ;
          lda   gSector
          cmp   #$0F
-         bne   tryuniversal
+         bne   .tryuniversal
 ;
 ; We just got to this track, so check for a variety
 ; of whole-track conditions
@@ -390,52 +390,52 @@ checksector
 ; 1) unformatted track
 ;
          jsr   IsUnformatted
-         bcs   checkf7
+         bcs   .checkf7
          lda   #s_unformat
          jsr   PrintByID
-         jmp   skiptrack
+         jmp   .skiptrack
 ;
 ; 2) $F7 protection track (F7F6EFEAAB nibble sequence)
 ;
-checkf7
+.checkf7
          jsr   IsF7
-         bcs   checksync
+         bcs   .checksync
          lda   #s_f7
          jsr   PrintByID
-         jmp   skiptrack
+         jmp   .skiptrack
 ;
 ; 3) nibble count track (mostly $FF sync bytes)
 ;
-:checksync
+.checksync
          jsr   IsSyncBytes
-         bcs   tryuniversal
+         bcs   .tryuniversal
          lda   #s_sync
          jsr   PrintByID
 
 ; note: execution falls through here
 
-skiptrack
+.skiptrack
          lda   #$00       ; skip rest of track
          jsr   ChangeSector
          lda   checksector+1
          sec
          sbc   #$0F
          sta   checksector+1
-         bcs   notrackdec
+         bcs   .notrackdec
          dec   checksector+2
-notrackdec
+.notrackdec
          jmp   nextsector
 
-:tryuniversal
+.tryuniversal
          lda   gTriedUniv ; have we tried the universal RWTS?
-         beq   fatal      ; yes, so read error is fatal
+         beq   .fatal     ; yes, so read error is fatal
          jsr   SwitchToUniv ; no, switch it in now
-         jmp   read       ; and re-read this sector
+         jmp   .read      ; and re-read this sector
 
-fatal    pla              ; if we get to here, we've
+.fatal   pla              ; if we get to here, we've
          jmp   FatalError ; decided the read error is fatal
 
-optional
+.optional
          lda   #s_optbad  ; say we're skipping this
          jsr   PrintByID  ; optional sector
 
@@ -446,17 +446,17 @@ nextsector
          dec   checksector+1
          lda   checksector+1
          cmp   #$FF
-         bne   nodec
+         bne   .nodec
          dec   checksector+2
-nodec
+.nodec
          lda   gSector
          sec
          sbc   #$01
          jsr   ChangeSector
          lda   gSector
-         bmi   prevtrack
-         jmp   read
-prevtrack
+         bmi   .prevtrack
+         jmp   .read
+.prevtrack
          lda   #$0F
          jsr   ChangeSector
          lda   gTrack
@@ -465,27 +465,27 @@ prevtrack
          jsr   ChangeTrack
          jsr   IncProgress
          lda   gTrack
-         bmi   pass
+         bmi   .pass
          cmp   gLastTrack
-         bcc   pass
-         jmp   read
-pass
+         bcc   .pass
+         jmp   .read
+.pass
          bit   gMode
-         bmi   passwrite
+         bmi   .passwrite
          lda   #s_pass
-         bne   passprint  ; always branches
-passwrite
-         bvs   ppasscrack
+         bne   .passprint ; always branches
+.passwrite
+         bvs   .passcrack
          lda   #s_passdemuf
-         bne   passprint  ; always branches
-ppasscrack
+         bne   .passprint ; always branches
+.passcrack
          lda   gPatchCount
-         beq   ppasscrack0
+         beq   .passcrack0
          lda   #s_passcrack
          !byte $2C        ; hide next LDA
-ppasscrack0
+.passcrack0
          lda   #s_passcrack0
-passprint
+.passprint
          jsr   PrintByID
          jmp   TheEnd
 
@@ -523,14 +523,14 @@ FatalError
          jsr   PrintByID
          lda   gTrack
          cmp   #$22
-         beq   failont22
+         beq   .failont22
          jmp   TheEnd
-failont22
+.failont22
          lda   gSector
          cmp   #$0F
-         beq   failont22s0f
+         beq   .failont22s0f
          jmp   TheEnd
-failont22s0f
+.failont22s0f
          lda   #s_fatal220f
          jsr   PrintByID
 
@@ -548,14 +548,14 @@ TheEnd
 CleanExit
          jsr   SwapProDOS
          lda   gChangedPrefs
-         bne   doquit
+         bne   .doquit
          jsr   SavePrefs
-doquit
+.doquit
          jsr   MLI
          !byte $65
-         !word quitparm
-quitparm
-         !byte 04,00,00,00,00,00,00
+         !word .quitparm
+.quitparm
+         !byte $04,$00,$00,$00,$00,$00,$00
 
 FatalNoSlot6
          lda   #s_noslot6
@@ -589,32 +589,32 @@ WriteTrack
 WriteTrackNA              ; entry point used by Special Delivery tracer
                           ; to write track with "N"o "A"nalysis
          bit   gMode
-         bpl   pdone      ; verify mode -> no write
+         bpl   .done      ; verify mode -> no write
          lda   gSaidWriting
-         beq   write
+         beq   .write
          lda   #s_writing ; only print "writing to" message once
          jsr   PrintByID
          lda   #TRUE
          sta   gSaidWriting
-write
+.write
          jsr   WriteTrackMLI
-         bcc   pdone
+         bcc   .done
          sta   gDisplayBytes ; for use in error messages, if any
          cmp   #MLI_IOERR
-         beq   ioerr
+         beq   .ioerr
          cmp   #MLI_NODEV
-         beq   nodev
+         beq   .nodev
          cmp   #MLI_WRITEPROT
-         beq   pwriteprot
+         beq   .writeprot
          lda   #s_othermli
          !byte $2C      ; hide next LDA
-ioerr
+.ioerr
          lda   #s_writeioerr
          !byte $2C      ; hide next LDA
-nodev
+.nodev
          lda   #s_writenodev
          !byte $2C      ; hide next LDA
-pwriteprot
+.writeprot
          lda   #s_writeprot
          pha
          lda   #s_writeerr
@@ -622,7 +622,7 @@ pwriteprot
          pla
          jsr   PrintByID
          jmp   TheEnd
-pdone
+.done
          rts
 
 ;-------------------------------
@@ -708,12 +708,14 @@ _applyToAll
          !source "patchers/prodosmecc.a"
          !source "patchers/rwtsswapmecc.a"
          !source "patchers/protecteddos.a"
+         !source "patchers/fbff.a"
+         !source "patchers/sierra.a"
 
          lda   gPatchCount
-         beq   nopatches
+         beq   .nopatches
          clc
          !byte $24        ; hide next SEC
-nopatches
+.nopatches
          sec              ; set carry if nothing happened
          rts
 

@@ -3,15 +3,17 @@
 ; post-boot RWTS swapper in MECC
 ; disks
 ;-------------------------------
+!zone {
 _rwtsswapmecc
          ldy   #$11
          jsr   SearchTrack
          !byte $0A,$18,$69,$FF,$A8,$8D,$8B,$C0
          !byte $8D,$8B,$C0,$B9,$97,$97,$8D,$AC
          !byte $D5
-         bcs   rwtsswapmecc_exit
+         bcs   .exit
          sta   gDisplayBytes
          ldy   #$03
          jsr   modify
-         !byte $A9,00,$24
-rwtsswapmecc_exit
+         !byte $A9,$00,$24
+.exit
+}

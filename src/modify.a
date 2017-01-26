@@ -13,6 +13,7 @@
 ;      all registers clobbered
 ;      all flags clobbered
 ;-------------------------------
+!zone {
 modify
          sta   gDisplayBytes
          clc
@@ -28,9 +29,9 @@ modify
          tya
          clc
          adc   modsrc
-         bcc   noinc
+         bcc   .noinc
          inx
-noinc
+.noinc
          sta   tmp
          txa
          pha
@@ -38,36 +39,37 @@ noinc
          pha
          sty   modtmp
          bit   gMode
-         bpl   exitnomod ; verify mode -> no modify
-         bvc   exitnomod ; demuffin mode -> no modify
+         bpl   .exitnomod ; verify mode -> no modify
+         bvc   .exitnomod ; demuffin mode -> no modify
          lda   #s_modify
          jsr   PrintByID
          ldy   #0
-dest
+.dest
          lda   (moddest),y
          jsr   PrintByte
          iny
          cpy   modtmp
-         bne   dest
+         bne   .dest
          lda   #s_modifyto
          jsr   PrintByID
          ldy   #0
-src
+.src
          iny
          lda   (modsrc),y
          jsr   PrintByte
          cpy   modtmp
-         bne   src
+         bne   .src
          lda   #$8D
          jsr   PrintA
-mod
+.mod
          lda   (modsrc),y
          dey
-         bmi   modify_exit
+         bmi   .exit
          sta   (moddest),y
          clv
-         bvc   mod        ; unconditional branch
-modify_exit
+         bvc   .mod       ; unconditional branch
+.exit
          inc   gPatchCount
-exitnomod
+.exitnomod
          rts
+}

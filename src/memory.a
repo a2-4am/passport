@@ -5,19 +5,21 @@
 ;      Y = number of pages to copy
 ; out: all flags and registers clobbered
 ;-------------------------------
+!zone {
 CopyMemory
-         sta   source1+2
-         stx   dest1+2
+         sta   .source+2
+         stx   .dest+2
          ldx   #$00
-source1  lda   $FF00,x
-dest1    sta   $FF00,x
+.source  lda   $FF00,x
+.dest    sta   $FF00,x
          inx
-         bne   source1
-         inc   source1+2
-         inc   dest1+2
+         bne   .source
+         inc   .source+2
+         inc   .dest+2
          dey
-         bne   source1
+         bne   .source
          rts
+}
 
 ;-------------------------------
 ; ClearMemory
@@ -26,17 +28,19 @@ dest1    sta   $FF00,x
 ;      Y = number of pages
 ; out: all flags and registers clobbered
 ;-------------------------------
+!zone {
 ClearMemory
-         sta   dest2+2
+         sta   .dest+2
          txa
          ldx   #$00
-dest2    sta   $FF00,x
+.dest    sta   $FF00,x
          inx
-         bne   dest2
-         inc   dest2+2
+         bne   .dest
+         inc   .dest+2
          dey
-         bne   dest2
+         bne   .dest
          rts
+}
 
 ;-------------------------------
 ; ClearTSBuffer
@@ -58,27 +62,29 @@ ClearTSBuffer
 ;       Y = number of pages to copy
 ; out:  all flags and registers clobbered
 ;-------------------------------
+!zone {
 SwapMemory
-         sta   source11+2
-         sta   source22+2
-         stx   dest11+2
-         stx   dest22+2
+         sta   .source1+2
+         sta   .source2+2
+         stx   .dest1+2
+         stx   .dest2+2
          ldx   #$00
-source11 lda   $FF00,x
+.source1 lda   $FF00,x
          pha
-dest11   lda   $FF00,x
-source22 sta   $FF00,x
+.dest1   lda   $FF00,x
+.source2 sta   $FF00,x
          pla
-dest22   sta   $FF00,x
+.dest2   sta   $FF00,x
          inx
-         bne   source11
-         inc   source11+2
-         inc   source22+2
-         inc   dest11+2
-         inc   dest22+2
+         bne   .source1
+         inc   .source1+2
+         inc   .source2+2
+         inc   .dest1+2
+         inc   .dest2+2
          dey
-         bne   source11
+         bne   .source1
          rts
+}
 
 ;-------------------------------
 ; SaveProDOS
@@ -87,6 +93,7 @@ dest22   sta   $FF00,x
 ; in:  none
 ; out: all flags and registers clobbered
 ;-------------------------------
+!zone {
 SaveProDOS
          lda   #$00
          ldx   #$40
@@ -100,8 +107,9 @@ SaveProDOS
          ldx   #$42
          ldy   #$01
          jsr   CopyMemory
-memory_exit
+.exit
          rts
+}
 
 ;-------------------------------
 ; SwapProDOS

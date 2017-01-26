@@ -37,39 +37,41 @@ endread
 ; nibble is stored in zp$4E and varies based on track
 ; and sector.
 ;
+!zone {
 _protread
          lda   gTrack     ; T02,S05+ use "protected" mode
          cmp   #$03       ; (altered data prologue and
-         bcs   protected  ; nibble translate table)
+         bcs   .protected ; nibble translate table)
          cmp   #$02       ; T00,S00 - T02,S04 use
-         bcc   standard   ; "standard" mode
+         bcc   .standard  ; "standard" mode
          lda   gSector
          cmp   #$05
-         bcs   protected
-standard
+         bcs   .protected
+.standard
          lda   #$9B
          sta   $BF2C
-         bne   go         ; unconditional branch
-protected
+         bne   .go        ; unconditional branch
+.protected
          lda   #$B5
          sta   $4E
          lda   #$D5
          sta   $BF2C      ; execution falls through here
-go
+.go
          lda   #<gRWTSParams
          ldy   #>gRWTSParams
          jsr   $BA00      ; note non-standard entry point
          bcc   endprotread
          lda   gOnAClearDayYouCanReadForever
-         beq   go
+         beq   .go
 endprotread
          rts
+}
 
 gRWTSParams               ; used to read each sector
-         !byte 01,$60,01,00
-gTrack   !byte 00
-gSector  !byte 00
+         !byte $01,$60,$01,$00
+gTrack   !byte $00
+gSector  !byte $00
          !word dct
 gAddress !word $1F00
-         !byte 00,00,01,00,$FE,$60,01,00,00
-dct      !byte 00,01,$EF,$D8,00
+         !byte $00,$00,$01,$00,$FE,$60,$01,$00,$00
+dct      !byte $00,$01,$EF,$D8,$00

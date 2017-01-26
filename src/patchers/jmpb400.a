@@ -4,18 +4,19 @@
 ; $B400 instead of $9D84
 ; e.g. Decimal Discovery
 ;-------------------------------
+!zone {
 _jmpb400
          lda   gIsBoot0   ; if DOS 3.3 boot0 loader
-         bne   jmpb400_exit
+         bne   .exit
          lda   gIsBoot1   ; and DOS 3.3 boot1 loader
-         bne   jmpb400_exit
+         bne   .exit
          lda   #$01
          sta   gDisplayBytes
          ldx   #$47
          ldy   #$03
          jsr   compare    ; and T00,S01,$47 ==
-         !byte $4C,00,$B4
-         bcs   jmpb400_exit
+         !byte $4C,$00,$B4
+         bcs   .exit
          lda   #s_jmpb400
          jsr   PrintByID
          lda   #$01
@@ -23,4 +24,5 @@ _jmpb400
          ldy   #$02
          jsr   modify     ; then set T00,S01,$48 =
          !byte $84,$9D
-jmpb400_exit
+.exit
+}

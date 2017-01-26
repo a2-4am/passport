@@ -8,6 +8,7 @@
 ; out C clear if sequence was found
 ;     C set if sequence was not found
 ;-------------------------------
+!zone {
 IsF7
          lda   $C0E9
          lda   #$00
@@ -19,34 +20,34 @@ IsF7
          bpl   -
          cmp   #$F7
          beq   +
-restart  iny
+.restart iny
          bne   -
          dec   nibcount
          bne   -
          beq   F7fail
--
-+        lda   $C0EC
++
+-        lda   $C0EC
          bpl   -
          cmp   #$F6
-         bne   restart
+         bne   .restart
 -        lda   $C0EC
          bpl   -
          cmp   #$EF
-         bne   restart
+         bne   .restart
 -        lda   $C0EC
          bpl   -
          cmp   #$EE
-         bne   restart
+         bne   .restart
 -        lda   $C0EC
          bpl   -
          cmp   #$AB
-         bne   restart
+         bne   .restart
          clc
          !byte $24        ; hides SEC
 F7fail   sec
          lda   $C0E8
          rts
-
+}
 ;-------------------------------
 ; IsSyncBytes
 ; check if track is mostly $FF bytes
@@ -106,6 +107,7 @@ nibloop  ldx   $C0EC
 ; out: C clear if protection code was found
 ;      C set if protection code was not found
 ;-------------------------------
+!zone {
 xHeredityDog
          lda   $08FE
          clc
@@ -114,27 +116,28 @@ xHeredityDog
          ldx   #$16
          ldy   #$0B
          jsr   CompareMemory
-         !byte $F0,05,$A2,$B2,$4C,$F0,$BB,$BD,$8C,$C0,$A9
+         !byte $F0,$05,$A2,$B2,$4C,$F0,$BB,$BD,$8C,$C0,$A9
          pla
-         bcc   analyze_maybe
-         jmp   no1
+         bcc   .maybe
+         jmp   .no
 
 ; don't check byte at $BB21 because it can vary
 
-analyze_maybe
+.maybe
          ldx   #$22
          ldy   #$3E
          jsr   CompareMemory
-         !byte $8D,00,02,$BD,$8C,$C0,$10,$FB,$C9,$EB,$D0,$F7,$BD,$8C
+         !byte $8D,$00,$02,$BD,$8C,$C0,$10,$FB,$C9,$EB,$D0,$F7,$BD,$8C
          !byte $C0,$10,$FB,$C9,$D5,$D0,$EE,$BD,$8C,$C0,$10,$FB,$C9,$AA,$D0,$E5
-         !byte $A9,$4C,$A0,00,$99,00,$95,$88,$D0,$FA,$CE,$46,$BB,$AD,$46,$BB
-         !byte $C9,07,$D0,$EC,$A9,$18,$8D,$42,$B9,$A9,$0A,$8D,$ED,$B7,$D0,05
-         bcs   no1
-yes1
+         !byte $A9,$4C,$A0,$00,$99,$00,$95,$88,$D0,$FA,$CE,$46,$BB,$AD,$46,$BB
+         !byte $C9,$07,$D0,$EC,$A9,$18,$8D,$42,$B9,$A9,$0A,$8D,$ED,$B7,$D0,$05
+         bcs   .no
+.yes
          lda   #$80
          sta   T00S0A
-no1
+.no
          rts
+}
 
 ;-------------------------------
 ; xSunburst
@@ -146,6 +149,7 @@ no1
 ; out: C clear if Sunburst RWTS was found
 ;      C set otherwise
 ;-------------------------------
+!zone {
 xSunburst
          lda   $08FE
          clc
@@ -156,15 +160,16 @@ xSunburst
          !byte $48,$A5,$2A,$4A,$A8,$B9,$29,$BA
          !byte $8D,$6A,$B9,$8D,$84,$BC,$B9,$34
          !byte $BA,$8D,$FC,$B8,$8D,$5D,$B8,$C0
-         !byte $11,$D0,03,$A9,02,$AC,$A9,$0E
-         !byte $8D,$C0,$BF,$68,$69,00,$48,$AD
-         !byte $78,04,$90,$2B
-         bcs   no2
-yes2
+         !byte $11,$D0,$03,$A9,$02,$AC,$A9,$0E
+         !byte $8D,$C0,$BF,$68,$69,$00,$48,$AD
+         !byte $78,$04,$90,$2B
+         bcs   .no
+.yes
          lda   #$80
          sta   T11S0F
-no2
+.no
          rts
+}
 
 ;-------------------------------
 ; xOptimumRes
@@ -176,26 +181,28 @@ no2
 ; out: C clear if OptimumRes bootloader was found
 ;      C set otherwise
 ;-------------------------------
+!zone {
 xOptimumRes
          lda   #$08
          ldx   #$5D
          ldy   #$0C
          jsr   CompareMemory
-         !byte $68,$85,$F0,$68,$85,$F1,$A0,01
+         !byte $68,$85,$F0,$68,$85,$F1,$A0,$01
          !byte $B1,$F0,$85,$54
-         bcc   yes3
+         bcc   .yes
          lda   #$08
          ldx   #$5D
          ldy   #$0C
          jsr   CompareMemory
-         !byte $68,$85,$A0,$68,$85,$A1,$A0,01
+         !byte $68,$85,$A0,$68,$85,$A1,$A0,$01
          !byte $B1,$A0,$85,$54
-         bcs   no3
-yes3
+         bcs   .no
+.yes
          lda   #$80
          sta   T01S0F
-no3
+.no
          rts
+}
 
 ;-------------------------------
 ; xB4BB
@@ -207,6 +214,7 @@ no3
 ; out: C clear if RWTS was modified in this routine
 ;      C set otherwise
 ;-------------------------------
+!zone {
 xB4BB
          lda   gTrack
          pha
@@ -218,9 +226,9 @@ b4bbcompare
          ldy   #$20
          jsr   CompareMemory
          !byte $D8,$A9,$DF,$48,$A9,$FF,$48,$A9
-         !byte 08,$85,$3D,$85,$43,$A9,$BF,$85
-         !byte $3F,$A9,00,$85,$3C,$85,$42,$E6
-         !byte $42,$A9,$FE,$85,$3E,$A0,00,$AD
+         !byte $08,$85,$3D,$85,$43,$A9,$BF,$85
+         !byte $3F,$A9,$00,$85,$3C,$85,$42,$E6
+         !byte $42,$A9,$FE,$85,$3E,$A0,$00,$AD
          bcs   _b4bbexit
          lda   #$00
          sta   gTrack
@@ -260,6 +268,7 @@ _b4bbexit
          pla
          sta   gTrack
          rts
+}
 
 ;-------------------------------
 ; xB660
@@ -276,18 +285,20 @@ _b4bbexit
 ; out: C clear if $B660 routine was found
 ;      C set otherwise
 ;-------------------------------
+!zone {
 xB660
          lda   #$08
          ldx   #$60
          ldy   #$1A
          jsr   CompareMemory
          !byte $BD,$8C,$C0,$10,$FB,$C9,$AD,$D0
-         !byte $F4,$A9,$F8,$3D,$8C,$C0,$D0,02
+         !byte $F4,$A9,$F8,$3D,$8C,$C0,$D0,$02
          !byte $EA,$EA,$EA,$EA,$BD,$8C,$C0,$2A
-         !byte $30,02
-         bcs   no4
-yes4
+         !byte $30,$02
+         bcs   .no
+.yes
          lda   #$FE
          sta   T00S09
-no4
+.no
          rts
+}

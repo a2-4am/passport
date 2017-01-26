@@ -3,14 +3,15 @@
 ; nibble count in encrypted bootloader
 ; e.g. Video Title Shop, Tomahawk //e
 ;-------------------------------
+!zone {
 _datasoft
          lda   gIsDatasoft ; only ever seen this protection
-         bne   datasoft_exit    ; on Datasoft disks (ID'd earlier)
+         bne   .exit      ; on Datasoft disks (ID'd earlier)
 
          ldy   #$06
          jsr   SearchTrack
          !byte $5D,$D4,$80,$49,00,$19
-         bcs   datasoft_exit
+         bcs   .exit
          sta   gDisplayBytes
          pha
          lda   #s_datasoft
@@ -19,4 +20,5 @@ _datasoft
          ldy   #$01
          jsr   modify
          !byte $C0
-datasoft_exit
+.exit
+}

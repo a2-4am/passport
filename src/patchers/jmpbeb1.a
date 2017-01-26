@@ -6,33 +6,34 @@
 ; NOTE: must be run before RWTS
 ; patchers due to overlapping bytes
 ;-------------------------------
+!zone {
 _jmpbeb1
          lda   gIsRWTS    ; if DOS 3.3 RWTS
-         bne   jmpbeb1_exit
+         bne   .exit
          lda   #$02
          ldx   #$48
          ldy   #$10
          jsr   compare    ; and T00,S03,$48 ==
-         !byte $A0,03,$48,$68,$20,$B9,$B8,$88
+         !byte $A0,$03,$48,$68,$20,$B9,$B8,$88
          !byte $D0,$F8,$4C,$B1,$BE,$EA,$EA,$A9
-         bcs   jmpbeb1_exit
+         bcs   .exit
          lda   #$02
          ldx   #$59
          ldy   #$04
          jsr   compare    ; and T00,S02,$59 ==
          !byte $20,$B8,$B8,$A9
-         bcs   jmpbeb1_exit
+         bcs   .exit
          lda   #$02
          ldx   #$5E
          ldy   #$03
          jsr   compare    ; and T00,S04,$5E ==
          !byte $20,$BB,$B8
-         bcs   jmpbeb1_exit
+         bcs   .exit
          lda   #$02
          ldx   #$49
          ldy   #$01
          jsr   modify     ; then set T00,S02,$49 =
-         !byte 04
+         !byte $04
          lda   #$02
          ldx   #$52
          ldy   #$05
@@ -43,4 +44,5 @@ _jmpbeb1
          ldy   #$01
          jsr   modify     ; and set T00,S02,$5F =
          !byte $B8
-jmpbeb1_exit
+.exit
+}

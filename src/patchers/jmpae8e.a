@@ -4,17 +4,18 @@
 ; for a nibble check
 ; e.g. Alien Addition
 ;-------------------------------
+!zone {
 _jmpae8e
          lda   gIsBoot0   ; if DOS 3.3 boot0 loader
-         bne   jmpae8e_exit
+         bne   .exit
          lda   gIsBoot1   ; and DOS 3.3 boot1 loader
-         bne   jmpae8e_exit
+         bne   .exit
          lda   #$0D
          ldx   #$4D
          ldy   #$03
          jsr   compare    ; and T00,S0D,$4D ==
          !byte $4C,$8E,$AE
-         bcs   jmpae8e_exit
+         bcs   .exit
          lda   #s_jmpae8e
          jsr   PrintByID
          lda   #$0D
@@ -22,4 +23,5 @@ _jmpae8e
          ldy   #$02
          jsr   modify     ; then set T00,S0D,$4E =
          !byte $80,$A1
-jmpae8e_exit
+.exit
+}
