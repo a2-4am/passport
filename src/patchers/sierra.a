@@ -107,6 +107,18 @@ _sierra
          ldy   #$01
          jsr   modify
          !byte $60
++        ldy   #17
+         jsr   SearchTrack
+         !byte $48,$8A,$48,$98,$48,$20,$3D,$9B,$68,$A8,$68,$AA,$68,$28,$6C,$36,$00
+         bcs   +
+         inx
+         inx
+         inx
+         inx
+         inx
+         ldy   #$01
+         jsr   modify
+         !byte $2C
 +        jmp   .exit
 .foundsierra
          !byte $00
