@@ -73,7 +73,5 @@ B8b3     sta   T02,y
          sta   $083F
          sta   $0842
          sta   $0845
-         pla
-         plp
          jmp   $0801
 }

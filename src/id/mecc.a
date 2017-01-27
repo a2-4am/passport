@@ -123,8 +123,6 @@ foundmeccm8
          ldy   #$A3
          lda   (modsrc),y
          sta   $B8FC
-         pla
-         plp
          jmp   ADStyle
 }
 
@@ -228,7 +226,5 @@ foundmeccm7
          ldy   #$2A
          lda   (modsrc),y
          sta   $B8FC
-         pla
-         plp
          jmp   ADStyle
 }
