@@ -21,8 +21,19 @@ _fbff
          !byte $EB,$BC,$8C,$C0,$10,$FB,$84,$FC
          !byte $C9,$0A,$D0,$CB,$BD,$8C,$C0,$10
          !byte $FB,$38,$2A,$25,$FC
+         bcc   +
+
+         ldy   #$38
+         jsr   SearchTrack
+         !byte $BD,$89,$C0,$A9,$56,$85,$FD,$A9
+         !byte $08,$C6,$FC,$D0,$04,$C6,$FD,$F0
+         !byte WILDCARD,$BC,$8C,$C0,$10,$FB,$C0,$FB
+         !byte $D0,$ED,$F0,$00,$EA,$EA,$BC,$8C
+         !byte $C0,$C0,$08,$2A,$B0,$0B,$BC,$8C
+         !byte $C0,$10,$FB,$C0,$FF,$D0,$D8,$F0
+         !byte $EB,$BC,$8C,$02,$40,$29,$7F,$C9
          bcs   .exit
-         sta   gDisplayBytes
++        sta   gDisplayBytes
          pha
          lda   #s_fbff
          jsr   PrintByID
