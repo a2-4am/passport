@@ -302,3 +302,22 @@ xB660
 .no
          rts
 }
+
+;-------------------------------
+; IsEATrack6
+; check if track 6 even exists
+; in the case of EA, track 6 reads as track 5
+;
+; in  slot 6, drive 1 is on track to test
+; out C clear if read track does not match expected track
+;     C set otherwise
+;-------------------------------
+IsEATrack6
+         lda   gTrack
+         cmp   #6
+         sec
+         bne   +
+         lda   $2E ;DOS read track number
+         sbc   #5
+         cmp   #1
++        rts

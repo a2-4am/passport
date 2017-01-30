@@ -73,6 +73,8 @@ PR0      =     $FE89
 IN0      =     $FE93
 
 ; Zero-page addresses we use for variables
+!ifdef PASS2 {
+} else {
 nibsrcindex =  $EC        ; byte
 nibdestindex = $ED        ; byte
 prbuf    =     $EE        ; word
@@ -89,8 +91,11 @@ tmpa     =     $FC        ; byte
 tmpx     =     $FD        ; byte
 tmpy     =     $FE        ; byte
 flag     =     $FF        ; byte
+}
 
 ; Application constants (not zero addresses)
+RELBASE  =     $6B00      ; address to move Passport code
+                          ; so that it's out of the way
 BASEPAGE =     $10        ; Special Delivery tracer assumes
                           ; this is $10, so don't change it!
 TRUE     =     $00        ; Lots of code assumes this is $00
@@ -98,21 +103,20 @@ TRUE     =     $00        ; Lots of code assumes this is $00
                           ; don't change it either!
 FALSE    =     $01
 
-FirstMover
-         ldy   #>LastMover-FirstMover
          ldx   #$00
-FM       lda   $2000,x
-         sta   $6800,x
+FM       lda   FirstMover + ((255 + LastMover - FirstMover) & $FF00),x
+         sta   $B500,x
          inx
          bne   FM
-         inc   FM+2
-         inc   FM+5
-         dey
-         cpy   #$48
+         dec   FM+2
+         dec   FM+5
+         lda   FM+2
+         cmp   #$1F
          bne   FM
          jmp   OneTimeSetup
 
-         !pseudopc *+$4800 {
+FirstMover
+         !pseudopc RELBASE {
 !zone
 ; use localized strings based on current language
 
@@ -143,6 +147,7 @@ FM       lda   $2000,x
          !source "id/specdelivery.a"
          !source "id/encode44.a"
          !source "id/encode53.a"
+         !source "id/ea.a"
          !source "print.a"
          !source "compare.a"
          !source "modify.a"
@@ -408,8 +413,17 @@ checksector
 ;
 .checksync
          jsr   IsSyncBytes
-         bcs   .tryuniversal
+         bcs   .checktrack6
          lda   #s_sync
+         jsr   PrintByID
+
+;
+; 4) track simply does not exist (Electronic Arts in particular)
+;
+.checktrack6
+         jsr   IsEATrack6
+         bcs   .tryuniversal
+         lda   #s_eatrk6
          jsr   PrintByID
 
 ; note: execution falls through here
@@ -710,6 +724,7 @@ _applyToAll
          !source "patchers/protecteddos.a"
          !source "patchers/fbff.a"
          !source "patchers/sierra.a"
+         !source "patchers/ea.a"
 
          lda   gPatchCount
          beq   .nopatches
@@ -766,11 +781,19 @@ gIsProtDOS
          !byte FALSE      ; 0=true, 1=false
                           ; set after reading T00
 
+gIsEA
+         !byte FALSE      ; 0=true, 1=false
+                          ; set after reading T00
+
 gOnAClearDayYouCanReadForever
          !byte FALSE      ; 0=true, 1=false
                           ; compile-time flag, no way to change at runtime
 
          !source "applyglobals.a"
          !source "universalrwts.a"
-LastMover
          }
+LastMover
+
+!if ($B500 - ((255 + LastMover - FirstMover) & $FF00)) != RELBASE {
+  !serious "RELBASE requires adjustment to ", ($B500 - ((255 + LastMover - FirstMover) & $FF00))
+}
