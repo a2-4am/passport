@@ -1,0 +1,40 @@
+;-------------------------------
+; #CORRUPTER
+; intentionally destroys T00,S00
+; if protection check fails
+;-------------------------------
+!zone {
+corrupter
+         lda   #$0F
+         sta   .sector+1
+.sector  lda   #$FF       ; modified at runtime
+         ldx   #$2C
+         ldy   #$07
+         jsr   compare
+         !byte $20,$E3,$03,$84,$00,$85,$01
+         bcs   .nextsector
+         ldx   #$D4
+         ldy   #$0F
+         jsr   compare
+         !byte $A9,$00,$8D,$00,$A0,$EE,$D3,$40
+         !byte $AD,$D3,$40,$C9,$FF,$D0,$F1
+         bcs   .nextsector
+         ldx   #$A4
+         ldy   #$0F
+         jsr   compare
+         !byte $A9,$23,$85,$02,$A9,$00,$85,$03
+         !byte $A9,$01,$85,$04,$20,$28,$40
+         bcs   .nextsector
+         sta   gDisplayBytes
+         pha
+         lda   #s_corrupter
+         jsr   PrintByID
+         pla
+         ldy   #$01
+         jsr   modify
+         !byte $60
+.nextsector
+         dec   .sector+1
+         bpl   .sector
+.exit
+}
