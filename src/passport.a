@@ -710,6 +710,7 @@ _applyToAll
          !source "patchers/protecteddos.a"
          !source "patchers/fbff.a"
          !source "patchers/sierra.a"
+         !source "patchers/corrupter.a"
 
          lda   gPatchCount
          beq   .nopatches
