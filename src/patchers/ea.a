@@ -176,7 +176,7 @@ _ea
          !byte $05, $FE, $95 ;jsra $4ce3
          !byte $1B, $EB, $39 ;lda  $c0e8
          !byte $04, $C6, $97 ;lda  $4ee4
-         bcs   .exit
+         bcs   +
          pha
          txa
          adc   #21
@@ -185,6 +185,26 @@ _ea
          ldy   #1
          jsr   modify
          !byte $C7
+
++        ldy   #23
+         jsr   SearchTrack
+         !byte $03, $4C      ;ldi  #$00
+         !byte $06, $E1, $DE ;sta  $07e2
+         !byte $05, $CC, $DC ;jsra $05cf
+         !byte $05, $CC, $DC ;jsra $05cf
+         !byte $05, $CC, $DC ;jsra $05cf
+         !byte $05, $CC, $DC ;jsra $05cf
+         !byte $04, $EB, $19 ;lda  $c0e8
+         !byte $04, $E1, $DE ;lda  $07e2
+         bcs   .exit
+         pha
+         txa
+         adc   #21
+         tax
+         pla
+         ldy   #1
+         jsr   modify
+         !byte $E0
 
 .dostitles
          lda   gIsBoot0
