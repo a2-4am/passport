@@ -84,8 +84,10 @@ s_specdel =    $41
 s_bytrack =    $42
 s_a5count =    $43
 s_restart =    $44
-s_corrupter =  $45
-STRINGCOUNT =  $46
+s_corrupter=   $45
+s_eab0    =    $46
+s_eatrk6  =    $47
+STRINGCOUNT =  $48
 
 !zone {
 StringTable
@@ -159,6 +161,8 @@ StringTable
          !word .a5count
          !word .restart
          !word .corrupter
+         !word .eaboot0
+         !word .eatrk6
 ;
 ; Text can contain substitution strings, which
 ; are replaced by current values at runtime. Each
@@ -407,7 +411,11 @@ StringTable
          !text "T%t,S%0 Found A5 nibble count",$8D,$00
 .restart
          !text "Restarting scan",$8D,$00
-.corrupter
-         !text "T%t,S%0 Protection check intentionally",$8D
-         !text "destroys unauthorized copies",$8D,$00
+.corrupter  
+         !text "T%t,S%0 Protection check intentionally",$8D  
+         !text "destroys unauthorized copies",$8D,$00  
+.eaboot0
+         !text "T00 Found Electronic Arts bootloader",$8D,00
+.eatrk6
+         !text "T06 Found EA protection track",$8D,00
 }

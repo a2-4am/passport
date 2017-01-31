@@ -1,0 +1,107 @@
+;-------------------------------
+; IDEA
+; identify Electronic Arts custom bootloader
+;
+; in:  track buffer contains T00,S00
+; out: C clear if EA bootloader was found
+;      C set if not found
+;      all other flags clobbered
+;      all registers clobbered
+;
+; module by qkumba
+;-------------------------------
+IDEA
+         lda   #$00
+         tax
+         ldy   #36
+         jsr   compare
+         !byte $05,$4C,$04,$08,$A9,$00,$8D,$F2
+         !byte $03,$A9,$C6,$8D,$F3,$03,$49,$A5
+         !byte $8D,$F4,$03,$A9,$00,$8D,$C7,$09
+         !byte $AD,$E9,$C0,$A9,$B0,$85,$3E,$A9
+         !byte $02,$20,$00,$0C
+         bcc   +
+         lda   #$00
+         tax
+         ldy   #39
+         jsr   compare
+         !byte $05,$4C,$04,$08,$A9,$00,$8D,$F2
+         !byte $03,$A9,$C6,$8D,$F3,$03,$49,$A5
+         !byte $8D,$F4,$03,$A9,$00,$8D,$C7,$09
+         !byte $AD,$E9,$C0,$A9,$B7,$48,$A9,$B0
+         !byte $85,$3E,$A9,$00,$20,$00,$0C
++        rts
+
+foundea
+;
+; We found an EA bootloader. Now we create
+; an RWTS that can read the rest of the disk.
+; Starting with our built-in RWTS, we modify address
+; and data prologues based on the parameters of the
+; original disk.
+;
+!zone {
+         lda   #s_eab0
+         jsr   PrintByID
+         jsr   CopyUniversal
+
+; mark track 6 as "skip" in sector map
+
+         ldy   #$0F
+         lda   #$00
+.skipsectors
+         sta   T06,y
+         dey
+         bpl   .skipsectors
+
+; mark track $22 as "optional" in sector map
+
+         ldy   #$0F
+         lda   #$80
+.ignoresectors
+         sta   T22,y
+         dey
+         bpl   .ignoresectors
+
+;hook read data prologue
+         lda   #<.checktrk
+         sta   $BE36
+         lda   #>.checktrk
+         sta   $BE37
+
+;
+; this RWTS alters the data prologue in a routine
+; on a non-zero track, so we need to set a flag so
+; we know to search for it later
+;
+         lda   #TRUE
+         sta   gIsEA
+         jmp   ADStyle
+
+.prologtbl
+         !byte $AA, $BB, $AD, $CF
+
+         ;try regular values first
+
+.checktrk
+         ldy   #0
+         lda   .prologtbl, y
+         sta   $B8F1
+         lda   .prologtbl+2, y
+         sta   $B8FC
+         jsr   $B8DC
+         bcc   +
+
+         ;on failure, switch to alternative values
+         ;we keep using the last successful values until we fail
+         ;and then we switch again
+
+         lda   .checktrk + 1
+         eor   #1
+         sta   .checktrk + 1
+
+         ;and allow DOS to retry
+         ;if DOS runs out of retries, then Passport will report it
+
++        rts
+}

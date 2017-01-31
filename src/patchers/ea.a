@@ -1,0 +1,205 @@
+;-------------------------------
+; #EA
+; patched RWTS and p-code madness
+;
+; module by qkumba
+;-------------------------------
+!zone {
+_ea
+         lda   gIsEA      ; only ever seen this protection
+         beq   +          ; on Electronic Arts titles
+         jmp   .dostitles
+
++        ldy   #40
+         jsr   SearchTrack
+         !byte $8D,$6F,$BC,$8C,$70,$BC,$A0,$20
+         !byte $88,$F0,$D7,$AD,$EC,$C0,$10,$FB
+         !byte $49,$D5,$D0,$F4,$EA,$AD,$EC,$C0
+         !byte $10,$FB,$C9,$BB,$D0,$F2,$EA,$AD
+         !byte $EC,$C0,$10,$FB,$C9,$CF,$D0,$E8
+         bcs   +
+         pha
+         txa
+         clc
+         adc   #27
+         tax
+         adc   #10
+         sta   .patch2+1
+         pla
+         pha
+         ldy   #1
+         jsr   modify
+         !byte $AA
+.patch2
+         ldx   #$D1
+         pla
+         ldy   #1
+         jsr   modify
+         !byte $AD
+
++        ldy   #13
+         jsr   SearchTrack
+         !byte $03, $49      ;ldi  #$05
+         !byte $01, $03, $65 ;jsra $bc00
+         !byte $01, $03, $79 ;jsra $a000
+         !byte $03, $4C      ;ldi  #$00
+         !byte $04, $EB, $19 ;lda  $c0e8
+         bcs   +
+         inx
+         inx
+         inx
+         inx
+         inx
+         ldy   #1
+         jsr   modify
+         !byte $04
++        ldy   #15
+         jsr   SearchTrack
+         !byte $BF,$9F,$BE,$F6,$04,$2E,$9B,$DA
+         !byte $5A,$16,$DA,$30,$06,$45,$C2
+         bcs   +
+         inx
+         ldy   #1
+         jsr   modify
+         !byte $EE
+
++        ldy   #8
+         jsr   SearchTrack
+         !byte $20,$10,$07,$A5,$56,$D0,$A7,$4C
+         bcs   +
+         inx
+         inx
+         inx
+         inx
+         inx
+         inx
+         ldy   #1
+         jsr   modify
+         !byte $00
+
++        ldy   #15
+         jsr   SearchTrack
+         !byte $03, $49      ;ldi  #$05
+         !byte $01, $03, $65 ;jsra $bc00
+         !byte $03, $4C      ;ldi  #$00
+         !byte $01, $03, $79 ;jsra $a000
+         !byte $07, $01      ;sub  #$4d
+         !byte $0F, $F5, $70 ;bne  $a9f6
+         bcs   +
+         pha
+         txa
+         adc   #7
+         tax
+         adc   #4
+         sta   .patch3 + 1
+         pla
+         pha
+         ldy   #1
+         jsr   modify
+         !byte $04
+         pla
+.patch3
+         ldx   #$D1
+         ldy   #1
+         jsr   modify
+         !byte $00
+
++        ldy   #13
+         jsr   SearchTrack
+         !byte $4C,$E7,$B2,$4C,$74,$B3,$00,$00
+         !byte $C9,$CB,$D0,$7C,$60
+         bcs   +
+         pha
+         txa
+         adc   #11
+         tax
+         pla
+         ldy   #1
+         jsr   modify
+         !byte $00
+
++        ldy   #15
+         jsr   SearchTrack
+         !byte $03,$49     ;ldi #$05
+         !byte $01,$03,$65 ;jsr $BC00
+         !byte $03,$4C     ;ldi #$00
+         !byte $01,$03,$6C ;jsr $B500
+         !byte $07,$1C     ;sub #$50
+         !byte $0F,$78,$60 ;bne $B97B
+         bcs   +
+         pha
+         txa
+         adc   #11
+         tax
+         pla
+         ldy   #1
+         jsr   modify
+         !byte $4C
+
++        ldy   #14
+         jsr   SearchTrack
+         !byte $78,$20,$00,$D7,$C9,$4D,$F0,$06
+         !byte $20,$67,$67,$20,$AA,$BF
+         bcs   +
+         inx
+         inx
+         inx
+         inx
+         inx
+         ldy   #1
+         jsr   modify
+         !byte $00
+
++        ldy   #12
+         jsr   SearchTrack
+         !byte $20,$3E,$91,$20,$F3,$76,$20,$00
+         !byte $61,$4C,$94,$69
+         bcs   +
+         inx
+         inx
+         inx
+         inx
+         inx
+         inx
+         ldy   #1
+         jsr   modify
+         !byte $2C
+
+.dostitles
+         ldy   #23
+         jsr   SearchTrack
+         !byte $09, $7A      ;ldi  #$00
+         !byte $06, $7E, $A3 ;sta  $0ee2
+         !byte $08, $4D, $A1 ;jsra $0cd1
+         !byte $08, $4D, $A1 ;jsra $0cd1
+         !byte $08, $4D, $A1 ;jsra $0cd1
+         !byte $08, $4D, $A1 ;jsra $0cd1
+         !byte $07, $74, $6D ;lda  $c0e8
+         !byte $07, $7E, $A3 ;lda  $0ee2
+         bcs   +
+         pha
+         txa
+         adc   #21
+         tax
+         pla
+         ldy   #1
+         jsr   modify
+         !byte $7F
+
++        ldy   #13
+         jsr   SearchTrack
+         !byte $A2,$04,$20,$4F,$1E,$20,$00,$A6
+         !byte $A5,$48,$D0,$01,$60
+         bcs   +
+         pha
+         txa
+         adc   #11
+         tax
+         pla
+         ldy   #1
+         jsr   modify
+         !byte $00
+
++
+.exit
+}

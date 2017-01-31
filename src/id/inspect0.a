@@ -18,14 +18,17 @@ CheckT00S00
          sta   gLastTrack
 
 ; Quick sanity check -- only recognized values for $0800
-; are 1 or 2.
+; are 1 or 2 for regular disks, and 5 for possible Electronic Arts.
 
          lda   $0800
          beq   +
          cmp   #$03
          bcc   ++
+         cmp   #$05
+         beq   ++
 +
-         jmp   UseUniversal
+-        jmp   UseUniversal
+
 ++
 ;
 ; Copy the boot sector from $0800 to the track/sector buffer
@@ -139,6 +142,15 @@ CheckT00S00
          jmp   TheEnd
 
 .notencoded53
+;
+; Try to identify Electronic Arts bootloader.
+;
+.tryea
+         jsr   IDEA
+         bcs   .notea
+         jmp   foundea
+
+.notea
 .useuniv
 ;
 ; We didn't recognize the boot sector, so use the universal
