@@ -160,6 +160,7 @@ StringTable
          !word .bytrack
          !word .a5count
          !word .restart
+         !word .corrupter
          !word .eaboot0
          !word .eatrk6
 ;
