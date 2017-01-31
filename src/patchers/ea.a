@@ -165,6 +165,27 @@ _ea
          jsr   modify
          !byte $2C
 
++        ldy   #23
+         jsr   SearchTrack
+         ;looks like garbage because it's enciphered
+         !byte $03, $5B      ;ldi  #$00
+         !byte $06, $FF, $97 ;sta  $4ee4
+         !byte $1C, $E0, $8F ;jsra $4ce3
+         !byte $05, $FB, $95 ;jsra $4ce3
+         !byte $19, $E0, $88 ;jsra $4ce3
+         !byte $05, $FE, $95 ;jsra $4ce3
+         !byte $1B, $EB, $39 ;lda  $c0e8
+         !byte $04, $C6, $97 ;lda  $4ee4
+         bcs   .exit
+         pha
+         txa
+         adc   #21
+         tax
+         pla
+         ldy   #1
+         jsr   modify
+         !byte $C7
+
 .dostitles
          ldy   #23
          jsr   SearchTrack
