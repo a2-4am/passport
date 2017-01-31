@@ -187,6 +187,9 @@ _ea
          !byte $C7
 
 .dostitles
+         lda   gIsBoot0
+         bne   .exit
+
          ldy   #23
          jsr   SearchTrack
          !byte $09, $7A      ;ldi  #$00
