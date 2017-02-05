@@ -14,6 +14,8 @@ CheckT00S00
          sta   gIsPascal
          sta   gIsDatasoft
          sta   gIsProtDOS
+         sta   gIsEA
+         sta   gIsOptimum
          lda   #$00
          sta   gLastTrack
 

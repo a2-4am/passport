@@ -1,0 +1,32 @@
+;-------------------------------
+; #Optimum
+; self-overwriter that restores
+; content later from custom sector
+; e.g. StickyBear Math
+;
+; module by qkumba
+;-------------------------------
+!zone {
+_optimum
+         lda   gIsOptimum
+         bne   .exit
+;;probably too strict about the location
+;;but easy enough to generalise
+         lda   gTrack
+         cmp   #$20
+         bne   .exit
+         lda   #$08
+         ldx   #$2C
+         ldy   #$11
+         jsr   compare    ; if T20,S08,$2C ==
+         !byte $A9,$00,$85,$50,$A9,$1E,$85,$51
+         !byte $A0,$0A,$A9,$00,$91,$50,$88,$D0
+         !byte $FB
+         bcs   .exit
+         lda   #$08
+         ldx   #$38
+         ldy   #$01
+         jsr   modify     ; then set T20,S08,$38 =
+         !byte $B1
+.exit
+}
