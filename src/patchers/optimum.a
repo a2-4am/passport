@@ -10,23 +10,34 @@
 _optimum
          lda   gIsOptimum
          bne   .exit
-;;probably too strict about the location
-;;but easy enough to generalise
-         lda   gTrack
-         cmp   #$20
-         bne   .exit
-         lda   #$08
-         ldx   #$2C
-         ldy   #$11
-         jsr   compare    ; if T20,S08,$2C ==
+         ldy   #17
+         jsr   SearchTrack
          !byte $A9,$00,$85,$50,$A9,$1E,$85,$51
-         !byte $A0,$0A,$A9,$00,$91,$50,$88,$D0
+         !byte $A0,WILDCARD,$A9,$00,$91,$50,$88,$D0
          !byte $FB
-         bcs   .exit
-         lda   #$08
-         ldx   #$38
+         bcs   +
+         pha
+         txa
+         adc   #12
+         tax
+         pla
          ldy   #$01
-         jsr   modify     ; then set T20,S08,$38 =
+         jsr   modify
          !byte $B1
++
+         ldy   #10
+         jsr   SearchTrack
+         !byte $A0,$3C,$A9,$04,$20,$E2,$02,$B0
+         !byte WILDCARD,$60
+         bcs   +
+         pha
+         txa
+         adc   #8
+         tax
+         pla
+         ldy   #$01
+         jsr   modify
+         !byte $00
++
 .exit
 }
