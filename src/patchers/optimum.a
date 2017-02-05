@@ -12,7 +12,7 @@ _optimum
          bne   .exit
          ldy   #17
          jsr   SearchTrack
-         !byte $A9,$00,$85,$50,$A9,$1E,$85,$51
+         !byte $A9,$00,$85,$50,$A9,WILDCARD,$85,$51
          !byte $A0,WILDCARD,$A9,$00,$91,$50,$88,$D0
          !byte $FB
          bcs   +
