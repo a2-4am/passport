@@ -10,25 +10,10 @@
 _optimum
          lda   gIsOptimum
          bne   .exit
-         ldy   #17
+         ldy   #13
          jsr   SearchTrack
-         !byte $A9,$00,$85,$50,$A9,WILDCARD,$85,$51
-         !byte $A0,WILDCARD,$A9,$00,$91,$50,$88,$D0
-         !byte $FB
-         bcs   +
-         pha
-         txa
-         adc   #12
-         tax
-         pla
-         ldy   #$01
-         jsr   modify
-         !byte $B1
-+
-         ldy   #10
-         jsr   SearchTrack
-         !byte $A0,$3C,$A9,$04,$20,$E2,$02,$B0
-         !byte WILDCARD,$60
+         !byte $A9,WILDCARD,$85,WILDCARD,$A0,WILDCARD,$A9,$00
+         !byte $91,$50,$88,$D0,$FB
          bcs   +
          pha
          txa
@@ -37,7 +22,16 @@ _optimum
          pla
          ldy   #$01
          jsr   modify
-         !byte $00
+         !byte $24
++
+         ldy   #10
+         jsr   SearchTrack
+         !byte $A0,$3C,$A9,$04,$20,$E2,$02,$B0
+         !byte WILDCARD,$60
+         bcs   +
+         ldy   #$01
+         jsr   modify
+         !byte $60
 +
 .exit
 }
