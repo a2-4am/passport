@@ -1,0 +1,127 @@
+;-------------------------------
+; #Optimum
+; self-overwriter that restores
+; content later from custom sector
+; e.g. StickyBear Math
+;
+; module by qkumba
+;-------------------------------
+!zone {
+_optimum
+         lda   gIsOptimum
+         bne   +++
+         ldx   gTrack
+         dex
+         bne   +
+
+         ;after read track 1, uninstall hook
+
+         lda   #$20
+         ldx   #$DC
+         ldy   #$B8
+         bne   ++
++        dex
+         bne   +
+
+         ;before read track 1, install hook
+
+         lda   #$2C
+         ldx   #<.readhook
+         ldy   #>.readhook
+++       stx   $BE36
+         sty   $BE37
+         sta   $BE40
+
++        ldy   #15
+         jsr   SearchTrack
+         !byte $A2,$00,$A0,$00,$BD,$21,$03,$E8
+         !byte $85,WILDCARD,$BD,$21,$03,$E8,$85
+         bcs   +++
+         ldy   #$01
+         jsr   modify
+         !byte $60
++++      jmp   .exit
+
+.table
+         !byte $00,$01,$00,$07,$08,$09,$01,$02
+         !byte $02,$00,$01,$06,$04,$03,$04,$03
+         !byte $05,$05,$00,$02,$01,$0A,$07,$0E
+         !byte $05,$02,$01,$06,$07,$03,$00,$02
+         !byte $05,$0B,$04,$0F,$00,$07,$0A,$01
+         !byte $02,$03,$00,$0C,$0C,$06,$07,$05
+         !byte $08,$06,$02,$04,$01,$00,$08,$0A
+         !byte $03,$0E,$00,$01,$07,$09,$0A,$05
+         !byte $0B,$02,$05,$10,$03,$04,$0C,$06
+         !byte $0D,$01,$0F,$06,$05,$0E,$0F,$0B
+         !byte $11,$02,$00,$09
+
+.readhook
+         lda   $2D
+         cmp   #$0F
+         beq   +
+         jmp   $B8DC
++        ldy   #$20
+--       dey
+         beq   +
+-        lda   $C08C, x
+         bpl   -
+---      eor   #$D5
+         bne   --
+         nop
+-        lda   $C08C, x
+         bpl   -
+         cmp   #$AA
+         bne   ---
+-        lda   $C08C, x
+         bpl   -
+         nop
+         nop
+         sta   $C08D, x
+         ldy   #$55
+         sty   $26
+-        lda   $C08C, x
+         bpl   -
+         sta   $BC00, y
+         dey
+         bne   -
+-        lda   $C08C, x
+         bpl   -
+         sta   $BB00, y
+         iny
+         bne   -
+
+         ;decoder
+
+         ldx   #$BC
+         stx   .tblsel1+2
+         stx   .tblsel2+2
+         lda   #$86
+         sta   $26
+         ldy   #$53
+-
+.tblsel1
+         ldx   $BC00, y
+         lda   (.table-$96)-$16, x
+         asl
+         asl
+         asl
+         asl
+         dey
+.tblsel2
+         ldx   $BC00, y
+         ora   (.table-$96)-$16, x
+         sty   $2C
+         ldy   $26
+         sta   ($3E), y
+         ldy   $2C
+         bne   +
+         dec   .tblsel1+2
+         dec   .tblsel2+2
++        dey
+         dec   $26
+         bne   -
+         clc
+         rts
+
+.exit
+}
