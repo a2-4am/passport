@@ -87,7 +87,8 @@ s_restart =    $44
 s_corrupter=   $45
 s_eab0    =    $46
 s_eatrk6  =    $47
-STRINGCOUNT =  $48
+s_eeef   =     $48
+STRINGCOUNT =  $49
 
 !zone {
 StringTable
@@ -163,6 +164,7 @@ StringTable
          !word .corrupter
          !word .eaboot0
          !word .eatrk6
+         !word .eeef
 ;
 ; Text can contain substitution strings, which
 ; are replaced by current values at runtime. Each
@@ -188,7 +190,7 @@ StringTable
 ; can be set directly before calling PrintByID.
 ;
 .header
-         !text "Passport by 4am               2017-01-31",00
+         !text "Passport by 4am               2017-02-06",00
 .mainmenu
          !text "________________________________________",$8D,$8D,$8D,$8D,$8D,$8D,$8D
          !text "              "
@@ -418,4 +420,6 @@ StringTable
          !text "T00 Found Electronic Arts bootloader",$8D,00
 .eatrk6
          !text "T06 Found EA protection track",$8D,00
+.eeef
+         !text "T%t Found $EEEFBBBA protection",$8D,00
 }

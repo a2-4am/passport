@@ -297,7 +297,7 @@ Action
          jsr   PrintByID
          jmp   TheEnd
 .checkt00s00
-         jmp   CheckT00S00 ; /src/id/inspect0
+         jmp   IDBootloader ; /src/id/inspect0
 
 
 
@@ -390,46 +390,13 @@ checksector
          bne   .tryuniversal
 ;
 ; We just got to this track, so check for a variety
-; of whole-track conditions
-;
-; 1) unformatted track
-;
-         jsr   IsUnformatted
-         bcs   .checkf7
-         lda   #s_unformat
-         jsr   PrintByID
-         jmp   .skiptrack
-;
-; 2) $F7 protection track (F7F6EFEAAB nibble sequence)
-;
-.checkf7
-         jsr   IsF7
-         bcs   .checksync
-         lda   #s_f7
-         jsr   PrintByID
-         jmp   .skiptrack
-;
-; 3) nibble count track (mostly $FF sync bytes)
-;
-.checksync
-         jsr   IsSyncBytes
-         bcs   .checktrack6
-         lda   #s_sync
-         jsr   PrintByID
-
-;
-; 4) track simply does not exist (Electronic Arts in particular)
-;
-.checktrack6
-         jsr   IsEATrack6
+; of whole-track conditions that might indicate we should
+; just skip the entire track
+         jsr   SkipTrack
          bcs   .tryuniversal
-         lda   #s_eatrk6
-         jsr   PrintByID
 
-; note: execution falls through here
-
-.skiptrack
-         lda   #$00       ; skip rest of track
+; Skip this track (we already printed the reason)
+         lda   #$00
          jsr   ChangeSector
          lda   checksector+1
          sec
@@ -683,7 +650,7 @@ AnalyzeTrack
          beq   _applyToT00
          jmp   _applyToAll
 _applyToT00
-         jsr   ApplyGlobals
+         jsr   AnalyzeT00 ; /src/id/inspect0
          !source "patchers/sunburst.a"
          !source "patchers/jmpbcf0.a"
          !source "patchers/jmpbeb1.a"
@@ -756,41 +723,47 @@ gChangedPrefs
                           ; set to #TRUE when changing slots
 gLastTrack
          !byte 00         ; int
-                          ; set after reading T00
+                          ; the last track that we should try to read
+                          ; (assuming reading from T22 down to T00)
+                          ; reset to 0 before each operation, but some
+                          ; disks (like DOS3.3P) will change it because
+                          ; they write out the first few DOS tracks
+                          ; manually before seeking up to T22 to convert
+                          ; the rest of the disk
 gIsBoot0
          !byte FALSE      ; 0=true, 1=false
-                          ; set after reading T00
+                          ; set after reading T00,S00 (see IDBootloader)
 gIsBoot1
          !byte FALSE      ; 0=true, 1=false
-                          ; set after reading T00
+                          ; set after reading T00 (see AnalyzeT00)
 gIsMaster
          !byte FALSE      ; 0=true, 1=false
-                          ; set after reading T00
+                          ; set after reading T00 (see AnalyzeT00)
 gIsRWTS
          !byte FALSE      ; 0=true, 1=false
-                          ; set after reading T00
+                          ; set after reading T00 (see AnalyzeT00)
 gIsProDOS
          !byte FALSE      ; 0=true, 1=false
-                          ; set after reading T00
+                          ; set after reading T00,S00 (see IDBootloader)
 gIsPascal
          !byte FALSE      ; 0=true, 1=false
-                          ; set after reading T00
+                          ; set after reading T00,S00 (see IDBootloader)
 gIsDatasoft
          !byte FALSE      ; 0=true, 1=false
-                          ; set after reading T00
+                          ; set after reading T00,S00 (see IDBootloader)
 gIsProtDOS
          !byte FALSE      ; 0=true, 1=false
-                          ; set after reading T00
-
+                          ; set after reading T00,S00 (see IDBootloader)
 gIsEA
          !byte FALSE      ; 0=true, 1=false
-                          ; set after reading T00
-
+                          ; set after reading T00,S00 (see IDBootloader)
+gIsEEEF
+         !byte FALSE      ; 0=true, 1=false
+                          ; set after reading T22
 gOnAClearDayYouCanReadForever
          !byte FALSE      ; 0=true, 1=false
                           ; compile-time flag, no way to change at runtime
 
-         !source "applyglobals.a"
          !source "universalrwts.a"
          }
 LastMover

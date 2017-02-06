@@ -1,4 +1,66 @@
 ;-------------------------------
+; SkipTrack
+; out:   C clear if we should skip this track
+;        C set if we should not skip this track
+;-------------------------------
+!zone {
+SkipTrack
+;
+; 1) $EEEF protection track (EEEFBBBAFAAE nibble sequence)
+;    [must come first because track would otherwise pass the IsUnformatted test below]
+;    [speed optimization: only check on track $22]
+;
+.checkeeef
+         lda   gTrack
+         cmp   #$22
+         bne   .checkunformat
+         jsr   IsEEEF
+         bcs   .checkunformat
+         lda   #s_eeef
+         bcc   .skiptrack ; always taken
+;
+; 2) unformatted track
+;
+.checkunformat
+         jsr   IsUnformatted
+         bcs   .checkf7
+         lda   #s_unformat
+         bcc  .skiptrack ; always taken
+;
+; 3) $F7 protection track (F7F6EFEAAB nibble sequence)
+;
+.checkf7
+         jsr   IsF7
+         bcs   .checksync
+         lda   #s_f7
+         bcc   .skiptrack ; always taken
+;
+; 4) nibble count track (mostly $FF sync bytes)
+;
+.checksync
+         jsr   IsSyncBytes
+         bcs   .checktrack6
+         lda   #s_sync
+         bcc   .skiptrack ; always taken
+
+;
+; 5) track simply does not exist (Electronic Arts in particular)
+;
+.checktrack6
+         jsr   IsEATrack6
+         bcs   .fail
+         lda   #s_eatrk6
+; note: execution falls through here
+.skiptrack
+         jsr   PrintByID
+         clc
+         !byte $24        ; hides next SEC
+.fail
+         sec
+         rts
+}
+
+;-------------------------------
 ; IsF7
 ; check for a specific nibble sequence
 ; ("F7 F6 EF EE AB") that is used by a
@@ -24,7 +86,7 @@ IsF7
          bne   -
          dec   nibcount
          bne   -
-         beq   F7fail
+         beq   .fail
 +
 -        lda   $C0EC
          bpl   -
@@ -44,10 +106,66 @@ IsF7
          bne   .restart
          clc
          !byte $24        ; hides SEC
-F7fail   sec
+.fail    sec
          lda   $C0E8
          rts
 }
+
+;-------------------------------
+; IsEEEF
+; check for a specific nibble sequence
+; ("EE EF BB BA FA AE") that is used by a
+; whole-track protection scheme
+;
+; in  slot 6, drive 1 is on track to test
+; out C clear if sequence was found
+;     C set if sequence was not found
+;-------------------------------
+!zone {
+IsEEEF
+         lda   $C0E9
+         lda   #$00
+         jsr   WAIT
+         lda   #$20
+         sta   nibcount
+         ldy   #$00
+-        lda   $C0EC
+         bpl   -
+         cmp   #$EE
+         beq   +
+.restart iny
+         bne   -
+         dec   nibcount
+         bne   -
+         beq   .fail
++
+-        lda   $C0EC
+         bpl   -
+         cmp   #$EF
+         bne   .restart
+-        lda   $C0EC
+         bpl   -
+         cmp   #$BB
+         bne   .restart
+-        lda   $C0EC
+         bpl   -
+         cmp   #$BA
+         bne   .restart
+-        lda   $C0EC
+         bpl   -
+         cmp   #$FA
+         bne   .restart
+-        lda   $C0EC
+         bpl   -
+         cmp   #$AE
+         bne   .restart
+         clc
+         !byte $24        ; hides SEC
+.fail    sec
+         lda   $C0E8
+         rts
+}
+
 ;-------------------------------
 ; IsSyncBytes
 ; check if track is mostly $FF bytes
@@ -114,28 +232,18 @@ xHeredityDog
          adc   #$04
          pha
          ldx   #$16
-         ldy   #$0B
+         ldy   #$4A
          jsr   CompareMemory
-         !byte $F0,$05,$A2,$B2,$4C,$F0,$BB,$BD,$8C,$C0,$A9
-         pla
-         bcc   .maybe
-         jmp   .no
-
-; don't check byte at $BB21 because it can vary
-
-.maybe
-         ldx   #$22
-         ldy   #$3E
-         jsr   CompareMemory
+         !byte $F0,$05,$A2,$B2,$4C,$F0,$BB,$BD,$8C,$C0,$A9,WILDCARD
          !byte $8D,$00,$02,$BD,$8C,$C0,$10,$FB,$C9,$EB,$D0,$F7,$BD,$8C
          !byte $C0,$10,$FB,$C9,$D5,$D0,$EE,$BD,$8C,$C0,$10,$FB,$C9,$AA,$D0,$E5
          !byte $A9,$4C,$A0,$00,$99,$00,$95,$88,$D0,$FA,$CE,$46,$BB,$AD,$46,$BB
          !byte $C9,$07,$D0,$EC,$A9,$18,$8D,$42,$B9,$A9,$0A,$8D,$ED,$B7,$D0,$05
-         bcs   .no
-.yes
+         pla
+         bcs   .exit
          lda   #$80
          sta   T00S0A
-.no
+.exit
          rts
 }
 
@@ -187,15 +295,8 @@ xOptimumRes
          ldx   #$5D
          ldy   #$0C
          jsr   CompareMemory
-         !byte $68,$85,$F0,$68,$85,$F1,$A0,$01
-         !byte $B1,$F0,$85,$54
-         bcc   .yes
-         lda   #$08
-         ldx   #$5D
-         ldy   #$0C
-         jsr   CompareMemory
-         !byte $68,$85,$A0,$68,$85,$A1,$A0,$01
-         !byte $B1,$A0,$85,$54
+         !byte $68,$85,WILDCARD,$68,$85,WILDCARD,$A0,$01
+         !byte $B1,WILDCARD,$85,$54
          bcs   .no
 .yes
          lda   #$80
