@@ -331,6 +331,8 @@ ADStyle
 .noSun
          jsr   xOptimumRes
          bcs   .noOptimum
+         lda   #TRUE
+         sta   gIsOptimum
          lda   #s_optimum
          jsr   PrintByID
 .noOptimum
@@ -726,6 +728,7 @@ _applyToAll
          !source "patchers/sierra.a"
          !source "patchers/corrupter.a"
          !source "patchers/ea.a"
+         !source "patchers/optimum.a"
 
          lda   gPatchCount
          beq   .nopatches
@@ -781,8 +784,10 @@ gIsDatasoft
 gIsProtDOS
          !byte FALSE      ; 0=true, 1=false
                           ; set after reading T00
-
 gIsEA
+         !byte FALSE      ; 0=true, 1=false
+                          ; set after reading T00
+gIsOptimum
          !byte FALSE      ; 0=true, 1=false
                           ; set after reading T00
 
