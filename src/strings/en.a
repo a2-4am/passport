@@ -226,8 +226,7 @@ StringTable
          !text "T00,S04 Found Sunburst disk",$8D
          !text "T11,S0F might be unreadable",$8D,00
 .optimum
-         !text "T00,S00 Found Optimum Resource disk",$8D
-         !text "T01,S0F might be unreadable",$8D,00
+         !text "T00,S00 Found Optimum Resource disk",$8D,00
 .builtin
          !text "Using built-in RWTS",$8D,00
 .switch
