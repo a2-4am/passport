@@ -708,19 +708,26 @@ _applyToAll
 ;
 gTriedUniv
          !byte FALSE      ; 0=true, 1=false
-                          ; reset to #FALSE before each operation
+                          ; whether or not we've already tried the built-in RWTS
+                          ; (and therefore a read error is fatal)
+                          ; reset before each operation
 gMode
          !byte %00000000  ; bit 7 0=verify, 1=see bit 6
                           ; bit 6 0=demuffin, 1=crack
                           ; set based on main menu choice
 gPatchCount
          !byte 00         ; int
+                          ; number of patches we've applied to this disk
                           ; reset before each operation
+                          ; incremented in modify()
 gSaidWriting
          !byte FALSE      ; 0=true, 1=false
                           ; reset before each operation
+                          ; set to #TRUE after we print WRITING TO S%s,D%d
 gChangedPrefs
          !byte FALSE      ; 0=true, 1=false
+                          ; whether we should try to write the configuration file
+                          ; when the program exits
                           ; set to #TRUE when changing slots
 gLastTrack
          !byte 00         ; int
@@ -733,36 +740,48 @@ gLastTrack
                           ; the rest of the disk
 gIsBoot0
          !byte FALSE      ; 0=true, 1=false
-                          ; set after reading T00,S00 (see IDBootloader)
+                          ; reset before each operation
+                          ; set in IDBootloader() after reading T00,S00
 gIsBoot1
          !byte FALSE      ; 0=true, 1=false
-                          ; set after reading T00 (see AnalyzeT00)
+                          ; reset before each operation
+                          ; set in AnalyzeT00() after reading T00
 gIsMaster
          !byte FALSE      ; 0=true, 1=false
-                          ; set after reading T00 (see AnalyzeT00)
+                          ; reset before each operation
+                          ; set in AnalyzeT00() after reading T00
 gIsRWTS
          !byte FALSE      ; 0=true, 1=false
-                          ; set after reading T00 (see AnalyzeT00)
+                          ; reset before each operation
+                          ; set in AnalyzeT00() after reading T00
 gIsProDOS
          !byte FALSE      ; 0=true, 1=false
-                          ; set after reading T00,S00 (see IDBootloader)
+                          ; reset before each operation
+                          ; set in IDBootloader() after reading T00,S00
 gIsPascal
          !byte FALSE      ; 0=true, 1=false
-                          ; set after reading T00,S00 (see IDBootloader)
+                          ; reset before each operation
+                          ; set in IDBootloader() after reading T00,S00
 gIsDatasoft
          !byte FALSE      ; 0=true, 1=false
-                          ; set after reading T00,S00 (see IDBootloader)
+                          ; reset before each operation
+                          ; set in IDBootloader() after reading T00,S00
 gIsProtDOS
          !byte FALSE      ; 0=true, 1=false
-                          ; set after reading T00,S00 (see IDBootloader)
+                          ; reset before each operation
+                          ; set in IDBootloader() after reading T00,S00
 gIsEA
          !byte FALSE      ; 0=true, 1=false
-                          ; set after reading T00,S00 (see IDBootloader)
+                          ; reset before each operation
+                          ; set in IDBootloader() after reading T00,S00
 gIsEEEF
          !byte FALSE      ; 0=true, 1=false
-                          ; set after reading T22
+                          ; reset before each operation
+                          ; set in IsEEEF() after reading T22
 gOnAClearDayYouCanReadForever
          !byte FALSE      ; 0=true, 1=false
+                          ; retry reads with a captured RWTS forever,
+                          ; instead of falling back to built-in RWTS
                           ; compile-time flag, no way to change at runtime
 
          !source "universalrwts.a"
