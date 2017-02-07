@@ -159,6 +159,8 @@ IsEEEF
          bpl   -
          cmp   #$AE
          bne   .restart
+         lda   #TRUE
+         sta   gIsEEEF
          clc
          !byte $24        ; hides SEC
 .fail    sec

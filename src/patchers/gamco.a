@@ -1,0 +1,31 @@
+;-------------------------------
+; #GAMCO
+; bad block check POKEd into memory
+; from compiled BASIC
+; e.g. Essential Grammar, Math Football
+;-------------------------------
+!zone {
+_gamco
+
+; [speed optimization: only ever seen this protection on disks with a specific
+; nibble sequence on track $22]
+         lda   gIsEEEF
+         bne   .exit
+         ldy   #$12
+         jsr   SearchTrack
+         !byte $33,$32,$01,$30,$03,$31,$39,$31
+         !byte $03,$31,$32,$38,$02,$31,$31,$02
+         !byte $39,$36
+         bcs   .exit
+         sta   gDisplayBytes
+         pha
+         lda   #s_poke
+         jsr   PrintByID
+         pla
+         ldy   #$12
+         jsr   modify
+         !byte $34,$34,$01,$30,$02,$31,$30,$03
+         !byte $32,$33,$34,$03,$31,$36,$39,$02
+         !byte $33,$39
+.exit
+}
