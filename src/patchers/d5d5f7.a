@@ -9,10 +9,23 @@
 _d5d5f7
          ldy   #$20
          jsr   SearchTrack
-         !byte $BD,$8C,$C0,$10,$FB,$48,$68,$C9
-         !byte $D5,$D0,$F5,$A0,$00,$8C,$97,$97
-         !byte $BD,$8C,$C0,$10,$FB,$C9,$D5,$F0
-         !byte $0F,$C9,$F7,$D0,$01,$C8,$18,$6D
+         !byte $BD,$8C,$C0; LDA $C08C,X
+         !byte $10,$FB    ; BPL -$FB
+         !byte $48        ; PHA
+         !byte $68        ; PLA
+         !byte $C9,$D5    ; CMP #$D5
+         !byte $D0,$F5    ; BNE -$F5
+         !byte $A0,$00    ; LDY #00
+         !byte $8C,WILDCARD,WILDCARD; STY $xxxx
+         !byte $BD,$8C,$C0; LDA $C08C,X
+         !byte $10,$FB    ; BPL -$FB
+         !byte $C9,$D5    ; CMP #$D5
+         !byte $F0,$0F    ; BEQ +$0F
+         !byte $C9,$F7    ; CMP #$F7
+         !byte $D0,$01    ; BNE +$01
+         !byte $C8        ; INY
+         !byte $18        ; CLC
+         !byte $6D        ; ADC
          bcs   .exit
          sta   gDisplayBytes
          pha
@@ -21,6 +34,6 @@ _d5d5f7
          pla
          ldy   #$01
          jsr   modify
-         !byte $60
+         !byte $60        ; RTS
 .exit
 }

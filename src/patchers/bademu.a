@@ -16,14 +16,19 @@ _bademu
          ldx   #$4F
          ldy   #$11
          jsr   compare    ; and T00,S03,$4F ==
-         !byte $BD,$8C,$C0,$10,$FB,$C9,$D5,$D0
-         !byte $F0,$EA,$BD,$8C,$C0,$C9,$D5,$F0
-         !byte $12
+         !byte $BD,$8C,$C0; LDA $C08C,X
+         !byte $10,$FB    ; BPL -$FB
+         !byte $C9,$D5    ; CMP #$D5
+         !byte $D0,$F0    ; BNE -$F0
+         !byte $EA        ; NOP
+         !byte $BD,$8C,$C0; LDA $C08C,X
+         !byte $C9,$D5    ; CMP #$D5
+         !byte $F0,$12    ; BEQ +$12
          bcs   .exit
          lda   #$03
          ldx   #$58
          ldy   #$02
-         jsr   modify     ; and set T00,S03,$58 =
-         !byte $F0,06
+         jsr   modify     ; then set T00,S03,$58 =
+         !byte $F0,06     ; BEQ +$06
 .exit
 }

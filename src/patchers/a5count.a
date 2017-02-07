@@ -11,8 +11,11 @@ _a5count
 
          ldy   #$0A
          jsr   SearchTrack
-         !byte $07,$E6,$02,$D0,$03,$4C,$A5,$00
-         !byte $C9,$A5
+         !byte $07
+         !byte $E6,$02    ; INC $02
+         !byte $D0,$03    ; BNE +3
+         !byte $4C,$A5,$00; JMP $00A5
+         !byte $C9,$A5    ; CMP #$A5
          bcs   .exit
          sta   gDisplayBytes
          pha
@@ -25,6 +28,6 @@ _a5count
          pla
          ldy   #$02
          jsr   modify
-         !byte $D0,$7B
+         !byte $D0,$7B    ; BNE +$7B
 .exit
 }

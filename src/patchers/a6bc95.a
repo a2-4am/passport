@@ -10,23 +10,32 @@ _a6bc95
 
          ldy   #$09
          jsr   SearchTrack
-         !byte $BD,$8C,$C0,$10,$FB,$C9,$A6,$D0
-         !byte $ED
+         !byte $BD,$8C,$C0; LDA $C08C,X
+         !byte $10,$FB    ; BPL -$FB
+         !byte $C9,$A6    ; CMP #$A6
+         !byte $D0,$ED    ; BNE -$ED
          bcs   .exit
          ldy   #$09
          jsr   SearchTrack
-         !byte $BD,$8C,$C0,$10,$FB,$C9,$BC,$D0
-         !byte $E4
+         !byte $BD,$8C,$C0; LDA $C08C,X
+         !byte $10,$FB    ; BPL -$FB
+         !byte $C9,$BC    ; CMP #$BC
+         !byte $D0,$E4    ; BNE -$E4
          bcs   .exit
          ldy   #$09
          jsr   SearchTrack
-         !byte $BD,$8C,$C0,$10,$FB,$C9,$95,$D0
-         !byte $DB
+         !byte $BD,$8C,$C0; LDA $C08C,X
+         !byte $10,$FB    ; BPL -$FB
+         !byte $C9,$95    ; CMP #$95
+         !byte $D0,$DB    ; BNE -$DB
          bcs   .exit
          ldy   #$0E
          jsr   SearchTrack
-         !byte $AE,$F8,$01,$A9,$0A,$8D,$FE,$01
-         !byte $BD,$8E,$C0,$BD,$89,$C0
+         !byte $AE,$F8,$01; LDX $01F8
+         !byte $A9,$0A    ; LDA #$0A
+         !byte $8D,$FE,$01; STA $01FE
+         !byte $BD,$8E,$C0; LDA $C08E,X
+         !byte $BD,$89,$C0; LDA $C089,X
          bcs   .exit
          sta   gDisplayBytes
          pha
@@ -35,6 +44,6 @@ _a6bc95
          pla
          ldy   #$01
          jsr   modify
-         !byte $60
+         !byte $60        ; RTS
 .exit
 }

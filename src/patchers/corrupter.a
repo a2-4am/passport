@@ -11,19 +11,30 @@ corrupter
          ldx   #$2C
          ldy   #$07
          jsr   compare
-         !byte $20,$E3,$03,$84,$00,$85,$01
+         !byte $20,$E3,$03; JSR $03E3
+         !byte $84,$00    ; STY $00
+         !byte $85,$01    ; STA $01
          bcs   .nextsector
          ldx   #$D4
          ldy   #$0F
          jsr   compare
-         !byte $A9,$00,$8D,$00,$A0,$EE,$D3,$40
-         !byte $AD,$D3,$40,$C9,$FF,$D0,$F1
+         !byte $A9,$00    ; LDA #$00
+         !byte $8D,$00,$A0; STA $4000
+         !byte $EE,$D3,$40; INC $40D3
+         !byte $AD,$D3,$40; LDA $40D3
+         !byte $C9,$FF    ; CMP #$FF
+         !byte $D0,$F1    ; BNE -$F1
          bcs   .nextsector
          ldx   #$A4
          ldy   #$0F
          jsr   compare
-         !byte $A9,$23,$85,$02,$A9,$00,$85,$03
-         !byte $A9,$01,$85,$04,$20,$28,$40
+         !byte $A9,$23    ; LDA #$23
+         !byte $85,$02    ; STA $02
+         !byte $A9,$00    ; LDA #$00
+         !byte $85,$03    ; STA $03
+         !byte $A9,$01    ; LDA #$01
+         !byte $85,$04    ; STA $04
+         !byte $20,$28,$40; JSR $4028
          bcs   .nextsector
          sta   gDisplayBytes
          pha
@@ -32,7 +43,7 @@ corrupter
          pla
          ldy   #$01
          jsr   modify
-         !byte $60
+         !byte $60        ; RTS
 .nextsector
          dec   .sector+1
          bpl   .sector

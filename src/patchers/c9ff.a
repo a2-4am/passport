@@ -16,10 +16,21 @@
 _c9ff
          ldy   #$1A
          jsr   SearchTrack
-         !byte $A8,$D0,$15,$BD,$8C,$C0,$10,$FB
-         !byte $C9,$FF,$D0,$0C,$EA,$BD,$8C,$C0
-         !byte $10,$FB,$C9,$FF,$D0,$02,$18,$60
-         !byte $38,$60
+         !byte $A8        ; TAY
+         !byte $D0,$15    ; BNE +$15
+         !byte $BD,$8C,$C0; LDA $C08C,X
+         !byte $10,$FB    ; BPL -$FB
+         !byte $C9,$FF    ; CMP #$FF
+         !byte $D0,$0C    ; BNE +$0C
+         !byte $EA        ; NOP
+         !byte $BD,$8C,$C0; LDA $C08C,X
+         !byte $10,$FB    ; BPL -$FB
+         !byte $C9,$FF    ; CMP #$FF
+         !byte $D0,$02    ; BNE +$02
+         !byte $18        ; CLC
+         !byte $60        ; RTS
+         !byte $38        ; SEC
+         !byte $60        ; RTS
          bcs   .exit
          sta   gDisplayBytes
          pha

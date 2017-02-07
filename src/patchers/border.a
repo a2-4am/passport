@@ -16,7 +16,12 @@ _border
          ldx   #$5A
          ldy   #$0A
          jsr   compare    ; and T00,S08,$5A ==
-         !byte $C9,$23,$B0,$EB,$0A,$20,$6C,$BF,$EA,$EA
+         !byte $C9,$23    ; CMP #$23
+         !byte $B0,$EB    ; BCS -$EB
+         !byte $0A        ; ASL
+         !byte $20,$6C,$BF; JSR $BF6C
+         !byte $EA        ; NOP
+         !byte $EA        ; NOP
          bcs   .exit
          sta   gDisplayBytes
          pha
@@ -25,6 +30,12 @@ _border
          pla
          ldy   #$0A
          jsr   modify     ; then set T00,S08,$5A =
-         !byte $48,$A0,$01,$B1,$3C,$6A,$68,$90,$08,$0A
+         !byte $48        ; PHA
+         !byte $A0,$01    ; LDY #$01
+         !byte $B1,$3C    ; LDA ($3C),Y
+         !byte $6A        ; ROR
+         !byte $68        ; PLA
+         !byte $90,$08    ; BCC +$08
+         !byte $0A        ; ASL
 .exit
 }
