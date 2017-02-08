@@ -1,0 +1,78 @@
+;-------------------------------
+; #Optimum
+; self-overwriter that restores
+; content later from custom sector
+; e.g. StickyBear Math
+;
+; module by qkumba
+;-------------------------------
+!zone {
+_optimum
+         lda   gIsOptimum
+         bne   ++
+         lda   gTrack
+         cmp   #2
+         bne   +
+
+         ;before read track 1, install hook
+
+         lda   #<.readhook
+         sta   $BE36
+         lda   #>.readhook
+         sta   $BE37
+
++        ldy   #11
+         jsr   SearchTrack
+         !byte $9D,$8D,$C0 ;STA $C08D,X
+         !byte $88         ;DEY
+         !byte $84,$26     ;STY $26
+         !byte $BD,$8C,$C0 ;LDA $C08C,X
+         !byte $10,$FB     ;BPL -$FB
+         bcs   ++
+         inx
+         inx
+         ldy   #$01
+         jsr   modify
+         ;$C0->$BB, no longer softswitch
+         !byte $BB
+++       jmp   .exit
+
+.desync
+         !byte $49, $AD      ;EOR #$AD ;set A to 0
+         !byte $EA           ;NOP      ;alignment
+         !byte $9D, $8D, $C0 ;STA $C08D,X
+
+.sync
+         !byte $C9, $AD      ;CMP #$AD
+         !byte $D0, $E7      ;BNE -$E7
+         !byte $A9, $00      ;LDA #$00
+
+.readhook
+         ;read using desync technique
+
+         ldy   #5
+-        lda   .desync, y
+         sta   $B8FB, y
+         dey
+         bpl   -
+         jsr   $B8DC
+         ldy   #5
+-        lda   .sync, y
+         sta   $B8FB, y
+         dey
+         bpl   -
+
+         ;after read track 1, uninstall hook
+
+         lda   #$DC
+         sta   $BE36
+         lda   #$B8
+         sta   $BE37
+
+         ;then fall through to decode
+
+         clc
++        rts
+
+.exit
+}
