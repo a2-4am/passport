@@ -38,14 +38,14 @@ _optimum
 ++       jmp   .exit
 
 .desync
-         !byte $49, $AD      ;EOR #$AD ;set A to 0
-         !byte $EA           ;NOP      ;alignment
-         !byte $9D, $8D, $C0 ;STA $C08D,X
+         !byte $49,$AD     ;EOR #$AD ;set A to 0
+         !byte $EA         ;NOP      ;alignment
+         !byte $9D,$8D,$C0 ;STA $C08D,X
 
 .sync
-         !byte $C9, $AD      ;CMP #$AD
-         !byte $D0, $E7      ;BNE -$E7
-         !byte $A9, $00      ;LDA #$00
+         !byte $C9,$AD     ;CMP #$AD
+         !byte $D0,$E7     ;BNE -$E7
+         !byte $A9,$00     ;LDA #$00
 
 .readhook
          ;read using desync technique

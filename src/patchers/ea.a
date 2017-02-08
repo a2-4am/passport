@@ -12,11 +12,25 @@ _ea
 
 +        ldy   #40
          jsr   SearchTrack
-         !byte $8D,$6F,$BC,$8C,$70,$BC,$A0,$20
-         !byte $88,$F0,$D7,$AD,$EC,$C0,$10,$FB
-         !byte $49,$D5,$D0,$F4,$EA,$AD,$EC,$C0
-         !byte $10,$FB,$C9,$BB,$D0,$F2,$EA,$AD
-         !byte $EC,$C0,$10,$FB,$C9,$CF,$D0,$E8
+         !byte $8D,$6F,$BC ;STA $BC6F
+         !byte $8C,$70,$BC ;STY $BC70
+         !byte $A0,$20     ;LDY #$20
+         !byte $88         ;DEY
+         !byte $F0,$D7     ;BEQ -$D7
+         !byte $AD,$EC,$C0 ;LDA $C0EC
+         !byte $10,$FB     ;BPL -$FB
+         !byte $49,$D5     ;EOR #$D5
+         !byte $D0,$F4     ;BNE -$F4
+         !byte $EA         ;NOP
+         !byte $AD,$EC,$C0 ;LDA $C0EC
+         !byte $10,$FB     ;BPL -$FB
+         !byte $C9,$BB     ;CMP #$BB
+         !byte $D0,$F2     ;BNE -$F2
+         !byte $EA         ;NOP
+         !byte $AD,$EC,$C0 ;LDA $C0EC
+         !byte $10,$FB     ;BPL -$FB
+         !byte $C9,$CF     ;CMP #$CF
+         !byte $D0,$E8     ;BNE -$E8
          bcs   +
          pha
          txa
@@ -29,21 +43,21 @@ _ea
          pha
          ldy   #1
          jsr   modify
-         !byte $AA
+         !byte $AA         ;data prologue #2
 .patch2
          ldx   #$D1
          pla
          ldy   #1
          jsr   modify
-         !byte $AD
+         !byte $AD         ;data prologue #3
 
 +        ldy   #13
          jsr   SearchTrack
-         !byte $03, $49      ;ldi  #$05
-         !byte $01, $03, $65 ;jsra $bc00
-         !byte $01, $03, $79 ;jsra $a000
-         !byte $03, $4C      ;ldi  #$00
-         !byte $04, $EB, $19 ;lda  $c0e8
+         !byte $03,$49     ;LDI  #$05
+         !byte $01,$03,$65 ;JSRA $bc00
+         !byte $01,$03,$79 ;JSRA $a000
+         !byte $03,$4C     ;LDI  #$00
+         !byte $04,$EB,$19 ;LDA  $c0e8
          bcs   +
          inx
          inx
@@ -55,17 +69,21 @@ _ea
          !byte $04
 +        ldy   #15
          jsr   SearchTrack
+         ;enciphered call to p-code as above
          !byte $BF,$9F,$BE,$F6,$04,$2E,$9B,$DA
          !byte $5A,$16,$DA,$30,$06,$45,$C2
          bcs   +
          inx
          ldy   #1
          jsr   modify
-         !byte $EE
+         !byte $EE         ;enciphered jsra->lda to disable call
 
 +        ldy   #8
          jsr   SearchTrack
-         !byte $20,$10,$07,$A5,$56,$D0,$A7,$4C
+         !byte $20,$10,$07 ;JSR $0710
+         !byte $A5,$56     ;LDA $56
+         !byte $D0,$A7     ;BNE -$A7
+         !byte $4C         ;JMP $xxxx
          bcs   +
          inx
          inx
@@ -75,16 +93,16 @@ _ea
          inx
          ldy   #1
          jsr   modify
-         !byte $00
+         !byte $00         ;disable branch
 
 +        ldy   #15
          jsr   SearchTrack
-         !byte $03, $49      ;ldi  #$05
-         !byte $01, $03, $65 ;jsra $bc00
-         !byte $03, $4C      ;ldi  #$00
-         !byte $01, $03, $79 ;jsra $a000
-         !byte $07, $01      ;sub  #$4d
-         !byte $0F, $F5, $70 ;bne  $a9f6
+         !byte $03,$49     ;LDI  #$05
+         !byte $01,$03,$65 ;JSRA $bc00
+         !byte $03,$4C     ;LDI  #$00
+         !byte $01,$03,$79 ;JSRA $a000
+         !byte $07,$01     ;SUB  #$4d
+         !byte $0F,$F5,$70 ;BNE  $a9f6
          bcs   +
          pha
          txa
@@ -96,18 +114,23 @@ _ea
          pha
          ldy   #1
          jsr   modify
-         !byte $04
+         !byte $04         ;new checksum value for sub
          pla
 .patch3
          ldx   #$D1
          ldy   #1
          jsr   modify
-         !byte $00
+         !byte $00         ;jsra->lda to disable call
+                           ;routine loops infinitely on failure
 
 +        ldy   #13
          jsr   SearchTrack
-         !byte $4C,$E7,$B2,$4C,$74,$B3,$00,$00
-         !byte $C9,$CB,$D0,$7C,$60
+         !byte $4C,$E7,$B2 ;JMP $B2E7
+         !byte $4C,$74,$B3 ;JMP $B374
+         !byte $00,$00     ;filler
+         !byte $C9,$CB     ;CMP #$CB
+         !byte $D0,$7C     ;BNE +$7C
+         !byte $60         ;RTS
          bcs   +
          pha
          txa
@@ -116,16 +139,16 @@ _ea
          pla
          ldy   #1
          jsr   modify
-         !byte $00
+         !byte $00         ;disable branch
 
 +        ldy   #15
          jsr   SearchTrack
-         !byte $03,$49     ;ldi #$05
-         !byte $01,$03,$65 ;jsr $BC00
-         !byte $03,$4C     ;ldi #$00
-         !byte $01,$03,$6C ;jsr $B500
-         !byte $07,$1C     ;sub #$50
-         !byte $0F,$78,$60 ;bne $B97B
+         !byte $03,$49     ;LDI #$05
+         !byte $01,$03,$65 ;JSR $BC00
+         !byte $03,$4C     ;LDI #$00
+         !byte $01,$03,$6C ;JSR $B500
+         !byte $07,$1C     ;SUB #$50
+         !byte $0F,$78,$60 ;BNE $B97B
          bcs   +
          pha
          txa
@@ -134,12 +157,16 @@ _ea
          pla
          ldy   #1
          jsr   modify
-         !byte $4C
+         !byte $4C         ;new checksum value for sub
 
 +        ldy   #14
          jsr   SearchTrack
-         !byte $78,$20,$00,$D7,$C9,$4D,$F0,$06
-         !byte $20,$67,$67,$20,$AA,$BF
+         !byte $78         ;SEI
+         !byte $20,$00,$D7 ;JSR $D700
+         !byte $C9,$4D     ;CMP #$4D
+         !byte $F0,$06     ;BEQ +$06
+         !byte $20,$67,$67 ;JSR $6767
+         !byte $20,$AA,$BF ;JSR $BFAA
          bcs   +
          inx
          inx
@@ -148,12 +175,14 @@ _ea
          inx
          ldy   #1
          jsr   modify
-         !byte $00
+         !byte $00         ;new checksum value for cmp
 
 +        ldy   #12
          jsr   SearchTrack
-         !byte $20,$3E,$91,$20,$F3,$76,$20,$00
-         !byte $61,$4C,$94,$69
+         !byte $20,$3E,$91 ;JSR $913E
+         !byte $20,$F3,$76 ;JSR $76F3
+         !byte $20,$00,$61 ;JSR $6100
+         !byte $4C,$94,$69 ;JMP $6994
          bcs   +
          inx
          inx
@@ -163,19 +192,19 @@ _ea
          inx
          ldy   #1
          jsr   modify
-         !byte $2C
+         !byte $2C         ;JSR->BIT
 
 +        ldy   #23
          jsr   SearchTrack
          ;looks like garbage because it's enciphered
-         !byte $03, $5B      ;ldi  #$00
-         !byte $06, $FF, $97 ;sta  $4ee4
-         !byte $1C, $E0, $8F ;jsra $4ce3
-         !byte $05, $FB, $95 ;jsra $4ce3
-         !byte $19, $E0, $88 ;jsra $4ce3
-         !byte $05, $FE, $95 ;jsra $4ce3
-         !byte $1B, $EB, $39 ;lda  $c0e8
-         !byte $04, $C6, $97 ;lda  $4ee4
+         !byte $03,$5B     ;LDI #$00
+         !byte $06,$FF,$97 ;STA  $4ee4
+         !byte $1C,$E0,$8F ;JSRA $4ce3
+         !byte $05,$FB,$95 ;JSRA $4ce3
+         !byte $19,$E0,$88 ;JSRA $4ce3
+         !byte $05,$FE,$95 ;JSRA $4ce3
+         !byte $1B,$EB,$39 ;LDA  $c0e8
+         !byte $04,$C6,$97 ;LDA  $4ee4
          bcs   +
          pha
          txa
@@ -184,18 +213,18 @@ _ea
          pla
          ldy   #1
          jsr   modify
-         !byte $C7
+         !byte $C7         ;lda from known-zero instead
 
 +        ldy   #23
          jsr   SearchTrack
-         !byte $03, $4C      ;ldi  #$00
-         !byte $06, $E1, $DE ;sta  $07e2
-         !byte $05, $CC, $DC ;jsra $05cf
-         !byte $05, $CC, $DC ;jsra $05cf
-         !byte $05, $CC, $DC ;jsra $05cf
-         !byte $05, $CC, $DC ;jsra $05cf
-         !byte $04, $EB, $19 ;lda  $c0e8
-         !byte $04, $E1, $DE ;lda  $07e2
+         !byte $03,$4C     ;LDI  #$00
+         !byte $06,$E1,$DE ;STA  $07e2
+         !byte $05,$CC,$DC ;JSRA $05cf
+         !byte $05,$CC,$DC ;JSRA $05cf
+         !byte $05,$CC,$DC ;JSRA $05cf
+         !byte $05,$CC,$DC ;JSRA $05cf
+         !byte $04,$EB,$19 ;LDA  $c0e8
+         !byte $04,$E1,$DE ;LDA  $07e2
          bcs   .exit
          pha
          txa
@@ -204,7 +233,7 @@ _ea
          pla
          ldy   #1
          jsr   modify
-         !byte $E0
+         !byte $E0         ;lda from known-zero instead
 
 .dostitles
          lda   gIsBoot0
@@ -212,14 +241,14 @@ _ea
 
          ldy   #23
          jsr   SearchTrack
-         !byte $09, $7A      ;ldi  #$00
-         !byte $06, $7E, $A3 ;sta  $0ee2
-         !byte $08, $4D, $A1 ;jsra $0cd1
-         !byte $08, $4D, $A1 ;jsra $0cd1
-         !byte $08, $4D, $A1 ;jsra $0cd1
-         !byte $08, $4D, $A1 ;jsra $0cd1
-         !byte $07, $74, $6D ;lda  $c0e8
-         !byte $07, $7E, $A3 ;lda  $0ee2
+         !byte $09,$7A     ;LDI  #$00
+         !byte $06,$7E,$A3 ;STA  $0ee2
+         !byte $08,$4D,$A1 ;JSRA $0cd1
+         !byte $08,$4D,$A1 ;JSRA $0cd1
+         !byte $08,$4D,$A1 ;JSRA $0cd1
+         !byte $08,$4D,$A1 ;JSRA $0cd1
+         !byte $07,$74,$6D ;LDA  $c0e8
+         !byte $07,$7E,$A3 ;LDA  $0ee2
          bcs   +
          pha
          txa
@@ -228,12 +257,16 @@ _ea
          pla
          ldy   #1
          jsr   modify
-         !byte $7F
+         !byte $7F         ;lda from known-zero instead
 
 +        ldy   #13
          jsr   SearchTrack
-         !byte $A2,$04,$20,$4F,$1E,$20,$00,$A6
-         !byte $A5,$48,$D0,$01,$60
+         !byte $A2,$04     ;LDX #$04
+         !byte $20,$4F,$1E ;JSR $1E4F
+         !byte $20,$00,$A6 ;JSR $A600
+         !byte $A5,$48     ;LDA $48
+         !byte $D0,$01     ;BNE +$01
+         !byte $60         ;RTS
          bcs   +
          pha
          txa
@@ -242,7 +275,7 @@ _ea
          pla
          ldy   #1
          jsr   modify
-         !byte $00
+         !byte $00         ;disable branch
 
 +
 .exit
