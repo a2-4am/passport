@@ -62,16 +62,28 @@ _optimum
          dey
          bpl   -
 
-         ;after read track 1, uninstall hook
+         ;decode it
+         ;while overriding bad checksum or missing tail
+
+         clc
+         jsr   $BE38
+
+         ;but decoding misses four bits because of impossible encoding
+         ;so we have to reflect that in the pre-write buffer
+
+         lda   $BC00
+         sta   $2001
+         eor   $BC01
+         sta   $2000
+
+         ;uninstall hook
 
          lda   #$DC
          sta   $BE36
          lda   #$B8
          sta   $BE37
-
-         ;then fall through to decode
-
-         clc
+         pla
+         pla
 +        rts
 
 .exit
