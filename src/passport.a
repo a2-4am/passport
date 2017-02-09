@@ -94,7 +94,7 @@ flag     =     $FF        ; byte
 }
 
 ; Application constants (not zero addresses)
-RELBASE  =     $6900      ; address to move Passport code
+RELBASE  =     $6700      ; address to move Passport code
                           ; so that it's out of the way
 BASEPAGE =     $10        ; Special Delivery tracer assumes
                           ; this is $10, so don't change it!

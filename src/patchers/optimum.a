@@ -9,87 +9,238 @@
 !zone {
 _optimum
          lda   gIsOptimum
-         bne   ++
+         bne   .jmpexit
          lda   gTrack
-         cmp   #2
-         bne   +
+         beq   .reread1
+         ldy   #15
+         jsr   SearchTrack
+         !byte $A2,$00      ;LDX #$00
+         !byte $A0,$00      ;LDY #$00
+         !byte $BD,$21,$03  ;LDA $0321,X
+         !byte $E8          ;INX
+         !byte $85,WILDCARD ;STA $xx
+         !byte $BD,$21,$03  ;LDA $0321,X
+         !byte $E8          ;INX
+         !byte $85          ;STA $xx
+         bcs   +
+         ldy   #$01
+         jsr   modify
+         !byte $60          ;RTS
 
-         ;before read track 1, install hook
+         ;find the IOB with replaced page
+
++        ldy   #9
+         jsr   SearchTrack
+         !byte $01,WILDCARD,$01,$00
+         !byte $01,$0F
+         !byte WILDCARD,$04
+         !byte $00
+         bcs   +
+         adc   #BASEPAGE
+         sta   .patch3+2
+.patch3
+         lda   $D109,x
+         sta   .address+1
++
+.jmpexit
+         jmp   .exit
+
+         ;track 0, find the region with replaced page
+
+.reread1
+         ldy   #8
+         jsr   SearchTrack
+         !byte $20,$5D,$B6  ;JSR $B65D
+         !byte WILDCARD, WILDCARD
+         !byte $00,$08,$18  ;address, count
+         bcs   .jmpexit ;give up
+         adc   #BASEPAGE
+         sta   .patch1+2
+         sta   .patch2+2
+
+         ;convert address to track/sector
+
+.address
+         lda   #$D1
+         sbc   #7
+         pha
+         and   #$0F
+         sta   tmp
+.patch1
+         lda   $D104,x
+         sbc   tmp
+         and   #$0F
+         sta   gSector
+         pla
+         php
+         lsr
+         lsr
+         lsr
+         lsr
+         clc
+.patch2
+         adc   $D103,x
+         tay
+         plp
+         bcs   +
+         iny
++        sty   gTrack
+
+         ;read replaced page
+
+         ldy   #<gRWTSParams
+         lda   #>gRWTSParams
+         jsr   $BD00
 
          lda   #<.readhook
          sta   $BE36
          lda   #>.readhook
          sta   $BE37
 
-+        ldy   #11
-         jsr   SearchTrack
-         !byte $9D,$8D,$C0 ;STA $C08D,X
-         !byte $88         ;DEY
-         !byte $84,$26     ;STY $26
-         !byte $BD,$8C,$C0 ;LDA $C08C,X
-         !byte $10,$FB     ;BPL -$FB
-         bcs   ++
-         inx
-         inx
-         ldy   #$01
-         jsr   modify
-         ;$C0->$BB, no longer softswitch
-         !byte $BB
-++       jmp   .exit
+         lda   #1
+         sta   gTrack
+         lda   #$0f
+         sta   gSector
 
-.desync
-         !byte $49,$AD     ;EOR #$AD ;set A to 0
-         !byte $EA         ;NOP      ;alignment
-         !byte $9D,$8D,$C0 ;STA $C08D,X
+         ldy   #<gRWTSParams
+         lda   #>gRWTSParams
+         jmp   $BD00
 
-.sync
-         !byte $C9,$AD     ;CMP #$AD
-         !byte $D0,$E7     ;BNE -$E7
-         !byte $A9,$00     ;LDA #$00
+.table
+         !byte $00,$01,$00,$07,$08,$09,$01,$02
+         !byte $02,$00,$01,$06,$04,$03,$04,$03
+         !byte $05,$05,$00,$02,$01,$0A,$07,$0E
+         !byte $05,$02,$01,$06,$07,$03,$00,$02
+         !byte $05,$0B,$04,$0F,$00,$07,$0A,$01
+         !byte $02,$03,$00,$0C,$0C,$06,$07,$05
+         !byte $08,$06,$02,$04,$01,$00,$08,$0A
+         !byte $03,$0E,$00,$01,$07,$09,$0A,$05
+         !byte $0B,$02,$05,$10,$03,$04,$0C,$06
+         !byte $0D,$01,$0F,$06,$05,$0E,$0F,$0B
+         !byte $11,$02,$00,$09
+
+.readret
+         rts
 
 .readhook
-         ;read using desync technique
-
-         ldy   #5
--        lda   .desync, y
-         sta   $B8FB, y
-         dey
-         bpl   -
-         jsr   $B8DC
-         ldy   #5
--        lda   .sync, y
-         sta   $B8FB, y
-         dey
-         bpl   -
-
-         ;decode it
-         ;while overriding bad checksum or missing tail
-
-         jsr   $BE3C
-
-         ;but decoding misses four bits because of impossible encoding
-         ;so we have to reflect that in the pre-write buffer
-
-         lda   #BASEPAGE
-         adc   #$10
-         sta   .patch+2
-         ldy   #1
-         lda   $BC00
-.patch
-         sta   $d100, y
-         eor   $BC01
-         dey
-         bpl   .patch
-
          ;uninstall hook
 
          lda   #$DC
          sta   $BE36
          lda   #$B8
          sta   $BE37
+
+         ;read using desync technique
+
+         ldy   #$20
+--       dey
+         cpy   #0 ;set carry on failure
+         beq   .readret
+-        lda   $C08C,x
+         bpl   -
+---      eor   #$D5
+         bne   --
+         nop
+-        lda   $C08C,x
+         bpl   -
+         cmp   #$AA
+         bne   ---
+         ldy   #$56
+-        lda   $C08C,x
+         bpl   -
+         nop
+         nop
+         sta   $C08D,x
+         nop
+         sty   $26
+-        lda   $C08C,x
+         bpl   -
+         dey
+         sta   $BC00,y
+         bne   -
+-        lda   $C08C,x
+         bpl   -
+         sta   $BB00,y
+         iny
+         bne   -
+
+         ;decode and merge content
+
+         lda   #$BC
+         sta   .tblsel1+2
+         sta   .tblsel2+2
+         lda   #$88
+         sta   .direction1
+         sta   .direction2
+         lda   #$86
+         sta   $26
+         ldy   #$53
+-
+.tblsel1
+         ldx   $D100,y
+         lda   (.table-$96)-$16, x
+         asl
+         asl
+         asl
+         asl
+.direction1
+         dey
+.tblsel2
+         ldx   $D100,y
+         ora   (.table-$96)-$16, x
+         sty   $2C
+         ldy   $26
+         sta   (BASEPAGE+$0F)*256,y
+         ldy   $2C
+         bne   +
+         dec   .tblsel1+2
+         dec   .tblsel2+2
+         lda   #$C8
+         sta   .direction1
+         sta   .direction2
+         !byte $24 ;mask DEY
++
+.direction2
+         dey
+         dec   $26
+         ldx   $26
+         inx
+         bne   -
+
+         ;write replaced page
+
+         lda   gRWTSParams+1
+         pha
+         lda   gRWTSParams+2
+         pha
+         lda   SLOT
+         asl
+         asl
+         asl
+         asl
+         sta   gRWTSParams+1
+         lda   DRIVE
+         and   #$0F
+         sta   gRWTSParams+2
+         inc   gRWTSParams+$0C
+         ldy   #<gRWTSParams
+         lda   #>gRWTSParams
+         jsr   $BD00
+         dec   gRWTSParams+$0C
          pla
+         sta   gRWTSParams+2
          pla
-+        rts
+         sta   gRWTSParams+1
+
+         ;restore original page
+
+         lda   #0
+         sta   gTrack
+         lda   #$0F
+         sta   gSector
+         ldy   #<gRWTSParams
+         lda   #>gRWTSParams
+         jsr   $BD00
 
 .exit
 }
