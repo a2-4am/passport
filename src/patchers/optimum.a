@@ -65,8 +65,7 @@ _optimum
          ;decode it
          ;while overriding bad checksum or missing tail
 
-         clc
-         jsr   $BE38
+         jsr   $BE3C
 
          ;but decoding misses four bits because of impossible encoding
          ;so we have to reflect that in the pre-write buffer
@@ -80,7 +79,7 @@ _optimum
          sta   $d100, y
          eor   $BC01
          dey
-         bpl   -
+         bpl   .patch
 
          ;uninstall hook
 
