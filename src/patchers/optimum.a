@@ -71,10 +71,16 @@ _optimum
          ;but decoding misses four bits because of impossible encoding
          ;so we have to reflect that in the pre-write buffer
 
+         lda   #BASEPAGE
+         adc   #$10
+         sta   .patch+2
+         ldy   #1
          lda   $BC00
-         sta   $2001
+.patch
+         sta   $d100, y
          eor   $BC01
-         sta   $2000
+         dey
+         bpl   -
 
          ;uninstall hook
 
