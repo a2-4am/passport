@@ -203,6 +203,7 @@ _optimum
          asl
          asl
          sta   gRWTSParams+1
+         sta   gRWTSParams+$0F
          lda   DRIVE
          and   #$0F
          sta   gRWTSParams+2
@@ -218,6 +219,7 @@ _optimum
          pla
          sta   gRWTSParams+2
          pla
+         sta   gRWTSParams+$0F
          sta   gRWTSParams+1
 
          ;restore original page
