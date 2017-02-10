@@ -94,7 +94,7 @@ flag     =     $FF        ; byte
 }
 
 ; Application constants (not zero addresses)
-RELBASE  =     $6900      ; address to move Passport code
+RELBASE  =     $6800      ; address to move Passport code
                           ; so that it's out of the way
 BASEPAGE =     $10        ; Special Delivery tracer assumes
                           ; this is $10, so don't change it!
@@ -331,6 +331,8 @@ ADStyle
 .noSun
          jsr   xOptimumRes
          bcs   .noOptimum
+         lda   #TRUE
+         sta   gIsOptimum
          lda   #s_optimum
          jsr   PrintByID
 .noOptimum
@@ -694,6 +696,7 @@ _applyToAll
          !source "patchers/corrupter.a"
          !source "patchers/ea.a"
          !source "patchers/gamco.a"
+         !source "patchers/optimum.a"
 
          lda   gPatchCount
          beq   .nopatches
@@ -778,6 +781,10 @@ gIsEEEF
          !byte FALSE      ; 0=true, 1=false
                           ; reset before each operation
                           ; set in IsEEEF() after reading T22
+gIsOptimum
+         !byte FALSE      ; 0=true, 1=false
+                          ; reset before each operation
+                          ; set in IDBootloader() after reading T00,S00
 gOnAClearDayYouCanReadForever
          !byte FALSE      ; 0=true, 1=false
                           ; retry reads with a captured RWTS forever,

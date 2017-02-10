@@ -1,0 +1,233 @@
+;-------------------------------
+; #Optimum
+; self-overwriter that restores
+; content later from custom sector
+; e.g. StickyBear Math
+;
+; module by qkumba
+;-------------------------------
+!zone {
+_optimum
+         lda   gIsOptimum
+         bne   .jmpexit1
+         lda   gTrack
+         beq   .jmpreread
+         ldy   #15
+         jsr   SearchTrack
+         !byte $A2,$00      ;LDX #$00
+         !byte $A0,$00      ;LDY #$00
+         !byte $BD,$21,$03  ;LDA $0321,X
+         !byte $E8          ;INX
+         !byte $85,WILDCARD ;STA $xx
+         !byte $BD,$21,$03  ;LDA $0321,X
+         !byte $E8          ;INX
+         !byte $85          ;STA $xx
+         bcc   +
+.jmpexit1
+         jmp   .exit
+
+.jmpreread
+         jmp   .reread1
+
++        pha
+         adc   #BASEPAGE
+         sta   .swapbase1+2
+         tay
+         txa
+         pha
+         dey
+         sty   .swapbase4+2
+         dey
+         sty   .swapbase2+2
+         sty   .swapbase3+2
+         ldy   #$B5
+-
+.swapbase1
+         lda   $D100,y
+         sta   $2D8,y
+         dey
+         cpy   #$FF
+         bne   -
+
+         ;disable decoding because using the real version
+         ;would corrupt the text screen
+
+         lda   #$2C
+         sta   $BE40
+
+         ;read T01S0F
+
+         lda   gTrack
+         pha
+         lda   #1
+         sta   gTrack
+         ldy   #<gRWTSParams
+         lda   #>gRWTSParams
+         jsr   $2E2
+         pla
+         sta   gTrack
+
+         ;re-enable decoding
+
+         lda   #$20
+         sta   $BE40
+
+         ;disable redirection
+
+         pla
+         tax
+         pla
+         ldy   #$01
+         jsr   modify
+         !byte $60          ;RTS
+
+         ;decode and stash content
+
+         lda   #$BC
+         sta   .tblsel1+2
+         sta   .tblsel2+2
+         lda   #$88
+         sta   .direction1
+         sta   .direction2
+         lda   #$86
+         sta   $26
+         ldy   #$53
+-
+.tblsel1
+         ldx   $D100,y
+.swapbase2
+         lda   ($D110-$96)-$16,x
+         asl
+         asl
+         asl
+         asl
+.direction1
+         dey
+.tblsel2
+         ldx   $D100,y
+.swapbase3
+         ora   ($D110-$96)-$16,x
+         sty   $2C
+         ldy   $26
+         sta   $B600,y
+         ldy   $2C
+         bne   +
+         dec   .tblsel1+2
+         dec   .tblsel2+2
+         lda   #$C8
+         sta   .direction1
+         sta   .direction2
+         !byte $24 ;mask DEY
++
+.direction2
+         dey
+         dec   $26
+         ldx   $26
+         inx
+         bne   -
+
+         ;read IOB with replaced page
+
+.swapbase4
+         lda   $D16D,x
+         sta   .address+1
+
+.jmpexit2
+         jmp   .exit
+
+         ;track 0, find the region with replaced page
+
+.reread1
+         ldy   #8
+         jsr   SearchTrack
+         !byte $20,$5D,$B6  ;JSR $B65D
+         !byte WILDCARD, WILDCARD
+         !byte $00,$08,$18  ;address, count
+         bcs   .jmpexit2 ;give up
+         adc   #BASEPAGE
+         sta   .patch1+2
+         sta   .patch2+2
+
+         ;convert address to track/sector
+
+.address
+         lda   #$D1
+         sbc   #7
+         pha
+         and   #$0F
+         sta   tmp
+.patch1
+         lda   $D104,x
+         sbc   tmp
+         and   #$0F
+         sta   gSector
+         pla
+         php
+         lsr
+         lsr
+         lsr
+         lsr
+         clc
+.patch2
+         adc   $D103,x
+         tay
+         plp
+         bcs   +
+         iny
++        sty   gTrack
+
+         ;read replaced page
+
+         ldy   #<gRWTSParams
+         lda   #>gRWTSParams
+         jsr   $BD00
+
+         ;merge content
+
+         ldy   #$86
+-        lda   $B600,y
+         sta   (BASEPAGE+$0F)*256,y
+         dey
+         cpy   #$FF
+         bne   -
+
+         ;write replaced page
+
+         lda   gRWTSParams+1
+         pha
+         lda   gRWTSParams+2
+         pha
+         lda   SLOT
+         asl
+         asl
+         asl
+         asl
+         sta   gRWTSParams+1
+         sta   gRWTSParams+$0F
+         lda   DRIVE
+         and   #$0F
+         sta   gRWTSParams+2
+         lda   #1
+         sta   gTrack
+         lda   #$0F
+         sta   gSector
+         inc   gRWTSParams+$0C
+         ldy   #<gRWTSParams
+         lda   #>gRWTSParams
+         jsr   $BD00
+         dec   gRWTSParams+$0C
+         pla
+         sta   gRWTSParams+2
+         pla
+         sta   gRWTSParams+$0F
+         sta   gRWTSParams+1
+
+         ;restore original page
+
+         dec   gTrack
+         ldy   #<gRWTSParams
+         lda   #>gRWTSParams
+         jsr   $BD00
+
+.exit
+}
