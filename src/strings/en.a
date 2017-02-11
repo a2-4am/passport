@@ -194,7 +194,7 @@ StringTable
 ; can be set directly before calling PrintByID.
 ;
 .header
-         !text "Passport by 4am               2017-02-10",00
+         !text "Passport by 4am               2017-02-11",00
 .mainmenu
          !text "________________________________________",$8D,$8D,$8D,$8D,$8D,$8D,$8D
          !text "              "
@@ -430,6 +430,5 @@ StringTable
          !text "T%t,S%0 BASIC program POKEs protection",$8D
          !text "check into memory and CALLs it.",$8D,$00
 .construct
-         !text "Constructing complete T01S0F content.",$8D
-         !text "Protected version is only partial.",$8D,$00
+         !text "T01,S0F Reconstructing missing data",$8D,$00
 }
