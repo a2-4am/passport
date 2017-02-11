@@ -138,6 +138,8 @@ _optimum
          ;track 0, find the region with replaced page
 
 .reread1
+         lda   #s_construct
+         jsr   PrintByID
          ldy   #8
          jsr   SearchTrack
          !byte $20,$5D,$B6  ;JSR $B65D
@@ -191,40 +193,36 @@ _optimum
          cpy   #$FF
          bne   -
 
-         ;write replaced page
+         ;read other page in block
 
-         lda   gRWTSParams+1
-         pha
-         lda   gRWTSParams+2
-         pha
-         lda   SLOT
-         asl
-         asl
-         asl
-         asl
-         sta   gRWTSParams+1
-         sta   gRWTSParams+$0F
-         lda   DRIVE
-         and   #$0F
-         sta   gRWTSParams+2
          lda   #1
          sta   gTrack
-         lda   #$0F
          sta   gSector
-         inc   gRWTSParams+$0C
+         dec   gAddress+1
          ldy   #<gRWTSParams
          lda   #>gRWTSParams
          jsr   $BD00
-         dec   gRWTSParams+$0C
-         pla
-         sta   gRWTSParams+2
-         pla
-         sta   gRWTSParams+$0F
-         sta   gRWTSParams+1
 
-         ;restore original page
+         ;write replaced block
+
+         lda   #(BASEPAGE+$0E)
+         sta   mliparam+3 ; hi byte of data buffer
+         dec   mliparam+4 ; lo byte of block number
+         jsr   SwapProDOS
+         lda   #$81       ; 'write block' command
+         ldy   #$03       ; parameter count
+         jsr   mli
+         jsr   SwapProDOS
+
+         ;restore original pages
 
          dec   gTrack
+         inc   gSector
+         ldy   #<gRWTSParams
+         lda   #>gRWTSParams
+         jsr   $BD00
+         inc   gSector
+         inc   gAddress+1
          ldy   #<gRWTSParams
          lda   #>gRWTSParams
          jsr   $BD00

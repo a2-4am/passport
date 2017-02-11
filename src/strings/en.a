@@ -89,7 +89,8 @@ s_eab0    =    $46
 s_eatrk6  =    $47
 s_eeef   =     $48
 s_poke   =     $49
-STRINGCOUNT =  $4A
+s_construct=   $4A
+STRINGCOUNT =  $4B
 
 !zone {
 StringTable
@@ -167,6 +168,7 @@ StringTable
          !word .eatrk6
          !word .eeef
          !word .poke
+         !word .construct
 ;
 ; Text can contain substitution strings, which
 ; are replaced by current values at runtime. Each
@@ -192,7 +194,7 @@ StringTable
 ; can be set directly before calling PrintByID.
 ;
 .header
-         !text "Passport by 4am               2017-02-09",00
+         !text "Passport by 4am               2017-02-10",00
 .mainmenu
          !text "________________________________________",$8D,$8D,$8D,$8D,$8D,$8D,$8D
          !text "              "
@@ -427,4 +429,7 @@ StringTable
 .poke
          !text "T%t,S%0 BASIC program POKEs protection",$8D
          !text "check into memory and CALLs it.",$8D,$00
+.construct
+         !text "Constructing complete T01S0F content.",$8D
+         !text "Protected version is only partial.",$8D,$00
 }
