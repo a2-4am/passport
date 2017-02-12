@@ -45,15 +45,6 @@ foundea
          jsr   PrintByID
          jsr   CopyUniversal
 
-; mark track 6 as "skip" in sector map
-
-         ldy   #$0F
-         lda   #$00
-.skipsectors
-         sta   T06,y
-         dey
-         bpl   .skipsectors
-
 ; mark track $22 as "optional" in sector map
 
          ldy   #$0F
