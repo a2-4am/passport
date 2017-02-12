@@ -1,4 +1,22 @@
 ;-------------------------------
+; YE OLDE GRAND UNIFIED MEMORY MAP
+;
+; 0800..08FF - clobbered by all boot tracers
+; 0900..09FF - clobbered by Special Delivery tracer
+; 0A00..0AFF - backup of zero page during Special Delivery tracer
+; 0B00..0BFF - unused
+; 0C00..0CFF - clobbered by Special Delivery tracer
+; 0D00..0FFF - unused
+; 1000..1FFF - data buffer for current track
+; 2000..35FF - clobbered by Special Delivery tracer
+; 3600..3FFF - clobbered by lomem DOS 3.3 / Special Delivery tracers
+; 4000..42FF - backup of zero page, page 3, page $BF (SaveProDOS, SwapProDOS)
+; 4300..B5FF - program code
+; B600..BFFF - clobbered by DOS 3.3 boot tracer
+;-------------------------------
+
+
+;-------------------------------
 ; CopyMemory
 ; in:  A = source address (high)
 ;      X = destination address (high)
