@@ -55,7 +55,7 @@ _optimum
          lda   #$2C
          sta   $BE40
 
-         ;read T01S0F
+         ;read T01S0F, remains encoded at $BB00-BC55
 
          lda   gTrack
          pha
@@ -109,7 +109,7 @@ _optimum
          ora   ($D110-$96)-$16,x
          sty   $2C
          ldy   $26
-         sta   $B600,y
+         sta   $300,y
          ldy   $2C
          bne   +
          dec   .tblsel1+2
@@ -180,6 +180,8 @@ _optimum
 
          ;read replaced page
 
+         lda   #9         ; $900-9FF
+         sta   gAddress+1
          ldy   #<gRWTSParams
          lda   #>gRWTSParams
          jsr   $BD00
@@ -187,8 +189,8 @@ _optimum
          ;merge content
 
          ldy   #$86
--        lda   $B600,y
-         sta   (BASEPAGE+$0F)*256,y
+-        lda   $300,y
+         sta   $900,y
          dey
          cpy   #$FF
          bne   -
@@ -198,14 +200,14 @@ _optimum
          lda   #1
          sta   gTrack
          sta   gSector
-         dec   gAddress+1
+         dec   gAddress+1 ; and $800-8FF
          ldy   #<gRWTSParams
          lda   #>gRWTSParams
          jsr   $BD00
 
          ;write replaced block
 
-         lda   #(BASEPAGE+$0E)
+         lda   #8         ; $800-9FF
          sta   mliparam+3 ; hi byte of data buffer
          dec   mliparam+4 ; lo byte of block number
          jsr   SwapProDOS
@@ -214,18 +216,11 @@ _optimum
          jsr   mli
          jsr   SwapProDOS
 
-         ;restore original pages
+         ;restore original disk location
 
-         dec   gTrack
-         inc   gSector
-         ldy   #<gRWTSParams
-         lda   #>gRWTSParams
-         jsr   $BD00
-         inc   gSector
-         inc   gAddress+1
-         ldy   #<gRWTSParams
-         lda   #>gRWTSParams
-         jsr   $BD00
+         dec   gTrack     ; #0
+         lda   #$0F
+         sta   gSector
 
 .exit
 }
