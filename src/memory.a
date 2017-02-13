@@ -1,6 +1,7 @@
 ;-------------------------------
 ; YE OLDE GRAND UNIFIED MEMORY MAP
 ;
+; 02D8..038D - clobbered by Optimum reader
 ; 0800..08FF - clobbered by all boot tracers
 ; 0900..09FF - clobbered by Special Delivery tracer
 ; 0A00..0AFF - backup of zero page during Special Delivery tracer
