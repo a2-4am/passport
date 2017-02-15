@@ -96,6 +96,7 @@ flag     =     $FF        ; byte
 ; Application constants (not zero addresses)
 RELBASE  =     $6800      ; address to move Passport code
                           ; so that it's out of the way
+LOWPOINT =     $4300      ; lowest available address for code
 BASEPAGE =     $10        ; Special Delivery tracer assumes
                           ; this is $10, so don't change it!
 TRUE     =     $00        ; Lots of code assumes this is $00
@@ -797,4 +798,7 @@ LastMover
 
 !if ($B500 - ((255 + LastMover - FirstMover) & $FF00)) != RELBASE {
   !serious "RELBASE requires adjustment to ", ($B500 - ((255 + LastMover - FirstMover) & $FF00))
+}
+!if ($B500 - ((255 + LastMover - FirstMover) & $FF00)) < LOWPOINT {
+  !serious "code is too large to fit in available space!"
 }
