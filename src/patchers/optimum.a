@@ -138,8 +138,6 @@ _optimum
          ;track 0, find the region with replaced page
 
 .reread1
-         lda   #s_construct
-         jsr   PrintByID
          ldy   #8
          jsr   SearchTrack
          !byte $20,$5D,$B6  ;JSR $B65D
@@ -149,6 +147,8 @@ _optimum
          adc   #BASEPAGE
          sta   .patch1+2
          sta   .patch2+2
+         lda   #s_construct
+         jsr   PrintByID
 
          ;convert address to track/sector
 
