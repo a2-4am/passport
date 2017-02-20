@@ -158,6 +158,7 @@ FirstMover
          !source "slots.a"
          !source "prefs.a"
          !source "keys.a"
+         !source "cffa.a"
          !source "rwts.a"
 
 OneTimeSetup
@@ -203,7 +204,12 @@ MainMenu
          jsr   PrintByID
 .getkey
          jsr   WaitForKey
-         cmp   #$9B
+         cmp   #$80
+         bne   +
+         jsr   EnterCFFAIfAvailable
+         bcc   ResetVector
+         bcs   .getkey
++        cmp   #$9B
          beq   .jmptoexit
          cmp   #k_quit
          bne   +
