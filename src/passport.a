@@ -672,6 +672,7 @@ _applyToT00
          !source "patchers/rwts.a"
          !source "patchers/meccm8.a"
          !source "patchers/meccm7.a"
+         !source "patchers/meccm6.a"
          !source "patchers/rol1e.a"
          !source "patchers/jmpb4bb.a"
          !source "patchers/jmpb4bbhi.a"

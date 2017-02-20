@@ -150,6 +150,10 @@ IDBootloader
          jmp   foundmeccm7
 
 .notmeccm7
+         jsr   IDMECCM6
+         bcs   .notmeccm6
+         jmp   foundmeccm6
+.notmeccm6
 .notmecc
 ;
 ; Try to identify the encrypted Datasoft bootloader.

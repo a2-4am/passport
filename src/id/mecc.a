@@ -42,49 +42,46 @@ IDMECCM8
          adc   #BASEPAGE
          sta   gAddress+1
          jsr   ReadSector
-         bcc   +
-.no
-         rts
-+
+         bcs   .exit
+
+; This entry point is also called by the meccm8 patcher
+; in lieu of keeping a global variable around.
+IDMECCM8RWTS
          lda   #$0B
          ldx   #$02
          ldy   #$06
          jsr   compare    ; IF T00,S0B,$02 ==
          !byte $BD,$8C,$C0,$10,$FB,$C9
-         bcs   .no
-         lda   #$0B
+         bcs   .exit
          ldx   #$09
          ldy   #$09
          jsr   compare    ; AND T00,S0B,$09 ==
          !byte $D0,$EF,$EA,$BD,$8C,$C0,$10,$FB
          !byte $C9
-         bcs   .no
-         lda   #$0B
+         bcs   .exit
          ldx   #$13
          ldy   #$0A
          jsr   compare    ; AND T00,S0B,$13 ==
          !byte $D0,$E5,$A0,$03,$BD,$8C,$C0,$10
          !byte $FB,$C9
-         bcs   .no
-         lda   #$0B
+         bcs   .exit
          ldx   #$89
          ldy   #$06
          jsr   compare    ; AND T00,S0B,$89 ==
          !byte $BD,$8C,$C0,$10,$FB,$C9
-         bcs   .no
-         lda   #$0B
+         bcs   .exit
          ldx   #$90
          ldy   #$09
          jsr   compare    ; AND T00,S0B,$90 ==
          !byte $D0,$F4,$EA,$BD,$8C,$C0,$10,$FB
          !byte $C9
-         bcs   .no
-         lda   #$0B
+         bcs   .exit
          ldx   #$9A
          ldy   #$09
          jsr   compare    ; AND T00,S0B,$9A ==
          !byte $D0,$F2,$EA,$BD,$8C,$C0,$10,$FB
          !byte $C9
+.exit
          rts
 
 foundmeccm8
@@ -147,45 +144,41 @@ IDMECCM7
          adc   #BASEPAGE
          sta   gAddress+1
          jsr   ReadSector
-         bcc   +
-.no
-         rts
-+
+         bcs   .exit
+; This entry point is also called by the meccm7 patcher
+; in lieu of keeping a global variable around.
+IDMECCM7RWTS
          lda   #$07
          ldx   #$7D
          ldy   #$06
          jsr   compare    ; IF T00,S07,$7D ==
          !byte $BD,$8C,$C0,$10,$FB,$C9
-         bcs   .no
-         lda   #$07
+         bcs   .exit
          ldx   #$84
          ldy   #$09
          jsr   compare    ; AND T00,S07,$84 ==
          !byte $D0,$F0,$EA,$BD,$8C,$C0,$10,$FB,$C9
-         bcs   .no
-         lda   #$07
+         bcs   .exit
          ldx   #$8E
          ldy   #$0A
          jsr   compare    ; and T00,S07,$8E ==
          !byte $D0,$F2,$A0,$03,$BD,$8C,$C0,$10,$FB,$C9
-         bcs   .no
-         lda   #$07
+         bcs   .exit
          ldx   #$0F
          ldy   #$06
          jsr   compare    ; and T00,S07,$0F ==
          !byte $BD,$8C,$C0,$10,$FB,$49
-         bcs   .no
-         lda   #$07
+         bcs   .exit
          ldx   #$18
          ldy   #$07
          jsr   compare    ; and T00,S07,$18 ==
          !byte $EA,$BD,$8C,$C0,$10,$FB,$C9
-         bcs   .no
-         lda   #$07
+         bcs   .exit
          ldx   #$20
          ldy   #$0A
          jsr   compare    ; and T00,S07,$20 ==
          !byte $D0,$F2,$A0,$56,$BD,$8C,$C0,$10,$FB,$C9
+.exit
          rts
 
 foundmeccm7
@@ -224,6 +217,111 @@ foundmeccm7
          lda   (modsrc),y
          sta   $B8F1
          ldy   #$2A
+         lda   (modsrc),y
+         sta   $B8FC
+         jmp   ADStyle
+}
+
+;-------------------------------
+; IDMECCM6
+; identify MECC "M6" bootloader
+;
+; in:  track buffer contains T00,S00
+; out: C clear if MECC "M6" bootloader was found
+;      C set if not found
+;      all other flags clobbered
+;      all registers clobbered
+;-------------------------------
+!zone {
+IDMECCM6
+         lda   #$00
+         sta   gTrack
+         sta   gAddress
+         lda   #$0B
+         sta   gSector
+         clc
+         adc   #BASEPAGE
+         sta   gAddress+1
+         jsr   ReadSector
+         bcs   .exit
+         dec   gSector
+         dec   gAddress+1
+         jsr   ReadSector
+         bcs   .exit
+; This entry point is also called by the meccm6 patcher
+; in lieu of keeping a global variable around.
+IDMECCM6RWTS
+         lda   #$0A
+         ldx   #$E2
+         ldy   #$06
+         jsr   compare    ; IF T00,S0A,$E2 ==
+         !byte $BD,$8C,$C0,$10,$FB,$C9
+         bcs   .exit
+         ldx   #$E9
+         ldy   #$09
+         jsr   compare    ; AND T00,S0A,$E9 ==
+         !byte $D0,$EF,$EA,$BD,$8C,$C0,$10,$FB,$C9
+         bcs   .exit
+         ldx   #$F3
+         ldy   #$0A
+         jsr   compare    ; and T00,S0A,$F3 ==
+         !byte $D0,$F2,$A0,$03,$BD,$8C,$C0,$10,$FB,$C9
+         bcs   .exit
+         lda   #$0B
+         ldx   #$69
+         ldy   #$06
+         jsr   compare    ; and T00,S0B,$69 ==
+         !byte $BD,$8C,$C0,$10,$FB,$C9
+         bcs   .exit
+         ldx   #$70
+         ldy   #$09
+         jsr   compare    ; and T00,S0B,$70 ==
+         !byte $D0,$F4,$EA,$BD,$8C,$C0,$10,$FB,$C9
+         bcs   .exit
+         ldx   #$7A
+         ldy   #$09
+         jsr   compare    ; and T00,S0B,$7A ==
+         !byte $D0,$F2,$EA,$BD,$8C,$C0,$10,$FB,$C9
+.exit
+         rts
+
+foundmeccm6
+;
+; We found an "M6" MECC bootloader. Now we create
+; an RWTS that can read the rest of the disk.
+; Starting with our built-in RWTS, we modify address
+; and data prologues based on the parameters of the
+; original disk.
+;
+         lda   #s_meccm6
+         jsr   PrintByID
+
+         jsr   CopyUniversal
+
+         lda   #$00
+         sta   modsrc
+         lda   #$0A
+         clc
+         adc   #BASEPAGE
+         sta   modsrc+1
+         ldy   #$E8
+         lda   (modsrc),y
+         lsr
+         sta   $B956
+         ldy   #$F2
+         lda   (modsrc),y
+         sta   $B966
+         ldy   #$FD
+         lda   (modsrc),y
+         sta   $B96F
+         inc   modsrc+1
+         ldy   #$6F
+         lda   (modsrc),y
+         sta   $B8E7
+         ldy   #$79
+         lda   (modsrc),y
+         sta   $B8F1
+         ldy   #$83
          lda   (modsrc),y
          sta   $B8FC
          jmp   ADStyle
