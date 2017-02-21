@@ -92,7 +92,7 @@ IDMECC1
 
 foundmecc1
 ;
-; We found an "M8" MECC bootloader. Now we create
+; We found a MECC bootloader. Now we create
 ; an RWTS that can read the rest of the disk.
 ; Starting with our built-in RWTS, we modify address
 ; and data prologues based on the parameters of the
@@ -175,7 +175,7 @@ IDMECC4a
 
 foundmecc2
 ;
-; We found an "M7" MECC bootloader. Now we create
+; We found a MECC bootloader. Now we create
 ; an RWTS that can read the rest of the disk.
 ; Starting with our built-in RWTS, we modify address
 ; and data prologues based on the parameters of the
@@ -297,7 +297,7 @@ foundmecc3
 ;-------------------------------
 ; IDMECC4
 ; identify MECC bootloader variant #4
-; (labeled "M7" on original disks)
+; (labeled "M8" on original disks)
 ; same as variant #2 but everything is
 ; on T00,S08 instead of T00,S07
 ;
