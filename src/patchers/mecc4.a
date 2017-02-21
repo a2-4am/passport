@@ -1,73 +1,73 @@
 ;-------------------------------
-; #MECCM7
+; #MECC4
 ; MECC fastloader with custom
 ; address and data prologues
-; e.g. Phonics Prime Time series
+; e.g. A-201 Conquering Whole Numbers
 ;-------------------------------
 !zone {
-_meccm7
+_mecc4
          jsr   IDMECC
          bcs   .exit
-         jsr   IDMECCM7RWTS
+         jsr   IDMECC4
          bcs   .exit
-         lda   #$07
+         lda   #$08
          ldx   #$83
          ldy   #$01
-         jsr   compare    ; if T00,S07,$83 !=
+         jsr   compare    ; if T00,S08,$83 !=
          !byte $D5
          bcc   .addr2
          ldy   #$01
-         jsr   modify     ; then set T00,S07,$83 =
+         jsr   modify     ; then set T00,S08,$83 =
          !byte $D5
 .addr2
-         lda   #$07
+         lda   #$08
          ldx   #$8D
          ldy   #$01
-         jsr   compare    ; if T00,S07,$8D !=
+         jsr   compare    ; if T00,S08,$8D !=
          !byte $AA
          bcc   .addr3
          ldy   #$01
-         jsr   modify     ; then set T00,S07,$8D =
+         jsr   modify     ; then set T00,S08,$8D =
          !byte $AA
 .addr3
-         lda   #$07
+         lda   #$08
          ldx   #$98
          ldy   #$01
-         jsr   compare    ; if T00,S07,$98 !=
+         jsr   compare    ; if T00,S08,$98 !=
          !byte $96
          bcc   .data1
          ldy   #$01
-         jsr   modify     ; then set T00,S07,$98 =
+         jsr   modify     ; then set T00,S08,$98 =
          !byte $96
 .data1
-         lda   #$07
+         lda   #$08
          ldx   #$15
          ldy   #$01
-         jsr   compare    ; if T00,S07,$15 !=
+         jsr   compare    ; if T00,S08,$15 !=
          !byte $D5
          bcc   .data2
          ldy   #$01
-         jsr   modify     ; then set T00,S07,$15 =
+         jsr   modify     ; then set T00,S08,$15 =
          !byte $D5
 .data2
-         lda   #$07
+         lda   #$08
          ldx   #$1F
          ldy   #$01
-         jsr   compare    ; if T00,S07,$1F !=
+         jsr   compare    ; if T00,S08,$1F !=
          !byte $AA
          bcc   .data3
          ldy   #$01
-         jsr   modify     ; then set T00,S07,$1F =
+         jsr   modify     ; then set T00,S08,$1F =
          !byte $AA
 .data3
-         lda   #$07
+         lda   #$08
          ldx   #$2A
          ldy   #$01
-         jsr   compare    ; if T00,S07,$2A !=
+         jsr   compare    ; if T00,S08,$2A !=
          !byte $AD
          bcc   .exit
          ldy   #$01
-         jsr   modify     ; then set T00,S07,$2A =
+         jsr   modify     ; then set T00,S08,$2A =
          !byte $AD
 .exit
 }

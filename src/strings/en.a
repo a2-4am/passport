@@ -53,7 +53,7 @@ s_modifyto =   $22
 s_dosb0  =     $23
 s_prodosb0 =   $24
 s_pascalb0 =   $25
-s_meccb0 =     $26
+s_mecc =       $26
 s_sierra =     $27
 s_a6bc95 =     $28
 s_jmpbcf0 =    $29
@@ -68,7 +68,7 @@ s_thunder =    $31
 s_jmpae8e =    $32
 s_diskvol =    $33
 s_d5d5f7 =     $34
-s_meccm7 =     $35
+s_construct=   $35
 s_datasoftb0 = $36
 s_datasoft =   $37
 s_lsr6a  =     $38
@@ -89,9 +89,7 @@ s_eab0    =    $46
 s_eatrk6  =    $47
 s_eeef   =     $48
 s_poke   =     $49
-s_construct=   $4A
-s_meccm6 =     $4B
-STRINGCOUNT =  $4C
+STRINGCOUNT =  $4A
 
 !zone {
 StringTable
@@ -133,7 +131,7 @@ StringTable
          !word .dosboot0
          !word .prodosboot0
          !word .pascalboot0
-         !word .meccboot0
+         !word .mecc
          !word .sierra
          !word .a6bc95
          !word .jmpbcf0
@@ -148,7 +146,7 @@ StringTable
          !word .jmpae8e
          !word .diskvol
          !word .d5d5f7
-         !word .meccm7
+         !word .construct
          !word .datasoftb0
          !word .datasoft
          !word .lsr6a
@@ -169,8 +167,6 @@ StringTable
          !word .eatrk6
          !word .eeef
          !word .poke
-         !word .construct
-         !word .meccm6
 ;
 ; Text can contain substitution strings, which
 ; are replaced by current values at runtime. Each
@@ -196,7 +192,7 @@ StringTable
 ; can be set directly before calling PrintByID.
 ;
 .header
-         !text "Passport by 4am               2017-02-20",00
+         !text "Passport by 4am               2017-02-21",00
 .mainmenu
          !text "________________________________________",$8D,$8D,$8D,$8D,$8D,$8D,$8D
          !text "              "
@@ -335,8 +331,8 @@ StringTable
          !text "T00,S00 Found ProDOS bootloader",$8D,00
 .pascalboot0
          !text "T00,S00 Found Pascal bootloader",$8D,00
-.meccboot0
-         !text "T00 Found MECC M8 bootloader",$8D,00
+.mecc
+         !text "T00,S00 Found MECC bootloader",$8D,00
 .sierra
          !text "T%t,S%0 Found Sierra protection check",$8D,00
 .a6bc95
@@ -378,8 +374,8 @@ StringTable
          !text "disk volume number.",$8D,00
 .d5d5f7
          !text "T%t,S%0 Found D5D5F7 protection check",$8D,00
-.meccm7
-         !text "T00 Found MECC M7 bootloader",$8D,00
+.construct
+         !text "T01,S0F Reconstructing missing data",$8D,$00
 .datasoftb0
          !text "T00,S00 Found Datasoft bootloader",$8D,00
 .datasoft
@@ -431,8 +427,4 @@ StringTable
 .poke
          !text "T%t,S%0 BASIC program POKEs protection",$8D
          !text "check into memory and CALLs it.",$8D,$00
-.construct
-         !text "T01,S0F Reconstructing missing data",$8D,$00
-.meccm6
-         !text "T00 Found MECC M6 bootloader",$8D,00
 }
