@@ -10,19 +10,20 @@
 _optimum
          lda   gIsOptimum
          bne   .jmpexit1
-         lda   gTrack
-         beq   .jmpreread
          ldy   #15
          jsr   SearchTrack
          !byte $A2,$00      ;LDX #$00
          !byte $A0,$00      ;LDY #$00
-         !byte $BD,$21,$03  ;LDA $0321,X
+         !byte $BD,WILDCARD,$03  ;LDA $03xx,X
          !byte $E8          ;INX
          !byte $85,WILDCARD ;STA $xx
-         !byte $BD,$21,$03  ;LDA $0321,X
+         !byte $BD,WILDCARD,$03  ;LDA $03xx,X
          !byte $E8          ;INX
          !byte $85          ;STA $xx
          bcc   +
+         lda   gTrack
+         beq   .jmpreread
+
 .jmpexit1
          jmp   .exit
 
@@ -31,46 +32,92 @@ _optimum
 
 +        pha
          adc   #BASEPAGE
-         sta   .swapbase1+2
+         sta   .swapbase2+2
          tay
+         sbc   #0
+         sta   .swapbase1+1
          txa
          pha
          dey
-         sty   .swapbase4+2
-         dey
-         sty   .swapbase2+2
-         sty   .swapbase3+2
-         ldy   #$B5
--
+         sty   .swapbase5+2
+
 .swapbase1
+         lda   #$D1
+         ldy   #5
+         jsr   SearchSector
+         !byte $00,$07,$08,$09,$01
+         bcs   .notable
+         txa
+         sbc   #($96+$17)
+         sta   .swapbase3+1
+         sta   .swapbase4+1
+         lda   .swapbase1+1
+         sbc   #0
+         sta   .swapbase3+2
+         sta   .swapbase4+2
+         ldy   #0
+-
+.swapbase2
          lda   $D100,y
          sta   $2D8,y
-         dey
-         cpy   #$FF
+         iny
          bne   -
 
-         ;disable decoding because using the real version
-         ;would corrupt the text screen
-
-         lda   #$2C
-         sta   $BE40
-
-         ;read T01S0F, remains encoded at $BB00-BC55
+         lda   #2
+         sta   .retrycount
 
          lda   gTrack
          pha
          lda   #1
          sta   gTrack
+
+         ;disable decoding because using the real version
+         ;would corrupt the text screen
+
+.retry
+         lda   #$2C
+         sta   $BE40
+
+         ;read T01S0F, remains encoded at $BB00-BC55
+
          ldy   #<gRWTSParams
          lda   #>gRWTSParams
-         jsr   $2E2
-         pla
-         sta   gTrack
 
+         ;special case check
+
+         ldx   $2E2
+         cpx   #$48 ;PHA
+         beq   +
+         jsr   $2FC
+         jmp   ++
+
+         ;regular dispatch
++
+         jsr   $2E2
+
+++
          ;re-enable decoding
 
          lda   #$20
          sta   $BE40
+
+         ;detect read failure
+
+         bcc   +
+         dec   .retrycount
+         bne   .retry
+         lda   #s_optbad  ; say read failure
+         jsr   PrintByID  ; but can't quit from here
+         pla
+         sta   gTrack
+.notable
+         pla
+         pla
+         jmp   .exit
+
++
+         pla
+         sta   gTrack
 
          ;disable redirection
 
@@ -95,8 +142,8 @@ _optimum
 -
 .tblsel1
          ldx   $D100,y
-.swapbase2
-         lda   ($D110-$96)-$16,x
+.swapbase3
+         lda   $D1D1,x
          asl
          asl
          asl
@@ -105,8 +152,8 @@ _optimum
          dey
 .tblsel2
          ldx   $D100,y
-.swapbase3
-         ora   ($D110-$96)-$16,x
+.swapbase4
+         ora   $D1D1,x
          sty   $2C
          ldy   $26
          sta   $300,y
@@ -128,12 +175,18 @@ _optimum
 
          ;read IOB with replaced page
 
-.swapbase4
+.swapbase5
          lda   $D16D,x
          sta   .address+1
 
+         lda   gTrack
+         beq   .reread1
+
 .jmpexit2
          jmp   .exit
+
+.retrycount
+         !byte $D1
 
          ;track 0, find the region with replaced page
 
