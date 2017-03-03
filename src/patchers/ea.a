@@ -177,6 +177,37 @@ _ea
          jsr   modify
          !byte $00         ;new checksum value for cmp
 
++        ldy   #9
+         jsr   SearchTrack
+         !byte $20,$84,$6E ;JSR $6E84
+         !byte $A5,$11     ;LDA $11
+         !byte $C9,$52     ;CMP #$52
+         !byte $F0,$03     ;BEQ +$03
+         bcs   +
+         inx
+         inx
+         inx
+         inx
+         inx
+         inx
+         ldy   #1
+         jsr   modify
+         !byte $50         ;new checksum value for cmp
+
++        ldy   #7
+         jsr   SearchTrack
+         !byte $20,$86,$6E ;JSR $6E86
+         !byte $C9,$52     ;CMP #$52
+         !byte $D0,$DB     ;BNE -$DB
+         bcs   +
+         inx
+         inx
+         inx
+         inx
+         ldy   #1
+         jsr   modify
+         !byte $50         ;new checksum value for cmp
+
 +        ldy   #12
          jsr   SearchTrack
          !byte $20,$3E,$91 ;JSR $913E
