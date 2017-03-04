@@ -1,0 +1,38 @@
+;-------------------------------
+; #PRODOS6A
+; disk allows either $D4 or $D5 for the
+; first address prologue nibble
+; (no patches required, but we want to
+; log it)
+;-------------------------------
+!zone {
+prodos6a
+         lda   gIsProDOS  ; only if ProDOS (separate check for DOS)
+         bne   .exit
+         lda   #$0F
+         sta   .sector+1
+.sector  lda   #$FF       ; modified at runtime
+         sta   gDisplayBytes
+         ldx   #$A5
+         ldy   #$08
+         jsr   compare
+         !byte $BD,$8C,$C0,$10,$FB,$4A,$C9,$6A
+         bcs   +
+         lda   #s_lsr6a
+         jsr   PrintByID
+         inc   gPatchCount
++
+         lda   .sector+1
+         ldx   #$EF
+         ldy   #$07
+         jsr   compare
+         !byte $48,$68,$BD,$8C,$C0,$C9,$08
+         bcs   .nextsector
+         lda   #s_bcs08
+         jsr   PrintByID
+         inc   gPatchCount
+.nextsector
+         dec   .sector+1
+         bpl   .sector
+.exit
+}

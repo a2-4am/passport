@@ -697,6 +697,7 @@ _applyToAll
          !source "patchers/a5count.a"
          !source "patchers/d5d5f7.a"
          !source "patchers/prodosrwts.a"
+         !source "patchers/prodos6a.a"
          !source "patchers/prodosmecc.a"
          !source "patchers/rwtsswapmecc.a"
          !source "patchers/protecteddos.a"
