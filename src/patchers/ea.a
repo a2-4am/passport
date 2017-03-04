@@ -256,7 +256,7 @@ _ea
          !byte $05,$CC,$DC ;JSRA $05cf
          !byte $04,$EB,$19 ;LDA  $c0e8
          !byte $04,$E1,$DE ;LDA  $07e2
-         bcs   .exit
+         bcs   +
          pha
          txa
          adc   #21
@@ -265,6 +265,24 @@ _ea
          ldy   #1
          jsr   modify
          !byte $E0         ;lda from known-zero instead
+
++        ldy   #16
+         jsr   SearchTrack
+         !byte $49,$4E     ;EOR #$4E
+         !byte $09,$2B     ;ORA #$2B
+         !byte $48         ;PHA
+         !byte $A9,$04     ;LDA #$04
+         !byte $48         ;PHA
+         !byte $A5,$4F     ;LDA $4F
+         !byte $45,$4F     ;EOR $4F
+         !byte $18         ;CLC
+         !byte $E9,$00     ;SBC #$00
+         !byte $48         ;PHA
+         bcs   .exit
+         inx
+         ldy   #1
+         jsr   modify
+         !byte $E8         ;new checksum value for eor
 
 .dostitles
          lda   gIsBoot0
