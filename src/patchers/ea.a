@@ -266,6 +266,26 @@ _ea
          jsr   modify
          !byte $E0         ;lda from known-zero instead
 
++        ldy   #23
+         jsr   SearchTrack
+         !byte $03,$4C     ;LDI  #$00
+         !byte $07,$E1,$DE ;STA  $07e2
+         !byte $04,$CC,$DC ;JSRA $05cf
+         !byte $04,$CC,$DC ;JSRA $05cf
+         !byte $04,$CC,$DC ;JSRA $05cf
+         !byte $04,$CC,$DC ;JSRA $05cf
+         !byte $05,$EB,$19 ;LDA  $c0e8
+         !byte $05,$E1,$DE ;LDA  $07e2
+         bcs   +
+         pha
+         txa
+         adc   #21
+         tax
+         pla
+         ldy   #1
+         jsr   modify
+         !byte $E0         ;lda from known-zero instead
+
 +        ldy   #16
          jsr   SearchTrack
          !byte $49,$4E     ;EOR #$4E
