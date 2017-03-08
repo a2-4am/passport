@@ -17,6 +17,38 @@ WILDCARD =     $97
 ;      all other registers and flags clobbered
 ;-------------------------------
 SearchTrack
+;set end point for the search
+
+         lda   #BASEPAGE+$10
+         sta   .endvalue+1
+         lda   #BASEPAGE
+         bne   SearchSectors
+
+;-------------------------------
+; SearchSector subroutine
+; written by qkumba
+; same as SearchTrack, but for a single sector
+; in:  A = sector address
+;      Y = string length
+;      stack = string to find
+; out: C clear if string found
+;        or set if not found
+;      If C is clear, then
+;      X = starting offset where string was found
+;      all other registers and flags clobbered
+;-------------------------------
+
+SearchSector
+;set end point for the search
+
+         tax
+         inx
+         stx   .endvalue+1
+
+; set high part of initial search position
+
+SearchSectors
+         sta   search+2
          pla
          sta   match_buffer1+1
          sta   match_all+1
@@ -59,11 +91,6 @@ plus01
          bne   plus02
          inc   match_all+2
 plus02
-
-; set high part of initial search position
-
-         lda   #BASEPAGE
-         sta   search+2
 
          lda   #<cont_search-branch_cont-2
          sta   branch_cont+1
@@ -131,7 +158,8 @@ match_size2
 check_end
          inc   search+2
          ldx   search+2
-         cpx   #BASEPAGE+$10
+.endvalue
+         cpx   #$D1
          bne   check_byte1
          ldx   #<all_done_set-branch_cont-2
          stx   branch_cont+1
