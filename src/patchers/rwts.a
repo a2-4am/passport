@@ -634,6 +634,7 @@ rwtspatcher
          lda   gIsRWTS    ; if DOS 3.3 RWTS
          bne   .lsr6a
          lda   #$03
+         sta   gDisplayBytes
          ldx   #$4F
          ldy   #$0A
          jsr   compare    ; and T00,S03,$4F ==
@@ -654,6 +655,7 @@ rwtspatcher
          lda   gIsRWTS    ; if DOS 3.3 RWTS
          bne   .bcs08
          lda   #$03
+         sta   gDisplayBytes
          ldx   #$8B
          ldy   #$15
          jsr   compare    ; and T00,S03,$8B ==

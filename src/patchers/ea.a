@@ -177,6 +177,37 @@ _ea
          jsr   modify
          !byte $00         ;new checksum value for cmp
 
++        ldy   #9
+         jsr   SearchTrack
+         !byte $20,$84,$6E ;JSR $6E84
+         !byte $A5,$11     ;LDA $11
+         !byte $C9,$52     ;CMP #$52
+         !byte $F0,$03     ;BEQ +$03
+         bcs   +
+         inx
+         inx
+         inx
+         inx
+         inx
+         inx
+         ldy   #1
+         jsr   modify
+         !byte $50         ;new checksum value for cmp
+
++        ldy   #7
+         jsr   SearchTrack
+         !byte $20,$86,$6E ;JSR $6E86
+         !byte $C9,$52     ;CMP #$52
+         !byte $D0,$DB     ;BNE -$DB
+         bcs   +
+         inx
+         inx
+         inx
+         inx
+         ldy   #1
+         jsr   modify
+         !byte $50         ;new checksum value for cmp
+
 +        ldy   #12
          jsr   SearchTrack
          !byte $20,$3E,$91 ;JSR $913E
@@ -225,7 +256,7 @@ _ea
          !byte $05,$CC,$DC ;JSRA $05cf
          !byte $04,$EB,$19 ;LDA  $c0e8
          !byte $04,$E1,$DE ;LDA  $07e2
-         bcs   .exit
+         bcs   +
          pha
          txa
          adc   #21
@@ -234,6 +265,44 @@ _ea
          ldy   #1
          jsr   modify
          !byte $E0         ;lda from known-zero instead
+
++        ldy   #23
+         jsr   SearchTrack
+         !byte $03,$4C     ;LDI  #$00
+         !byte $07,$E1,$DE ;STA  $07e2
+         !byte $04,$CC,$DC ;JSRA $05cf
+         !byte $04,$CC,$DC ;JSRA $05cf
+         !byte $04,$CC,$DC ;JSRA $05cf
+         !byte $04,$CC,$DC ;JSRA $05cf
+         !byte $05,$EB,$19 ;LDA  $c0e8
+         !byte $05,$E1,$DE ;LDA  $07e2
+         bcs   +
+         pha
+         txa
+         adc   #21
+         tax
+         pla
+         ldy   #1
+         jsr   modify
+         !byte $E0         ;lda from known-zero instead
+
++        ldy   #16
+         jsr   SearchTrack
+         !byte $49,$4E     ;EOR #$4E
+         !byte $09,$2B     ;ORA #$2B
+         !byte $48         ;PHA
+         !byte $A9,$04     ;LDA #$04
+         !byte $48         ;PHA
+         !byte $A5,$4F     ;LDA $4F
+         !byte $45,$4F     ;EOR $4F
+         !byte $18         ;CLC
+         !byte $E9,$00     ;SBC #$00
+         !byte $48         ;PHA
+         bcs   .exit
+         inx
+         ldy   #1
+         jsr   modify
+         !byte $E8         ;new checksum value for eor
 
 .dostitles
          lda   gIsBoot0

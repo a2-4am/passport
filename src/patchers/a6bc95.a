@@ -15,19 +15,17 @@ _a6bc95
          !byte $C9,$A6    ; CMP #$A6
          !byte $D0,$ED    ; BNE -$ED
          bcs   .exit
-         ldy   #$09
+         ldy   #$07
          jsr   SearchTrack
          !byte $BD,$8C,$C0; LDA $C08C,X
          !byte $10,$FB    ; BPL -$FB
          !byte $C9,$BC    ; CMP #$BC
-         !byte $D0,$E4    ; BNE -$E4
          bcs   .exit
-         ldy   #$09
+         ldy   #$07
          jsr   SearchTrack
          !byte $BD,$8C,$C0; LDA $C08C,X
          !byte $10,$FB    ; BPL -$FB
          !byte $C9,$95    ; CMP #$95
-         !byte $D0,$DB    ; BNE -$DB
          bcs   .exit
          ldy   #$0E
          jsr   SearchTrack

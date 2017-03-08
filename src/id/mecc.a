@@ -2,15 +2,18 @@
 ; IDMECC
 ; identify MECC custom bootloader
 ; note: there are several MECC RWTSes that share
-; the same bootloader, so further checks will be
-; required to distinguish between them
+; the same early bootloader, so further checks
+; are required to distinguish between them after
+; this function matches
 ;
 ; in:  track buffer contains T00,S00
 ; out: C clear if MECC bootloader was found
+;        (and track buffer now contains all of track 0)
 ;      C set if not found
 ;      all other flags clobbered
 ;      all registers clobbered
 ;-------------------------------
+!zone {
 IDMECC
          lda   #$00
          ldx   #$00
@@ -19,34 +22,37 @@ IDMECC
          !byte $01,$4C,$1A,$08,$17,$0F,$00,$00
          !byte $0D,$0B,$09,$07,$05,$03,$01,$0E
          !byte $0C,$0A,$08,$06,$04,$02,$0F
+         bcs   .exit
+         lda   #$00
+         sta   gTrack
+         sta   gAddress
+         lda   #$0F
+         sta   gSector
+         clc
+         adc   #BASEPAGE
+         sta   gAddress+1
+-        jsr   ReadSector
+         bcs   .exit
+         dec   gAddress+1
+         dec   gSector
+         bne   -
+.exit
          rts
+}
 
 ;-------------------------------
-; IDMECCM8
-; identify MECC "M8" bootloader
+; IDMECC1
+; identify MECC bootloader variant #1
+; (labeled "M8" on original disks)
 ;
-; in:  track buffer contains T00,S00
+; in:  track buffer contains all of track 0
 ; out: C clear if MECC "M8" bootloader was found
 ;      C set if not found
 ;      all other flags clobbered
 ;      all registers clobbered
 ;-------------------------------
 !zone {
-IDMECCM8
-         lda   #$00
-         sta   gTrack
-         sta   gAddress
-         lda   #$0B
-         sta   gSector
-         clc
-         adc   #BASEPAGE
-         sta   gAddress+1
-         jsr   ReadSector
-         bcs   .exit
-
-; This entry point is also called by the meccm8 patcher
-; in lieu of keeping a global variable around.
-IDMECCM8RWTS
+IDMECC1
          lda   #$0B
          ldx   #$02
          ldy   #$06
@@ -84,17 +90,14 @@ IDMECCM8RWTS
 .exit
          rts
 
-foundmeccm8
+foundmecc1
 ;
-; We found an "M8" MECC bootloader. Now we create
+; We found a MECC bootloader. Now we create
 ; an RWTS that can read the rest of the disk.
 ; Starting with our built-in RWTS, we modify address
 ; and data prologues based on the parameters of the
 ; original disk.
 ;
-         lda   #s_meccb0
-         jsr   PrintByID
-         jsr   CopyUniversal
          lda   #$00
          sta   modsrc
          lda   #$0B
@@ -124,31 +127,20 @@ foundmeccm8
 }
 
 ;-------------------------------
-; IDMECCM7
-; identify MECC "M7" bootloader
+; IDMECC2
+; identify MECC bootloader variant #2
+; (labeled "M7" on original disks)
 ;
-; in:  track buffer contains T00,S00
+; in:  track buffer contains all of track 0
 ; out: C clear if MECC "M7" bootloader was found
 ;      C set if not found
 ;      all other flags clobbered
 ;      all registers clobbered
 ;-------------------------------
 !zone {
-IDMECCM7
-         lda   #$00
-         sta   gTrack
-         sta   gAddress
+IDMECC2
          lda   #$07
-         sta   gSector
-         clc
-         adc   #BASEPAGE
-         sta   gAddress+1
-         jsr   ReadSector
-         bcs   .exit
-; This entry point is also called by the meccm7 patcher
-; in lieu of keeping a global variable around.
-IDMECCM7RWTS
-         lda   #$07
+IDMECC4a
          ldx   #$7D
          ldy   #$06
          jsr   compare    ; IF T00,S07,$7D ==
@@ -181,25 +173,21 @@ IDMECCM7RWTS
 .exit
          rts
 
-foundmeccm7
+foundmecc2
 ;
-; We found an "M7" MECC bootloader. Now we create
+; We found a MECC bootloader. Now we create
 ; an RWTS that can read the rest of the disk.
 ; Starting with our built-in RWTS, we modify address
 ; and data prologues based on the parameters of the
 ; original disk.
 ;
-         lda   #s_meccm7
-         jsr   PrintByID
-
-         jsr   CopyUniversal
-
-         lda   #$00
-         sta   modsrc
          lda   #$07
+foundmecc4a
          clc
          adc   #BASEPAGE
          sta   modsrc+1
+         lda   #$00
+         sta   modsrc
          ldy   #$83
          lda   (modsrc),y
          lsr
@@ -223,34 +211,18 @@ foundmeccm7
 }
 
 ;-------------------------------
-; IDMECCM6
-; identify MECC "M6" bootloader
+; IDMECC3
+; identify MECC bootloader (M7 variant
+; found in Word Muncher v1.1 and others)
 ;
-; in:  track buffer contains T00,S00
-; out: C clear if MECC "M6" bootloader was found
+; in:  track buffer contains all of track 0
+; out: C clear if this MECC bootloader variant was found
 ;      C set if not found
 ;      all other flags clobbered
 ;      all registers clobbered
 ;-------------------------------
 !zone {
-IDMECCM6
-         lda   #$00
-         sta   gTrack
-         sta   gAddress
-         lda   #$0B
-         sta   gSector
-         clc
-         adc   #BASEPAGE
-         sta   gAddress+1
-         jsr   ReadSector
-         bcs   .exit
-         dec   gSector
-         dec   gAddress+1
-         jsr   ReadSector
-         bcs   .exit
-; This entry point is also called by the meccm6 patcher
-; in lieu of keeping a global variable around.
-IDMECCM6RWTS
+IDMECC3
          lda   #$0A
          ldx   #$E2
          ldy   #$06
@@ -285,19 +257,14 @@ IDMECCM6RWTS
 .exit
          rts
 
-foundmeccm6
+foundmecc3
 ;
-; We found an "M6" MECC bootloader. Now we create
+; We found a MECC bootloader. Now we create
 ; an RWTS that can read the rest of the disk.
 ; Starting with our built-in RWTS, we modify address
 ; and data prologues based on the parameters of the
 ; original disk.
 ;
-         lda   #s_meccm6
-         jsr   PrintByID
-
-         jsr   CopyUniversal
-
          lda   #$00
          sta   modsrc
          lda   #$0A
@@ -325,4 +292,34 @@ foundmeccm6
          lda   (modsrc),y
          sta   $B8FC
          jmp   ADStyle
+}
+
+;-------------------------------
+; IDMECC4
+; identify MECC bootloader variant #4
+; (labeled "M8" on original disks)
+; same as variant #2 but everything is
+; on T00,S08 instead of T00,S07
+;
+; in:  track buffer contains all of track 0
+; out: C clear if MECC bootloader was found
+;      C set if not found
+;      all other flags clobbered
+;      all registers clobbered
+;-------------------------------
+!zone {
+IDMECC4
+         lda   #$08
+         jmp   IDMECC4a
+
+foundmecc4
+;
+; We found a MECC bootloader. Now we create
+; an RWTS that can read the rest of the disk.
+; Starting with our built-in RWTS, we modify address
+; and data prologues based on the parameters of the
+; original disk.
+;
+         lda   #$08
+         jmp   foundmecc4a
 }

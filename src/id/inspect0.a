@@ -141,19 +141,26 @@ IDBootloader
 ;
          jsr   IDMECC
          bcs   .notmecc
-         jsr   IDMECCM8
-         bcs   .notmeccm8
-         jmp   foundmeccm8
-.notmeccm8
-         jsr   IDMECCM7
-         bcs   .notmeccm7
-         jmp   foundmeccm7
+         lda   #s_mecc
+         jsr   PrintByID
+         jsr   CopyUniversal
+         jsr   IDMECC1
+         bcs   .notmecc1
+         jmp   foundmecc1
+.notmecc1
+         jsr   IDMECC2
+         bcs   .notmecc2
+         jmp   foundmecc2
 
-.notmeccm7
-         jsr   IDMECCM6
-         bcs   .notmeccm6
-         jmp   foundmeccm6
-.notmeccm6
+.notmecc2
+         jsr   IDMECC3
+         bcs   .notmecc3
+         jmp   foundmecc3
+.notmecc3
+         jsr   IDMECC4
+         bcs   .notmecc4
+         jmp   foundmecc4
+.notmecc4
 .notmecc
 ;
 ; Try to identify the encrypted Datasoft bootloader.

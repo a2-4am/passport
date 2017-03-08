@@ -8,7 +8,7 @@
 _meccm8
          jsr   IDMECC
          bcs   .exit
-         jsr   IDMECCM8RWTS
+         jsr   IDMECC1
          bcs   .exit
          lda   #$0B
          ldx   #$08

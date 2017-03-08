@@ -1,14 +1,14 @@
 ;-------------------------------
-; #MECCM6
+; #MECC3
 ; MECC fastloader with custom
 ; address and data prologues
-; e.g. early versions of Word Munchers
+; e.g. Word Munchers v1.1
 ;-------------------------------
 !zone {
-_meccm6
+_mecc3
          jsr   IDMECC
          bcs   .exit
-         jsr   IDMECCM6RWTS
+         jsr   IDMECC3
          bcs   .exit
          lda   #$0A
          ldx   #$E8
