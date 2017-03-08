@@ -298,11 +298,30 @@ _ea
          !byte $18         ;CLC
          !byte $E9,$00     ;SBC #$00
          !byte $48         ;PHA
-         bcs   .exit
+         bcs   +
          inx
          ldy   #1
          jsr   modify
          !byte $E8         ;new checksum value for eor
+
++        ldy   #14
+         jsr   SearchTrack
+         !byte $AD,$00,$05
+         !byte $A2,$FF
+         !byte $5D,$00,$05
+         !byte $CA
+         !byte $D0,$FA
+         !byte $C9,$A0
+         !byte $F0
+         bcs   .exit
+         pha
+         txa
+         adc   #12
+         tax
+         pla
+         ldy   #1
+         jsr   modify
+         !byte $A1         ;new checksum value for eor
 
 .dostitles
          lda   gIsBoot0
