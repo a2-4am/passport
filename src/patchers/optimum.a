@@ -194,7 +194,7 @@ _optimum
          ldy   #8
          jsr   SearchTrack
          !byte $20,$5D,$B6  ;JSR $B65D
-         !byte WILDCARD, WILDCARD
+         !byte $01,$0E      ;track 1, sector #$0E
          !byte $00,$08,$18  ;address, count
          bcs   .jmpexit2 ;give up
          adc   #BASEPAGE
