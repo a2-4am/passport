@@ -175,9 +175,14 @@ _optimum
 
          ;read IOB with replaced page
 
+         lda   $2E8
+         ldy   $2E2
+         cpy   #$48 ;PHA
+         bne   +
+
 .swapbase5
          lda   $D16D,x
-         sta   .address+1
++        sta   .address+1
 
          lda   gTrack
          beq   .reread1
