@@ -1,0 +1,31 @@
+;-------------------------------
+; #BOOTCOUNTER
+; MECC "limited backup" disks
+; contain code to self-destruct
+; after a certain number of boots
+;-------------------------------
+!zone {
+_bootcounter
+         lda   gTrack
+         cmp   #$01
+         bne   .exit
+         lda   #$00
+         ldx   #$00
+         ldy   #$23
+         jsr   compare    ; if T01,S00,$00 !=
+         !byte $AD,$F3,$03,$8D,$F4,$03,$20,$2F
+         !byte $FB,$20,$93,$FE,$20,$89,$FE,$20
+         !byte $58,$FC,$A9,$0A,$85,$25,$2C,WILDCARD
+         !byte WILDCARD,$CE,$17,$18,$D0,$05,$A9,$80
+         !byte $8D,$18,$18
+         bcs   .exit
+         sta   gDisplayBytes
+         pha
+         lda   #s_bootcounter
+         jsr   PrintByID
+         pla
+         ldy   #$03
+         jsr   modify     ; then set T01,S00,$00 =
+         !byte $4C,$03,$1B
+.exit
+}
