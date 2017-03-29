@@ -22,7 +22,12 @@ IDMECC
          !byte $01,$4C,$1A,$08,$17,$0F,$00,$00
          !byte $0D,$0B,$09,$07,$05,$03,$01,$0E
          !byte $0C,$0A,$08,$06,$04,$02,$0F
-         bcs   .exit
+.exit
+         rts
+}
+
+!zone {
+PrereadT00
          lda   #$00
          sta   gTrack
          sta   gAddress

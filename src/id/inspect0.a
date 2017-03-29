@@ -144,6 +144,8 @@ IDBootloader
          lda   #s_mecc
          jsr   PrintByID
          jsr   CopyUniversal
+         jsr   PrereadT00
+         bcs   .notmecc
          jsr   IDMECC1
          bcs   .notmecc1
          jmp   foundmecc1
