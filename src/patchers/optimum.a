@@ -46,7 +46,7 @@ _optimum
          ldy   #5
          jsr   SearchSector
          !byte $00,$07,$08,$09,$01
-         bcs   .notable
+         bcs   .jmpnotable
          txa
          sbc   #($96+$17)
          sta   .swapbase3+1
@@ -60,6 +60,13 @@ _optimum
 .swapbase2
          lda   $D100,y
          sta   $2D8,y
+         cmp   #$8D
+         bne   +
+         lda   $2D7,y
+         cmp   #$9D         ;STA $xx8D,x
+         bne   +
+         lda   #$BD
+         sta   $2D7,y       ;STA->LDA
          iny
          bne   -
 
@@ -72,6 +79,7 @@ _optimum
          iny
          jsr   modify
          !byte $60          ;RTS
+.jmpnotable
          jmp   .notable
 
 +        lda   #2
