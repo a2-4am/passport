@@ -63,7 +63,18 @@ _optimum
          iny
          bne   -
 
-         lda   #2
+         lda   $2E8
+         cmp   #$B1
+         bne   +
+         lda   .swapbase2+2
+         sbc   #BASEPAGE
+         ldx   #0
+         iny
+         jsr   modify
+         !byte $60          ;RTS
+         jmp   .notable
+
++        lda   #2
          sta   .retrycount
 
          lda   gTrack
