@@ -46,7 +46,7 @@ _optimum
          ldy   #5
          jsr   SearchSector
          !byte $00,$07,$08,$09,$01
-         bcs   .notable
+         bcs   .jmpnotable
          txa
          sbc   #($96+$17)
          sta   .swapbase3+1
@@ -60,10 +60,29 @@ _optimum
 .swapbase2
          lda   $D100,y
          sta   $2D8,y
+         cmp   #$8D
+         bne   +
+         lda   $2D7,y
+         cmp   #$9D         ;STA $xx8D,x
+         bne   +
+         lda   #$BD
+         sta   $2D7,y       ;STA->LDA
          iny
          bne   -
 
-         lda   #2
+         lda   $2E8
+         cmp   #$B1
+         bne   +
+         lda   .swapbase2+2
+         sbc   #BASEPAGE
+         ldx   #0
+         iny
+         jsr   modify
+         !byte $60          ;RTS
+.jmpnotable
+         jmp   .notable
+
++        lda   #2
          sta   .retrycount
 
          lda   gTrack
@@ -175,9 +194,14 @@ _optimum
 
          ;read IOB with replaced page
 
+         lda   $2E8
+         ldy   $2E2
+         cpy   #$48 ;PHA
+         bne   +
+
 .swapbase5
          lda   $D16D,x
-         sta   .address+1
++        sta   .address+1
 
          lda   gTrack
          beq   .reread1
@@ -194,7 +218,7 @@ _optimum
          ldy   #8
          jsr   SearchTrack
          !byte $20,$5D,$B6  ;JSR $B65D
-         !byte WILDCARD, WILDCARD
+         !byte $01,$0E      ;track 1, sector #$0E
          !byte $00,$08,$18  ;address, count
          bcs   .jmpexit2 ;give up
          adc   #BASEPAGE
