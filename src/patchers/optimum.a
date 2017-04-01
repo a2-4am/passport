@@ -67,7 +67,7 @@ _optimum
          bne   +
          lda   #$BD
          sta   $2D7,y       ;STA->LDA
-         iny
++        iny
          bne   -
 
          lda   $2E8
