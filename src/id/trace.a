@@ -15,6 +15,10 @@ TraceDOS33
          sta   gTrack
          lda   #$09
          sta   gSector
+         lda   #$F0
+         sta   $B959
+         lda   #$05
+         sta   $B95A
 precheck
          ldy   #<gRWTSParams
          lda   #>gRWTSParams

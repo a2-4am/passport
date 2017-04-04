@@ -11,7 +11,7 @@
 
 # third-party tools required to build
 # https://sourceforge.net/projects/acme-crossass/
-ACME=/usr/local/bin/acme
+ACME=`which acme`
 # https://sourceforge.net/projects/applecommander/
 AC=bin/AppleCommander.jar
 
