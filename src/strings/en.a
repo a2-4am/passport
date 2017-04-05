@@ -90,7 +90,8 @@ s_eatrk6  =    $47
 s_eeef   =     $48
 s_poke   =     $49
 s_bootcounter = $4A
-STRINGCOUNT =  $4B
+s_milliken =   $4B
+STRINGCOUNT =  $4C
 
 !zone {
 StringTable
@@ -169,6 +170,7 @@ StringTable
          !word .eeef
          !word .poke
          !word .bootcounter
+         !word .milliken
 ;
 ; Text can contain substitution strings, which
 ; are replaced by current values at runtime. Each
@@ -194,7 +196,7 @@ StringTable
 ; can be set directly before calling PrintByID.
 ;
 .header
-         !text "Passport by 4am               2017-04-03",00
+         !text "Passport by 4am               2017-04-04",00
 .mainmenu
          !text "________________________________________",$8D,$8D,$8D,$8D,$8D,$8D,$8D
          !text "              "
@@ -432,4 +434,7 @@ StringTable
 .bootcounter
          !text "T%t,S%0 Original disk destroys itself",$8D
          !text "after a limited number of boots.",$8D,$00
+.milliken
+         !text "T00,S0A Found Milliken protection check",$8D
+         !text "T02,S05 might be unreadable",$8D,00
 }

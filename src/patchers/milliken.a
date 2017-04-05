@@ -1,0 +1,23 @@
+;-------------------------------
+; #MILLIKEN
+; Milliken protection routine on T00,S0A
+; does a fake drive speed check then
+; a nibble check
+; e.g. Gulp and Frenzy, Tangram Puzzler,
+; The Writing Workshop, Math Sequences
+;-------------------------------
+!zone {
+_milliken
+         jsr   IDMilliken1
+         bcs   .exit
+         lda   #$01
+         ldx   #$48
+         ldy   #$02
+         jsr   compare    ; and T00,S01,$48 ==
+         !byte $03,$9B
+         bcs   .exit
+         ldy   #$02
+         jsr   modify     ; then set T00,S01,$48 =
+         !byte $84,$9D
+.exit
+}

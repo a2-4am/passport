@@ -1,0 +1,47 @@
+;-------------------------------
+; IDMilliken
+; identify Milliken protection routine
+; in late-stage boot
+;
+; in:  $B600..$BFFF contains RWTS that can read this disk
+;      $B747..$B749 contains "JMP $9B03"
+; out: C clear if Milliken protection routine found
+;      C set otherwise
+;      all registers clobbered
+;      all other flags clobbered
+;-------------------------------
+!zone {
+IDMilliken
+; protection routine starts on T00,S0A (by this point we've
+; already identified a marker on T00,S01 that strongly
+; suggests the presence of this routine, so it's worth
+; doing an extra disk read here to be sure)
+         lda   #$00
+         sta   gTrack
+         lda   #$0A
+         sta   gSector
+         clc
+         adc   #BASEPAGE
+         sta   gAddress+1
+         jsr   ReadSector
+         bcs   .exit
+
+IDMilliken1
+; variant 1 (seen in Gulp and Frenzy, Tangram Puzzler)
+         lda   #$0A
+         ldx   #$03
+         ldy   #$0E
+         jsr   compare
+         !byte $A9,$AE,$8D,$00,$04,$4C,$99,$AD
+         !byte $AE,$F8,$05,$BD,$89,$C0
+         bcc   .exit
+
+; variant 2 (seen in The Writing Workshop)
+         ldy   #$0B
+         jsr   compare
+         !byte $A9,$AE,$8D,$00,$04,$AE,$F8,$05
+         !byte $BD,$89,$C0
+
+.exit
+         rts
+}

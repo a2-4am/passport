@@ -54,6 +54,7 @@ TraceDOS33b
 
 TraceDOS33c
          lda   $08FE      ; 2nd-level trace callback is here
+         sta   .x6+1
          clc
          adc   #$02
 _Inspect1a
@@ -124,8 +125,24 @@ _Inspect1a
          ldy   #$03
          jsr   CompareMemory
          !byte $AE,$E8,$1F
-         bcs   +
+         bcs   .x6
          jmp   UseUniversal ; give up tracing; this RWTS is unsupported
+;
+; Check for Milliken protection routine in late-stage boot
+; (affects readable/ignoreable sector map, so must ID now)
+;
+.x6      lda   #$FF       ; check for "JMP $9B03" at $B747
+         ldx   #$47
+         ldy   #$03
+         jsr   CompareMemory
+         !byte $4C,$03,$9B
+         bcs   +
+         jsr   IDMilliken
+         bcs   +
+         lda   #s_milliken
+         jsr   PrintByID
+         lda   #$80
+         sta   T02S05
 +        jmp   ADStyle    ; use this RWTS to read the disk
 
 ; TODO this doesn't belong here
