@@ -109,7 +109,7 @@ IDBootloader
 
 ; Pascal 1.3 signature [thanks Marco V.]
 
-         !byte $01,$E0,$07,$B0,$04,$E0,$40,$B0
+         !byte $01,$E0,$70,$B0,$04,$E0,$40,$B0
          ldx   #TRUE
          bcc   .pascal
          ldx   #FALSE
