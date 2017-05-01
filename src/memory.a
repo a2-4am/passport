@@ -151,3 +151,83 @@ SwapProDOS
          ldy   #$01
          jsr   SwapMemory
          rts
+
+;-------------------------------
+; ReorderLogicalToPhysical - reorder pages in
+; track data buffer for disks that expect
+; sectors in physical sector order
+;
+; 1 -> 7
+; 2 -> E
+; 3 -> 6
+; 4 -> D
+;
+; 6 -> C
+; 7 -> 4
+; 8 -> B
+; 9 -> 3
+;
+; B -> 2
+; C -> 9
+; D -> 1
+; E -> 8
+;
+; 0123456789ABCDEF
+; 07E6D5C4B3A2918F
+; in:  track buffer has data in logical sector order
+; out: A,Y clobbered
+;      X preserved
+;-------------------------------
+!zone {
+ReorderLogicalToPhysical
+         ldy   #$00
+-        lda   $1100,y
+         pha
+         lda   $1200,y
+         pha
+         lda   $1300,y
+         pha
+         lda   $1400,y
+         pha
+         lda   $1600,y
+         pha
+         lda   $1700,y
+         pha
+         lda   $1800,y
+         pha
+         lda   $1900,y
+         pha
+         lda   $1b00,y
+         pha
+         lda   $1c00,y
+         pha
+         lda   $1d00,y
+         pha
+         lda   $1e00,y
+         sta   $1800,y
+         pla
+         sta   $1100,y
+         pla
+         sta   $1900,y
+         pla
+         sta   $1200,y
+         pla
+         sta   $1300,y
+         pla
+         sta   $1b00,y
+         pla
+         sta   $1400,y
+         pla
+         sta   $1c00,y
+         pla
+         sta   $1d00,y
+         pla
+         sta   $1600,y
+         pla
+         sta   $1e00,y
+         pla
+         sta   $1700,y
+         iny
+         bne   -
+         rts
+}

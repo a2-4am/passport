@@ -45,33 +45,4 @@ ID8b3
          !byte $C6,$01,$A9,$08,$C5,$01,$D0,$EC
          !byte $60
          rts
-
-found8b3
-         tya
-         pha
-         ldy   #$0F
-         lda   #$00
-A8b3     sta   T00,y
-         dey
-         bpl   A8b3
-         ldy   #$0B
-B8b3     sta   T02,y
-         iny
-         cpy   #$10
-         bne   B8b3
-         pla
-         tay
-         lda   #$4C
-         sta   $085A
-         lda   #<Inspect1_8b3
-         sta   $085B
-         lda   #>Inspect1_8b3
-         sta   $085C
-         lda   #$60
-         sta   $08CC
-         lda   #$2C
-         sta   $083F
-         sta   $0842
-         sta   $0845
-         jmp   $0801
 }

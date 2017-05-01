@@ -1,0 +1,110 @@
+;-------------------------------
+; Trace8B3
+; set up 1st-level boot trace on
+; a bootloader that calls $08B3
+; on first run to alter nibble table
+; for rest of track 0
+;-------------------------------
+!zone {
+Trace8B3
+         lda   #<Trace8B3b
+         ldx   #>Trace8B3b
+         jmp   Trace
+
+;-------------------------------
+; Trace8B3b
+; set up 2nd boot trace at $084A
+;-------------------------------
+Trace8B3b
+         lda   $085A
+         sta   _restore1+1
+         lda   $085B
+         sta   _restore2+1
+         lda   $085C
+         sta   _restore3+1
+         lda   #$4C
+         sta   $085A
+         lda   #<Trace8B3c
+         sta   $085B
+         lda   #>Trace8B3c
+         sta   $085C
+         lda   #$2C       ; disable calls to
+         sta   $083F      ; TEXt/PR0/IN0
+         sta   $0842
+         sta   $0845
+         lda   #$60       ; disable memory wipe
+         sta   $08CC
+         jmp   $0801
+
+Trace8B3c
+;
+; Need to write out track 0 now because the built-in RWTS
+; won't be able to read it later.
+;
+         lda   $C0E8      ; turn off source drive
+;
+; Restore the original code in memory before continuing
+;
+         lda   #$B6
+         sta   $B6FE
+         lda   #$09
+         sta   $B6FF
+         lda   #$20
+         sta   $B63F
+         sta   $B642
+         sta   $B645
+         lda   #$A9
+         sta   $B6CC
+_restore1
+         lda   #$d1       ; set at runtime (in Trace8B3b)
+         sta   $B65A
+_restore2
+         lda   #$d1       ; set at runtime (in Trace8B3b)
+         sta   $B65B
+_restore3
+         lda   #$d1       ; set at runtime (in Trace8B3b)
+         sta   $B65C
+;
+; Copy track into buffer from writing
+;
+         jsr   ClearTSBuffer
+         lda   #$B6
+         ldx   #$10
+         ldy   #$0A
+         jsr   CopyMemory
+;
+; Manually write out track 0 (with patches)
+;
+         jsr   IncProgress
+         lda   #$00
+         sta   gTrack
+         jsr   AnalyzeTrack
+         jsr   ReorderLogicalToPhysical         ; bootloader expects sectors in physical sector order
+         jsr   WriteTrackNA
+;
+; Mark track 0 and part of track 2 as "skip" in sector map
+;
+         ldy   #$0F
+         lda   #$00
+-        sta   T00,y
+         dey
+         bpl   -
+         ldy   #$0B
+-        sta   T02,y
+         iny
+         cpy   #$10
+         bne   -
+;
+; Set up RWTS entry point
+;
+         lda   #$00
+         sta   callrwts+1
+         lda   #$BD
+         sta   callrwts+2
+;
+; Read the rest of the disk with the original RWTS
+;
+         lda   #$01
+         sta   gLastTrack
+         jmp   ADStyle
+}

@@ -94,7 +94,7 @@ flag     =     $FF        ; byte
 }
 
 ; Application constants (not zero addresses)
-RELBASE  =     $6500      ; address to move Passport code
+RELBASE  =     $6300      ; address to move Passport code
                           ; so that it's out of the way
 LOWPOINT =     $4300      ; lowest available address for code
 BASEPAGE =     $10        ; Special Delivery tracer assumes
@@ -142,6 +142,7 @@ FirstMover
          !source "id/trace.a"
          !source "id/dos33.a"
          !source "id/jsr8b3.a"
+         !source "id/trace8b3.a"
          !source "id/mecc.a"
          !source "id/datasoft.a"
          !source "id/protecteddos.a"
@@ -692,6 +693,8 @@ _applyToT00
          !source "patchers/diskvol.a"
          !source "patchers/c9ff.a"
          !source "patchers/milliken.a"
+         !source "patchers/methods.a"
+         !source "patchers/jsr8b3.a"
 _applyToAll
          !source "patchers/universale7.a"
          !source "patchers/runhello.a"

@@ -15,6 +15,15 @@ TraceDOS33
          sta   gTrack
          lda   #$09
          sta   gSector
+;
+; This pre-check is made more difficult by the fact that
+; some disks have a timing bit after the $D5 nibble in
+; the address prologue, which triggers the wrong code path
+; in our built-in RWTS. So just for this pre-check, we
+; disable that code path. This hack will get overwritten
+; either by the disk's own RWTS when we capture it, or by
+; re-copying the built-in RWTS later.
+;
          lda   #$F0
          sta   $B959
          lda   #$05
@@ -28,9 +37,9 @@ precheck
 +
          dec   gSector
          bne   precheck
-
+;
 ; pre-check passed, do the trace
-
+;
          lda   #<TraceDOS33b
          ldx   #>TraceDOS33b
          jmp   Trace
@@ -144,14 +153,6 @@ _Inspect1a
          lda   #$80
          sta   T02S05
 +        jmp   ADStyle    ; use this RWTS to read the disk
-
-; TODO this doesn't belong here
-Inspect1_8b3
-         jsr   WriteTrack
-         lda   $08FE
-         clc
-         adc   #$01
-         jmp   _Inspect1a
 
 ;-------------------------------
 ; Trace

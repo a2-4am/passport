@@ -133,7 +133,9 @@ IDBootloader
 ;
          jsr   ID8b3
          bcs   .not8b3
-         jmp   found8b3
+         lda   #s_jsr8b3
+         jsr   PrintByID
+         jmp   Trace8B3
 
 .not8b3
 ;

@@ -1,0 +1,56 @@
+;-------------------------------
+; #METHODS
+; RWTS changes prologue with RWTS
+; swapper at $B6B4
+; e.g. "Alphabetizing: Blue Level"
+; and others by Methods & Solutions
+;-------------------------------
+!zone {
+_methods
+         lda   gIsBoot0   ; if DOS 3.3 boot0 loader
+         bne   .exit
+         lda   #$08
+         ldx   #$5A
+         ldy   #$03
+         jsr   compare    ; and T00,S08,$5A ==
+         !byte $4C,$B4,$36; JMP $36B4
+         bcs   .exit
+         lda   #$00
+         ldx   #$B4
+         ldy   #$1A
+         jsr   compare    ; and T00,S00,$B4 ==
+         !byte $48        ; PHA
+         !byte $68        ; PLA
+         !byte $48        ; PHA
+         !byte $F0,$06    ; BEQ +$06
+         !byte $A9,WILDCARD; LDA #$**
+         !byte $A0,WILDCARD; LDY #$**
+         !byte $D0,$04    ; BNE +$04
+         !byte $A9,$D5    ; LDA #$D5
+         !byte $A0,$AA    ; LDY #$AA
+         !byte $8D,$55,$39; STA $3955
+         !byte $8C,$5F,$39; STY $395F
+         !byte $A0,$01    ; LDY #$01
+         !byte $4C,$5D,$3E; JMP $3E5D
+         bcs   .exit
+         sta   gDisplayBytes
+         lda   #s_bytrack
+         jsr   PrintByID
+         lda   #$00
+         ldx   #$BD
+         ldy   #$01
+         jsr   modify     ; then set T00,S00,$BD =
+         !byte $24        ; BIT
+         lda   #$01
+         ldx   #$47
+         ldy   #$03
+         jsr   compare    ; if T00,S01,$47 ==
+         !byte $4C,$CE,$36; JMP $36CE
+         bcs   .exit
+         lda   #$01
+         ldx   #$48
+         ldy   #$01
+         jsr   modify     ; then set T00,S01,$48 =
+         !byte $D8
+.exit
+}
