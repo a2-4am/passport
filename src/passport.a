@@ -139,8 +139,10 @@ FirstMover
 
          !source "analyze.a"
          !source "id/inspect0.a"
-         !source "id/trace.a"
          !source "id/dos33.a"
+         !source "id/trace.a"
+         !source "id/prodos.a"
+         !source "id/pascal.a"
          !source "id/jsr8b3.a"
          !source "id/trace8b3.a"
          !source "id/mecc.a"
@@ -779,10 +781,6 @@ gIsProDOS
                           ; reset before each operation
                           ; set in IDBootloader() after reading T00,S00
 gIsPascal
-         !byte FALSE      ; 0=true, 1=false
-                          ; reset before each operation
-                          ; set in IDBootloader() after reading T00,S00
-gIsDatasoft
          !byte FALSE      ; 0=true, 1=false
                           ; reset before each operation
                           ; set in IDBootloader() after reading T00,S00

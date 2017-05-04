@@ -7,9 +7,9 @@
 ;-------------------------------
 !zone {
 IDBootloader
-
+;
 ; reset all per-disk globals
-
+;
          lda   #FALSE
          sta   gIsBoot0
          sta   gIsBoot1
@@ -17,25 +17,24 @@ IDBootloader
          sta   gIsRWTS
          sta   gIsProDOS
          sta   gIsPascal
-         sta   gIsDatasoft
          sta   gIsProtDOS
          sta   gIsEA
          sta   gIsEEEF
          lda   #$00
          sta   gLastTrack
-
+;
 ; Quick sanity check -- only recognized values for $0800
 ; are 1 or 2 for regular disks, and 5 for possible Electronic Arts.
-
+;
          lda   $0800
          beq   +
          cmp   #$03
-         bcc   ++
+         bcc   .sane
          cmp   #$05
-         beq   ++
+         beq   .sane
 +        jmp   UseUniversal
 
-++
+.sane
 ;
 ; Copy the boot sector from $0800 to the track/sector buffer
 ; so we can reuse our standard compare functions.
@@ -44,80 +43,32 @@ IDBootloader
          ldx   #BASEPAGE
          ldy   #$01
          jsr   CopyMemory
-
-         lda   #$00
-         ldx   #$00
-         ldy   #$05
-         jsr   compare    ; if T00,S00,$00 ==
-
-; This abbreviated signature matches all ProDOS disks
-; I can find, with no false positives.
-; Some disks jump to $08FF at $0804 (SOS entry point).
-; Others have a modified T00,S00 but eventually load
-; ProDOS (e.g. 1-2-3 Sequence Me, Alge-Blaster Plus,
-; Dazzle Draw, SuperPrint II)
-
-         !byte 01,$38,$B0,$03,$4C
-         ldx   #TRUE
-         bcc   .prodos
-         ldx   #FALSE
-.prodos
-         stx   gIsProDOS
-
-         lda   #$00
-         ldx   #$00
-         ldy   #$08
-         jsr   compare    ; if T00,S00,$00 ==
-
-; Apple Pascal signature (version < 1.3)
-; The wildcard in 7th position catches alternate jump
-; addresses (e.g. Wizardry I, Sundog Frozen Legacy)
-
-         !byte $01,$E0,$60,$F0,$03,$4C,WILDCARD,$08
-         ldx   #TRUE
-         bcc   .pascal
-         lda   #$00
-         ldx   #$00
-         ldy   #$08
-         jsr   compare    ; or if T00,S00,$00 ==
-
-; Pascal 1.3 signature [thanks Marco V.]
-
-         !byte $01,$E0,$70,$B0,$04,$E0,$40,$B0
-         ldx   #TRUE
-         bcc   .pascal
-         ldx   #FALSE
-.pascal
-         stx   gIsPascal
-
 ;
-; Try to identify DOS 3.3-shaped bootloader, which
-; we can maybe trace to capture the RWTS in memory.
+; Try to identify DOS 3.3-shaped bootloader.
+; Exit via custom trace function if found.
 ;
          jsr   IDDOS33
-         bcs   .notdos33
+         bcs   +
          lda   #TRUE
          sta   gIsBoot0
          lda   #s_dosb0
          jsr   PrintByID
          jmp   TraceDOS33
-
-.notdos33
 ;
 ; Try to identify a variant bootloader that calls to $08B3
 ; early to munge the nibble tables used by the drive firmware.
+; Exit via custom trace function if found.
 ;
-         jsr   ID8b3
-         bcs   .not8b3
++        jsr   ID8b3
+         bcs   +
          lda   #s_jsr8b3
          jsr   PrintByID
          jmp   Trace8B3
-
-.not8b3
 ;
 ; Try to identify all the different MECC fastloader variants.
+; Exit via custom trace function if found.
 ;
-         jsr   IDMECC
++        jsr   IDMECC
          bcs   .notmecc
          lda   #s_mecc
          jsr   PrintByID
@@ -125,73 +76,44 @@ IDBootloader
          jsr   PrereadT00
          bcs   .notmecc
          jsr   IDMECC1
-         bcs   .notmecc1
+         bcs   +
          jmp   foundmecc1
-.notmecc1
-         jsr   IDMECC2
-         bcs   .notmecc2
++        jsr   IDMECC2
+         bcs   +
          jmp   foundmecc2
-
-.notmecc2
-         jsr   IDMECC3
-         bcs   .notmecc3
++        jsr   IDMECC3
+         bcs   +
          jmp   foundmecc3
-.notmecc3
-         jsr   IDMECC4
-         bcs   .notmecc4
++        jsr   IDMECC4
+         bcs   .notmecc
          jmp   foundmecc4
-.notmecc4
 .notmecc
 ;
-; Try to identify the encrypted Datasoft bootloader.
+; Try to identify DOS 3.3P (Special Delivery) bootloader.
+; Exit via custom trace function if found.
 ;
-         jsr   IDDatasoft
-         bcs   .notdatasoft
-         lda   #s_datasoftb0
-         jsr   PrintByID
-         lda   #TRUE
-         sta   gIsDatasoft
-         jmp   .useuniv
-
-.notdatasoft
-;
-; Try to identify ProDOS bootloader.
-;
-         lda   gIsProDOS
-         bne   .notprodos
-         lda   #s_prodosb0
-         jsr   PrintByID
-         jmp   .useuniv
-
-.notprodos
-;
-; Try to identify Apple Pascal bootloader (all variants).
-;
-         lda   gIsPascal
-         bne   .notpascal
-         lda   #s_pascalb0
-         jsr   PrintByID
-
-.notpascal
          jsr   IDSpecDel
-         bcs   .notspecdel
+         bcs   +
          lda   #s_specdel
          jsr   PrintByID
          jmp   TraceSpecDel
-
-.notspecdel
+;
+; Try to identify Electronic Arts bootloader.
+; Exit via custom trace function if found.
+;
++        jsr   IDEA
+         bcs   +
+         jmp   foundea
 ;
 ; Try to detect whether there is code in the boot sector
 ; that loads 4-and-4-encoded data. This is an early escape
 ; hatch for disks that are guaranteed to fail later anyway.
 ;
-         jsr   IDEncoded44
-         bcs   .notencoded44
++        jsr   IDEncoded44
+         bcs   +
          lda   #s_encoded44
          jsr   PrintByID
          jmp   TheEnd
-
-.notencoded44
 ;
 ; Try to detect whether there is code in the boot sector
 ; that loads 5-and-3-encoded data (like DOS 3.2 disks with
@@ -200,37 +122,49 @@ IDBootloader
 ; this serves as an early escape hatch for disks that are
 ; guaranteed to fail later anyway.
 ;
-         jsr   IDEncoded53
-         bcs   .notencoded53
++        jsr   IDEncoded53
+         bcs   +
          lda   #s_encoded53
          jsr   PrintByID
          jmp   TheEnd
-
-.notencoded53
 ;
-; Try to identify Electronic Arts bootloader.
+; ProDOS (all versions)
 ;
-.tryea
-         jsr   IDEA
-         bcs   .notea
-         jmp   foundea
-
-.notea
++        jsr   IDProDOS
+         bcs   +
+         lda   #s_prodosb0
+         jsr   PrintByID
+         lda   #TRUE
+         sta   gIsProDOS
+         beq   .useuniv   ; always branches
 ;
-; Try to identify David-DOS bootloader
-; (no special behavior for now because all samples I have are
-; handled by built-in RWTS, so no need to trace)
+;Apple Pascal (all versions)
 ;
-         jsr   IDDavid
-         bcs   .notdavid
++        jsr   IDPascal
+         bcs   +
+         lda   #s_pascalb0
+         jsr   PrintByID
+         lda   #TRUE
+         sta   gIsPascal
+         beq   .useuniv   ; always branches
+;
+; Encrypted Datasoft bootloader
+;
++        jsr   IDDatasoft
+         bcs   +
+         lda   #s_datasoftb0
+         jsr   PrintByID
+         bcc   .useuniv   ; always branches
+;
+; David-DOS II
+;
++        jsr   IDDavid
+         bcs   +
          lda   #s_daviddos
          jsr   PrintByID
-.notdavid
+
++
 .useuniv
-;
-; We didn't recognize the boot sector, so use the universal
-; (built-in) RWTS and hope for the best
-;
          jmp   UseUniversal
 }
 

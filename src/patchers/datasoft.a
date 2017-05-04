@@ -4,9 +4,8 @@
 ; e.g. Video Title Shop, Tomahawk //e
 ;-------------------------------
 !zone {
-_datasoft
-         lda   gIsDatasoft ; only ever seen this protection
-         bne   .exit      ; on Datasoft disks (ID'd earlier)
+         jsr   IDDatasoft
+         bcs   .exit
 
          ldy   #$06
          jsr   SearchTrack

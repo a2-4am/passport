@@ -1,0 +1,28 @@
+;-------------------------------
+; IDProDOS
+; identify ProDOS bootloader
+;
+; in:  $0800..$08FF contains T00,S00
+;      first page of track buffer also contains T00,S00
+; out: C clear if Apple Pascal bootloader found
+;      C set otherwise
+;      all registers clobbered
+;      all other flags clobbered
+;-------------------------------
+!zone {
+IDProDOS
+; Some disks jump to $08FF at $0804 (SOS entry point).
+; Others have a modified T00,S00 but eventually load
+; ProDOS (e.g. 1-2-3 Sequence Me, Alge-Blaster Plus,
+; Dazzle Draw, SuperPrint II). All of these variants
+; will match.
+         lda   #$00
+         ldx   #$00
+         ldy   #$05
+         jsr   compare    ; if T00,S00,$00 ==
+         !byte $01
+         !byte $38        ; SEC
+         !byte $B0,$03    ; BCS +3
+         !byte $4C        ; JMP
+         rts
+}
