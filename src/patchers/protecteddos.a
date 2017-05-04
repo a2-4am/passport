@@ -9,7 +9,6 @@
 ; Math Blaster, Moebius
 ;-------------------------------
 !zone {
-_protdos
          lda   gIsProtDOS
          beq   +
          jmp   .exit
@@ -20,8 +19,11 @@ _protdos
 ;
          ldy   #$0C
          jsr   SearchTrack
-         !byte $A9,$B5,$85,$4E,$8D,$5D,$BD,$A9
-         !byte $D5,$8D,$2C,$BF
+         !byte $A9,$B5
+         !byte $85,$4E
+         !byte $8D,$5D,$BD
+         !byte $A9,$D5
+         !byte $8D,$2C,$BF
          bcs   .specific
          sta   .swapper2+1
          inx
@@ -96,8 +98,11 @@ _protdos
          ldx   #$AF
          ldy   #$0C
          jsr   compare    ; if T01,S02,$AF ==
-         !byte $A2,$B5,$86,$4E,$8E,$5D,$BD,$A2
-         !byte $D5,$8E,$2C,$BF
+         !byte $A2,$B5
+         !byte $86,$4E
+         !byte $8E,$5D,$BD
+         !byte $A2,$D5
+         !byte $8E,$2C,$BF
          bcs   .exitt1
          lda   #$02
          ldx   #$B0
@@ -183,10 +188,18 @@ _protdos
          ldx   #$48
          ldy   #$19
          jsr   compare    ; if T00,S07,$48 ==
-         !byte $A0,$04,$48,$68,$A0,$B9,$BD,$88
-         !byte $D0,$F8,$A9,$97,$20,$B8,$BD,$A9
-         !byte $97,$20,$B8,$BD,$A9,$97,$20,$B8
-         !byte $BD
+         !byte $A0,$04
+         !byte $48
+         !byte $68
+         !byte $A0,$B9,$BD
+         !byte $88
+         !byte $D0,$F8
+         !byte $A9,WILDCARD
+         !byte $20,$B8,$BD
+         !byte $A9,WILDCARD
+         !byte $20,$B8,$BD
+         !byte $A9,WILDCARD
+         !byte $20,$B8,$BD
          bcs   .writeIsOK
          ldx   #$4C
          ldy   #$01

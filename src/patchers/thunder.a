@@ -8,7 +8,6 @@
 ; Dig Dug, Pac-Man, Galaxian
 ;-------------------------------
 !zone {
-_thunder
          lda   gIsBoot0   ; if DOS 3.3 boot0 loader
          bne   .no
          lda   gIsBoot1   ; and DOS 3.3 boot1 loader
@@ -17,7 +16,8 @@ _thunder
          ldx   #$3E
          ldy   #$04
          jsr   compare    ; and T00,S03,$3E ==
-         !byte $4C,$B3,$B6,$EA
+         !byte $4C,$B3,$B6
+         !byte $EA
          bcc   +
 .no
          jmp   .exit

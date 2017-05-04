@@ -6,7 +6,6 @@
 ; e.g. Microzine 15, Alpine Tram Ride
 ;-------------------------------
 !zone {
-_runhello
          lda   gIsProDOS  ; this exact protection is only
          beq   .exit      ; on DOS 3.3 disks (other patchers
          lda   gIsPascal  ; will catch other variations)

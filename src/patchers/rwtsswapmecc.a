@@ -7,13 +7,19 @@
 _rwtsswapmecc
          ldy   #$11
          jsr   SearchTrack
-         !byte $0A,$18,$69,$FF,$A8,$8D,$8B,$C0
-         !byte $8D,$8B,$C0,$B9,$97,$97,$8D,$AC
-         !byte $D5
+         !byte $0A
+         !byte $18
+         !byte $69,$FF
+         !byte $A8
+         !byte $8D,$8B,$C0
+         !byte $8D,$8B,$C0
+         !byte $B9,WILDCARD,WILDCARD
+         !byte $8D,$AC,$D5
          bcs   .exit
          sta   gDisplayBytes
          ldy   #$03
          jsr   modify
-         !byte $A9,$00,$24
+         !byte $A9,$00
+         !byte $24
 .exit
 }

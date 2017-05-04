@@ -7,7 +7,6 @@
 ; patchers due to overlapping bytes
 ;-------------------------------
 !zone {
-_sunburst
          sec
          lda   gIsRWTS    ; if DOS 3.3 RWTS
          bne   .exit
@@ -27,18 +26,36 @@ _sunburst
          ldx   #$69
          ldy   #$2C
          jsr   compare    ; and T00,S04,$69 ==
-         !byte $48,$A5,$2A,$4A,$A8,$B9,$29,$BA
-         !byte $8D,$6A,$B9,$8D,$84,$BC,$B9,$34
-         !byte $BA,$8D,$FC,$B8,$8D,$5D,$B8,$C0
-         !byte $11,$D0,03,$A9,02,$AC,$A9,$0E
-         !byte $8D,$C0,$BF,$68,$69,00,$48,$AD
-         !byte $78,04,$90,$2B
+         !byte $48
+         !byte $A5,$2A
+         !byte $4A
+         !byte $A8
+         !byte $B9,$29,$BA
+         !byte $8D,$6A,$B9
+         !byte $8D,$84,$BC
+         !byte $B9,$34,$BA
+         !byte $8D,$FC,$B8
+         !byte $8D,$5D,$B8
+         !byte $C0,$11
+         !byte $D0,$03
+         !byte $A9,$02
+         !byte $AC
+         !byte $A9,$0E
+         !byte $8D,$C0,$BF
+         !byte $68
+         !byte $69,00
+         !byte $48
+         !byte $AD,$78,04
+         !byte $90,$2B
          bcs   .exit
          lda   #$06
          ldx   #$69
          ldy   #$06
          jsr   compare    ; and T00,S06,$69 ==
-         !byte $4C,$B8,$B6,$EA,$EA,$EA
+         !byte $4C,$B8,$B6
+         !byte $EA
+         !byte $EA
+         !byte $EA
          bcs   .exit
          lda   #$08
          ldx   #$8C
@@ -63,7 +80,8 @@ _sunburst
          ldx   #$69
          ldy   #$06
          jsr   modify     ; and set T00,S06,$69 =
-         !byte $20,$C3,$BC,$20,$C3,$BC
+         !byte $20,$C3,$BC
+         !byte $20,$C3,$BC
          lda   #$08
          ldx   #$8C
          ldy   #$02

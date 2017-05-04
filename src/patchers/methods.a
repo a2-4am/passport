@@ -2,11 +2,10 @@
 ; #METHODS
 ; RWTS changes prologue with RWTS
 ; swapper at $B6B4
-; e.g. "Alphabetizing: Blue Level"
+; e.g. Alphabetizing: Blue Level
 ; and others by Methods & Solutions
 ;-------------------------------
 !zone {
-_methods
          lda   gIsBoot0   ; if DOS 3.3 boot0 loader
          bne   .exit
          lda   #$08

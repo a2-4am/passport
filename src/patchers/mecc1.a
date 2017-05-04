@@ -1,11 +1,10 @@
 ;-------------------------------
-; #MECCM8
+; #MECC1
 ; MECC fastloader with custom
 ; address and data prologues
 ; e.g. Word Munchers
 ;-------------------------------
 !zone {
-_meccm8
          jsr   IDMECC
          bcs   .exit
          jsr   IDMECC1

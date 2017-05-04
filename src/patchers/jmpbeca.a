@@ -38,7 +38,7 @@
          jsr   PrintByID
          lda   #$02
          ldy   #$0D
-         jsr   modify     ; and set T00,S02,$F4 =
+         jsr   modify     ; then set T00,S02,$F4 =
          !byte $A0,$56
          !byte $BD,$8C,$C0
          !byte $10,$FB

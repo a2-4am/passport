@@ -3,7 +3,6 @@
 ; address prologue byte 1 (read)
 ;-------------------------------
 !zone {
-rwtspatcher
          lda   gIsRWTS    ; if DOS 3.3 RWTS
          bne   .ap1r
          lda   #$03
@@ -638,7 +637,11 @@ rwtspatcher
          ldx   #$4F
          ldy   #$0A
          jsr   compare    ; and T00,S03,$4F ==
-         !byte $BD,$8C,$C0,$10,$FB,$4A,$97,$6A,$D0,$EF
+         !byte $BD,$8C,$C0
+         !byte $10,$FB
+         !byte $4A
+         !byte WILDCARD,$6A
+         !byte $D0,$EF
          bcs   .lsr6a
          lda   #s_lsr6a
          jsr   PrintByID
@@ -659,7 +662,18 @@ rwtspatcher
          ldx   #$8B
          ldy   #$15
          jsr   compare    ; and T00,S03,$8B ==
-         !byte $BD,$8C,$C0,$10,$FB,$C9,$DE,$F0,$0A,$48,$68,$BD,$8C,$C0,$C9,$08,$B0,$A5,$EA,$18,$60
+         !byte $BD,$8C,$C0
+         !byte $10,$FB
+         !byte $C9,$DE
+         !byte $F0,$0A
+         !byte $48
+         !byte $68
+         !byte $BD,$8C,$C0
+         !byte $C9,$08
+         !byte $B0,$A5
+         !byte $EA
+         !byte $18
+         !byte $60
          bcs   .bcs08
          lda   #s_bcs08
          jsr   PrintByID

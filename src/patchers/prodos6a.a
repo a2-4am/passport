@@ -3,10 +3,10 @@
 ; disk allows either $D4 or $D5 for the
 ; first address prologue nibble
 ; (no patches required, but we want to
-; log it)
+; log it and pretend we patched something
+; so we get a nice CRACK COMPLETE message)
 ;-------------------------------
 !zone {
-prodos6a
          lda   gIsProDOS  ; only if ProDOS (separate check for DOS)
          bne   .exit
          lda   #$0F
@@ -16,7 +16,10 @@ prodos6a
          ldx   #$A5
          ldy   #$08
          jsr   compare
-         !byte $BD,$8C,$C0,$10,$FB,$4A,$C9,$6A
+         !byte $BD,$8C,$C0
+         !byte $10,$FB
+         !byte $4A
+         !byte $C9,$6A
          bcs   +
          lda   #s_lsr6a
          jsr   PrintByID
@@ -26,7 +29,10 @@ prodos6a
          ldx   #$EF
          ldy   #$07
          jsr   compare
-         !byte $48,$68,$BD,$8C,$C0,$C9,$08
+         !byte $48
+         !byte $68
+         !byte $BD,$8C,$C0
+         !byte $C9,$08
          bcs   .nextsector
          lda   #s_bcs08
          jsr   PrintByID

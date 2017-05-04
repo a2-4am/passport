@@ -9,7 +9,6 @@
 ; module by qkumba
 ;-------------------------------
 !zone {
-_sierra
          lda   .foundsierra
          bne   +
          jmp   .dosearch

@@ -1,11 +1,10 @@
 ;-------------------------------
-; #MECCM7
+; #MECC2
 ; MECC fastloader with custom
 ; address and data prologues
 ; e.g. Phonics Prime Time series
 ;-------------------------------
 !zone {
-_meccm7
          jsr   IDMECC
          bcs   .exit
          jsr   IDMECC2

@@ -14,19 +14,28 @@ _rwtsswap2
          ldx   #$69
          ldy   #$13
          jsr   compare    ; and T00,S04,$69 ==
-         !byte $A9,$AB,$8D,$4B,$B8,$A9,$FF,$20
-         !byte $DF,$BC,$20,$EC,$BC,$A9,$AA,$8D
-         !byte $29,$BA,$60
+         !byte $A9,$AB
+         !byte $8D,$4B,$B8
+         !byte $A9,$FF
+         !byte $20,$DF,$BC
+         !byte $20,$EC,$BC
+         !byte $A9,$AA
+         !byte $8D,$29,$BA
+         !byte $60
          bcs   .exit
-         lda   #$04
          ldx   #$7D
          ldy   #$15
          jsr   compare    ; and T00,S04,$7D ==
-         !byte $A9,$FF,$8D,$4B,$B8,$A9,$DE,$20
-         !byte $DF,$BC,$A9,$AA,$20,$EC,$BC,$A9
-         !byte $96,$8D,$29,$BA,$60
+         !byte $A9,$FF
+         !byte $8D,$4B,$B8
+         !byte $A9,$DE
+         !byte $20,$DF,$BC
+         !byte $A9,$AA
+         !byte $20,$EC,$BC
+         !byte $A9,$96
+         !byte $8D,$29,$BA
+         !byte $60
          bcs   .exit
-         lda   #$04
          ldx   #$69
          ldy   #$01
          jsr   modify     ; then set T00,S04,$69 =

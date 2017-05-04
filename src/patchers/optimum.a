@@ -7,7 +7,6 @@
 ; module by qkumba
 ;-------------------------------
 !zone {
-_optimum
          lda   gIsOptimum
          bne   .jmpexit1
          ldy   #15

@@ -7,7 +7,6 @@
 ; Backbones, EduCalc
 ;-------------------------------
 !zone {
-_jsrbb03
          lda   gIsBoot0   ; if DOS 3.3 boot0 loader
          bne   .exit
          lda   gIsBoot1   ; and DOS 3.3 boot1 loader
@@ -34,6 +33,10 @@ _jsrbb03
          ldx   #$03
          ldy   #$09
          jsr   modify     ; then set T00,S05,$03 =
-         !byte $A9,$B5,$48,$A9,$18,$48,$4C,$93,$B7
+         !byte $A9,$B5
+         !byte $48
+         !byte $A9,$18
+         !byte $48
+         !byte $4C,$93,$B7
 .exit
 }

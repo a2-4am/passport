@@ -9,22 +9,55 @@ _rol1e
          ldx   #$00
          ldy   #$2F
          jsr   compare    ; if T00,S03,$00 ==
-         !byte $86,$1B,$BA,$BD,$02,$01,$85,$03
-         !byte $18,$69,$04,$85,$05,$A0,$00,$84
-         !byte $02,$A0,$40,$84,$04,$A0,$39,$A9
-         !byte $93,$91,$02,$C8,$A5,$03,$91,$02
-         !byte $A0,$7F,$B1,$04,$99,$00,$08,$88
-         !byte $10,$F8,$A6,$1B,$4C,$00,$08
+         !byte $86,$1B
+         !byte $BA
+         !byte $BD,$02,$01
+         !byte $85,$03
+         !byte $18
+         !byte $69,$04
+         !byte $85,$05
+         !byte $A0,$00
+         !byte $84,$02
+         !byte $A0,$40
+         !byte $84,$04
+         !byte $A0,$39
+         !byte $A9,$93
+         !byte $91,$02
+         !byte $C8
+         !byte $A5,$03
+         !byte $91,$02
+         !byte $A0,$7F
+         !byte $B1,$04
+         !byte $99,$00
+         !byte $08
+         !byte $88
+         !byte $10,$F8
+         !byte $A6,$1B
+         !byte $4C,$00,$08
          bcs   .exit
-         lda   #$03
          ldx   #$40
          ldy   #$28
          jsr   compare    ; and T00,S03,$40 ==
-         !byte $A9,$00,$A0,$EC,$91,$02,$C8,$91
-         !byte $02,$A9,$09,$A0,$F1,$91,$02,$A9
-         !byte $08,$A0,$E1,$91,$02,$A9,$4C,$85
-         !byte $01,$A9,$93,$85,$02,$20,$01,$00
-         !byte $A0,$00,$84,$02,$A5,$1E,$85,$08
+         !byte $A9,$00
+         !byte $A0,$EC
+         !byte $91,$02
+         !byte $C8
+         !byte $91,$02
+         !byte $A9,$09
+         !byte $A0,$F1
+         !byte $91,$02
+         !byte $A9,$08
+         !byte $A0,$E1
+         !byte $91,$02
+         !byte $A9,$4C
+         !byte $85,$01
+         !byte $A9,$93
+         !byte $85,$02
+         !byte $20,$01,$00
+         !byte $A0,$00
+         !byte $84,$02
+         !byte $A5,$1E
+         !byte $85,$08
          bcs   .exit
          lda   #s_rol1e
          jsr   PrintByID
