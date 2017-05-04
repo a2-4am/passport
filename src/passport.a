@@ -154,6 +154,7 @@ FirstMover
          !source "id/ea.a"
          !source "id/milliken.a"
          !source "id/daviddos.a"
+         !source "id/quickdos.a"
          !source "print.a"
          !source "compare.a"
          !source "modify.a"

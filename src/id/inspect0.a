@@ -162,6 +162,13 @@ IDBootloader
          bcs   +
          lda   #s_daviddos
          jsr   PrintByID
+;
+; Quick-DOS
+;
++        jsr   IDQuickDOS
+         bcs   +
+         lda   #s_quickdos
+         jsr   PrintByID
 
 +
 .useuniv
