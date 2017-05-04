@@ -13,14 +13,22 @@ _jmpb720
          ldx   #$08
          ldy   #$18
          jsr   compare    ; and T00,S0B,$08 ==
-         !byte $4C,$20,$B7,$4C,$0E,$A9,$A2,$02
-         !byte $BD,$0B,$B7,$9D,$5E,$B8,$BD,$08
-         !byte $B7,$9D,$F6,$B8,$CA,$10,$F1,$60
+         !byte $4C,$20,$B7
+         !byte $4C,$0E,$A9
+         !byte $A2,$02
+         !byte $BD,$0B,$B7
+         !byte $9D,$5E,$B8
+         !byte $BD,$08,$B7
+         !byte $9D,$F6,$B8
+         !byte $CA
+         !byte $10,$F1
+         !byte $60
          bcs   .exit
          lda   #$0B
          ldx   #$08
          ldy   #$06
          jsr   modify     ; then set T00,S0B,$08 =
-         !byte $BD,$8C,$C0,$20,$B8,$B8
+         !byte $BD,$8C,$C0
+         !byte $20,$B8,$B8
 .exit
 }

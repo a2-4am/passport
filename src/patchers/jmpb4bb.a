@@ -5,7 +5,6 @@
 ; e.g. Troll's Tale
 ;-------------------------------
 !zone {
-jmpb4bb
          lda   gIsMaster  ; if DOS 3.3 lomem bootloader
          bne   .exit
          lda   #$0C

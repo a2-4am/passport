@@ -13,23 +13,29 @@ _jmpbeb1
          lda   #$02
          ldx   #$48
          ldy   #$10
-         jsr   compare    ; and T00,S03,$48 ==
-         !byte $A0,$03,$48,$68,$20,$B9,$B8,$88
-         !byte $D0,$F8,$4C,$B1,$BE,$EA,$EA,$A9
+         jsr   compare    ; and T00,S02,$48 ==
+         !byte $A0,$03
+         !byte $48
+         !byte $68
+         !byte $20,$B9,$B8
+         !byte $88
+         !byte $D0,$F8
+         !byte $4C,$B1,$BE
+         !byte $EA
+         !byte $EA
+         !byte $A9
          bcs   .exit
-         lda   #$02
          ldx   #$59
          ldy   #$04
          jsr   compare    ; and T00,S02,$59 ==
-         !byte $20,$B8,$B8,$A9
+         !byte $20,$B8,$B8
+         !byte $A9
          bcs   .exit
-         lda   #$02
          ldx   #$5E
          ldy   #$03
-         jsr   compare    ; and T00,S04,$5E ==
+         jsr   compare    ; and T00,S02,$5E ==
          !byte $20,$BB,$B8
          bcs   .exit
-         lda   #$02
          ldx   #$49
          ldy   #$01
          jsr   modify     ; then set T00,S02,$49 =

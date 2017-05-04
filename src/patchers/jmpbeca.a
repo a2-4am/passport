@@ -7,23 +7,43 @@
 ; patchers due to overlapping bytes
 ;-------------------------------
 !zone {
-_jmpbeca
          lda   gIsRWTS    ; if DOS 3.3 RWTS
          bne   .exit
          lda   #$02
          ldx   #$F4
          ldy   #$0D
          jsr   compare    ; and T00,S02,$F4 ==
-         !byte $EA,$BD,$8C,$C0,$10,$FB,$C9,$AD
-         !byte $D0,$E8,$4C,$CA,$BE
+         !byte $EA
+         !byte $BD,$8C,$C0
+         !byte $10,$FB
+         !byte $C9,$AD
+         !byte $D0,$E8
+         !byte $4C,$CA,$BE
+         bcc   .yes
+;
+; variant seen in Library Magic
+;
+         ldy   #$0D
+         jsr   compare    ; or T00,S02,$F4 ==
+         !byte $4C,$CA,$BE
+         !byte $EA
+         !byte $BD,$8C,$C0
+         !byte $10,$FB
+         !byte $49
+         !byte $AD,$D0,$DD
          bcs   .exit
+
+.yes
          lda   #s_jmpbeca
          jsr   PrintByID
          lda   #$02
-         ldx   #$F4
          ldy   #$0D
          jsr   modify     ; and set T00,S02,$F4 =
-         !byte $A0,$56,$BD,$8C,$C0,$10,$FB,$C9
-         !byte $AD,$D0,$E7,$A9,$00
+         !byte $A0,$56
+         !byte $BD,$8C,$C0
+         !byte $10,$FB
+         !byte $C9,$AD
+         !byte $D0,$E7
+         !byte $A9,$00
 .exit
 }

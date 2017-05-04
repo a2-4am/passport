@@ -14,7 +14,9 @@ _jmpbcf0
          ldx   #$94
          ldy   #$08
          jsr   compare    ; and T00,S03,$94 ==
-         !byte $DD,$8C,$C0,$D0,$A9,$4C,$F0,$BC
+         !byte $DD,$8C,$C0
+         !byte $D0,$A9
+         !byte $4C,$F0,$BC
          bcs   .exit
          lda   #s_jmpbcf0
          jsr   PrintByID
@@ -22,6 +24,9 @@ _jmpbcf0
          ldx   #$94
          ldy   #$08
          jsr   modify     ; then set T00,S03,$94 =
-         !byte $EA,$BD,$8C,$C0,$10,$FB,$C9,$AA
+         !byte $EA
+         !byte $BD,$8C,$C0
+         !byte $10,$FB
+         !byte $C9,$AA
 .exit
 }

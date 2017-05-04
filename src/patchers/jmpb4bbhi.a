@@ -18,9 +18,22 @@ _jmpb4bbhi
          lda   #s_jmpb4bb
          jsr   PrintByID
          lda   #$0C
-         ldx   #$84
          ldy   #$03
          jsr   modify     ; then set T00,S0C,$84 =
          !byte $AD,$E9,$B7
+;
+; also check a variant that redirects the DOS input
+; vector through code that is only loaded by the
+; protection check we just bypassed
+;
+         lda   #$0D
+         ldx   #$BA
+         ldy   #$03
+         jsr   compare    ; if T00,S0D,$BA ==
+         !byte $4C,$0B,$B7
+         bcs   .exit
+         ldy   #$03
+         jsr   modify     ; then set T00,S0D,$BA =
+         !byte $6C,$38,00
 .exit
 }
