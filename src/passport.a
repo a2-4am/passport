@@ -151,6 +151,7 @@ FirstMover
          !source "id/encode53.a"
          !source "id/ea.a"
          !source "id/milliken.a"
+         !source "id/daviddos.a"
          !source "print.a"
          !source "compare.a"
          !source "modify.a"

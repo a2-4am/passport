@@ -240,6 +240,16 @@ IDBootloader
          jmp   foundea
 
 .notea
+;
+; Try to identify David-DOS bootloader
+; (no special behavior for now because all samples I have are
+; handled by built-in RWTS, so no need to trace)
+;
+         jsr   IDDavid
+         bcs   .notdavid
+         lda   #s_daviddos
+         jsr   PrintByID
+.notdavid
 .useuniv
 ;
 ; We didn't recognize the boot sector, so use the universal

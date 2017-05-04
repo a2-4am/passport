@@ -1,0 +1,32 @@
+;-------------------------------
+; IDDavid
+; identify David-DOS bootloader
+;
+; in:  $0800..$08FF contains T00,S00
+;      first page of track buffer also contains T00,S00
+; out: C clear if David-DOS bootloader found
+;      C set otherwise
+;      all registers clobbered
+;      all other flags clobbered
+;-------------------------------
+!zone {
+IDDavid
+         lda   #$00
+         ldx   #$01
+         ldy   #$06
+         jsr   compare    ; if T00,S00,$01 ==
+         !byte $A5,$27    ; LDA $27
+         !byte $C9,$09    ; CMP #$09
+         !byte $D0,$17    ; BNE +$17
+         bcs   .exit
+         lda   #$00
+         ldx   #$4A
+         ldy   #$0B
+         jsr   compare    ; and T00,S00,$4A ==
+         !byte $A2,$0D    ; LDX #$0D
+         !byte $BD,$B9,$08; LDA $08B9,X
+         !byte $9D,$0D,$04; STA $040D,X
+         !byte $CA        ; DEX
+         !byte $10,$F7    ; BPL -
+.exit    rts
+}

@@ -92,7 +92,8 @@ s_poke   =     $49
 s_bootcounter = $4A
 s_milliken =   $4B
 s_jsr8b3 =     $4C
-STRINGCOUNT =  $4D
+s_daviddos =   $4D
+STRINGCOUNT =  $4E
 
 !zone {
 StringTable
@@ -173,6 +174,7 @@ StringTable
          !word .bootcounter
          !word .milliken
          !word .jsr8b3
+         !word .daviddos
 ;
 ; Text can contain substitution strings, which
 ; are replaced by current values at runtime. Each
@@ -198,7 +200,7 @@ StringTable
 ; can be set directly before calling PrintByID.
 ;
 .header
-         !text "Passport by 4am               2017-05-01",00
+         !text "Passport by 4am               2017-05-04",00
 .mainmenu
          !text "________________________________________",$8D,$8D,$8D,$8D,$8D,$8D,$8D
          !text "              "
@@ -441,4 +443,6 @@ StringTable
          !text "T02,S05 might be unreadable",$8D,00
 .jsr8b3
          !text "T00,S00 Found JSR $08B3 bootloader",$8D,00
+.daviddos
+         !text "T00,S00 Found David-DOS bootloader",$8D,00
 }
