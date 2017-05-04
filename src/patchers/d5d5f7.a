@@ -6,7 +6,6 @@
 ; (Ace Detective, Robomath, Fraction-oids)
 ;-------------------------------
 !zone {
-_d5d5f7
          ldy   #$20
          jsr   SearchTrack
          !byte $BD,$8C,$C0; LDA $C08C,X

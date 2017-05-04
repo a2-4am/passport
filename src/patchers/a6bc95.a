@@ -4,7 +4,6 @@
 ; e.g. The Secrets of Science Island
 ;-------------------------------
 !zone {
-_a6bc95
          lda   gIsPascal  ; only ever seen this protection
          bne   .exit      ; on Pascal disks
 

@@ -3,43 +3,58 @@
 ; Activision's Timing Bit Detection:
 ;  FB+FF FF+FF FF+FD FF+FF+FF+FF+FF+FF+FF+FF+FF+ and
 ;  DE AA EB+FF+FF+FF+FF+FF+FF D5 AA
-; Magic key is #FF, usually EOR'ed with #$AA but not always
+; Magic key is #$FF, usually EOR'ed with #$AA but not always
 ; As found on Aliens, Maniac Mansion + 22 other titles
 ;
 ; Module by Brian Troha
 ;-------------------------------
 !zone {
-_fbff
          ldy   #$45
          jsr   SearchTrack
-         !byte $BD,$89,$C0,$A9,$56,$85,$FD,$A9
-         !byte $08,$C6,$FC,$D0,$04,$C6,$FD,$F0
-         !byte WILDCARD,$BC,$8C,$C0,$10,$FB,$C0,$FB
-         !byte $D0,$ED,$F0,$00,$EA,$EA,$BC,$8C
-         !byte $C0,$C0,$08,$2A,$B0,$0B,$BC,$8C
-         !byte $C0,$10,$FB,$C0,$FF,$D0,$D8,$F0
-         !byte $EB,$BC,$8C,$C0,$10,$FB,$84,$FC
-         !byte $C9,$0A,$D0,$CB,$BD,$8C,$C0,$10
-         !byte $FB,$38,$2A,$25,$FC
-         bcc   +
-
-         ldy   #$38
-         jsr   SearchTrack
-         !byte $BD,$89,$C0,$A9,$56,$85,$FD,$A9
-         !byte $08,$C6,$FC,$D0,$04,$C6,$FD,$F0
-         !byte WILDCARD,$BC,$8C,$C0,$10,$FB,$C0,$FB
-         !byte $D0,$ED,$F0,$00,$EA,$EA,$BC,$8C
-         !byte $C0,$C0,$08,$2A,$B0,$0B,$BC,$8C
-         !byte $C0,$10,$FB,$C0,$FF,$D0,$D8,$F0
-         !byte $EB,$BC,$8C,$02,$40,$29,$7F,$C9
+         !byte $BD,$89,$C0
+         !byte $A9,$56
+         !byte $85,$FD
+         !byte $A9,$08
+         !byte $C6,$FC
+         !byte $D0,$04
+         !byte $C6,$FD
+         !byte $F0,WILDCARD
+         !byte $BC,$8C,$C0
+         !byte $10,$FB
+         !byte $C0,$FB
+         !byte $D0,$ED
+         !byte $F0,$00
+         !byte $EA
+         !byte $EA
+         !byte $BC,$8C,$C0
+         !byte $C0,$08
+         !byte $2A
+         !byte $B0,$0B
+         !byte $BC,$8C,$C0
+         !byte $10,$FB
+         !byte $C0,$FF
+         !byte $D0,$D8
+         !byte $F0,$EB
+         !byte $BC,$8C,$C0
+         !byte $10,$FB
+         !byte $84,$FC
+         !byte $C9,$0A
+         !byte $D0,$CB
+         !byte $BD,$8C,$C0
+         !byte $10,$FB
+         !byte $38
+         !byte $2A
+         !byte $25,$FC
          bcs   .exit
-+        sta   gDisplayBytes
+         sta   gDisplayBytes
          pha
          lda   #s_fbff
          jsr   PrintByID
          pla
          ldy   #$05
          jsr   modify
-         !byte $A9,$FF,$18,$90,$40
+         !byte $A9,$FF
+         !byte $18
+         !byte $90,$40
 .exit
 }

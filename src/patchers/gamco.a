@@ -5,8 +5,6 @@
 ; e.g. Essential Grammar, Math Football
 ;-------------------------------
 !zone {
-_gamco
-
 ; [speed optimization: only ever seen this protection on disks with a specific
 ; nibble sequence on track $22]
          lda   gIsEEEF

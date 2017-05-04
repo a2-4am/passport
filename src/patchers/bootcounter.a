@@ -5,7 +5,6 @@
 ; after a certain number of boots
 ;-------------------------------
 !zone {
-_bootcounter
          lda   gTrack
          cmp   #$01
          bne   .exit

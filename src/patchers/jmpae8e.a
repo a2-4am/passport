@@ -5,7 +5,6 @@
 ; e.g. Alien Addition
 ;-------------------------------
 !zone {
-_jmpae8e
          lda   gIsBoot0   ; if DOS 3.3 boot0 loader
          bne   .exit
          lda   gIsBoot1   ; and DOS 3.3 boot1 loader

@@ -5,7 +5,6 @@
 ; e.g. Game Frame One, Game Frame Two
 ;-------------------------------
 !zone {
-_a5count
          lda   gIsPascal  ; only ever seen this protection
          bne   .exit      ; on Pascal disks
 

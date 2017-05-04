@@ -9,7 +9,6 @@
 ; e.g. Dino Dig, Make A Face
 ;-------------------------------
 !zone {
-_bademu
          lda   gIsRWTS    ; if DOS 3.3 RWTS
          bne   .exit
          lda   #$03

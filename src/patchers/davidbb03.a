@@ -10,7 +10,6 @@
 ; Mystery of the Witch's Shoes
 ;-------------------------------
 !zone {
-_davidbb03
          lda   #$00
          ldx   #$00
          ldy   #$38

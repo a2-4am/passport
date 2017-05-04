@@ -4,7 +4,6 @@
 ; if protection check fails
 ;-------------------------------
 !zone {
-corrupter
          lda   #$0F
          sta   .sector+1
 .sector  lda   #$FF       ; modified at runtime

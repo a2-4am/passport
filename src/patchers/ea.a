@@ -5,7 +5,6 @@
 ; module by qkumba
 ;-------------------------------
 !zone {
-_ea
          lda   gIsEA      ; only ever seen this protection
          beq   +          ; on Electronic Arts titles
          jmp   .dostitles

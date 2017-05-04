@@ -13,7 +13,6 @@
 ; position for it to start.
 ;-------------------------------
 !zone {
-_c9ff
          ldy   #$1A
          jsr   SearchTrack
          !byte $A8        ; TAY
