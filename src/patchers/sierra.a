@@ -4,7 +4,19 @@
 ; protection check used on many Sierra
 ; disks in a way that doesn't trip the
 ; tamper check that checksums the code
-; e.g. Sammy Lightfoot, Crossfire
+;
+; Apple Cider Spider
+; Aquatron
+; BC's Quest For Tires
+; Cannonball Blitz
+; Crossfire
+; Dragon's Keep
+; Learning with Leeper
+; Marauder
+; Mr. Cool
+; Oil's Well
+; Sammy Lightfoot
+; Sierra Championship Boxing
 ;
 ; module by qkumba
 ;-------------------------------
@@ -138,7 +150,10 @@
          jmp   .exit
 
 .dosearch
-         ldy   #15
+         lda   gIsBoot0
+         beq   +
+         jmp   .exit
++        ldy   #15
          jsr   SearchTrack
          !byte $CE,WILDCARD,WILDCARD,$EF,WILDCARD,WILDCARD,$AD
          !byte WILDCARD,WILDCARD,$49,WILDCARD,$D0,01,$20,$8D

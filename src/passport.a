@@ -94,7 +94,7 @@ flag     =     $FF        ; byte
 }
 
 ; Application constants (not zero addresses)
-RELBASE  =     $6300      ; address to move Passport code
+RELBASE  =     $6200      ; address to move Passport code
                           ; so that it's out of the way
 LOWPOINT =     $4300      ; lowest available address for code
 BASEPAGE =     $10        ; Special Delivery tracer assumes
@@ -711,7 +711,7 @@ _applyToAll
          !source "patchers/rwtsswapmecc.a"      ; gIsMECCFastloader only
          !source "patchers/protecteddos.a"      ; gIsProtDOS only
          !source "patchers/fbff.a"
-         !source "patchers/sierra.a"
+         !source "patchers/sierra.a"            ; gIsBoot0 only
          !source "patchers/corrupter.a"         ; T13 only
          !source "patchers/ea.a"                ; gIsEA only (+gIsBoot0 for DOS titles)
          !source "patchers/gamco.a"             ; gIsEEEF only
