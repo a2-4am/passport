@@ -95,7 +95,8 @@ s_jsr8b3 =     $4C
 s_daviddos =   $4D
 s_quickdos =   $4E
 s_diversidos = $4F
-STRINGCOUNT =  $50
+s_prontodos =  $50
+STRINGCOUNT =  $51
 
 !zone {
 StringTable
@@ -179,6 +180,7 @@ StringTable
          !word .daviddos
          !word .quickdos
          !word .diversidos
+         !word .prontodos
 ;
 ; Text can contain substitution strings, which
 ; are replaced by current values at runtime. Each
@@ -453,4 +455,6 @@ StringTable
          !text "T00,S00 Found Quick-DOS bootloader",$8D,00
 .diversidos
          !text "T00,S00 Found Diversi-DOS bootloader",$8D,00
+.prontodos
+         !text "T00,S00 Found Pronto-DOS bootloader",$8D,00
 }

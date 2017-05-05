@@ -156,6 +156,7 @@ FirstMover
          !source "id/daviddos.a"
          !source "id/quickdos.a"
          !source "id/diversidos.a"
+         !source "id/prontodos.a"
          !source "print.a"
          !source "compare.a"
          !source "modify.a"

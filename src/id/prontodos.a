@@ -1,21 +1,23 @@
 ;-------------------------------
-; IDDiversi
-; identify Diversi-DOS bootloader
+; IDPronto
+; identify Pronto-DOS bootloader
 ;
 ; in:  $0800..$08FF contains T00,S00
 ;      first page of track buffer also contains T00,S00
 ;      bootloader was identified as DOS 3.3-shaped (IDDOS33 returned success)
-; out: C clear if Diversi-DOS bootloader found
+; out: C clear if Pronto-DOS bootloader found
 ;      C set otherwise
 ;      all registers clobbered
 ;      all other flags clobbered
 ;-------------------------------
 !zone {
-IDDiversi
+IDPronto
          lda   #$00
-         ldx   #$F1
-         ldy   #$0B
-         jsr   compare    ; if T00,S00,$F1 ==
-         !byte $B3,$A3,$A0,$D2,$CF,$D2,$D2,$C5,$8D,$87,$8D
+         ldx   #$5E
+         ldy   #$07
+         jsr   compare    ; if T00,S00,$5E ==
+         !byte $B0,$50    ; BCS +$50
+         !byte $AD,$CB,$B5; LDA $B5CB
+         !byte $85,$42    ; STA $42
          rts
 }

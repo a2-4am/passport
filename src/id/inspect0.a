@@ -51,12 +51,17 @@ IDBootloader
          bcs   +
          lda   #TRUE
          sta   gIsBoot0
-         jsr   IDDiversiDOS
+         jsr   IDDiversi
          bcc   .diversi
+         jsr   IDPronto
+         bcc   .pronto
          lda   #s_dosb0
          !byte $2c
 .diversi
          lda   #s_diversidos
+         !byte $2c
+.pronto
+         lda   #s_prontodos
          jsr   PrintByID
          jmp   TraceDOS33
 ;
