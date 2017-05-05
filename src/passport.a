@@ -702,10 +702,10 @@ _applyToT00
          !source "patchers/jsr8b3.a"
 _applyToAll
          !source "patchers/universale7.a"
-         !source "patchers/runhello.a"          ; !gIsProDOS && !gIsPascal only
+         !source "patchers/runhello.a"          ; (!gIsProDOS && !gIsPascal) only
          !source "patchers/a6bc95.a"            ; gIsPascal only
          !source "patchers/a5count.a"           ; gIsPascal only
-         !source "patchers/d5d5f7.a"
+         !source "patchers/d5d5f7.a"            ; gIsPascal || (gIsBoot0 && gPossibleD5D5F7) only
          !source "patchers/prodosrwts.a"        ; gIsProDOS only
          !source "patchers/prodos6a.a"          ; gIsProDOS only
          !source "patchers/prodosmecc.a"        ; gIsProDOS only
@@ -714,7 +714,7 @@ _applyToAll
          !source "patchers/fbff.a"
          !source "patchers/sierra.a"            ; gIsBoot0 only
          !source "patchers/corrupter.a"         ; T13 only
-         !source "patchers/ea.a"                ; gIsEA only (+gIsBoot0 for DOS titles)
+         !source "patchers/ea.a"                ; (gIsEA || gIsBoot0) only
          !source "patchers/gamco.a"             ; gIsEEEF only
          !source "patchers/optimum.a"           ; gIsOptimum only
          !source "patchers/bootcounter.a"       ; T01 only
