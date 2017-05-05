@@ -1,0 +1,57 @@
+;-------------------------------
+; #JMPB412
+; Boot1 jumps to $B3C3 to read
+; and decrypt a nibble check at
+; $B412, which exits via $9D84
+; if successful
+;
+; Zoo Goer
+; Zoo Collector
+; Zoo Builder
+; America Coast to Coast (Mindscape release)
+;-------------------------------
+!zone {
+         lda   gTrack
+         cmp   #$02
+         bne   .exit
+
+         lda   #$00
+         ldx   #$C3
+         ldy   #$35
+         jsr   compare    ; if T02,S00,$C3 ==
+         !byte $A9,WILDCARD;LDA #$**
+         !byte $8D,$EC,$B7; STA $B7EC
+         !byte $A9,WILDCARD;LDA #$**
+         !byte $8D,$ED,$B7; STA $B7ED
+         !byte $A9,$B4    ; LDA #$B4
+         !byte $8D,$F1,$B7; STA $B7F1
+         !byte $A9,$00    ; LDA #$00
+         !byte $8D,$F3,$B7; STA $B7F3
+         !byte $8D,$EB,$B7; STA $B7EB
+         !byte $A9,$B7    ; LDA #$B7
+         !byte $A0,$E8    ; LDY #$E8
+         !byte $20,$B5,$B7; JSR $B7B5
+         !byte $A0,$00    ; LDY #$00
+         !byte $B9,$12,$B4; LDA $B412,Y
+         !byte $49,WILDCARD;EOR #$**
+         !byte $99,$12,$B4; STA $B412,Y
+         !byte $C8        ; INY
+         !byte $C0,$FF    ; CPY #$FF
+         !byte $D0,$F3    ; BNE
+         !byte WILDCARD
+         !byte WILDCARD
+         !byte WILDCARD
+         !byte WILDCARD
+         !byte WILDCARD
+         !byte $4C,$12,$B4; JMP $B412
+         bcs   .exit
+         sta   gDisplayBytes
+         lda   #s_jmpb412
+         jsr   PrintByID
+         lda   #$00
+         ldx   #$F6
+         ldy   #$02
+         jsr   modify     ; then set T02,S00,$F6 =
+         !byte $84,$9D
+.exit
+}

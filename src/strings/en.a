@@ -96,7 +96,8 @@ s_daviddos =   $4D
 s_quickdos =   $4E
 s_diversidos = $4F
 s_prontodos =  $50
-STRINGCOUNT =  $51
+s_jmpb412 =    $51
+STRINGCOUNT =  $52
 
 !zone {
 StringTable
@@ -181,6 +182,7 @@ StringTable
          !word .quickdos
          !word .diversidos
          !word .prontodos
+         !word .jmpb412
 ;
 ; Text can contain substitution strings, which
 ; are replaced by current values at runtime. Each
@@ -457,4 +459,7 @@ StringTable
          !text "T00,S00 Found Diversi-DOS bootloader",$8D,00
 .prontodos
          !text "T00,S00 Found Pronto-DOS bootloader",$8D,00
+.jmpb412
+         !text "T02,S00 Disk calls a protection check",$8D
+         !text "at $B412 before initializing DOS.",$8D,00
 }
