@@ -94,7 +94,8 @@ s_milliken =   $4B
 s_jsr8b3 =     $4C
 s_daviddos =   $4D
 s_quickdos =   $4E
-STRINGCOUNT =  $4F
+s_diversidos = $4F
+STRINGCOUNT =  $50
 
 !zone {
 StringTable
@@ -177,6 +178,7 @@ StringTable
          !word .jsr8b3
          !word .daviddos
          !word .quickdos
+         !word .diversidos
 ;
 ; Text can contain substitution strings, which
 ; are replaced by current values at runtime. Each
@@ -449,4 +451,6 @@ StringTable
          !text "T00,S00 Found David-DOS bootloader",$8D,00
 .quickdos
          !text "T00,S00 Found Quick-DOS bootloader",$8D,00
+.diversidos
+         !text "T00,S00 Found Diversi-DOS bootloader",$8D,00
 }

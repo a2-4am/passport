@@ -23,9 +23,9 @@ IDDavid
          ldx   #$4A
          ldy   #$0B
          jsr   compare    ; and T00,S00,$4A ==
-         !byte $A2,$0D    ; LDX #$0D
-         !byte $BD,$B9,$08; LDA $08B9,X
-         !byte $9D,$0D,$04; STA $040D,X
+         !byte $A2,WILDCARD    ; LDX #$**
+         !byte $BD,WILDCARD,$08; LDA $08**,X
+         !byte $9D,WILDCARD,$04; STA $04**,X
          !byte $CA        ; DEX
          !byte $10,$F7    ; BPL -
 .exit    rts

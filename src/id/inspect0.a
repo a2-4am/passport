@@ -51,7 +51,12 @@ IDBootloader
          bcs   +
          lda   #TRUE
          sta   gIsBoot0
+         jsr   IDDiversiDOS
+         bcc   .diversi
          lda   #s_dosb0
+         !byte $2c
+.diversi
+         lda   #s_diversidos
          jsr   PrintByID
          jmp   TraceDOS33
 ;

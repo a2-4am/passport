@@ -1,0 +1,20 @@
+;-------------------------------
+; IDDiversiDOS
+; identify Diversi-DOS bootloader
+;
+; in:  $0800..$08FF contains T00,S00
+;      first page of track buffer also contains T00,S00
+; out: C clear if Diversi-DOS bootloader found
+;      C set otherwise
+;      all registers clobbered
+;      all other flags clobbered
+;-------------------------------
+!zone {
+IDDiversiDOS
+         lda   #$00
+         ldx   #$F1
+         ldy   #$0B
+         jsr   compare    ; if T00,S00,$F1 ==
+         !byte $B3,$A3,$A0,$D2,$CF,$D2,$D2,$C5,$8D,$87,$8D
+         rts
+}
