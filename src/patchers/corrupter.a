@@ -1,19 +1,27 @@
 ;-------------------------------
 ; #CORRUPTER
+; protection check on T13,S0E
 ; intentionally destroys T00,S00
-; if protection check fails
+; if check fails
+;
+; Millionaire
+; Squire
+; Baron
+; Super Huey
 ;-------------------------------
 !zone {
-         lda   #$0F
-         sta   .sector+1
-.sector  lda   #$FF       ; modified at runtime
+         lda   gTrack
+         cmp   #$13
+         bne   .exit
+
+         lda   #$0E
          ldx   #$2C
          ldy   #$07
          jsr   compare
          !byte $20,$E3,$03; JSR $03E3
          !byte $84,$00    ; STY $00
          !byte $85,$01    ; STA $01
-         bcs   .nextsector
+         bcs   .exit
          ldx   #$D4
          ldy   #$0F
          jsr   compare
@@ -23,7 +31,7 @@
          !byte $AD,$D3,$40; LDA $40D3
          !byte $C9,$FF    ; CMP #$FF
          !byte $D0,$F1    ; BNE -$F1
-         bcs   .nextsector
+         bcs   .exit
          ldx   #$A4
          ldy   #$0F
          jsr   compare
@@ -34,17 +42,12 @@
          !byte $A9,$01    ; LDA #$01
          !byte $85,$04    ; STA $04
          !byte $20,$28,$40; JSR $4028
-         bcs   .nextsector
-         sta   gDisplayBytes
-         pha
+         bcs   .exit
          lda   #s_corrupter
          jsr   PrintByID
-         pla
+         lda   #$0E
          ldy   #$01
          jsr   modify
          !byte $60        ; RTS
-.nextsector
-         dec   .sector+1
-         bpl   .sector
 .exit
 }

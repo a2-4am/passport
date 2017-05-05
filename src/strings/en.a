@@ -432,7 +432,7 @@ StringTable
 .restart
          !text "Restarting scan",$8D,$00
 .corrupter
-         !text "T%t,S%0 Protection check intentionally",$8D
+         !text "T13,S0E Protection check intentionally",$8D
          !text "destroys unauthorized copies",$8D,$00
 .eaboot0
          !text "T00 Found Electronic Arts bootloader",$8D,00
