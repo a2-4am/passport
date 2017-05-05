@@ -1,12 +1,12 @@
 ;-------------------------------
 ; #RWTSSWAPMECC
 ; post-boot RWTS swapper in MECC
-; disks
-; TODO might be able to gate this on MECC fastloader
-; (I think it's only used on Dataquest disks)
+; fastloader disks
 ;-------------------------------
 !zone {
-_rwtsswapmecc
+         lda   gIsMECCFastloader
+         bne   .exit
+
          ldy   #$11
          jsr   SearchTrack
          !byte $0A

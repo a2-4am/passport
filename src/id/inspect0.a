@@ -8,7 +8,8 @@
 !zone {
 IDBootloader
 ;
-; reset all per-disk globals
+; Reset all per-disk globals.
+; These are used as filters later so irrelevant patchers can be skipped.
 ;
          lda   #FALSE
          sta   gIsBoot0
@@ -20,6 +21,7 @@ IDBootloader
          sta   gIsProtDOS
          sta   gIsEA
          sta   gIsEEEF
+         sta   gIsMECCFastloader
          lda   #$00
          sta   gLastTrack
 ;
@@ -80,6 +82,8 @@ IDBootloader
 ;
 +        jsr   IDMECC
          bcs   .notmecc
+         lda   #TRUE
+         sta   gIsMECCFastloader
          lda   #s_mecc
          jsr   PrintByID
          jsr   CopyUniversal
