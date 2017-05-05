@@ -157,6 +157,7 @@ FirstMover
          !source "id/quickdos.a"
          !source "id/diversidos.a"
          !source "id/prontodos.a"
+         !source "id/d5d5f7.a"
          !source "print.a"
          !source "compare.a"
          !source "modify.a"
@@ -803,6 +804,10 @@ gIsOptimum
                           ; reset before each operation
                           ; set in IDBootloader() after reading T00,S00
 gIsMECCFastloader
+         !byte FALSE      ; 0=true, 1=false
+                          ; reset before each operation
+                          ; set in IDBootloader() after reading T00,S00
+gPossibleD5D5F7
          !byte FALSE      ; 0=true, 1=false
                           ; reset before each operation
                           ; set in IDBootloader() after reading T00,S00

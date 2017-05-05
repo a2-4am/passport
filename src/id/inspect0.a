@@ -22,6 +22,7 @@ IDBootloader
          sta   gIsEA
          sta   gIsEEEF
          sta   gIsMECCFastloader
+         sta   gPossibleD5D5F7
          lda   #$00
          sta   gLastTrack
 ;
@@ -50,10 +51,14 @@ IDBootloader
 ; Exit via custom trace function if found.
 ;
          jsr   IDDOS33
-         bcs   +
+         bcs   .notdos33
          lda   #TRUE
          sta   gIsBoot0
-         jsr   IDDiversi
+         jsr   IDD5D5F7
+         bcs   +
+         lda   #TRUE
+         sta   gPossibleD5D5F7
++        jsr   IDDiversi
          bcc   .diversi
          jsr   IDPronto
          bcc   .pronto
@@ -71,7 +76,8 @@ IDBootloader
 ; early to munge the nibble tables used by the drive firmware.
 ; Exit via custom trace function if found.
 ;
-+        jsr   ID8b3
+.notdos33
+         jsr   ID8b3
          bcs   +
          lda   #s_jsr8b3
          jsr   PrintByID

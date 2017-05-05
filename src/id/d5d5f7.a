@@ -1,0 +1,34 @@
+;-------------------------------
+; IDD5D5F7
+; Identify specific version of DOS 3.3 bootloader
+; shared by all disks that use the D5D5F7 check.
+; Note: this detection pattern makes no logical
+; sense; it just happens to be a useful filter for
+; the D5D5F7 patcher to use later. It filters out
+; about 2/3 of disks on which I've never seen a
+; D5D5F7 protection check, so we can save time by
+; not doing full-track searches on those disks.
+;
+; in:  $0800..$08FF contains T00,S00
+;      IDDOS33 returned success
+; out: C clear if specific version of DOS 3.3 bootloader found
+;      C set otherwise
+;      X,Y preserved
+;      all other flags and registers clobbered
+;-------------------------------
+!zone {
+IDD5D5F7
+         lda   $084C
+         cmp   #$08
+         bne   .no
+         lda   $08B0
+         cmp   #$B6
+         bne   .no
+         lda   $08D0
+         cmp   #$20
+         bne   .no
+         clc
+         !byte $24
+.no      sec
+         rts
+}

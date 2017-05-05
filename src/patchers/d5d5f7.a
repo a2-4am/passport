@@ -2,11 +2,37 @@
 ; #D5D5F7
 ; nibble count with weird bitstream
 ; involving $D5 and $F7 as delimiters
-; e.g. NoteCard Maker, many Mindplay titles
-; (Ace Detective, Robomath, Fraction-oids)
+;
+; Ace Detective
+; Cat 'N Mouse
+; Cotton Tales
+; Dyno-Quest
+; Easy Street
+; Fraction-oids
+; Math Magic
+; RoboMath
+; Sum Ducks
+; NoteCard Maker
 ;-------------------------------
 !zone {
-         ldy   #$20
+;
+; always run on Pascal disks
+;
+         lda   gIsPascal
+         beq   +
+;
+; if DOS 3.3-shaped bootloader, only run if we found
+; specific markers on T00,S00 earlier that are shared
+; by all the samples I have that use this protection.
+; (This filter is subject to revision if we find
+; additional samples.)
+;
+         lda   gIsBoot0
+         bne   .exit
+         lda   gPossibleD5D5F7
+         bne   .exit
+
++        ldy   #$20
          jsr   SearchTrack
          !byte $BD,$8C,$C0; LDA $C08C,X
          !byte $10,$FB    ; BPL -$FB
