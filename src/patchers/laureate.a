@@ -1,0 +1,47 @@
+;-------------------------------
+; Laureate Learning Systems RWTS fixup
+; annoyingly shifted by 2 sectors,
+; but generally DOS-shaped
+;-------------------------------
+!zone {
+         jsr   IDLaureate
+         bcs   .exit
+         bcc   +
+
+.sectors
+         !byte $04,$04,$04,$04,$04,$04,$04,$04,$04,$05,$05,$05,$05,$05,$05,$05,$06,$06,$06
+.offsets
+         !byte $53,$58,$5D,$9E,$A3,$A8,$E7,$F1,$FC,$35,$3F,$55,$5F,$6A,$91,$9B,$49,$D5,$D6
+.values
+         !byte $D5,$AA,$AD,$DE,$AA,$EB,$D5,$AA,$AD,$DE,$AA,$D5,$AA,$96,$DE,$AA,$D6,$D5,$20
+
++        lda   #$12
+         sta   .loop+1
+
+.loop    ldy   #$d1
+         lda   .values,y
+         sta   .valuea
+         sta   .valueb
+         lda   .sectors,y
+         ldx   .offsets,y
+         ldy   #$01
+         jsr   compare
+.valuea  !byte $d1
+         bcc   +
+         ldy   #$01
+         jsr   modify
+.valueb  !byte $d1
++        dec   .loop+1
+         bpl   .loop
+
+         lda   #$0A
+         ldx   #$12
+         ldy   #$02
+         jsr   compare
+         !byte $B1,$48
+         bcs   .exit
+         ldy   #$02
+         jsr   modify
+         !byte $A9,$00
+.exit
+}

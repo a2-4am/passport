@@ -1,0 +1,80 @@
+;-------------------------------
+; IDLaureate
+; identify custom bootloader seen on disks from
+; Laureate Learning Systems
+; loads RWTS directly into language card
+;
+; in:  track buffer contains T00,S00
+; out: C clear if Laureate bootloader was found
+;        (and track buffer now contains all of track 0)
+;      C set if not found
+;      all other flags clobbered
+;      all registers clobbered
+;-------------------------------
+!zone {
+IDLaureate
+         lda   #$00
+         ldx   #$2E
+         ldy   #$0E
+         jsr   compare    ; if T00,S00,$2E ==
+         !byte $AE,$FF,$08; LDX $08FF
+         !byte $30,$1E    ; BMI +$1E
+         !byte $E0,$02    ; CPX #$02
+         !byte $D0,$05    ; BNE +$05
+         !byte $A9,$BF    ; LDA #$BF
+         !byte $8D,$FE,$08; STA $08FE
+         bcs   .exit
+         lda   #$00
+         ldx   #$F8
+         ldy   #$08
+         jsr   compare    ; and T00,S00,$F8 ==
+         !byte $4C,$00,$B7; JMP $B700
+         !byte $00,$00,$00
+         !byte $FF,$0B
+.exit
+         rts
+}
+
+;-------------------------------
+; TraceLaureate
+; Create an RWTS that can read the disk (T01+).
+; The original RWTS lives at $F800, which is
+; inconvenient. So, starting with our built-in RWTS,
+; we copy bits and pieces to create a similar RWTS
+; that lives at $B800.
+;;
+; in:  track buffer contains all of track 0
+; exits via ADStyle
+;-------------------------------
+!zone {
+TraceLaureate
+         lda   #$00
+         sta   modsrc
+         lda   #$04
+         clc
+         adc   #BASEPAGE
+         sta   modsrc+1
+         ldy   #$E7
+         lda   (modsrc),y
+         sta   $B8E7
+         ldy   #$F1
+         lda   (modsrc),y
+         sta   $B8F1
+         ldy   #$FC
+         lda   (modsrc),y
+         sta   $B8FC
+         inc   modsrc+1
+         ldy   #$44
+-        lda   (modsrc),y
+         sta   $b900,y
+         iny
+         cpy   #$A0
+         bne   -
+         inc   modsrc+1
+         ldy   #$29
+-        lda   (modsrc),y
+         sta   $BA00,y
+         iny
+         bne   -
+         jmp   ADStyle
+}

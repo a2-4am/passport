@@ -94,7 +94,7 @@ flag     =     $FF        ; byte
 }
 
 ; Application constants (not zero addresses)
-RELBASE  =     $6200      ; address to move Passport code
+RELBASE  =     $6100      ; address to move Passport code
                           ; so that it's out of the way
 LOWPOINT =     $4300      ; lowest available address for code
 BASEPAGE =     $10        ; Special Delivery tracer assumes
@@ -158,6 +158,7 @@ FirstMover
          !source "id/diversidos.a"
          !source "id/prontodos.a"
          !source "id/d5d5f7.a"
+         !source "id/laureate.a"
          !source "print.a"
          !source "compare.a"
          !source "modify.a"
@@ -700,6 +701,7 @@ _applyToT00
          !source "patchers/milliken.a"
          !source "patchers/methods.a"
          !source "patchers/jsr8b3.a"
+         !source "patchers/laureate.a"
 _applyToAll
          !source "patchers/universale7.a"
          !source "patchers/runhello.a"          ; (!gIsProDOS && !gIsPascal) only

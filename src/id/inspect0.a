@@ -118,6 +118,18 @@ IDBootloader
          jsr   PrintByID
          jmp   TraceSpecDel
 ;
+; Try to identify Laureate Learning Systems bootloader.
+; Exit via custom trace function if found.
+;
++        jsr   IDLaureate
+         bcs   +
+         lda   #s_laureate
+         jsr   PrintByID
+         jsr   CopyUniversal
+         jsr   PrereadT00
+         bcs   +
+         jmp   TraceLaureate
+;
 ; Try to identify Electronic Arts bootloader.
 ; Exit via custom trace function if found.
 ;
