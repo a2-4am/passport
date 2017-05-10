@@ -62,7 +62,18 @@
          iny
          bne   -
 
-         lda   #2
+         lda   $2E8
+         cmp   #$B1
+         bne   +
+         lda   .swapbase2+2
+         sbc   #BASEPAGE
+         ldx   #0
+         iny
+         jsr   modify
+         !byte $60          ;RTS
+         jmp   .notable
+
++        lda   #2
          sta   .retrycount
 
          lda   gTrack
@@ -127,6 +138,26 @@
          jsr   modify
          !byte $60          ;RTS
 
+         ;detect write-protect
+         ;work around OE issue
+
+         ldx   gRWTSParams+1
+         lda   $C08D,x
+         lda   $C08E,x
+         bpl   +
+         ldx   $BB00
+         ldy   #1
+-        lda   $BB00,y
+         sta   $BAFF,y
+         iny
+         bne   -
+         ldy   #$54
+-        lda   $BC00,y
+         sta   $BC01,y
+         dey
+         bpl   -
+         stx   $BC00
++
          ;decode and stash content
 
          lda   #$BC
@@ -174,9 +205,14 @@
 
          ;read IOB with replaced page
 
+         lda   $2E8
+         ldy   $2E2
+         cpy   #$48 ;PHA
+         bne   +
+
 .swapbase5
          lda   $D16D,x
-         sta   .address+1
++        sta   .address+1
 
          lda   gTrack
          beq   .reread1
@@ -193,7 +229,7 @@
          ldy   #8
          jsr   SearchTrack
          !byte $20,$5D,$B6  ;JSR $B65D
-         !byte WILDCARD, WILDCARD
+         !byte $01,$0E      ;track 1, sector #$0E
          !byte $00,$08,$18  ;address, count
          bcs   .jmpexit2 ;give up
          adc   #BASEPAGE
