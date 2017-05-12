@@ -8,72 +8,76 @@
 ;-------------------------------
 !zone {
          lda   gIsOptimum
-         bne   .jmpexit1
+         bne   .jmpexit
+         ldx   gTrack
+         beq   .jmptrack0
+         dex
+         beq   .dotrack1
          ldy   #15
          jsr   SearchTrack
          !byte $A2,$00      ;LDX #$00
          !byte $A0,$00      ;LDY #$00
-         !byte $BD,WILDCARD,$03  ;LDA $03xx,X
+         !byte $BD,WILDCARD,WILDCARD ;LDA $xxxx,X
          !byte $E8          ;INX
          !byte $85,WILDCARD ;STA $xx
-         !byte $BD,WILDCARD,$03  ;LDA $03xx,X
+         !byte $BD,WILDCARD,WILDCARD ;LDA $xxxx,X
          !byte $E8          ;INX
          !byte $85          ;STA $xx
-         bcc   +
-         lda   gTrack
-         beq   .jmpreread
+         bcs   .jmpexit
+         tay
+         adc   #BASEPAGE-1
+         pha
+         tya
+         ldy   #$01
+         jsr   modify
+         !byte $60          ;RTS
+         pla
 
-.jmpexit1
+         ;find reference to T01 S0F
+
+         ldy   #6
+         jsr   SearchSector
+         !byte $01,$60,$01,$00,$01,$0F
+         bcs   .jmpexit
+         adc   #BASEPAGE
+         sta   .iob+2
+
+         ;save for later...
+
+.iob
+         lda   $D109,X
+         sta   .address+1
+
+.jmpexit
          jmp   .exit
 
-.jmpreread
-         jmp   .reread1
+.jmptrack0
+         jmp   .dotrack0
 
-+        pha
-         adc   #BASEPAGE
-         sta   .swapbase2+2
-         tay
-         sbc   #0
-         sta   .swapbase1+1
-         txa
-         pha
-         dey
-         sty   .swapbase5+2
+.retrycount
+         !byte $D1
 
-.swapbase1
-         lda   #$D1
-         ldy   #5
-         jsr   SearchSector
-         !byte $00,$07,$08,$09,$01
-         bcs   .notable
-         txa
-         sbc   #($96+$17)
-         sta   .swapbase3+1
-         sta   .swapbase4+1
-         lda   .swapbase1+1
-         sbc   #0
-         sta   .swapbase3+2
-         sta   .swapbase4+2
-         ldy   #0
--
-.swapbase2
-         lda   $D100,y
-         sta   $2D8,y
-         iny
-         bne   -
+.badread
+         lda   #s_optbad  ; say read failure
+         jsr   PrintByID
+         jmp   .exit
 
-         lda   #2
+.dotrack1
+         lda   #3
          sta   .retrycount
 
-         lda   gTrack
-         pha
-         lda   #1
-         sta   gTrack
-
-         ;disable decoding because using the real version
-         ;would corrupt the text screen
-
 .retry
+         dec   .retrycount
+         beq   .badread
+
+         ;disable decoding, requires custom handling
+
++        lda   #$4C
+         sta   $B8F6
+         lda   #<.readcallback
+         sta   $B8F7
+         lda   #>.readcallback
+         sta   $B8F8
          lda   #$2C
          sta   $BE40
 
@@ -81,52 +85,43 @@
 
          ldy   #<gRWTSParams
          lda   #>gRWTSParams
+         jsr   $BD00
 
-         ;special case check
-
-         ldx   $2E2
-         cpx   #$48 ;PHA
-         beq   +
-         jsr   $2FC
-         jmp   ++
-
-         ;regular dispatch
-+
-         jsr   $2E2
-
-++
          ;re-enable decoding
 
+         lda   #$BD
+         sta   $B8F6
+         lda   #$8C
+         sta   $B8F7
+         lda   #$C0
+         sta   $B8F8
          lda   #$20
          sta   $BE40
 
          ;detect read failure
 
-         bcc   +
-         dec   .retrycount
-         bne   .retry
-         lda   #s_optbad  ; say read failure
-         jsr   PrintByID  ; but can't quit from here
-         pla
-         sta   gTrack
-.notable
-         pla
-         pla
-         jmp   .exit
+         bcs   .retry
 
+         ;detect write-protect
+         ;work around OE issue
+
+         ldx   gRWTSParams+1
+         lda   $C08D,x
+         lda   $C08E,x
+         bpl   +
+         ldx   $BB00
+         ldy   #1
+-        lda   $BB00,y
+         sta   $BAFF,y
+         iny
+         bne   -
+         ldy   #$54
+-        lda   $BC00,y
+         sta   $BC01,y
+         dey
+         bpl   -
+         stx   $BC00
 +
-         pla
-         sta   gTrack
-
-         ;disable redirection
-
-         pla
-         tax
-         pla
-         ldy   #$01
-         jsr   modify
-         !byte $60          ;RTS
-
          ;decode and stash content
 
          lda   #$BC
@@ -141,8 +136,7 @@
 -
 .tblsel1
          ldx   $D100,y
-.swapbase3
-         lda   $D1D1,x
+         lda   .xlattbl-($96+$16),x
          asl
          asl
          asl
@@ -152,7 +146,7 @@
 .tblsel2
          ldx   $D100,y
 .swapbase4
-         ora   $D1D1,x
+         ora   .xlattbl-($96+$16),x
          sty   $2C
          ldy   $26
          sta   $300,y
@@ -171,36 +165,56 @@
          ldx   $26
          inx
          bne   -
-
-         ;read IOB with replaced page
-
-.swapbase5
-         lda   $D16D,x
-         sta   .address+1
-
-         lda   gTrack
-         beq   .reread1
-
-.jmpexit2
          jmp   .exit
 
-.retrycount
-         !byte $D1
+.readnib
+-        lda   $C08C,x
+         bpl   -
+         rts
+
+.readcallback
+-        jsr   .readnib
+         sta   $C08D,x
+         nop
+         nop
+-        jsr   .readnib
+         dey
+         sta   $BC00,y
+         bne   -
+-        jsr   .readnib
+         sta   $BB00,y
+         iny
+         bne   -
+         clc
+         rts
+
+.xlattbl
+         !byte $00,$01,$00,$07,$08,$09,$01,$02
+         !byte $02,$00,$01,$06,$04,$03,$04,$03
+         !byte $05,$05,$00,$02,$01,$0A,$07,$0E
+         !byte $05,$02,$01,$06,$07,$03,$00,$02
+         !byte $05,$0B,$04,$0F,$00,$07,$0A,$01
+         !byte $02,$03,$00,$0C,$0C,$06,$07,$05
+         !byte $08,$06,$02,$04,$01,$00,$08,$0A
+         !byte $03,$0E,$00,$01,$07,$09,$0A,$05
+         !byte $0B,$02,$05,$10,$03,$04,$0C,$06
+         !byte $0D,$01,$0F,$06,$05,$0E,$0F,$0B
+         !byte $11,$02,$00,$09
 
          ;track 0, find the region with replaced page
 
-.reread1
+.dotrack0
+         lda   #s_construct
+         jsr   PrintByID
          ldy   #8
          jsr   SearchTrack
          !byte $20,$5D,$B6  ;JSR $B65D
-         !byte WILDCARD, WILDCARD
+         !byte $01,$0E      ;track 1, sector #$0E
          !byte $00,$08,$18  ;address, count
-         bcs   .jmpexit2 ;give up
+         bcs   .exit ;give up
          adc   #BASEPAGE
          sta   .patch1+2
          sta   .patch2+2
-         lda   #s_construct
-         jsr   PrintByID
 
          ;convert address to track/sector
 
@@ -270,6 +284,7 @@
 
          ;restore original disk location
 
+.restore
          dec   gTrack     ; #0
          lda   #$0F
          sta   gSector
