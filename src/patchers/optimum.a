@@ -10,9 +10,11 @@
          lda   gIsOptimum
          bne   .jmpexit
          ldx   gTrack
-         beq   .jmptrack0
          dex
          beq   .dotrack1
+
+         ;for each track, search for the redirection code
+
          ldy   #15
          jsr   SearchTrack
          !byte $A2,$00      ;LDX #$00
@@ -23,24 +25,32 @@
          !byte $BD,WILDCARD,WILDCARD ;LDA $xxxx,X
          !byte $E8          ;INX
          !byte $85          ;STA $xx
-         bcs   .jmpexit
+         bcs   .checktrack
          tay
          adc   #BASEPAGE-1
+         sta   .iob+2
          pha
          tya
+
+         ;and disable it
+
          ldy   #$01
          jsr   modify
          !byte $60          ;RTS
          pla
 
          ;find reference to T01 S0F
+         ;to find page to hold protection data
 
          ldy   #6
          jsr   SearchSector
          !byte $01,$60,$01,$00,$01,$0F
-         bcs   .jmpexit
-         adc   #BASEPAGE
-         sta   .iob+2
+         bcc   .iob
+
+         ;if it doesn't exist, fetch address from alternative location
+
+         inc   .iob+2
+         ldx   #7
 
          ;save for later...
 
@@ -48,10 +58,9 @@
          lda   $D109,X
          sta   .address+1
 
-.jmpexit
-         jmp   .exit
-
-.jmptrack0
+.checktrack
+         lda   gTrack
+         bne   .jmpexit
          jmp   .dotrack0
 
 .retrycount
@@ -60,6 +69,8 @@
 .badread
          lda   #s_optbad  ; say read failure
          jsr   PrintByID
+
+.jmpexit
          jmp   .exit
 
 .dotrack1
@@ -104,6 +115,9 @@
 
          ;detect write-protect
          ;work around OE issue
+         ;OE returns nibbles in wrong order on write-protected disks
+         ;versus non-write-protected disks, when reset is issued
+         ;so we detect write-protect and fix the order appropriately
 
          ldx   gRWTSParams+1
          lda   $C08D,x
@@ -172,6 +186,8 @@
          bpl   -
          rts
 
+         ;read protected data
+
 .readcallback
 -        jsr   .readnib
          sta   $C08D,x
@@ -202,10 +218,20 @@
          !byte $11,$02,$00,$09
 
          ;track 0, find the region with replaced page
+         ;for loads to $B1 and $03, the page is stand-alone
+         ;otherwise we have to find which page to merge
+         ;the protection is that $87 bytes of a particular page,
+         ;and which page depends on the title in question,
+         ;are supplied by reading the data from the protected sector
+         ;failing to read the data causes the title to crash
 
 .dotrack0
          lda   #s_construct
          jsr   PrintByID
+         lda   .address+1
+         bmi   .domerge
+         cmp   #3
+         beq   .domerge
          ldy   #8
          jsr   SearchTrack
          !byte $20,$5D,$B6  ;JSR $B65D
@@ -246,6 +272,7 @@
 
          ;read replaced page
 
+.domerge
          lda   #9         ; $900-9FF
          sta   gAddress+1
          ldy   #<gRWTSParams
@@ -262,6 +289,7 @@
          bne   -
 
          ;read other page in block
+         ;sector $01 pairs with $0F
 
          lda   #1
          sta   gTrack
@@ -284,7 +312,6 @@
 
          ;restore original disk location
 
-.restore
          dec   gTrack     ; #0
          lda   #$0F
          sta   gSector
