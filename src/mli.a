@@ -1,6 +1,8 @@
 ; MLI command codes
 CMD_CREATE =   $C0        ; create new file
 CMD_DESTROY =  $C1        ; delete a file
+CMD_GETFILEINFO = $C4     ; get file (or volume) info
+CMD_ONLINE =   $C5        ; check online volume(s)
 CMD_SETPREFIX = $C6       ; change default pathname prefix
 CMD_OPEN =     $C8        ; open a file
 CMD_NEWLINE =  $C9        ; set line-by-line read mode
@@ -12,6 +14,8 @@ CMD_SETMARK =  $CE        ; change position in an open file
 ; MLI parameter counts
 PC_CREATE =    $07
 PC_DESTROY =   $01
+PC_GETFILEINFO = $0A
+PC_ONLINE =    $02
 PC_SETPREFIX = $01
 PC_OPEN  =     $03
 PC_NEWLINE =   $03
@@ -498,6 +502,43 @@ DeleteFile
 SetPrefix
          lda   #CMD_SETPREFIX
          ldy   #PC_SETPREFIX
+         jsr   mli
+         rts
+
+;-------------------------------
+; get volume name of disk in specific slot+drive
+; in:  A = unit number (DSSS0000)
+; out: if no disk in drive or any MLI error, C set and A contains error code
+;      if disk found, C clear and @VolumeName contains volume name
+;      (length byte + up to 14 character name, no leading slash)
+;-------------------------------
+!zone {
+GetVolumeName
+         sta   mliparam+1
+         lda   #<OnlineReturn
+         sta   mliparam+2
+         lda   #>OnlineReturn
+         sta   mliparam+3
+         jsr   Online
+         rts
+OnlineReturn
+         !byte $FF
+VolumeName
+         !byte $FF,$FF,$FF,$FF,$FF,$FF,$FF
+         !byte $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
+}
+
+;-------------------------------
+; check if volume is online
+; using ProDOS MLI
+; in:  caller has filled @mliparam
+;        with unit number
+; out: if error, C set and A contains error code
+;      if success, C clear
+;-------------------------------
+Online
+         lda   #CMD_ONLINE
+         ldy   #PC_ONLINE
          jsr   mli
          rts
 

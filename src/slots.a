@@ -76,3 +76,30 @@ NextSlot
 .reallydone
          rts
 }
+
+!zone {
+ScanForRAMDisk
+         rts
+
+         lda   #$00
+         sta   $0800
+         sta   $0801
+
+         lda   #$00
+         sta   iunit
+-        lda   iunit
+         clc
+         adc   #$10
+         sta   iunit
+         beq   .done
+         cmp   #$80
+         beq   -
+         jsr   GetVolumeName
+         bcs   -
+         lda   #<VolumeName
+         sta   $0800
+         lda   #>VolumeName
+         sta   $0801
+.done
+         jmp   $ff59
+}

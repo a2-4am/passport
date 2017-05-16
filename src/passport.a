@@ -87,6 +87,7 @@ cmp1     =     $F8        ; word
 cmp2     =     $FA        ; word
 counter  =     $FC        ; byte
 tmp      =     $FC        ; byte
+iunit    =     $FC        ; byte
 tmpa     =     $FC        ; byte
 tmpx     =     $FD        ; byte
 tmpy     =     $FE        ; byte
@@ -94,7 +95,7 @@ flag     =     $FF        ; byte
 }
 
 ; Application constants (not zero addresses)
-RELBASE  =     $6100      ; address to move Passport code
+RELBASE  =     $6000      ; address to move Passport code
                           ; so that it's out of the way
 LOWPOINT =     $4300      ; lowest available address for code
 BASEPAGE =     $10        ; Special Delivery tracer assumes
@@ -185,6 +186,7 @@ OneTimeSetup
          bne   .founds6
          jmp   FatalNoSlot6
 .founds6
+         jsr   ScanForRAMDisk
          jsr   LoadPrefs  ; load preferences (if available)
          bcc   ResetVector
          jsr   SavePrefs  ; save preferences (if possible)
