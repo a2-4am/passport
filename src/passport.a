@@ -713,6 +713,7 @@ _applyToAll
          !source "patchers/prodosrwts.a"        ; gIsProDOS only
          !source "patchers/prodos6a.a"          ; gIsProDOS only
          !source "patchers/prodosmecc.a"        ; gIsProDOS only
+         !source "patchers/bbf9.a"              ; gIsProDOS only
          !source "patchers/rwtsswapmecc.a"      ; gIsMECCFastloader only
          !source "patchers/protecteddos.a"      ; gIsProtDOS only
          !source "patchers/fbff.a"

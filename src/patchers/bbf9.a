@@ -1,0 +1,40 @@
+;-------------------------------
+; #BBF9
+; patch nibble check seen in
+; Sunburst disks 1988 and later
+;
+; see write-up of 4am crack
+; no. 1165 Muppet Slate
+;
+; tested on
+; Muppet Slate (1988)
+; Memory Building Blocks (1989)
+; Odd One Out (1989)
+; Regrouping (1989)
+; Simon Says (1989)
+; Teddy and Iggy (1990)
+; 1-2-3 Sequence Me (1991)
+;-------------------------------
+!zone {
+         lda   gIsProDOS
+         bne   .exit
+         ldy   #$0E
+         jsr   SearchTrack
+         !byte $A6,WILDCARD
+         !byte $BD,$89,$C0
+         !byte $BD,$8E,$C0
+         !byte $18
+         !byte $A5,WILDCARD
+         !byte $69,$8C
+         !byte $8D
+         bcs   .exit
+         sta   gDisplayBytes
+         pha
+         lda   #s_bbf9
+         jsr   PrintByID
+         pla
+         ldy   #$02
+         jsr   modify
+         !byte $18,$60
+.exit
+}
