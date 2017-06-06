@@ -26,25 +26,6 @@ IDMECC
          rts
 }
 
-!zone {
-PrereadT00
-         lda   #$00
-         sta   gTrack
-         sta   gAddress
-         lda   #$0F
-         sta   gSector
-         clc
-         adc   #BASEPAGE
-         sta   gAddress+1
--        jsr   ReadSector
-         bcs   .exit
-         dec   gAddress+1
-         dec   gSector
-         bne   -
-.exit
-         rts
-}
-
 ;-------------------------------
 ; IDMECC1
 ; identify MECC bootloader variant #1

@@ -76,5 +76,18 @@ TraceLaureate
          sta   $BA00,y
          iny
          bne   -
+;
+; don't read track 0 sectors $0C-$0F
+; (never read, some disks have intentionally bad sectors there)
+; (seen on Sound Ideas)
+;
+         lda   #$00
+         sta   T00S0C
+         sta   T00S0D
+         sta   T00S0E
+         sta   T00S0F
+;
+; read the rest of the disk with this constructed RWTS
+;
          jmp   ADStyle
 }

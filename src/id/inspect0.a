@@ -92,7 +92,6 @@ IDBootloader
          sta   gIsMECCFastloader
          lda   #s_mecc
          jsr   PrintByID
-         jsr   CopyUniversal
          jsr   PrereadT00
          bcs   .notmecc
          jsr   IDMECC1
@@ -125,8 +124,8 @@ IDBootloader
          bcs   +
          lda   #s_laureate
          jsr   PrintByID
-         jsr   CopyUniversal
-         jsr   PrereadT00
+         lda   #$0B
+         jsr   PrereadT00Partial
          bcs   +
          jmp   TraceLaureate
 ;
@@ -269,5 +268,29 @@ AnalyzeT00
          ldx   #FALSE
 .rwts
          stx   gIsRWTS
+         rts
+}
+
+!zone {
+PrereadT00
+         lda   #$0F
+PrereadT00Partial
+         sta   gSector
+         clc
+         adc   #BASEPAGE
+         sta   gAddress+1
+         lda   #$00
+         sta   gTrack
+         sta   gAddress
+         lda   #$F0
+         sta   $B959
+         lda   #$05
+         sta   $B95A
+-        jsr   ReadSector
+         bcs   .exit
+         dec   gAddress+1
+         dec   gSector
+         bne   -
+.exit
          rts
 }

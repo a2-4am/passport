@@ -40,7 +40,11 @@ sectormap
 T00      !byte $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
 T00S09   !byte                                     $FF
 T00S0A   !byte                                         $FF
-         !byte                                             $FF,$FF,$FF,$FF,$FF
+T00S0B   !byte                                             $FF
+T00S0C   !byte                                                 $FF
+T00S0D   !byte                                                     $FF
+T00S0E   !byte                                                         $FF
+T00S0F   !byte                                                             $FF
 T01      !byte $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
 T01S0F   !byte                                                             $FF
 T02      !byte $FF,$FF,$FF,$FF,$FF
