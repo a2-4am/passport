@@ -1,6 +1,6 @@
 ;-------------------------------
 ; #JMPBECA
-; RWTS calls $BECA after reading
+; RWTS calls $3ECA or $BECA after reading
 ; data prologue to burn cycles
 ; e.g. Terrapin Logo 1.2, Starting with Phonics
 ; NOTE: must be run before RWTS
@@ -18,14 +18,14 @@
          !byte $10,$FB
          !byte $C9,$AD
          !byte $D0,$E8
-         !byte $4C,$CA,$BE
+         !byte $4C,$CA,WILDCARD
          bcc   .yes
 ;
 ; variant seen in Library Magic
 ;
          ldy   #$0D
          jsr   compare    ; or T00,S02,$F4 ==
-         !byte $4C,$CA,$BE
+         !byte $4C,$CA,WILDCARD
          !byte $EA
          !byte $BD,$8C,$C0
          !byte $10,$FB

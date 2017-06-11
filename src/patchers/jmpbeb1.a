@@ -1,6 +1,6 @@
 ;-------------------------------
 ; #JMPBEB1
-; RWTS calls $BEB1 after writing
+; RWTS calls $3EB1 or $BEB1 after writing
 ; data prologue
 ; e.g. Terrapin Logo 1.2, Starting with Phonics
 ; NOTE: must be run before RWTS
@@ -17,10 +17,10 @@ _jmpbeb1
          !byte $A0,$03
          !byte $48
          !byte $68
-         !byte $20,$B9,$B8
+         !byte $20,$B9,WILDCARD
          !byte $88
          !byte $D0,$F8
-         !byte $4C,$B1,$BE
+         !byte $4C,$B1,WILDCARD
          !byte $EA
          !byte $EA
          !byte $A9
@@ -28,23 +28,26 @@ _jmpbeb1
          ldx   #$59
          ldy   #$04
          jsr   compare    ; and T00,S02,$59 ==
-         !byte $20,$B8,$B8
+         !byte $20,$B8,WILDCARD
          !byte $A9
          bcs   .exit
          ldx   #$5E
          ldy   #$03
          jsr   compare    ; and T00,S02,$5E ==
-         !byte $20,$BB,$B8
+         !byte $20,$BB,WILDCARD
          bcs   .exit
          ldx   #$49
          ldy   #$01
          jsr   modify     ; then set T00,S02,$49 =
          !byte $04
+         lda   $124E
+         sta   _jsr+2
          lda   #$02
          ldx   #$52
          ldy   #$05
          jsr   modify     ; and set T00,S02,$52 =
-         !byte $A9,$D5,$20,$B8,$B8
+         !byte $A9,$D5
+_jsr     !byte $20,$B8,$d1; final byte set at runtime
          lda   #$02
          ldx   #$5F
          ldy   #$01
