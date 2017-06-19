@@ -4,7 +4,7 @@
 ;      $B600..$BFFF contains boot1
 ; out: C clear if "Protected DOS" was found
 ;      C set if "Protected DOS" was not found
-;      gProtectedDOS is set to TRUE or FALSE
+;      gIsProtDOS is set to TRUE or FALSE
 ;-------------------------------
 !zone {
 ProtectedDOS

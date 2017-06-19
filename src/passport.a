@@ -704,6 +704,7 @@ _applyToT00
          !source "patchers/methods.a"
          !source "patchers/jsr8b3.a"
          !source "patchers/laureate.a"
+         !source "patchers/pascalrwts.a"
 _applyToAll
          !source "patchers/universale7.a"
          !source "patchers/runhello.a"          ; (!gIsProDOS && !gIsPascal) only

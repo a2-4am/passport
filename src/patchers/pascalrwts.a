@@ -1,0 +1,60 @@
+;-------------------------------
+; #PASCALRWTS
+; patch RWTS on Pascal disks
+; RWTS changes are rare on Pascal disks,
+; so this currently only handles a very
+; specific subset of RWTS changes.
+;
+; tested on
+; Solar Reading Flight 1 series
+;   (Jupiter, Saturn, Uranus, Nepture)
+;-------------------------------
+!zone {
+         lda   gIsPascal
+         bne   .exit
+         lda   #$0D
+         ldx   #$41
+         ldy   #$11
+         jsr   compare    ; if T00,S0D,$41 ==
+         !byte $BD,$8C,$C0
+         !byte $10,$FB
+         !byte $C9,WILDCARD
+         !byte $D0,$AE
+         !byte $EA
+         !byte $BD,$8C,$C0
+         !byte $10,$FB
+         !byte $C9,WILDCARD
+         bcs   +
+         ldx   #$51
+         ldy   #$01
+         jsr   compare    ; and T00,S0D,$51 !=
+         !byte $AA
+         bcc   +
+         ldy   #$01
+         jsr   modify
+         !byte $AA
+
++        lda   #$0F
+         ldx   #$6B
+         ldy   #$11
+         jsr   compare    ; if T00,S0F,$6B ==
+         !byte $BD,$8C,$C0
+         !byte $10,$FB
+         !byte $C9,WILDCARD
+         !byte $D0,$0C
+         !byte $EA
+         !byte $BD,$8C,$C0
+         !byte $10,$FB
+         !byte $C9,WILDCARD
+         bcs   +
+         ldx   #$7B
+         ldy   #$01
+         jsr   compare    ; and T00,S0F,$7B !=
+         !byte $AA
+         bcc   +
+         ldy   #$01
+         jsr   modify
+         !byte $AA
++
+.exit
+}
