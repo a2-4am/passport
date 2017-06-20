@@ -12,15 +12,31 @@
          lda   #$06
          ldx   #$01
          ldy   #$09
-         jsr   compare    ; and T00,S06,$01 ==
+         jsr   compare    ; if T00,S06,$01 ==
+         !byte $AD,$EC,$C0
+         !byte $10,$FB
+         !byte $C9,$BE
+         !byte $D0,$E5
+         bcc   .patch
+         ldx   #$07
+         ldy   #$09
+         jsr   compare    ; or if T00,S06,$07 ==
          !byte $AD,$EC,$C0
          !byte $10,$FB
          !byte $C9,$BE
          !byte $D0,$E5
          bcs   .exit
-         ldx   #$09
+.patch
+         inx
+         inx
+         inx
+         inx
+         inx
+         inx
+         inx
+         inx
          ldy   #$01
-         jsr   modify     ; then set T00,S06,$07 =
+         jsr   modify     ; then set T00,S06,$xx =
          !byte $00
 .exit
 }
