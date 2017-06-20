@@ -187,6 +187,13 @@ IDBootloader
          jsr   PrintByID
          bcc   .useuniv   ; always branches
 ;
+; Micrograms bootloader
+;
++        jsr   IDMicrograms
+         bcs   +
+         lda   #s_micrograms
+         jsr   PrintByID
+;
 ; David-DOS II
 ;
 +        jsr   IDDavid

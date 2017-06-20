@@ -1,0 +1,26 @@
+;-------------------------------
+; #MICROGRAMS
+; Micrograms RWTS requires a non-standard
+; third epilogue nibble ($BE)
+;
+; tested on
+; Wild West Math Level 3
+; Wild West Math Level 4
+; Wild West Math Level 5
+;-------------------------------
+!zone {
+         lda   #$06
+         ldx   #$01
+         ldy   #$09
+         jsr   compare    ; and T00,S06,$01 ==
+         !byte $AD,$EC,$C0
+         !byte $10,$FB
+         !byte $C9,$BE
+         !byte $D0,$E5
+         bcs   .exit
+         ldx   #$09
+         ldy   #$01
+         jsr   modify     ; then set T00,S06,$07 =
+         !byte $00
+.exit
+}

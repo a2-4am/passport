@@ -1,0 +1,29 @@
+;-------------------------------
+; IDMicrograms
+; identify Micrograms bootloader
+;
+; in:  track buffer contains T00,S00
+; out: C clear if MECC bootloader was found
+;        (and track buffer now contains all of track 0)
+;      C set if not found
+;      all other flags clobbered
+;      all registers clobbered
+;-------------------------------
+!zone {
+IDMicrograms
+         lda   #$00
+         ldx   #$01
+         ldy   #$0A
+         jsr   compare
+         !byte $A5,$27
+         !byte $C9,$09
+         !byte $D0,$12
+         !byte $A9,$C6
+         !byte $85,$3F
+         bcs   .exit
+         ldx   #$42
+         ldy   #$03
+         jsr   compare
+         !byte $4C,$00,$0D
+.exit    rts
+}

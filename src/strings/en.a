@@ -99,7 +99,8 @@ s_prontodos =  $50
 s_jmpb412 =    $51
 s_laureate =   $52
 s_bbf9   =     $53
-STRINGCOUNT =  $54
+s_micrograms = $54
+STRINGCOUNT =  $55
 
 !zone {
 StringTable
@@ -187,6 +188,7 @@ StringTable
          !word .jmpb412
          !word .laureate
          !word .bbf9
+         !word .micrograms
 ;
 ; Text can contain substitution strings, which
 ; are replaced by current values at runtime. Each
@@ -212,7 +214,7 @@ StringTable
 ; can be set directly before calling PrintByID.
 ;
 .header
-         !text "Passport by 4am               2017-06-19",00
+         !text "Passport by 4am               2017-06-20",00
 .mainmenu
          !text "________________________________________",$8D,$8D,$8D,$8D,$8D,$8D,$8D
          !text "              "
@@ -470,4 +472,6 @@ StringTable
          !text "T00,S00 Found Laureate bootloader",$8D,00
 .bbf9
          !text "T%t,S%0 Found BBF9 protection check",$8D,00
+.micrograms
+         !text "T00,S00 Found Micrograms bootloader",$8D,00
 }
