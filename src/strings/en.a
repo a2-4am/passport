@@ -100,7 +100,8 @@ s_jmpb412 =    $51
 s_laureate =   $52
 s_bbf9   =     $53
 s_micrograms = $54
-STRINGCOUNT =  $55
+s_writeram =   $55
+STRINGCOUNT =  $56
 
 !zone {
 StringTable
@@ -189,6 +190,7 @@ StringTable
          !word .laureate
          !word .bbf9
          !word .micrograms
+         !word .writeram
 ;
 ; Text can contain substitution strings, which
 ; are replaced by current values at runtime. Each
@@ -474,4 +476,6 @@ StringTable
          !text "T%t,S%0 Found BBF9 protection check",$8D,00
 .micrograms
          !text "T00,S00 Found Micrograms bootloader",$8D,00
+.writeram
+         !text "Writing to RAM disk",$8D,00
 }

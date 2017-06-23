@@ -10,6 +10,7 @@ CMD_READ =     $CA        ; read an open file
 CMD_WRITE =    $CB        ; write to an open file
 CMD_CLOSE =    $CC        ; close an open file
 CMD_SETMARK =  $CE        ; change position in an open file
+CMD_SETEOF  =  $D0        ; set file size
 
 ; MLI parameter counts
 PC_CREATE =    $07
@@ -23,8 +24,13 @@ PC_READ  =     $04
 PC_WRITE =     $04
 PC_CLOSE =     $01
 PC_SETMARK =   $02
+PC_SETEOF  =   $02
 
 PRODOSMLI =    $BF00      ; [callable] MLI entry point
+
+!ct "lcase.ct"
+RAMFileName    !text "PASSPORT.IMG"
+RAMFileName_e
 
 ; MLI error codes
 ERR_FNF  =     $46
@@ -45,20 +51,21 @@ ERR_EOF  =     $4C
 !zone {
 WriteTrackMLI
          jsr   SwapProDOS
+         lda   gUsingRAMDisk
+         cmp   #TRUE
+         beq   +
          jsr   ReorderBuffer
-         lda   #$81       ; 'write block' command
++        lda   #$81       ; 'write block' command
          sta   mlicmd
          lda   DRIVE      ; ProDOS "unit number" is
          sec
-         sbc   #$30
+         sbc   #$31
          lsr              ; DSSS0000, where D is the
-         asl              ; drive number (0=drive 1,
-         asl              ; 1=drive 2) and SSS is
-         asl              ; the slot number (1-7).
-         asl              ; "Beneath Apple ProDOS"
-         asl              ; page 6-19
-         asl
-         asl
+         lda   #00        ; drive number (0=drive 1,
+         ror              ; 1=drive 2) and SSS is
+                          ; the slot number (1-7).
+                          ; "Beneath Apple ProDOS"
+                          ; page 6-19
          sta   mliparam+1
          lda   SLOT
          sec
@@ -67,8 +74,7 @@ WriteTrackMLI
          asl
          asl
          asl
-         clc
-         adc   mliparam+1
+         ora   mliparam+1
          sta   mliparam+1
          lda   #$00
          sta   mliparam+2 ; lo byte of data buffer
@@ -85,23 +91,33 @@ WriteTrackMLI
          lda   #BASEPAGE  ; hi byte of data buffer
          sta   mliparam+3
 .writeloop
+         lda   gUsingRAMDisk
+         cmp   #TRUE
+         beq   +
          lda   mlicmd
          ldy   #$03       ; parameter count
          jsr   mli
          bcs   .writeerr
-         inc   mliparam+3 ; 2 pages per block
+-        inc   mliparam+3 ; 2 pages per block
          inc   mliparam+3
          inc   mliparam+4
          dec   .blockcount
          bne   .writeloop
          clc
          bcc   .writedone
+
++        jsr   WriteToRAMFile
+         bcc   -
+
 .writeerr
 .writedone
          php
          pha
+         lda   gUsingRAMDisk
+         cmp   #TRUE
+         beq   +
          jsr   ReorderBuffer
-         jsr   SwapProDOS
++        jsr   SwapProDOS
          pla
          plp
          rts
@@ -327,7 +343,6 @@ LoadFile1Shot
 ; in:  caller has filled @mliparam with address of
 ;        pathname, address of data buffer, and maximum
 ;        data length
-;      A = file reference number
 ; out: if C set, open failed and A contains error code
 ;      if C clear, open succeeded and A contains
 ;        file reference number
@@ -438,6 +453,27 @@ WriteFile
 }
 
 ;-------------------------------
+; set file size in an open file via ProDOS MLI
+;
+; in:  A = file reference number
+;      caller has filled @mliparam+2/+3/+4 with
+;        new file size
+; out: if C set, set_eof call failed and A contains error code
+;      if C clear, set_eof call succeeded and A contains
+;        the same file reference number that was passed in
+;-------------------------------
+!zone {
+SetEOF
+         sta   mliparam+1 ; store file reference number
+         lda   #CMD_SETEOF ; MLI set_eof command
+         ldy   #PC_SETEOF ; number of params for 'set_eof' cmd
+         jsr   mli
+         bcs   .exit
+         lda   mliparam+1 ; if no error, return file refnum
+.exit    rts
+}
+
+;-------------------------------
 ; close an open file
 ; in:  A = file reference number
 ; out: if error, C set and A contains error code
@@ -492,6 +528,228 @@ DeleteFile
          rts
 
 ;-------------------------------
+; CreateRAMFile - create image file on RAM disk
+;   if RAM disk is in use
+; in:  nothing (assumes that prefix is set to /RAM)
+; out: if C set, write failed (A contains MLI error code)
+;      if C clear, write succeeded (A is clobbered)
+;      all other flags clobbered
+;      all registers clobbered
+;-------------------------------
+!zone {
+CreateRAMFile
+         lda   gUsingRAMDisk
+         cmp   #TRUE
+         bne   .done
+
+         ;existing file being reused?
+
+         lda   gRAMDiskRef
+         bne   .done
+
+         ;no, create a new one
+
+         lda   OnlineReturn
+         tay
+         clc
+         adc   #(RAMFileName_e-RAMFileName)+1
+         sta   RAMPath
+         tax
+         lda   #$2F
+         sta   RAMPath+1,y
+-        lda   OnlineReturn,y
+         sta   RAMPath,y
+         dey
+         bne   -
+         ldy   #(RAMFileName_e-RAMFileName)
+-        lda   RAMFileName-1,y
+         sta   RAMPath,x
+         dex
+         dey
+         bne   -
+         jsr   DeleteRAMFile
+         jsr   CreateFile
+         bcs   .createfail
+         lda   #0
+         sta   mliparam+3
+         lda   #8
+         sta   mliparam+4
+         jsr   OpenFile
+         bcs   .openfail
+
+         sta   gRAMDiskRef
+
+         ;140kb
+
+         ldx   #0
+         stx   mliparam+2
+         ldx   #$30
+         stx   mliparam+3
+         ldx   #2
+         stx   mliparam+4
+         jsr   SetEOF
+
+         ;update file buffer array
+
+         php
+         jsr   SaveGlobal
+         plp
+         bcc   .done
+
+         lda   gRAMDiskRef
+         jsr   CloseFile
+
+.openfail
+         pha
+         jsr   DeleteRAMFile
+         pla
+         sec
+
+.createfail
+         ldx   #FALSE
+         stx   gUsingRAMDisk
+
+.done
+         rts
+
+RAMPath  !byte $d1
+         !fill 17
+         !fill RAMFileName_e-RAMFileName
+
+}
+
+;-------------------------------
+; WriteToRAMFile - write memory to image file on RAM disk
+;   if RAM disk is in use
+; in:  called has filled @mliparam
+;        with block number and write address
+; out: if error, C set and A contains error code
+;      if success, C clear
+;      all other flags clobbered
+;      all registers clobbered
+;-------------------------------
+!zone {
+WriteToRAMFile
+         lda   mliparam+2
+         pha
+         lda   mliparam+3
+         pha
+
+         lda   mliparam+4
+         sta   .tmpparm4
+         asl
+         sta   mliparam+3
+         lda   mliparam+5
+         sta   .tmpparm5
+         rol
+         sta   mliparam+4
+         lda   #0
+         sta   mliparam+2
+         lda   gRAMDiskRef
+         jsr   SetMark
+         tax
+         pla
+         sta   mliparam+3
+         pla
+         sta   mliparam+2
+         txa
+         bcs   .done
+         lda   #0
+         sta   mliparam+4
+         lda   #2
+         sta   mliparam+5         
+         lda   gRAMDiskRef
+         jsr   WriteFile
+
+.done
+         pha
+         lda   .tmpparm4
+         sta   mliparam+4
+         lda   .tmpparm5
+         sta   mliparam+5
+         pla
+         rts
+
+.tmpparm4 !byte 0
+.tmpparm5 !byte 0
+}
+
+;-------------------------------
+; WriteRAMToDisk - write image file in RAM to physical disk
+;   if RAM disk is in use
+; in:  nothing
+; out: if error, C set and A contains error code
+;      if success, C clear
+;      all other flags clobbered
+;      all registers clobbered
+;-------------------------------
+!zone {
+WriteRAMToDisk
+         lda   #0
+         sta   mliparam+2
+         sta   mliparam+3
+         sta   mliparam+4
+         jsr   SwapProDOS
+         lda   gRAMDiskRef
+         jsr   SetMark
+         jsr   SwapProDOS
+
+         ;prevent track write from calling RAM again
+
+         lda   #FALSE
+         sta   gUsingRAMDisk
+         
+-        lda   #0
+         sta   mliparam+2
+         sta   mliparam+4
+         lda   #$10
+         sta   mliparam+3
+         sta   mliparam+5
+         jsr   SwapProDOS
+         lda   gRAMDiskRef
+         jsr   ReadFile
+         jsr   SwapProDOS
+         inc   gTrack
+         jsr   WriteTrackMLI
+         lda   gTrack
+         cmp   #$22
+         bne   -
+
+         lda   #TRUE
+         sta   gUsingRAMDisk
+
+.done
+         rts
+}
+
+;-------------------------------
+; (Close)DeleteRAMFile - (close and) remove image file on RAM disk
+;   if RAM disk is in use
+; in:  nothing
+; out: if error, C set and A contains error code
+;      if success, C clear
+;      all other flags clobbered
+;      all registers clobbered
+;-------------------------------
+!zone {
+CloseDeleteRAMFile
+         lda   gRAMDiskRef
+         jsr   CloseFile
+         lda   #0
+         sta   gRAMDiskRef
+DeleteRAMFile
+         lda   #<RAMPath
+         sta   mliparam+1
+         lda   #>RAMPath
+         sta   mliparam+2
+         jsr   DeleteFile
+
+.done
+         rts
+}
+
+
+;-------------------------------
 ; change current directory (set prefix)
 ; using ProDOS MLI
 ; in:  caller has filled @mliparam
@@ -543,6 +801,36 @@ Online
          rts
 
 ;-------------------------------
+; query volume information
+; using ProDOS MLI
+; in:  nothing (queries last fetched volume)
+; out: if error, C set and A contains error code
+;      if success, C clear and MLI buffer is filled
+;      (access, file type, block count, dates and times)
+;-------------------------------
+GetVolumeInfo
+         lda   OnlineReturn
+         and   #$0F
+         tax
+         inx
+         stx   OnlineReturn
+         tay
+-        lda   OnlineReturn,y
+         sta   VolumeName,y
+         dey
+         bne   -
+         lda   #$2F ;'/'
+         sta   VolumeName
+         lda   #<OnlineReturn
+         sta   mliparam+1
+         lda   #>OnlineReturn
+         sta   mliparam+2
+         lda   #CMD_GETFILEINFO
+         ldy   #PC_GETFILEINFO
+         jsr   mli
+         rts
+
+;-------------------------------
 ; low-level MLI wrapper
 ; in:  A = MLI command code
 ;      Y = number of MLI parameters
@@ -560,8 +848,12 @@ mli      sta   mlicmd     ; store command code
 mlicmd   !byte 00         ; command number
          !word mliparam   ; address of parameter table
          rts
-mliparam !byte $FE,$FE,$FE,$FE,$FE
+mliparam !byte $FE,$FE,$FE,$FE
+filetype !byte $FE        ; file type (set by MLI get_file_info)
+auxtype                   ; auxiliary file type (2 bytes, set by MLI get_file_info)
 refnum   !byte $FE        ; file refnum (set by MLI open)
 mlilen   !byte $FE,$FE    ; file length (set by MLI read)
-         !byte $FE,$FE,$FE,$FE
-                          ; used by createfile
+blocks   !byte $FE,$FE    ; blocks used (set by getvolumeinfo)
+                          ; member is also used by createfile
+         !byte $FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE
+                          ; used by get_file_info
