@@ -273,7 +273,7 @@
          ;read replaced page
 
 .domerge
-         lda   #9         ; $900-9FF
+         lda   #21        ; $2100-21FF
          sta   gAddress+1
          ldy   #<gRWTSParams
          lda   #>gRWTSParams
@@ -283,7 +283,7 @@
 
          ldy   #$86
 -        lda   $300,y
-         sta   $900,y
+         sta   $2000,y
          dey
          cpy   #$FF
          bne   -
@@ -294,14 +294,14 @@
          lda   #1
          sta   gTrack
          sta   gSector
-         dec   gAddress+1 ; and $800-8FF
+         dec   gAddress+1 ; and $2000-20FF
          ldy   #<gRWTSParams
          lda   #>gRWTSParams
          jsr   $BD00
 
          ;write replaced block
 
-         lda   #8         ; $800-9FF
+         lda   #$20       ; $2000-21FF
          sta   mliparam+3 ; hi byte of data buffer
          dec   mliparam+4 ; lo byte of block number
          jsr   SwapProDOS

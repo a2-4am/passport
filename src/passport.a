@@ -95,7 +95,7 @@ flag     =     $FF        ; byte
 }
 
 ; Application constants (not zero addresses)
-RELBASE  =     $5F00      ; address to move Passport code
+RELBASE  =     $5D00      ; address to move Passport code
                           ; so that it's out of the way
 LOWPOINT =     $4300      ; lowest available address for code
 BASEPAGE =     $10        ; Special Delivery tracer assumes
@@ -209,7 +209,6 @@ ResetVector
 MainMenu
          ldx   #$FF
          txs
-         jsr   TEXT
          jsr   ClearScreen
          lda   #s_header
          jsr   PrintByID
@@ -248,6 +247,7 @@ MainMenu
 +
          cmp   #k_crack
          bne   .getkey
+         jsr   CreateRAMFile
          lda   #%11000000
 
 ; note: execution falls through here
@@ -482,6 +482,13 @@ nextsector
          lda   #s_passdemuf
          bne   .passprint ; always branches
 .passcrack
+         lda   gUsingRAMDisk
+         cmp   #FALSE
+         beq   .skipram
+         lda   #s_writing
+         jsr   PrintByID
+         jsr   WriteRAMToDisk
+.skipram
          lda   gPatchCount
          beq   .passcrack0
          lda   #s_passcrack
@@ -551,8 +558,12 @@ TheEnd
 CleanExit
          jsr   SwapProDOS
          lda   gChangedPrefs
-         bne   .doquit
+         bne   .checkRAM
          jsr   SavePrefs
+.checkRAM
+         lda   gRAMDiskRef
+         beq   .doquit
+         jsr   CloseFile ; leave it behind in case it's wanted
 .doquit
          jsr   MLI
          !byte $65
@@ -595,8 +606,11 @@ WriteTrackNA              ; entry point used by Special Delivery tracer
          bpl   .done      ; verify mode -> no write
          lda   gSaidWriting
          beq   .write
+         lda   #s_writeram ; only print "writing to" message once
+         ldx   gUsingRAMDisk
+         beq   +
          lda   #s_writing ; only print "writing to" message once
-         jsr   PrintByID
++        jsr   PrintByID
          lda   #TRUE
          sta   gSaidWriting
 .write
@@ -828,6 +842,12 @@ gOnAClearDayYouCanReadForever
                           ; retry reads with a captured RWTS forever,
                           ; instead of falling back to built-in RWTS
                           ; compile-time flag, no way to change at runtime
+gUsingRAMDisk
+         !byte FALSE      ; 0=true, 1=false
+
+gRAMDiskRef
+         !byte 00         ; handle of RAM disk
+                          ; non-zero if open
 
          !source "universalrwts.a"
          }

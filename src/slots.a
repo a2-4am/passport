@@ -79,12 +79,6 @@ NextSlot
 
 !zone {
 ScanForRAMDisk
-         rts
-
-         lda   #$00
-         sta   $0800
-         sta   $0801
-
          lda   #$00
          sta   iunit
 -        lda   iunit
@@ -94,12 +88,63 @@ ScanForRAMDisk
          beq   .done
          cmp   #$80
          beq   -
+         pha
+         and   #$70
+         lsr
+         lsr
+         lsr
+         sta   .driverbase+1
+         lsr
+         tay
+         pla
+         ldx   DiskIIArray-1,y
+         bne   -
          jsr   GetVolumeName
          bcs   -
-         lda   #<VolumeName
-         sta   $0800
-         lda   #>VolumeName
-         sta   $0801
+         lda   OnlineReturn
+         beq   -
+         jsr   GetVolumeInfo
+
+         ;watch for RAM disk type
+
+         lda   filetype
+         and   #$0F
+         cmp   #$0F
+         bne   -
+
+.driverbase
+         ldx   #$d1
+         lda   $BF11,x
+         sta   .drivercode+2
+         and   #$f0
+         cmp   #$c0
+         bne   +
+
+         ;RAMFactor detection
+         ;looks like a SmartPort device
+
+.drivercode
+         lda   $d100
+         cmp   #$c9
+         bne   -
+
++
+         ;check free space
+         ;need at least $118 blocks
+
+         sec
+         lda   auxtype
+         sbc   blocks
+         tax
+         lda   auxtype+1
+         sbc   blocks+1
+         cmp   #1
+         bcc   -
+         bne   +
+         cpx   #$18
+         bcc   -
++        lda   #TRUE
+         sta   gUsingRAMDisk
 .done
-         jmp   $ff59
+         rts
 }

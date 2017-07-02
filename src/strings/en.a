@@ -101,7 +101,8 @@ s_laureate =   $52
 s_bbf9   =     $53
 s_micrograms = $54
 s_cmpbne0 =    $55
-STRINGCOUNT =  $56
+s_writeram =   $56
+STRINGCOUNT =  $57
 
 !zone {
 StringTable
@@ -191,6 +192,7 @@ StringTable
          !word .bbf9
          !word .micrograms
          !word .cmpbne0
+         !word .writeram
 ;
 ; Text can contain substitution strings, which
 ; are replaced by current values at runtime. Each
@@ -479,4 +481,6 @@ StringTable
 .cmpbne0
          !text "T%t,S%0 RWTS accepts any value for the",$8D
          !text "first address epilogue nibble.",$8D,00
+.writeram
+         !text "Writing to RAM disk",$8D,00
 }

@@ -2,10 +2,10 @@
 ; YE OLDE GRAND UNIFIED MEMORY MAP
 ;
 ; 02D8..038D - clobbered by Optimum reader
-; 0800..08FF - clobbered by all boot tracers
-; 0900..09FF - clobbered by Special Delivery tracer
-; 0A00..0AFF - backup of zero page during Special Delivery tracer
-; 0B00..0BFF - unused
+; 0800..08FF - clobbered by all boot tracers and RAM disk
+; 0900..09FF - clobbered by Special Delivery tracer and RAM disk
+; 0A00..0AFF - backup of zero page during Special Delivery tracer, used by RAM disk
+; 0B00..0BFF - used by RAM disk
 ; 0C00..0CFF - clobbered by Special Delivery tracer
 ; 0D00..0FFF - unused
 ; 1000..1FFF - data buffer for current track
@@ -122,6 +122,7 @@ SaveProDOS
          ldx   #$41
          ldy   #$01
          jsr   CopyMemory
+SaveGlobal
          lda   #$BF
          ldx   #$42
          ldy   #$01
