@@ -8,7 +8,7 @@
 ;-------------------------------
 !zone {
          lda   gIsOptimum
-         bne   .jmpexit
+         bne   .jmpexit1
          ldx   gTrack
          dex
          beq   .dotrack1
@@ -28,7 +28,8 @@
          bcs   .checktrack
          tay
          adc   #BASEPAGE-1
-         sta   .iob+2
+         sta   .iob1+2
+         sta   .iob2+2
          pha
          tya
 
@@ -45,22 +46,27 @@
          ldy   #6
          jsr   SearchSector
          !byte $01,$60,$01,$00,$01,$0F
-         bcc   .iob
+         bcc   .iob1
 
          ;if it doesn't exist, fetch address from alternative location
 
-         inc   .iob+2
+         inc   .iob1+2
+         inc   .iob2+2
          ldx   #7
 
          ;save for later...
 
-.iob
+.iob1
          lda   $D109,X
          sta   .address+1
 
+.iob2
+         lda   $D108,X
+         sta   .mergelo+1
+
 .checktrack
          lda   gTrack
-         bne   .jmpexit
+         bne   .jmpexit1
          jmp   .dotrack0
 
 .retrycount
@@ -70,7 +76,7 @@
          lda   #s_optbad  ; say read failure
          jsr   PrintByID
 
-.jmpexit
+.jmpexit1
          jmp   .exit
 
 .dotrack1
@@ -225,6 +231,9 @@
          ;are supplied by reading the data from the protected sector
          ;failing to read the data causes the title to crash
 
+.jmpexit2
+         jmp   .exit
+
 .dotrack0
          lda   #s_construct
          jsr   PrintByID
@@ -237,7 +246,7 @@
          !byte $20,$5D,$B6  ;JSR $B65D
          !byte $01,$0E      ;track 1, sector #$0E
          !byte $00,$08,$18  ;address, count
-         bcs   .exit ;give up
+         bcs   .jmpexit2 ;give up
          adc   #BASEPAGE
          sta   .patch1+2
          sta   .patch2+2
@@ -250,6 +259,9 @@
          pha
          and   #$0F
          sta   tmp
+         lda   #$D1
+         sta   .address+1 ; restore default value
+
 .patch1
          lda   $D104,x
          sbc   tmp
@@ -273,17 +285,37 @@
          ;read replaced page
 
 .domerge
-         lda   #21        ; $2100-21FF
+         lda   #$21        ; $2100-21FF
          sta   gAddress+1
          ldy   #<gRWTSParams
          lda   #>gRWTSParams
          jsr   $BD00
+         lda   .mergelo+1
+         beq   ++
+         dec   gSector
+         bpl   +
+         lda   #$0F
+         sta   gSector
+         dec   gTrack
++        inc   gAddress+1
+         ldy   #<gRWTSParams
+         lda   #>gRWTSParams
+         jsr   $BD00
+         dec   gAddress+1
+         ldy   #0
 
+.mergelo
+         lda   $2100,y ; self-modified
+         sta   $2100,y
+         iny
+         bne   .mergelo
+
+++
          ;merge content
 
          ldy   #$86
 -        lda   $300,y
-         sta   $2000,y
+         sta   $2100,y
          dey
          cpy   #$FF
          bne   -
