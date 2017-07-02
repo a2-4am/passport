@@ -799,6 +799,10 @@ gIsProtDOS
          !byte FALSE      ; 0=true, 1=false
                           ; reset before each operation
                           ; set in IDBootloader() after reading T00,S00
+gIsDavidDOS
+         !byte FALSE      ; 0=true, 1=false
+                          ; reset before each operation
+                          ; set in IDBootloader() after reading T00,S00
 gIsEA
          !byte FALSE      ; 0=true, 1=false
                           ; reset before each operation
