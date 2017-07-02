@@ -29,7 +29,7 @@ PC_SETEOF  =   $02
 PRODOSMLI =    $BF00      ; [callable] MLI entry point
 
 !ct "lcase.ct"
-RAMFileName    !text "PASSPORT.IMG"
+RAMFileName    !text "PASSPORTTMP.DSK"
 RAMFileName_e
 
 ; MLI error codes
@@ -52,7 +52,6 @@ ERR_EOF  =     $4C
 WriteTrackMLI
          jsr   SwapProDOS
          lda   gUsingRAMDisk
-         cmp   #TRUE
          beq   +
          jsr   ReorderBuffer
 +        lda   #$81       ; 'write block' command
@@ -92,7 +91,6 @@ WriteTrackMLI
          sta   mliparam+3
 .writeloop
          lda   gUsingRAMDisk
-         cmp   #TRUE
          beq   +
          lda   mlicmd
          ldy   #$03       ; parameter count
@@ -114,7 +112,6 @@ WriteTrackMLI
          php
          pha
          lda   gUsingRAMDisk
-         cmp   #TRUE
          beq   +
          jsr   ReorderBuffer
 +        jsr   SwapProDOS
@@ -539,7 +536,6 @@ DeleteFile
 !zone {
 CreateRAMFile
          lda   gUsingRAMDisk
-         cmp   #TRUE
          bne   .done
 
          ;existing file being reused?

@@ -93,6 +93,7 @@ ScanForRAMDisk
          lsr
          lsr
          lsr
+         sta   .driverbase+1
          lsr
          tay
          pla
@@ -105,13 +106,29 @@ ScanForRAMDisk
          jsr   GetVolumeInfo
 
          ;watch for RAM disk type
-         ;can't filter on device driver because RAMWorks
 
          lda   filetype
          and   #$0F
          cmp   #$0F
          bne   -
 
+.driverbase
+         ldx   #$d1
+         lda   $BF11,x
+         sta   .drivercode+2
+         and   #$f0
+         cmp   #$c0
+         bne   +
+
+         ;RAMFactor detection
+         ;looks like a SmartPort device
+
+.drivercode
+         lda   $d100
+         cmp   #$c9
+         bne   -
+
++
          ;check free space
          ;need at least $118 blocks
 

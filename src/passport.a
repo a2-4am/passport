@@ -482,8 +482,6 @@ nextsector
          lda   #s_passdemuf
          bne   .passprint ; always branches
 .passcrack
-         lda   gPatchCount
-         beq   .passcrack0
          lda   gUsingRAMDisk
          cmp   #FALSE
          beq   .skipram
@@ -491,6 +489,8 @@ nextsector
          jsr   PrintByID
          jsr   WriteRAMToDisk
 .skipram
+         lda   gPatchCount
+         beq   .passcrack0
          lda   #s_passcrack
          !byte $2C        ; hide next LDA
 .passcrack0
@@ -608,7 +608,6 @@ WriteTrackNA              ; entry point used by Special Delivery tracer
          beq   .write
          lda   #s_writeram ; only print "writing to" message once
          ldx   gUsingRAMDisk
-         cpx   #TRUE
          beq   +
          lda   #s_writing ; only print "writing to" message once
 +        jsr   PrintByID
