@@ -679,4 +679,28 @@
          jsr   PrintByID
          inc   gPatchCount
 .bcs08
+
+;-------------------------------
+; RWTS "CMP / BNE 0" identification
+; disk allows any value for
+; for the first address epilogue nibble
+; (no patches required, but we want to
+; log it)
+;-------------------------------
+         lda   gIsDavidDOS
+         bne   +
+         lda   #$05
+         sta   gDisplayBytes
+         ldx   #$8B
+         ldy   #$09
+         jsr   compare    ; and T00,S05,$8B ==
+         !byte $BD,$8C,$C0
+         !byte $10,$FB
+         !byte $C9,WILDCARD
+         !byte $D0,$00
+         bcs   +
+         lda   #s_cmpbne0
+         jsr   PrintByID
+         inc   gPatchCount
++
 }

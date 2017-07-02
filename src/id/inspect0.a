@@ -19,6 +19,7 @@ IDBootloader
          sta   gIsProDOS
          sta   gIsPascal
          sta   gIsProtDOS
+         sta   gIsDavidDOS
          sta   gIsEA
          sta   gIsEEEF
          sta   gIsMECCFastloader
@@ -179,6 +180,16 @@ IDBootloader
          sta   gIsPascal
          beq   .useuniv   ; always branches
 ;
+; David-DOS II
+;
++        jsr   IDDavid
+         bcs   +
+         lda   #s_daviddos
+         jsr   PrintByID
+         lda   #TRUE
+         sta   gIsDavidDOS
+         beq   .useuniv   ; always branches
+;
 ; Encrypted Datasoft bootloader
 ;
 +        jsr   IDDatasoft
@@ -192,13 +203,6 @@ IDBootloader
 +        jsr   IDMicrograms
          bcs   +
          lda   #s_micrograms
-         jsr   PrintByID
-;
-; David-DOS II
-;
-+        jsr   IDDavid
-         bcs   +
-         lda   #s_daviddos
          jsr   PrintByID
 ;
 ; Quick-DOS

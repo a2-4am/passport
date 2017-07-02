@@ -100,8 +100,9 @@ s_jmpb412 =    $51
 s_laureate =   $52
 s_bbf9   =     $53
 s_micrograms = $54
-s_writeram =   $55
-STRINGCOUNT =  $56
+s_cmpbne0 =    $55
+s_writeram =   $56
+STRINGCOUNT =  $57
 
 !zone {
 StringTable
@@ -190,6 +191,7 @@ StringTable
          !word .laureate
          !word .bbf9
          !word .micrograms
+         !word .cmpbne0
          !word .writeram
 ;
 ; Text can contain substitution strings, which
@@ -216,7 +218,7 @@ StringTable
 ; can be set directly before calling PrintByID.
 ;
 .header
-         !text "Passport by 4am               2017-06-20",00
+         !text "Passport by 4am               2017-07-02",00
 .mainmenu
          !text "________________________________________",$8D,$8D,$8D,$8D,$8D,$8D,$8D
          !text "              "
@@ -476,6 +478,9 @@ StringTable
          !text "T%t,S%0 Found BBF9 protection check",$8D,00
 .micrograms
          !text "T00,S00 Found Micrograms bootloader",$8D,00
+.cmpbne0
+         !text "T%t,S%0 RWTS accepts any value for the",$8D
+         !text "first address epilogue nibble.",$8D,00
 .writeram
          !text "Writing to RAM disk",$8D,00
 }
