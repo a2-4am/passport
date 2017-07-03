@@ -12,6 +12,7 @@
          lda   gIsRWTS    ; if DOS 3.3 RWTS
          bne   .exit
          lda   #$03
+         sta   gDisplayBytes
          ldx   #$4F
          ldy   #$11
          jsr   compare    ; and T00,S03,$4F ==
@@ -24,6 +25,8 @@
          !byte $C9,$D5    ; CMP #$D5
          !byte $F0,$12    ; BEQ +$12
          bcs   .exit
+         lda   #s_d5timing
+         jsr   PrintByID
          lda   #$03
          ldx   #$58
          ldy   #$02

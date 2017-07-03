@@ -24,7 +24,7 @@ SkipTrack
 .checkunformat
          jsr   IsUnformatted
          bcs   .checkf7
-         lda   #s_unformat
++        lda   #s_unformat
          bcc  .skiptrack ; always taken
 ;
 ; 3) $F7 protection track (F7F6EFEAAB nibble sequence)
@@ -53,7 +53,22 @@ SkipTrack
 ; note: execution falls through here
 .skiptrack
          jsr   PrintByID
-         clc
+;
+; Skipping T22 on a ProDOS disk might indicate the presence of a
+; Gamco Industries protection elsewhere on the disk. Different
+; Gamco disks present as different types of weirdness on T22 --
+; EEEF, sync, or even unformatted. (The actual protection is just
+; a bad block check, so putting the code here will catch all
+; possible cases.)
+;
+         lda   gTrack
+         cmp   #$22
+         bne   +
+         lda   gIsProDOS
+         bne   +
+         lda   #TRUE
+         sta   gPossibleGamco
++        clc
          !byte $24        ; hides next SEC
 .fail
          sec
@@ -159,8 +174,6 @@ IsEEEF
          bpl   -
          cmp   #$AE
          bne   .restart
-         lda   #TRUE
-         sta   gIsEEEF
          clc
          !byte $24        ; hides SEC
 .fail    sec

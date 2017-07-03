@@ -21,8 +21,8 @@ IDBootloader
          sta   gIsProtDOS
          sta   gIsDavidDOS
          sta   gIsEA
-         sta   gIsEEEF
          sta   gIsMECCFastloader
+         sta   gPossibleGamco
          sta   gPossibleD5D5F7
          lda   #$00
          sta   gLastTrack

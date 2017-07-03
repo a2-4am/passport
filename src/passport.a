@@ -95,7 +95,7 @@ flag     =     $FF        ; byte
 }
 
 ; Application constants (not zero addresses)
-RELBASE  =     $5D00      ; address to move Passport code
+RELBASE  =     $5C00      ; address to move Passport code
                           ; so that it's out of the way
 LOWPOINT =     $4300      ; lowest available address for code
 BASEPAGE =     $10        ; Special Delivery tracer assumes
@@ -737,7 +737,7 @@ _applyToAll
          !source "patchers/sierra.a"            ; gIsBoot0 only
          !source "patchers/corrupter.a"         ; T13 only
          !source "patchers/ea.a"                ; (gIsEA || gIsBoot0) only
-         !source "patchers/gamco.a"             ; gIsEEEF only
+         !source "patchers/gamco.a"             ; gPossibleGamco only
          !source "patchers/optimum.a"           ; gIsOptimum only
          !source "patchers/bootcounter.a"       ; T01 only
          !source "patchers/jmpb412.a"           ; T02 only
@@ -821,10 +821,10 @@ gIsEA
          !byte FALSE      ; 0=true, 1=false
                           ; reset before each operation
                           ; set in IDBootloader() after reading T00,S00
-gIsEEEF
+gPossibleGamco
          !byte FALSE      ; 0=true, 1=false
                           ; reset before each operation
-                          ; set in IsEEEF() after reading T22
+                          ; set in SkipTrack() after reading T22
 gIsOptimum
          !byte FALSE      ; 0=true, 1=false
                           ; reset before each operation
