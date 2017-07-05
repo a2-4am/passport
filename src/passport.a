@@ -723,7 +723,6 @@ _applyToT00
          !source "patchers/micrograms.a"
 _applyToAll
          !source "patchers/universale7.a"
-         !source "patchers/runhello.a"          ; (!gIsProDOS && !gIsPascal) only
          !source "patchers/a6bc95.a"            ; gIsPascal only
          !source "patchers/a5count.a"           ; gIsPascal only
          !source "patchers/d5d5f7.a"            ; gIsPascal || (gIsBoot0 && gPossibleD5D5F7) only
