@@ -293,10 +293,6 @@ PrereadT00Partial
          lda   #$00
          sta   gTrack
          sta   gAddress
-         lda   #$F0
-         sta   $B959
-         lda   #$05
-         sta   $B95A
 -        jsr   ReadSector
          bcs   .exit
          dec   gAddress+1

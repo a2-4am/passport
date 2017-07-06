@@ -276,41 +276,10 @@ Action
          sta   TEXTTOP
          lda   #s_reading
          jsr   PrintByID
-;
-; For the initial T00,S00 check, we need to wait much longer
-; than usual to find the address prologue, because sector 0
-; might literally be the only standard sector on the track.
-; This will get overridden as soon as we either trace the
-; disk's RWTS or copy the universal RWTS again. (One of these
-; is guaranteed to happen before we read the rest of the disk.)
-;
-         lda   #$E7
-         sta   $B945
          ldy   #<gRWTSParams ; call universal RWTS to see
          lda   #>gRWTSParams ; if T00,S00 is readable
-         jsr   $BD00      ; (only care about the return code)
-         bcs   .fatalt00s00
-         jmp   .checkt00s00
-.fatalt00s00
-         lda   #$F0
-         sta   $B959
-         lda   #$05
-         sta   $B95A
-         ldy   #<gRWTSParams
-         lda   #>gRWTSParams
-         jsr   $BD00
-         bcs   .reallyfatal
-;
-; Bad emulator detected (disk controller presents nibbles
-; immediately instead of based on cycle count). Patch the
-; universal RWTS to compensate.
-;
-         lda   #$F0
-         sta   _B959
-         lda   #$05
-         sta   _B95A
-         bne   .checkt00s00 ; unconditional branch
-.reallyfatal
+         jsr   $BD00         ; (only care about the return code)
+         bcc   .checkt00s00
          lda   #s_fail
          jsr   PrintByID
          lda   #s_fatal0000

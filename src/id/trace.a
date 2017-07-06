@@ -15,19 +15,6 @@ TraceDOS33
          sta   gTrack
          lda   #$09
          sta   gSector
-;
-; This pre-check is made more difficult by the fact that
-; some disks have a timing bit after the $D5 nibble in
-; the address prologue, which triggers the wrong code path
-; in our built-in RWTS. So just for this pre-check, we
-; disable that code path. This hack will get overwritten
-; either by the disk's own RWTS when we capture it, or by
-; re-copying the built-in RWTS later.
-;
-         lda   #$F0
-         sta   $B959
-         lda   #$05
-         sta   $B95A
 precheck
          ldy   #<gRWTSParams
          lda   #>gRWTSParams
