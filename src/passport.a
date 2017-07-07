@@ -221,7 +221,9 @@ MainMenu
          jsr   EnterCFFAIfAvailable
          bcc   ResetVector
          bcs   .getkey
-+        cmp   #$9B
++        cmp   #$9B       ; esc
+         beq   .jmptoexit
+         cmp   #$91       ; ctrl-Q
          beq   .jmptoexit
          cmp   #k_quit
          bne   +
