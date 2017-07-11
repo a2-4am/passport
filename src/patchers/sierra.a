@@ -17,6 +17,9 @@
 ; Oil's Well
 ; Sammy Lightfoot
 ; Sierra Championship Boxing
+; Winnie the Pooh
+; Donald Duck
+; Mickey's Space Adventure
 ;
 ; module by qkumba
 ;-------------------------------
@@ -30,7 +33,7 @@
 +        ldy   #3
          jsr   SearchTrack
 .call
-         !byte $20,$D1,$D1
+         !byte $20,$D1,$D1 ;JSR $xxxx
          bcs   +
          ldy   #$01
          jsr   modify
@@ -38,7 +41,7 @@
 +        ldy   #3
          jsr   SearchTrack
 .load
-         !byte $AD,$D1,$D1
+         !byte $AD,$D1,$D1 ;LDA $xxxx
          bcs   +
          sta   .cmp7+1
          adc   #BASEPAGE
@@ -56,7 +59,8 @@
          lda   #$D1
          ldy   #3
          jsr   compare
-         !byte $C9,$1D,$B0
+         !byte $C9,$1D ;CMP #$1D
+         !byte $B0     ;BCS *+xx
          bcs   +
          inx
          inx
@@ -66,7 +70,11 @@
          !byte $00
 +        ldy   #12
          jsr   SearchTrack
-         !byte $AD,WILDCARD,WILDCARD,$85,$C1,$A9,$00,$85,$C0,$6C,$C0,$00
+         !byte $AD,WILDCARD,WILDCARD ;LDA $xxxx
+         !byte $85,$C1               ;STA $C1
+         !byte $A9,$00               ;LDA #$00
+         !byte $85,$C0               ;STA $C0
+         !byte $6C,$C0,$00           ;JMP ($00C0)
          bcs   +
          pha
          txa
@@ -78,7 +86,15 @@
          !byte $60
 +        ldy   #14
          jsr   SearchTrack
-         !byte $85,$11,$49,WILDCARD,$48,$A5,$10,$49,WILDCARD,$48,$D0,$01,$4C,$60
+         !byte $85,$11      ;STA $11
+         !byte $49,WILDCARD ;EOR #$xx
+         !byte $48          ;PHA
+         !byte $A5,$10      ;LDA $10
+         !byte $49,WILDCARD ;EOR #$xx
+         !byte $48          ;PHA
+         !byte $D0,$01      ;BNE *+3
+         !byte $4C          ;dummy
+         !byte $60          ;RTS
          bcs   +
          pha
          tay
@@ -91,7 +107,7 @@
          tya
          ldy   #1
          jsr   modify
-         !byte $EA
+         !byte $EA ;NOP
          pla
          clc
          adc #5
@@ -99,28 +115,44 @@
          pla
          ldy   #1
          jsr   modify
-         !byte $EA
+         !byte $EA ;NOP
 +        ldy   #10
          jsr   SearchTrack
-         !byte $A9,$20,$8D,$DC,$4D,$A9,$60,$8D,$DF,$4D
+         !byte $A9,$20     ;LDA #$20
+         !byte $8D,$DC,$4D ;STA $4DDC
+         !byte $A9,$60     ;LDA #$60
+         !byte $8D,$DF,$4D ;STA $4DDF
          bcs   +
          inx
          ldy   #$01
          jsr   modify
-         !byte $2C
+         !byte $2C ;BIT $xxxx
 +        ldy   #6
          jsr   SearchTrack
-         !byte $20,$0A,$14,$6C,$C6,$03
+         !byte $20,$0A,$14 ;JSR $140A
+         !byte $6C,$C6,$03 ;JMP ($03C6)
          bcs   +
          inx
          inx
          inx
          ldy   #$01
          jsr   modify
-         !byte $60
+         !byte $60 ;RTS
 +        ldy   #17
          jsr   SearchTrack
-         !byte $48,$8A,$48,$98,$48,$20,$3D,$9B,$68,$A8,$68,$AA,$68,$28,$6C,$36,$00
+         !byte $48         ;PHA
+         !byte $8A         ;TXA
+         !byte $48         ;PHA
+         !byte $98         ;TYA
+         !byte $48         ;PHA
+         !byte $20,$3D,$9B ;JSR $9B3D
+         !byte $68         ;PLA
+         !byte $A8         ;TAY
+         !byte $68         ;PLA
+         !byte $AA         ;TAX
+         !byte $68         ;PLA
+         !byte $28         ;PLP
+         !byte $6C,$36,$00 ;JMP ($0036)
          bcs   +
          inx
          inx
@@ -129,7 +161,7 @@
          inx
          ldy   #$01
          jsr   modify
-         !byte $2C
+         !byte $2C ;BIT $xxxx
 +        jmp   .exit
 .foundsierra
          !byte $00
@@ -137,17 +169,51 @@
 .trybox
          ldy   #17
          jsr   SearchTrack
-         !byte $20,$00,$1D,$20,$C0,$1D,$A9,$16,$85,$56,$A9,$15,$85,$57,$20,$93,$15
-         bcs   .bcsexit1
-         sta   gDisplayBytes
+         !byte $20,$00,$1D ;JSR $1D00
+         !byte $20,$C0,$1D ;JSR $1DC0
+         !byte $A9,$16     ;LDA #$16
+         !byte $85,$56     ;STA $56
+         !byte $A9,$15     ;LDA #$15
+         !byte $85,$57     ;STA $57
+         !byte $20,$93,$15 ;JSR $1593
+         bcc   +
+         ldy   #19
+         jsr   SearchTrack
+         !byte $20,$17,$0A ;JSR $0A17
+         !byte $20,$25,$0D ;JSR $0D25
+         !byte $20,$85,$1E ;JSR $1E85
+         !byte $80         ;dummy
+         !byte $08,$CE,$CF,$CD,$CF,$CE,$C9,$C3,$CF
+                           ;NOMONICO
+         bcc   +
+         ldy   #19
+         jsr   SearchTrack
+         !byte $20,$07,$FF ;JSR $FF07
+         !byte $A2,$00     ;LDX #$00
+         !byte $A9,$01     ;LDA #$01
+         !byte $85,$08     ;STA $08
+         !byte $86,$09     ;STA $09
+         !byte $60         ;RTS
+         !byte $A9,$02     ;LDA #$02
+         !byte $85,$0C     ;STA $0C
+         !byte $4C,$41,$7E ;JMP $7E41
+         bcc   +
+         ldy   #17
+         jsr   SearchTrack
+         !byte $20,$27,$15 ;JSR $1527
+         !byte $4C,$6C,$41 ;JMP $416C
+         !byte $84,$C2,$CC,$CF,$C1,$C4,$A0,$D7,$C1,$CC,$D4
+                           ;"BLOAD WALT..."
+         bcs   ++
++        sta   gDisplayBytes
          pha
          lda   #s_sierra
          jsr   PrintByID
          pla
          ldy   #$01
          jsr   modify
-         !byte $2C
-         jmp   .exit
+         !byte $2C ;BIT $xxxx
+++       jmp   .exit
 
 .dosearch
          lda   gIsBoot0
@@ -155,10 +221,16 @@
          jmp   .exit
 +        ldy   #15
          jsr   SearchTrack
-         !byte $CE,WILDCARD,WILDCARD,$EF,WILDCARD,WILDCARD,$AD
-         !byte WILDCARD,WILDCARD,$49,WILDCARD,$D0,01,$20,$8D
-         bcs   .trybox
-         sta   .cmp1+1
+         !byte $CE,WILDCARD,WILDCARD ;DEC $xxxx
+         !byte $EF,WILDCARD,WILDCARD ;mod->INC $xxxx
+         !byte $AD,WILDCARD,WILDCARD ;LDA $xxxx
+         !byte $49,WILDCARD          ;EOR #$xx
+         !byte $D0,01                ;BNE *+3
+         !byte $20                   ;dummy
+         !byte $8D                   ;STA $xxxx
+         bcc   +
+         jmp   .trybox
++        sta   .cmp1+1
          sta   .cmp2+1
          sta   .cmp3+1
          sta   .cmp4+1
@@ -188,7 +260,10 @@
 +        pla
          ldy   #6
          jsr   compare
-         !byte $D0,$01,$4C,$A0,WILDCARD,$98
+         !byte $D0,$01      ;BNE *+3
+         !byte $4C          ;dummy
+         !byte $A0,WILDCARD ;LDY #$xx
+         !byte $98          ;TYA
 .bcsexit1
          bcs   .bcsexit2
 .page2
@@ -210,7 +285,10 @@
 +        pla
          ldy   #8
          jsr   compare
-         !byte $59,WILDCARD,WILDCARD,$99,WILDCARD,WILDCARD,$C8,$D0
+         !byte $59,WILDCARD,WILDCARD ;EOR $xxxx,Y
+         !byte $99,WILDCARD,WILDCARD ;STA $xxxx,Y
+         !byte $C8                   ;INY
+         !byte $D0                   ;BNE *+xx
 .bcsexit2
          bcs   .bcsexit3
 .page3
@@ -227,12 +305,18 @@
          pha
          ldy   #5
          jsr   compare
-         !byte $88,$30,$01,$4C,$60
+         !byte $88     ;DEY
+         !byte $30,$01 ;BMI *+3
+         !byte $4C     ;dummy
+         !byte $60     ;RTS
          pla
          bcc   +
          ldy   #5
          jsr   compare
-         !byte $98,$10,$01,$4C,$60
+         !byte $98     ;TYA
+         !byte $10,$01 ;BPL *+3
+         !byte $4C     ;dummy
+         !byte $60     ;RTS
 .bcsexit3
          bcs   .bcsexit4
 +        txa
@@ -261,7 +345,11 @@
          lda   #$D1
          ldy   #11
          jsr   compare
-         !byte $8C,$F4,$B7,WILDCARD,$EC,$B7,$A9,$B7,$A0,$E8,$20
+         !byte $8C,$F4,$B7      ;STY $B7F4
+         !byte WILDCARD,$EC,$B7 ;STx $B7EC
+         !byte $A9,$B7          ;LDA #$B7
+         !byte $A0,$E8          ;LDY #$E8
+         !byte $20              ;JSR $xxxx
 .bcsexit4
          bcs   .bcsexit5
          txa
@@ -293,7 +381,7 @@
          pha
          ldy   #3
          jsr   compare
-         !byte $AE,$E9,$B7
+         !byte $AE,$E9,$B7 ;LDX #$B7E9
          bcs   +
          inx
          inx
@@ -301,7 +389,10 @@
 +        pla
          ldy   #9
          jsr   compare
-         !byte $BD,$89,$C0,$A9,WILDCARD,$8D,WILDCARD,WILDCARD,$20
+         !byte $BD,$89,$C0           ;LDA $C089,X
+         !byte $A9,WILDCARD          ;LDA #$xx
+         !byte $8D,WILDCARD,WILDCARD ;STA $xxxx
+         !byte $20                   ;JSR $xxxx
 .bcsexit6
          bcs   .exit
 .page8
@@ -314,7 +405,8 @@
          pha
          ldy   #3
          jsr   compare
-         !byte $A9,$1C,$8D
+         !byte $A9,$1C ;LDA #$1C
+         !byte $8D     ;STA $xxxx
          pla
          bcs   .exit
 
