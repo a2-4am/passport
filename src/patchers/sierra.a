@@ -20,6 +20,10 @@
 ; Winnie the Pooh
 ; Donald Duck
 ; Mickey's Space Adventure
+; King's Quest
+; Leisure Suit Larry
+; Space Quest
+; The Black Cauldron
 ;
 ; module by qkumba
 ;-------------------------------
@@ -185,7 +189,7 @@
          !byte $80         ;dummy
          !byte $08,$CE,$CF,$CD,$CF,$CE,$C9,$C3,$CF
                            ;NOMONICO
-         bcc   +
++        bcc   +
          ldy   #19
          jsr   SearchTrack
          !byte $20,$07,$FF ;JSR $FF07
@@ -197,13 +201,44 @@
          !byte $A9,$02     ;LDA #$02
          !byte $85,$0C     ;STA $0C
          !byte $4C,$41,$7E ;JMP $7E41
-         bcc   +
++        bcc   +
          ldy   #17
          jsr   SearchTrack
          !byte $20,$27,$15 ;JSR $1527
          !byte $4C,$6C,$41 ;JMP $416C
          !byte $84,$C2,$CC,$CF,$C1,$C4,$A0,$D7,$C1,$CC,$D4
                            ;"BLOAD WALT..."
++        bcc   +
+         ldy   #11
+         jsr   SearchTrack
+         !byte $20,$00,$FF ;JSR $FF00
+         !byte $18         ;CLC
+         !byte $A9,$7A     ;LDA #$7A
+         !byte $65,$08     ;ADC $08
+         !byte $8D,$65,$66 ;STA $6665
++        bcc   +
+         ldy   #18
+         jsr   SearchTrack
+         !byte $20,$00,$FF ;JSR $FF00
+         !byte $A9,$00     ;LDA #$00
+         !byte $85,$A6     ;STA $A6
+         !byte $85,$A7     ;STA $A7
+         !byte $A9,$00     ;LDA #$00
+         !byte $85,$A8     ;STA $A8
+         !byte $85,$A9     ;STA $A9
+         !byte $20,$3A,$53 ;JSR $533A
++        bcc   +
+         ldy   #21
+         jsr   SearchTrack
+         !byte $20,$00,$FF ;JSR $FF00
+         !byte $A5,$AC     ;LDA $AC
+         !byte $8D,$E0,$7E ;STA $7EE0
+         !byte $A5,$AD     ;LDA $AD
+         !byte $8D,$E1,$7E ;STA $7EE1
+         !byte $A5,$06     ;LDA $06
+         !byte $85,$AC     ;STA $AC
+         !byte $A5,$07     ;LDA $07
+         !byte $85,$AD     ;STA $AD
          bcs   ++
 +        sta   gDisplayBytes
          pha
