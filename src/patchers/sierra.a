@@ -226,7 +226,7 @@
          !byte $A9,$00     ;LDA #$00
          !byte $85,$A8     ;STA $A8
          !byte $85,$A9     ;STA $A9
-         !byte $20,$3A,$53 ;JSR $533A
+         !byte $20,WILDCARD,$53 ;JSR $53xx
 +        bcc   +
          ldy   #21
          jsr   SearchTrack
