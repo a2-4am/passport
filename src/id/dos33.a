@@ -29,7 +29,7 @@ IDDOS33
 ;
 +        lda   #$00
          ldx   #$00
-         ldy   #$4A
+         ldy   #$3F
          jsr   compare    ; if T00,S00,$00 ==
          !byte $01
          !byte $A5,$27
@@ -62,10 +62,6 @@ IDDOS33
          !byte $6C,$3E,$00
          !byte $EE,$FE,$08
          !byte $EE,$FE,$08
-         !byte WILDCARD,WILDCARD,WILDCARD
-         !byte WILDCARD,WILDCARD,WILDCARD
-         !byte WILDCARD,WILDCARD,WILDCARD
-         !byte $A6,$2B
          bcs   .exit
 ;
 ; DOS 3.3 has JSR $FE89 / JSR $FE93 / JSR $FB2F
@@ -75,19 +71,21 @@ IDDOS33
 ;
          lda   #$00
          ldx   #$3F
-         ldy   #$09
+         ldy   #$0B
          jsr   compare    ; if T00,S00,$3F ==
          !byte $20,$89,$FE
          !byte $20,$93,$FE
          !byte $20,$2F,$FB
+         !byte $A6,$2B
          bcc   +
          lda   #$00
          ldx   #$3F
-         ldy   #$09
+         ldy   #$0B
          jsr   compare    ; if T00,S00,$3F ==
          !byte $8D,$50,$C0
          !byte $8D,$57,$C0
          !byte $8D,$55,$C0
+         !byte $A6,$2B
 +
 
 ;
