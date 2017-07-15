@@ -83,9 +83,11 @@
          iny
          cpy   #$03
          bne   .serialloop
+         bit   gMode
+         bpl   +
          lda   #s_protserial
          jsr   PrintByID
-
++
          lda   gTrack
          beq   .track0
 
@@ -122,9 +124,11 @@
 ;
 ; decrypt RWTS in track buffer
 ;
+         bit   gMode
+         bpl   +
          lda   #s_protdosw
          jsr   PrintByID
-         ldx   #BASEPAGE
++        ldx   #BASEPAGE
          inx
          stx   .a+2
          stx   .b+2
