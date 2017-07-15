@@ -44,10 +44,12 @@ TraceDOS33b
          sta   $084B
          lda   #>TraceDOS33c
          sta   $084C
-         lda   #$2C       ; disable calls to
-         sta   $083F      ; TEXt/PR0/IN0
-         sta   $0842
-         sta   $0845
+         lda   #$EA
+         ldy   #9
+.noppatch
+         sta   $83E,Y     ; disable calls to
+         dey              ; TEXt/PR0/IN0
+         bne   .noppatch  ; including "Grafboot"
          jmp   $0801
 
 TraceDOS33c
