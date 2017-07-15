@@ -1,0 +1,57 @@
+;-------------------------------
+; #JMPB400
+; Boot1 jumps to $B400 for a
+; self-decripting nibble check
+; that seeks to track $23
+; and exits via $9D84 if successful
+;
+; tested on
+; Binomal Multiplication (1984, Mindscape)
+; Decimal Discovery (1986, DLM)
+; Factoring Algebraic Expressions (1984, Mindscape)
+; First Degree Linear Equations (1984, Mindscape)
+; PathWords (1984, Thunder Mountain)
+; Success With Math - Multiplying and Dividing Fractions (1984, Mindscape)
+;-------------------------------
+!zone {
+         lda   gIsBoot0
+         bne   .exit
+         lda   gTrack
+         cmp   #$02
+         bne   .exit
+
+         lda   #$03
+         ldx   #$00
+         ldy   #$0A
+         jsr   compare    ; if T02,S03,$00 ==
+         !byte $A0,$00    ; LDY #$00
+         !byte $B9,$12,$B4; LDA $B412,Y
+         !byte $49,$4C    ; EOR #$4C
+         !byte $99,$12,$B4; STA $B412,Y
+         bcs   .exit
+         ldx   #$D5
+         ldy   #$16
+         jsr   compare    ; and T02,S03,$D5 ==
+         !byte $F1,$C2,$8C,$F1,$C0,$8C,$5C,$B7  ; encrypted code --
+         !byte $85,$99,$9C,$BF,$8C,$11,$9C,$82  ; decrypted listing follows
+         !byte $F1,$C4,$8C,$00,$C8,$D1
+                          ; LDA   $C08E,X
+                          ; LDA   $C08C,X
+                          ; BPL   $00D8
+                          ; CMP   #$D5
+                          ; BNE   $00D4
+                          ; CPY   #$5D
+                          ; BNE   $00B3
+                          ; LDA   $C088,X
+                          ; JMP   $9D84
+         bcs   .exit
+         sta   gDisplayBytes
+         lda   #s_jmpb400
+         jsr   PrintByID
+         lda   #$03
+         ldx   #$00
+         ldy   #$03
+         jsr   modify     ; then set T02,S03,$00 =
+         !byte $4C,$84,$9D
+.exit
+}
