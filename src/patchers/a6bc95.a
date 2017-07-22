@@ -26,13 +26,11 @@
          !byte $10,$FB    ; BPL -$FB
          !byte $C9,$95    ; CMP #$95
          bcs   .exit
-         ldy   #$0E
+         ldy   #$08
          jsr   SearchTrack
          !byte $AE,$F8,$01; LDX $01F8
          !byte $A9,$0A    ; LDA #$0A
          !byte $8D,$FE,$01; STA $01FE
-         !byte $BD,$8E,$C0; LDA $C08E,X
-         !byte $BD,$89,$C0; LDA $C089,X
          bcs   .exit
          sta   gDisplayBytes
          pha
