@@ -458,8 +458,7 @@ nextsector
          bne   .passprint ; always branches
 .passcrack
          lda   gUsingRAMDisk
-         cmp   #FALSE
-         beq   .skipram
+         bne   .skipram
          lda   #s_writing
          jsr   PrintByID
          jsr   WriteRAMToDisk
