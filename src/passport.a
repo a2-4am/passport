@@ -717,6 +717,7 @@ _applyToAll
          !source "patchers/bootcounter.a"       ; T01 only
          !source "patchers/jmpb412.a"           ; T02 only
          !source "patchers/jmpb400.a"           ; T02 && gIsBoot0 only
+         !source "patchers/advint.a"            ; gAdventureInternational only
 
          lda   gPatchCount
          beq   .nopatches
@@ -813,6 +814,10 @@ gPossibleD5D5F7
          !byte FALSE      ; 0=true, 1=false
                           ; reset before each operation
                           ; set in IDBootloader() after reading T00,S00
+gAdventureInternational
+         !byte FALSE      ; 0=true, 1=false
+                          ; reset before each operation
+                          ; set in TraceDOS33c() after tracing DOS 3.3-shaped RWTS
 gOnAClearDayYouCanReadForever
          !byte FALSE      ; 0=true, 1=false
                           ; retry reads with a captured RWTS forever,

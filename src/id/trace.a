@@ -60,6 +60,7 @@ TraceDOS33c
 _Inspect1a
          sta   .x1+1
          sta   .x2+1
+         sta   .x7+1
          sta   b4bbmodify+2
          sta   b4bbmodify2+2
          clc
@@ -136,13 +137,27 @@ _Inspect1a
          ldy   #$03
          jsr   CompareMemory
          !byte $4C,$03,$9B
-         bcs   +
+         bcs   .x7
          jsr   IDMilliken
-         bcs   +
+         bcs   .x7
          lda   #s_milliken
          jsr   PrintByID
          lda   #$80
          sta   T02S05
+;
+; Check for Adventure International RWTS (sets flag for patcher)
+;
+.x7      lda   #$FF       ; check for code at $B936
+         ldx   #$36
+         ldy   #$0A
+         jsr   CompareMemory
+         !byte $EA,$EA,$EA; NOP/NOP/NOP
+         !byte $BD,$8C,$C0; LDA $C08C,X
+         !byte $10,$FB    ; BPL -$FB
+         !byte $C9,$00    ; CMP #$00
+         bcs   +
+         lda   #TRUE
+         sta   gAdventureInternational
 +        jmp   ADStyle    ; use this RWTS to read the disk
 
 ;-------------------------------
