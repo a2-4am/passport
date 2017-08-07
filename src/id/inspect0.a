@@ -24,6 +24,7 @@ IDBootloader
          sta   gIsMECCFastloader
          sta   gPossibleGamco
          sta   gPossibleD5D5F7
+         sta   gAdventureInternational
          lda   #$00
          sta   gLastTrack
 ;

@@ -1,0 +1,41 @@
+;-------------------------------
+; #MEMORYCONFIG
+; modified PRODOS launches MEMORY.CONFIG
+; as startup program, which executes a
+; protection check before launching the
+; real startup program
+;
+; tested on
+; What Makes A Dinosaur Sore (1987, DC Heath)
+; Squeegee Learns About Drugs (1989, Marshware)
+; The Botanist's Apprentice (1989, National Geographic Society)
+; Journey to the Age of the Dinosaurs (1990, National Geographic Society)
+;-------------------------------
+!zone {
+         lda   gIsProDOS  ; only if ProDOS
+         bne   .exit
+         lda   #$0F
+         sta   .sector+1
+.sector  lda   #$FF       ; modified at runtime
+         sta   gDisplayBytes
+         ldx   #$33
+         ldy   #$10
+         jsr   compare
+         !byte $4C,$00,$10; JMP $1000
+         !byte $A9,$00    ; LDA #$00
+         !byte $85,$04    ; STA $04
+         !byte $AE,$30,$BF; LDX $BF30
+         !byte $BD,$89,$C0; LDA $C089,X
+         !byte $BD,$8E,$C0; LDA $C08E,X
+         bcs   +
+         lda   #s_runhello
+         jsr   PrintByID
+         lda   gDisplayBytes
+         ldx   #$36
+         ldy   #$01
+         jsr   modify
+         !byte $60
++        dec   .sector+1
+         bpl   .sector
+.exit
+}
