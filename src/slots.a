@@ -93,7 +93,6 @@ ScanForRAMDisk
          lsr
          lsr
          lsr
-         sta   .driverbase+1
          lsr
          tay
          pla
@@ -112,23 +111,21 @@ ScanForRAMDisk
          cmp   #$0F
          bne   -
 
-.driverbase
-         ldx   #$d1
-         lda   $BF11,x
-         sta   .drivercode+2
-         and   #$f0
-         cmp   #$c0
-         bne   +
+         ;check for RAM[x] by name
 
-         ;RAMFactor detection
-         ;looks like a SmartPort device
-
-.drivercode
-         lda   $d100
-         cmp   #$c9
-         bne   -
-
+         ldy   OnlineReturn
+         cpy   #4
+         beq   +
+         cpy   #6
+         bcs   -
+         dey
 +
+--       lda   SlashRAM-1,y
+         cmp   VolumeName-1,y
+         bne   -
+         dey
+         bne   --
+
          ;check free space
          ;need at least $118 blocks
 
@@ -147,4 +144,6 @@ ScanForRAMDisk
          sta   gUsingRAMDisk
 .done
          rts
+
+SlashRAM !byte $2F, $52, $41, $4D
 }
