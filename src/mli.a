@@ -67,8 +67,6 @@ WriteTrackMLI
                           ; page 6-19
          sta   mliparam+1
          lda   SLOT
-         sec
-         sbc   #$30
          asl
          asl
          asl
@@ -685,6 +683,7 @@ WriteRAMToDisk
          sta   mliparam+2
          sta   mliparam+3
          sta   mliparam+4
+         sta   gTrack
          jsr   SwapProDOS
          lda   gRAMDiskRef
          jsr   SetMark
