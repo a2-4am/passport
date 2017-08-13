@@ -704,8 +704,8 @@ WriteRAMToDisk
          lda   gRAMDiskRef
          jsr   ReadFile
          jsr   SwapProDOS
-         inc   gTrack
          jsr   WriteTrackMLI
+         inc   gTrack
          lda   gTrack
          cmp   #$22
          bne   -

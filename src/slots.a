@@ -116,8 +116,8 @@ ScanForRAMDisk
          ldy   OnlineReturn
          cpy   #4
          beq   +
-         cpy   #6
-         bcs   -
+         cpy   #5
+         bne   -
          dey
 +
 --       lda   SlashRAM-1,y
