@@ -95,7 +95,7 @@ flag     =     $FF        ; byte
 }
 
 ; Application constants (not zero addresses)
-RELBASE  =     $5A00      ; address to move Passport code
+RELBASE  =     $5900      ; address to move Passport code
                           ; so that it's out of the way
 LOWPOINT =     $4300      ; lowest available address for code
 BASEPAGE =     $10        ; Special Delivery tracer assumes
@@ -140,16 +140,18 @@ FirstMover
 
          !source "analyze.a"
          !source "id/inspect0.a"
-         !source "id/dos33.a"
          !source "id/trace.a"
+         !source "id/trace33.a"
+         !source "id/trace32.a"
+         !source "id/trace8b3.a"
+         !source "id/trace33p.a"
+         !source "id/dos33.a"
          !source "id/prodos.a"
          !source "id/pascal.a"
          !source "id/jsr8b3.a"
-         !source "id/trace8b3.a"
          !source "id/mecc.a"
          !source "id/datasoft.a"
          !source "id/protecteddos.a"
-         !source "id/specdelivery.a"
          !source "id/encode44.a"
          !source "id/encode53.a"
          !source "id/ea.a"
@@ -172,6 +174,7 @@ FirstMover
          !source "keys.a"
          !source "cffa.a"
          !source "rwts.a"
+         !source "standarddelivery.a"
 
 OneTimeSetup
          lda   $C0E8
@@ -696,6 +699,7 @@ _applyToT00
          !source "patchers/laureate.a"
          !source "patchers/pascalrwts.a"
          !source "patchers/micrograms.a"
+         !source "patchers/dos32.a"
 _applyToAll
          !source "patchers/universale7.a"
          !source "patchers/a6bc95.a"            ; gIsPascal only

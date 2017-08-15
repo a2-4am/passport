@@ -138,6 +138,16 @@ IDBootloader
          bcs   +
          jmp   foundea
 ;
+; Try to identify hybrid 16-/13-sector bootloader on
+; DOS 3.2 disks.
+; Exit via custom trace function if found.
+;
++        jsr   IDDOS32
+         bcs   +
+         lda   #s_dos32b0
+         jsr   PrintByID
+         jmp   TraceDOS32
+;
 ; Try to detect whether there is code in the boot sector
 ; that loads 4-and-4-encoded data. This is an early escape
 ; hatch for disks that are guaranteed to fail later anyway.

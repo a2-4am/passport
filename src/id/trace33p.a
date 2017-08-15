@@ -1,7 +1,7 @@
 ; "Special Delivery" boot tracer
 ; for DOS 3.3P disks
 ; e.g. Ernie's Quiz, Elite
-;
+
 ;-------------------------------
 ; IDSpecDel
 ; returns C clear if "Special Delivery" bootloader
@@ -135,10 +135,6 @@ SDsuccess
 ; but we should clear the rest of T00 so we're not
 ; writing garbage to disk on unused sectors
 
-         lda   #$10
-         ldx   #$00
-         ldy   #$01
-         jsr   ClearMemory
          lda   #$15
          ldx   #$00
          ldy   #$06
@@ -146,12 +142,9 @@ SDsuccess
 
 ; copy Standard Delivery bootloader into place for T00,S00
 
-         ldy   #$7E       ; _SDboot0-SDboot0, but set here
-                          ; manually to work around Merlin bug
-sdcopy   lda   SDboot0,y
-         sta   $1000,y
-         dey
-         bpl   sdcopy
+         lda   #<SD_DOS33p
+         ldx   #>SD_DOS33p
+         jsr   ConstructStandardDelivery
 
 ; now manually write out track 0 with Standard Delivery
 ; bootloader
@@ -219,26 +212,3 @@ skipsectors
          lda   #$03
          sta   gLastTrack
          jmp   ADStyle
-
-; Standard Delivery bootloader with DOS 3.3P support
-; https://github.com/peterferrie/standard-delivery/
-; rev. a5b839d7d0fa21b0ff3a7776d9f6c9750b09ae10 of 2016-11-29
-;
-SDboot0
-         !byte $01,$a8,$ee,$06,$08,$ad,$4e,$08
-         !byte $c9,$c0,$f0,$40,$85,$27,$c8,$c0
-         !byte $10,$90,$09,$f0,$05,$20,$2f,$08
-         !byte $a8,$2c,$a0,$01,$84,$3d,$c8,$a5
-         !byte $27,$f0,$df,$8a,$4a,$4a,$4a,$4a
-         !byte $09,$c0,$48,$a9,$5b,$48,$60,$e6
-         !byte $41,$06,$40,$20,$37,$08,$18,$20
-         !byte $3c,$08,$e6,$40,$a5,$40,$29,$03
-         !byte $2a,$05,$2b,$a8,$b9,$80,$c0,$a9
-         !byte $30,$4c,$a8,$fc,$4c,$b3,$10
-         !byte $1E,$1D,$1C,$1B,$00,$00,$00,$00
-         !byte $00,$00,$13,$12,$11,$10,$1F,$20
-         !byte $2E,$2D,$2C,$2B,$2A,$29,$28,$27
-         !byte $26,$25,$24,$23,$22,$21,$2F,$30
-         !byte $3E,$3D,$3C,$3B,$3A,$39,$38,$37
-         !byte $36,$35,$34,$33,$32,$31,$3F,$C0
-_SDboot0

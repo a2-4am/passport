@@ -1,0 +1,37 @@
+;-------------------------------
+; #DOS32
+; construct new bootloader and RWTS
+; for converted DOS 3.2 disks
+;-------------------------------
+!zone {
+         jsr   IDDOS32
+         bcs   .exit
+         bcc   +
+
+.sectors
+         !byte $00,$00,$02,$02,$02,$02,$02,$02,$02,$02
+.offsets
+         !byte $02,$5C,$0A,$0E,$10,$20,$25,$CA,$CE,$D2
+.values
+         !byte $C7,$B7,$BC,$BC,$00,$BC,$BC,$00,$BC,$BC
+
++        lda   #$09
+         sta   .loop+1
+         ldx   #$B8
+         ldy   #$10
+         jsr   modify
+         !byte $00,$0D,$0B,$09,$07,$05,$03,$01
+         !byte $0E,$0C,$0A,$08,$06,$04,$02,$0F
+
+.loop    ldy   #$d1
+         lda   .values,y
+         sta   .value
+         lda   .sectors,y
+         ldx   .offsets,y
+         ldy   #$01
+         jsr   modify
+.value   !byte $d1
+         dec   .loop+1
+         bpl   .loop
+.exit
+}

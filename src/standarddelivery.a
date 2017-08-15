@@ -1,0 +1,115 @@
+; Standard Delivery bootloader
+; https://github.com/peterferrie/standard-delivery/
+; rev. a5b839d7d0fa21b0ff3a7776d9f6c9750b09ae10 of 2016-11-29
+
+;-------------------------------
+; ConstructStandardDelivery
+; in:    A = low byte of Standard Delivery parameter table (see below)
+;        X = high byte of Standard Delivery parameter table
+; out:   $1000..$10FF replaced with Standard Delivery bootloader
+;        all registers clobbered
+;        A,X clobbered
+;        Y preserved
+;-------------------------------
+!zone {
+ConstructStandardDelivery
+         sta   .A+1
+         stx   .A+2
+         ldx   #$00
+         txa
+-        sta   $1000,x
+         inx
+         bne   -
+         ldx   #$4C
+-        lda   .code,x
+         sta   $1000,x
+         dex
+         bpl   -
+-        inx
+.A       lda   $FFFF,x
+         sta   $104D,x
+         cmp   #$C0
+         bne   -
+         rts
+
+.code
+         !byte $01,$a8,$ee,$06,$08,$ad,$4e,$08
+         !byte $c9,$c0,$f0,$40,$85,$27,$c8,$c0
+         !byte $10,$90,$09,$f0,$05,$20,$2f,$08
+         !byte $a8,$2c,$a0,$01,$84,$3d,$c8,$a5
+         !byte $27,$f0,$df,$8a,$4a,$4a,$4a,$4a
+         !byte $09,$c0,$48,$a9,$5b,$48,$60,$e6
+         !byte $41,$06,$40,$20,$37,$08,$18,$20
+         !byte $3c,$08,$e6,$40,$a5,$40,$29,$03
+         !byte $2a,$05,$2b,$a8,$b9,$80,$c0,$a9
+         !byte $30,$4c,$a8,$fc,$4c
+}
+
+;
+; Format for Standard Delivery parameter table
+;
+; - word: entry point of next boot phase (Standard Delivery bootloader will JMP to this address)
+; - byte array: high byte of target address of each sector, in the following order
+;   T00,S0E
+;   T00,S0D
+;   T00,S0C
+;   T00,S0B
+;   T00,S0A
+;   T00,S09
+;   T00,S08
+;   T00,S07
+;   T00,S06
+;   T00,S05
+;   T00,S04
+;   T00,S03
+;   T00,S02
+;   T00,S01
+;   T00,S0F
+;   T01,S00
+;   T01,S0E
+;   T01,S0D
+;   T01,S0C
+;   T01,S0B
+;   T01,S0A
+;   T01,S09
+;   T01,S08
+;   T01,S07
+;   T01,S06
+;   T01,S05
+;   T01,S04
+;   T01,S03
+;   T01,S02
+;   T01,S01
+;   T01,S0F
+;   &c. (all other tracks are the same order as track 1)
+; - byte: $C0 (end of data)
+;
+; Unused sectors are marked as $00.
+;
+; Address array does NOT include T00,S00. This sector holds the Standard Delivery
+; code and can not be reloaded at another address (unlike DOS 3.3).
+
+; Currently, all parameter tables are the same length (loading T00,S01-T02,S0F),
+; but this is not required. Standard Delivery can load an arbitrary number of
+; sectors and will move to the next track automatically.
+;
+
+SD_DOS33p
+         !byte $b3,$10                          ; exit via JMP $10B3
+         !byte $1E,$1D,$1C,$1B,$00,$00,$00,$00
+         !byte $00,$00,$13,$12,$11,$10,$1F,$20
+         !byte $2E,$2D,$2C,$2B,$2A,$29,$28,$27
+         !byte $26,$25,$24,$23,$22,$21,$2F,$30
+         !byte $3E,$3D,$3C,$3B,$3A,$39,$38,$37
+         !byte $36,$35,$34,$33,$32,$31,$3F
+         !byte $C0
+
+SD_DOS32
+         !byte $00,$B7                          ; exit via JMP $B700 (TODO: could be $3700)
+         !byte $00,$00,$9E,$9D,$00,$BF,$BE,$BD
+         !byte $BC,$BB,$BA,$B9,$B8,$B7,$00,$9F
+         !byte $00,$00,$AB,$AA,$A9,$A8,$A7,$A6
+         !byte $A5,$A4,$A3,$A2,$A1,$A0,$00,$AC
+         !byte $00,$00,$00,$00,$00,$B5,$B4,$B3
+         !byte $B2,$B1,$B0,$AF,$AE,$AD,$00
+         !byte $C0

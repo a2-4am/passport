@@ -1,0 +1,167 @@
+; DOS 3.2 boot tracer
+; for DOS 3.2 disks with a 3.2/3.3 hybrid bootloader
+; that boots automatically on 16-sector drives
+; e.g. many early disks from Edu-Ware, Hartley
+
+;-------------------------------
+; IDDOS32
+; returns C clear if 3.2/3.3 bootloader detected in T00,S00
+;-------------------------------
+!zone {
+IDDOS32
+         lda   #$00
+         ldx   #$00
+         ldy   #$0F
+         jsr   compare
+         !byte $01
+         !byte $A0,$0F    ; LDY #$0F
+         !byte $B9,$00,$08; LDA $0800,Y
+         !byte $99,$00,$02; STA $0200,Y
+         !byte $C8        ; INY
+         !byte $D0,$F7    ; BNE -
+         !byte $4C,$0F,$02; JMP $020F
+         bcs   .exit
+         ldx   #$33
+         ldy   #$08
+         jsr   compare
+         !byte $A6,$2B    ; LDX $2B
+         !byte $20,$5D,$02; JSR $025D
+         !byte $4C,$D1,$02; JMP $02D1
+         bcs   .exit
+         ldx   #$F4
+         ldy   #$08
+         jsr   compare
+         !byte $CC,$00,$03; CPY $0300
+         !byte $D0,$03    ; BNE +
+         !byte $4C,$3B,$02; JMP $023B
+         bcs   .exit
+         ldx   #$45
+         ldy   #$03
+         jsr   compare
+         !byte $4C,$01,$03; JMP $0301
+.exit    rts
+}
+
+;-------------------------------
+; TraceDOS32
+; set up boot trace to capture 13-sector RWTS
+;-------------------------------
+!zone {
+TraceDOS32
+         lda   #<TraceDOS32b
+         ldx   #>TraceDOS32b
+         jmp   Trace
+
+TraceDOS32b
+         lda   #<TraceDOS32c
+         sta   $0846
+         lda   #>TraceDOS32c
+         sta   $0847
+         jmp   $0801
+
+TraceDOS32c
+         lda   #$03
+         ldx   #$0D
+         ldy   #$39
+         jsr   CompareMemory
+         !byte $A6,$2B
+         !byte $A9,$09
+         !byte $85,$27
+         !byte $AD,$CC,$03
+         !byte $85,$41
+         !byte $84,$40
+         !byte $8A
+         !byte $4A
+         !byte $4A
+         !byte $4A
+         !byte $4A
+         !byte $A9,$02
+         !byte $85,$3F
+         !byte $A9,$5D
+         !byte $85,$3E
+         !byte $20,$43,$03
+         !byte $20,$46,$03
+         !byte $A5,$3D
+         !byte $4D,$FF,$03
+         !byte $F0,$06
+         !byte $E6,$41
+         !byte $E6,$3D
+         !byte $D0,$ED
+         !byte $85,$3E
+         !byte $AD,$CC,$03
+         !byte $85,$3F
+         !byte $E6,$3F
+         !byte $6C,$3E,$00
+         bcs   .fail
+         lda   $03CC
+         cmp   #$B6
+         beq   +
+         cmp   #$36
+         bne   .fail
++
+; set up RWTS entry point
+
+         clc
+         adc   #$07
+         sta   callrwts+2
+         lda   #$00
+         sta   callrwts+1
+
+; set up final trace
+
+         lda   #$4C
+         sta   $033A
+         lda   #<TraceDOS32d
+         sta   $033B
+         lda   #>TraceDOS32d
+         sta   $033C
+         ldy   $0300
+         jmp   $0301
+
+TraceDOS32d
+         lda   callrwts+2
+         ldx   #$00       ; check for "STY $48;STA $49"
+         ldy   #$04       ; at RWTS entry point
+         jsr   CompareMemory ; (e.g. $BD00 or $3D00)
+         !byte $84,$48,$85,$49
+         bcs   .fail
+
+; skip sectors $0D, $0E, and $0F on all tracks
+; since this is a 13-sector disk
+
+         lda   #<sectormap
+         sta   .C+1
+         lda   #>sectormap
+         sta   .C+2
+         lda   #$00
+         ldx   #$22
+.A       ldy   #$0F
+.B       cpy   #$03
+         bcs   .D
+.C       sta   $FFFF
+.D       inc   .C+1
+         bne   +
+         inc   .C+2
++        dey
+         bpl   .B
+         dex
+         bpl   .A
+
+; skip T00,S01-S0A
+; since we're going to construct our own bootloader later
+
+         ldy   #$0A
+-        sta   T00,y
+         dey
+         bne   -
+
+; read the rest of the disk with the original RWTS
+
+         jmp   ADStyle
+
+; something did not match, not comfortable tracing,
+; but we know enough to know that the universal RWTS won't work,
+; so we're done
+
+.fail    jmp   FatalError
+}

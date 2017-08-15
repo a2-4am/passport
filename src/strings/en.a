@@ -104,7 +104,8 @@ s_cmpbne0 =    $55
 s_writeram =   $56
 s_d5timing =   $57
 s_advint =     $58
-STRINGCOUNT =  $59
+s_dos32b0 =    $59
+STRINGCOUNT =  $5A
 
 !zone {
 StringTable
@@ -143,7 +144,7 @@ StringTable
          !word .reset
          !word .modify
          !word .modifyto
-         !word .dosboot0
+         !word .dos33boot0
          !word .prodosboot0
          !word .pascalboot0
          !word .mecc
@@ -197,6 +198,7 @@ StringTable
          !word .writeram
          !word .d5timing
          !word .advint
+         !word .dos32boot0
 ;
 ; Text can contain substitution strings, which
 ; are replaced by current values at runtime. Each
@@ -222,7 +224,7 @@ StringTable
 ; can be set directly before calling PrintByID.
 ;
 .header
-         !text "Passport by 4am               2017-08-13",$00
+         !text "Passport by 4am               2017-08-15",$00
 .mainmenu
          !text "________________________________________",$8D,$8D,$8D,$8D,$8D,$8D,$8D
          !text "              "
@@ -355,8 +357,10 @@ StringTable
          !text "T%t,S%0,$%1: ",$00
 .modifyto
          !text " -> ",$00
-.dosboot0
+.dos33boot0
          !text "T00,S00 Found DOS 3.3 bootloader",$8D,$00
+.dos32boot0
+         !text "T00,S00 Found DOS 3.2 bootloader",$8D,$00
 .prodosboot0
          !text "T00,S00 Found ProDOS bootloader",$8D,$00
 .pascalboot0

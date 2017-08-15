@@ -1,0 +1,165 @@
+;-------------------------------
+; TraceDOS33
+; set up 1st-level boot trace on
+; a DOS 3.3-shaped bootloader
+;-------------------------------
+!zone {
+TraceDOS33
+;
+; Before we trace through the drive firmware (which --
+; at least on some machines -- will loop forever looking
+; for each sector), we do a pre-check to ensure that all
+; the sectors we're about to trace are actually readable.
+;
+         lda   #$00
+         sta   gTrack
+         lda   #$09
+         sta   gSector
+         lda   #$00
+         sta   $b991
+precheck
+         ldy   #<gRWTSParams
+         lda   #>gRWTSParams
+         jsr   $BD00
+         bcc   +
+         jmp   FatalError
++
+         dec   gSector
+         bne   precheck
+;
+; pre-check passed, do the trace
+;
+         lda   #<TraceDOS33b
+         ldx   #>TraceDOS33b
+         jmp   Trace
+
+;-------------------------------
+; TraceDOS33b
+; set up 2nd boot trace at $084A
+;-------------------------------
+TraceDOS33b
+         lda   #$4C
+         sta   $084A
+         lda   #<TraceDOS33c
+         sta   $084B
+         lda   #>TraceDOS33c
+         sta   $084C
+         lda   #$EA
+         ldy   #9
+.noppatch
+         sta   $83E,Y     ; disable calls to
+         dey              ; TEXt/PR0/IN0
+         bne   .noppatch  ; including "Grafboot"
+         jmp   $0801
+
+TraceDOS33c
+         lda   $08FE      ; 2nd-level trace callback is here
+         sta   .x6+1
+         clc
+         adc   #$02
+_Inspect1a
+         sta   .x1+1
+         sta   .x2+1
+         sta   .x7+1
+         sta   b4bbmodify+2
+         sta   b4bbmodify2+2
+         clc
+         adc   #$06
+         sta   b4bbcompare+1
+         tax
+         dex
+         stx   .x5+1
+         dex
+         stx   .x3+1
+         stx   .x4+1
+         stx   callrwts+2
+         jsr   ProtectedDOS ; check for a specific (encrypted)
+                          ; bootloader called "Protected DOS"
+         bcs   .notprotdos
+         jmp   ADStyle
+.notprotdos
+         lda   callrwts+2
+         ldx   #$00       ; check for "STY $48;STA $49"
+         ldy   #$04       ; at RWTS entry point
+         jsr   CompareMemory ; (e.g. $BD00 or $3D00)
+         !byte $84,$48,$85,$49
+         bcc   .x1
+         jmp   UseUniversal
+.x1      lda   #$FF       ; check for "SEC;RTS" at $B942
+         ldx   #$42
+         ldy   #$02
+         jsr   CompareMemory
+         !byte $38,$60
+         bcc   .x2
+         jmp   UseUniversal
+.x2      lda   #$FF       ; check for "LDA $C08C,X" at $B94F
+         ldx   #$4F
+         ldy   #$03
+         jsr   CompareMemory
+         !byte $BD,$8C,$C0
+         bcc   .x3
+         jmp   UseUniversal
+.x3      lda   #$FF       ; check for "JSR $xx00" at $BDB9
+         ldx   #$B9
+         ldy   #$02
+         jsr   CompareMemory
+         !byte $20,00
+         bcc   .x5
+;
+; Check for RWTS variant that has extra code before
+; JSR $B800 e.g. Verb Viper (DLM), Advanced Analogies (Hartley)
+;
+.x4      lda   #$FF       ; check for "JSR $xx00" at $BDC5
+         ldx   #$C5
+         ldy   #$02
+         jsr   CompareMemory
+         !byte $20,00
+         bcc   .x5
+         jmp   UseUniversal ; give up tracing; this RWTS is unsupported
+;
+; Check for RWTS variant that uses non-standard address for slot
+; LDX $1FE8 e.g. Pinball Construction Set (1983)
+; we don't like that one
+;
+.x5      lda   #$FF       ; check for "LDX $1FE8" at $BE43
+         ldx   #$43
+         ldy   #$03
+         jsr   CompareMemory
+         !byte $AE,$E8,$1F
+         bcs   .x6
+         jmp   UseUniversal ; give up tracing; this RWTS is unsupported
+;
+; Check for Milliken protection routine in late-stage boot
+; (affects readable/ignoreable sector map, so must ID now)
+;
+.x6      lda   #$FF       ; check for "JMP $9B03" at $B747
+         ldx   #$47
+         ldy   #$03
+         jsr   CompareMemory
+         !byte $4C,$03,$9B
+         bcs   .x7
+         jsr   IDMilliken
+         bcs   .x7
+         lda   #s_milliken
+         jsr   PrintByID
+         lda   #$80
+         sta   T02S05
+;
+; Check for Adventure International RWTS (sets flag for patcher)
+;
+.x7      lda   #$FF       ; check for code at $B936
+         ldx   #$36
+         ldy   #$0A
+         jsr   CompareMemory
+         !byte $EA,$EA,$EA; NOP/NOP/NOP
+         !byte $BD,$8C,$C0; LDA $C08C,X
+         !byte $10,$FB    ; BPL -$FB
+         !byte $C9,$00    ; CMP #$00
+         bcs   +
+         lda   #TRUE
+         sta   gAdventureInternational
+;
+; good to go
+;
++        jmp   ADStyle    ; use this RWTS to read the disk
+}
