@@ -32,11 +32,12 @@ InitSectorMap
 ; 00 = ignore this sector (don't even read it)
 ; 80 = sector is optional -- read, but ignore any errors
 ; FE = sector is required, and switch to the built-in RWTS
-;      after reading it (if we haven't already)
+;      before reading it (if we haven't already)
 ; FF = sector is required -- read, and any error is fatal
 ;      (this is the default value for all sectors)
 ;-------------------------------
 sectormap
+T00S00
 T00      !byte $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
 T00S09   !byte                                     $FF
 T00S0A   !byte                                         $FF

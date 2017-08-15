@@ -77,9 +77,9 @@ foundea
 .checktrk
          ldy   #0
          lda   .prologtbl, y
-         sta   $B8F1
+         sta   UNIV_D2
          lda   .prologtbl+2, y
-         sta   $B8FC
+         sta   UNIV_D3
          jsr   $B8DC
          bcc   +
 

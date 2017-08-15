@@ -95,7 +95,7 @@ flag     =     $FF        ; byte
 }
 
 ; Application constants (not zero addresses)
-RELBASE  =     $5900      ; address to move Passport code
+RELBASE  =     $5800      ; address to move Passport code
                           ; so that it's out of the way
 LOWPOINT =     $4300      ; lowest available address for code
 BASEPAGE =     $10        ; Special Delivery tracer assumes
@@ -766,6 +766,10 @@ gLastTrack
                           ; they write out the first few DOS tracks
                           ; manually before seeking up to T22 to convert
                           ; the rest of the disk
+gIsDOS32
+         !byte FALSE      ; 0=true, 1=false
+                          ; reset before each operation
+                          ; set in IDBootloader() after reading T00,S00
 gIsBoot0
          !byte FALSE      ; 0=true, 1=false
                           ; reset before each operation

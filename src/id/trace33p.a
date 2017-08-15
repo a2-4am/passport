@@ -145,6 +145,8 @@ SDsuccess
          lda   #<SD_DOS33p
          ldx   #>SD_DOS33p
          jsr   ConstructStandardDelivery
+         lda   #s_bootwrite
+         jsr   PrintByID
 
 ; now manually write out track 0 with Standard Delivery
 ; bootloader

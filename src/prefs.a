@@ -6,7 +6,7 @@ PREFSFILE !byte prefs_e-prefs_b
 prefs_b
           !text "PASSPORT.CONF"
 prefs_e
-PREFSBUFFER =  $B000
+PREFSBUFFER =  $B600
 PREFSREADLEN = $0003
 
 PREFSVER !byte $FF

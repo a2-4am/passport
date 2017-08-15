@@ -105,7 +105,8 @@ s_writeram =   $56
 s_d5timing =   $57
 s_advint =     $58
 s_dos32b0 =    $59
-STRINGCOUNT =  $5A
+s_bootwrite =  $5A
+STRINGCOUNT =  $5B
 
 !zone {
 StringTable
@@ -199,6 +200,7 @@ StringTable
          !word .d5timing
          !word .advint
          !word .dos32boot0
+         !word .bootwrite
 ;
 ; Text can contain substitution strings, which
 ; are replaced by current values at runtime. Each
@@ -497,4 +499,6 @@ StringTable
 .advint
          !text "T%t,S%0 Found Adventure International",$8D
          !text "protection check",$8D,$00
+.bootwrite
+         !text "T00 Writing Standard Delivery bootloader",$00
 }

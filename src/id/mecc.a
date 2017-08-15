@@ -93,22 +93,22 @@ foundmecc1
          ldy   #$08
          lda   (modsrc),y
          lsr
-         sta   $B956
+         sta   UNIV_A1
          ldy   #$12
          lda   (modsrc),y
-         sta   $B966
+         sta   UNIV_A2
          ldy   #$1D
          lda   (modsrc),y
-         sta   $B96F
+         sta   UNIV_A3
          ldy   #$8F
          lda   (modsrc),y
-         sta   $B8E7
+         sta   UNIV_D1
          ldy   #$99
          lda   (modsrc),y
-         sta   $B8F1
+         sta   UNIV_D2
          ldy   #$A3
          lda   (modsrc),y
-         sta   $B8FC
+         sta   UNIV_D3
          jmp   ADStyle
 }
 
@@ -177,22 +177,22 @@ foundmecc4a
          ldy   #$83
          lda   (modsrc),y
          lsr
-         sta   $B956
+         sta   UNIV_A1
          ldy   #$8D
          lda   (modsrc),y
-         sta   $B966
+         sta   UNIV_A2
          ldy   #$98
          lda   (modsrc),y
-         sta   $B96F
+         sta   UNIV_A3
          ldy   #$15
          lda   (modsrc),y
-         sta   $B8E7
+         sta   UNIV_D1
          ldy   #$1F
          lda   (modsrc),y
-         sta   $B8F1
+         sta   UNIV_D2
          ldy   #$2A
          lda   (modsrc),y
-         sta   $B8FC
+         sta   UNIV_D3
          jmp   ADStyle
 }
 
@@ -260,23 +260,23 @@ foundmecc3
          ldy   #$E8
          lda   (modsrc),y
          lsr
-         sta   $B956
+         sta   UNIV_A1
          ldy   #$F2
          lda   (modsrc),y
-         sta   $B966
+         sta   UNIV_A2
          ldy   #$FD
          lda   (modsrc),y
-         sta   $B96F
+         sta   UNIV_A3
          inc   modsrc+1
          ldy   #$6F
          lda   (modsrc),y
-         sta   $B8E7
+         sta   UNIV_D1
          ldy   #$79
          lda   (modsrc),y
-         sta   $B8F1
+         sta   UNIV_D2
          ldy   #$83
          lda   (modsrc),y
-         sta   $B8FC
+         sta   UNIV_D3
          jmp   ADStyle
 }
 

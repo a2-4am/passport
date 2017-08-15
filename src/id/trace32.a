@@ -147,13 +147,18 @@ TraceDOS32d
          dex
          bpl   .A
 
-; skip T00,S01-S0A
+; skip T00,S00-S0A
 ; since we're going to construct our own bootloader later
 
          ldy   #$0A
 -        sta   T00,y
          dey
-         bne   -
+         bpl   -
+
+; set flag for patcher
+
+         lda   #TRUE
+         sta   gIsDOS32
 
 ; read the rest of the disk with the original RWTS
 

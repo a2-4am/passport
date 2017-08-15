@@ -12,6 +12,7 @@ IDBootloader
 ; These are used as filters later so irrelevant patchers can be skipped.
 ;
          lda   #FALSE
+         sta   gIsDOS32
          sta   gIsBoot0
          sta   gIsBoot1
          sta   gIsMaster

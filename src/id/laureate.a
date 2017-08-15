@@ -56,13 +56,13 @@ TraceLaureate
          sta   modsrc+1
          ldy   #$E7
          lda   (modsrc),y
-         sta   $B8E7
+         sta   UNIV_D1
          ldy   #$F1
          lda   (modsrc),y
-         sta   $B8F1
+         sta   UNIV_D2
          ldy   #$FC
          lda   (modsrc),y
-         sta   $B8FC
+         sta   UNIV_D3
          inc   modsrc+1
          ldy   #$44
 -        lda   (modsrc),y

@@ -4,34 +4,36 @@
 ; for converted DOS 3.2 disks
 ;-------------------------------
 !zone {
-         jsr   IDDOS32
-         bcs   .exit
-         bcc   +
+         lda   gIsDOS32
+         bne   .exit
 
-.sectors
-         !byte $00,$00,$02,$02,$02,$02,$02,$02,$02,$02
-.offsets
-         !byte $02,$5C,$0A,$0E,$10,$20,$25,$CA,$CE,$D2
-.values
-         !byte $C7,$B7,$BC,$BC,$00,$BC,$BC,$00,$BC,$BC
+; sectors 2-9
 
-+        lda   #$09
-         sta   .loop+1
-         ldx   #$B8
-         ldy   #$10
-         jsr   modify
-         !byte $00,$0D,$0B,$09,$07,$05,$03,$01
-         !byte $0E,$0C,$0A,$08,$06,$04,$02,$0F
+         lda   #>universalrwts
+         ldx   #$12       ; #BASEPAGE+2
+         ldy   #$08
+         jsr   CopyMemory
+         lda   #$38
+         sta   $1656      ; #BASEPAGE+6
 
-.loop    ldy   #$d1
-         lda   .values,y
-         sta   .value
-         lda   .sectors,y
-         ldx   .offsets,y
+; sector 1
+
+         lda   #$B7       ; TODO might be #$37
+         ldx   #$11       ; #BASEPAGE+1
          ldy   #$01
-         jsr   modify
-.value   !byte $d1
-         dec   .loop+1
-         bpl   .loop
+         jsr   CopyMemory
+         lda   #$2C
+         sta   $1138      ; #BASEPAGE+1
+
+; sector 0
+
+         lda   #<SD_DOS32
+         ldx   #>SD_DOS32
+         jsr   ConstructStandardDelivery
+
+         lda   #s_bootwrite
+         jsr   PrintByID
+
+         inc   gPatchCount
 .exit
 }
