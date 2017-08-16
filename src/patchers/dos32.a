@@ -1,11 +1,16 @@
 ;-------------------------------
 ; #DOS32
-; construct new bootloader and RWTS
-; for converted DOS 3.2 disks
+; construct new bootloader and RWTS for converted DOS 3.2 disks
 ;-------------------------------
 !zone {
          lda   gIsDOS32
          bne   .exit
+         bit   gMode      ; nothing to do here in verify-only mode
+         bpl   .exit
+
+         lda   #s_bootwrite
+         jsr   PrintByID
+         inc   gPatchCount
 
 ; sectors 2-9
 
@@ -18,7 +23,9 @@
 
 ; sector 1
 
-         lda   #$B7       ; TODO might be #$37
+         lda   callrwts+2
+         sec
+         sbc   #$06       ; #$B7 or #$37
          ldx   #$11       ; #BASEPAGE+1
          ldy   #$01
          jsr   CopyMemory
@@ -27,13 +34,16 @@
 
 ; sector 0
 
+         lda   callrwts+2
+         cmp   #$3D
+         beq   +
          lda   #<SD_DOS32
          ldx   #>SD_DOS32
          jsr   ConstructStandardDelivery
+         jmp   .exit
 
-         lda   #s_bootwrite
-         jsr   PrintByID
-
-         inc   gPatchCount
++        lda   #<SD_DOS32LO
+         ldx   #>SD_DOS32LO
+         jsr   ConstructStandardDelivery
 .exit
 }

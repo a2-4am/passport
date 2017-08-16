@@ -148,10 +148,15 @@ IDBootloader
          lda   #s_dos32b0
          jsr   PrintByID
          jmp   TraceDOS32
++        jsr   IDDOS32LO
+         bcs   +
+         lda   #s_dos32b0
+         jsr   PrintByID
+         jmp   TraceDOS32LO
 ;
 ; Try to detect whether there is code in the boot sector
 ; that loads 4-and-4-encoded data. This is an early escape
-; hatch for disks that are guaranteed to fail later anyway.
+; hatch for disks that will fail later anyway.
 ;
 +        jsr   IDEncoded44
          bcs   +
@@ -160,11 +165,11 @@ IDBootloader
          jmp   TheEnd
 ;
 ; Try to detect whether there is code in the boot sector
-; that loads 5-and-3-encoded data (like DOS 3.2 disks with
-; a hybrid boot sector that loads on 16-sector drives).
-; Passport has no support for converting DOS 3.2 disks, so
-; this serves as an early escape hatch for disks that are
-; guaranteed to fail later anyway.
+; that loads 5-and-3-encoded data. If the earlier DOS 3.2
+; identification failed, we will have no way to read the disk
+; (the universal RWTS only works on 6-and-2 encoded data), so
+; this serves as an early escape hatch for disks that will
+; fail later anyway.
 ;
 +        jsr   IDEncoded53
          bcs   +
