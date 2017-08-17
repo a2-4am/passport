@@ -361,13 +361,12 @@ checksector
          lda   $FFFF      ; current sector in sector map
          pha
          beq   nextsector ; #$00 = skip this sector
-         cmp   #$FE       ; #$FE = switch to built-in RWTS
-         bne   +          ;        to read this sector
+         cmp   #$FE       ; #$FE = switch to built-in RWTS to read this sector
+         bne   +
          lda   gTriedUniv
          beq   +
          jsr   SwitchToUniv
-+
-         jsr   ReadSector
++        jsr   ReadSector
          bcc   nextsector
          pla
          pha
@@ -379,35 +378,46 @@ checksector
          cmp   #$80
          beq   .optional
 ;
+; (13-sector only)
+; If we just got to this track, check for whole-track protections.
+;
+         lda   gIsDOS32
+         bne   +
+         lda   gSector
+         cmp   #$0C
+         beq   .tryskip
+;
 ; If we're in the middle of a track, try switching to the
 ; universal RWTS and see if that helps. (Many disks contain
 ; an RWTS that can't read the early tracks or sectors that
 ; contain the RWTS code, since those are loaded by the
 ; disk controller firmware.)
 ;
-         lda   gSector
++        lda   gSector
          cmp   #$0F
          bne   .tryuniversal
 ;
 ; We just got to this track, so check for a variety
 ; of whole-track conditions that might indicate we should
 ; just skip the entire track
+.tryskip
+         sta   .sub+1
          jsr   SkipTrack
          bcs   .tryuniversal
-
 ; Skip this track (we already printed the reason)
          lda   #$00
          jsr   ChangeSector
          lda   checksector+1
          sec
-         sbc   #$0F
+.sub     sbc   #$0F
          sta   checksector+1
-         bcs   .notrackdec
+         bcs   +
          dec   checksector+2
-.notrackdec
-         jmp   nextsector
++        jmp   nextsector
 
 .tryuniversal
+         lda   gIsDOS32   ; is this a DOS 3.2 disk?
+         beq   .fatal     ; yes, so read error is fatal
          lda   gTriedUniv ; have we tried the universal RWTS?
          beq   .fatal     ; yes, so read error is fatal
          jsr   SwitchToUniv ; no, switch it in now
