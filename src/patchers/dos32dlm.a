@@ -1,0 +1,25 @@
+;-------------------------------
+; #DOS32DLM
+; $9D84 jumps to $BCF0 to set the input vector to trap <Ctrl-C> during boot
+; (crashes because we don't include their custom code at $BCF0 when we
+; reconstruct the bootloader)
+;
+; tested on
+; Alien Addition (1982, DLM)
+; Alligator Mix (1982, DLM)
+; Dragon Mix (1982, DLM)
+;-------------------------------
+!zone {
+         lda   gIsDOS32
+         bne   .exit
+         lda   #$0b
+         ldx   #$84
+         ldy   #$03
+         jsr   compare    ; if T00,S0B,$84 ==
+         !byte $4C,$F0,$BC
+         bcs   .exit
+         ldy   #$03
+         jsr   modify     ; then set T00,S0B,$84 =
+         !byte $AD,$E9,$B7
+.exit
+}
