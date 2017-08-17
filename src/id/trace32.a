@@ -178,6 +178,26 @@ TraceDOS32d
          !byte $84,$48,$85,$49
          bcs   .fail
 
+         lda   #$FA
+         sta   modsrc
+         lda   callrwts+2
+         sec
+         sbc   #$05
+         sta   modsrc+1
+         ldy   #$00
+         lda   #$4C       ; set up JMP at $B8FA to our routine that will
+         sta   (modsrc),y ; check whether the data field is missing
+         iny
+         lda   #<FFer
+         sta   (modsrc),y
+         iny
+         lda   #>FFer
+         sta   (modsrc),y
+         ldy   #$07
+         lda   #$F8       ; change BEQ at $B900 to branch to that JMP at $B8FA
+                          ; if data prologue is not found
+         sta   (modsrc),y
+
 ; skip sectors $0D, $0E, and $0F on all tracks
 ; since this is a 13-sector disk
 
@@ -215,4 +235,19 @@ TraceDOS32d
 ; read the rest of the disk with the original RWTS
 
          jmp   ADStyle
+
+; callback to check if the data field is missing
+
+FFer
+         ldy   #$00
+-        lda   $C08C,x
+         bpl   -
+         cmp   #$FF
+         bne   +
+         iny
+         bne   -
+         clc
+         !byte $24        ; hide next SEC
++        sec
+         rts
 }
