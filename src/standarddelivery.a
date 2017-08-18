@@ -89,11 +89,6 @@ ConstructStandardDelivery
 ; Address array does NOT include T00,S00. This sector holds the Standard Delivery
 ; code and can not be reloaded at another address (unlike DOS 3.3).
 
-; Currently, all parameter tables are the same length (loading T00,S01-T02,S0F),
-; but this is not required. Standard Delivery can load an arbitrary number of
-; sectors and will move to the next track automatically.
-;
-
 SD_DOS33p
 ; exit via JMP $10B3
          !byte $b3,$10
@@ -109,11 +104,7 @@ SD_DOS32
 ; exit via JMP $B700
          !byte $00,$B7
 ; track 0
-         !byte     $00,$00,$9E,$9D,$00,$BF,$BE,$BD,$BC,$BB,$BA,$B9,$B8,$B7,$00
-; track 1
-         !byte $9F,$00,$00,$AB,$AA,$A9,$A8,$A7,$A6,$A5,$A4,$A3,$A2,$A1,$A0,$00
-; track 2
-         !byte $AC,$00,$00,$00,$00,$00,$B5,$B4,$B3,$B2,$B1,$B0,$AF,$AE,$AD,$00
+         !byte     $00,$00,$00,$00,$00,$BF,$BE,$BD,$BC,$BB,$BA,$B9,$B8,$B7
          !byte $C0
 
 SD_DOS32LO
