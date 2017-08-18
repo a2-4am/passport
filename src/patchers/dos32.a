@@ -8,10 +8,6 @@
          bit   gMode      ; nothing to do here in verify-only mode
          bpl   .exit
 
-         lda   #s_bootwrite
-         jsr   PrintByID
-         inc   gPatchCount
-
 ; sectors 2-9
 
          lda   #>universalrwts
@@ -21,6 +17,9 @@
          lda   #$38
          sta   $1656      ; #BASEPAGE+6
 
+         lda   #s_rwtswrite
+         jsr   PrintByID
+
 ; sector 1
 
          lda   callrwts+2
@@ -29,8 +28,16 @@
          ldx   #$11       ; #BASEPAGE+1
          ldy   #$01
          jsr   CopyMemory
-         lda   #$2C
-         sta   $1138      ; #BASEPAGE+1
+         lda   #$01
+         ldx   #$38
+         ldy   #$02
+         jsr   compare
+         !byte $20,$93
+         bcs   +
+         ldy   #$01
+         jsr   modify
+         !byte $2C
++
 
 ; sector 0
 
@@ -40,10 +47,14 @@
          lda   #<SD_DOS32
          ldx   #>SD_DOS32
          jsr   ConstructStandardDelivery
-         jmp   .exit
+         jmp   ++
 
 +        lda   #<SD_DOS32LO
          ldx   #>SD_DOS32LO
          jsr   ConstructStandardDelivery
+
+++       lda   #s_bootwrite
+         jsr   PrintByID
+         inc   gPatchCount
 .exit
 }
