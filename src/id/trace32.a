@@ -237,6 +237,8 @@ TraceDOS32d
          jmp   ADStyle
 
 ; callback to check if the data field is missing
+; and if so, fill the RWTS data buffer with zeros
+; and tell the caller that nibblizing was successful
 
 FFer
          ldy   #$00
@@ -246,8 +248,22 @@ FFer
          bne   +
          iny
          bne   -
+         ldy   callrwts+2
+         dey
+         sty   .G+2
+         dey
+         sty   .F+2
+         ldy   #$00
+         tya
+.F       sta   $FF00,y
+         iny
+         bne   .F
+.G       sta   $FF00,y
+         iny
+         cpy   #$9A
+         bne   .G
          clc
-         !byte $24        ; hide next SEC
+         rts
 +        sec
          rts
 }
