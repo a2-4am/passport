@@ -28,11 +28,22 @@
          ldx   #$11       ; #BASEPAGE+1
          ldy   #$01
          jsr   CopyMemory
+
+; If original disk loads boot1 into $3700 (and expects the RWTS at $3800),
+; we let Standard Delivery load boot1+RWTS+DOS and patch boot1 here so it
+; doesn't try to call the RWTS itself. Boot1 will exit via the standard
+; relocation routine at $1B03, after which both RWTS and DOS will be
+; in higher memory.
+;
+; This will all fail horribly if the relocation routine decides not to
+; relocate (on old Apple II machines with less than 48K), and I have made
+; peace with that.
+
          lda   #$01
          ldx   #$38
-         ldy   #$02
+         ldy   #$03
          jsr   compare
-         !byte $20,$93
+         !byte $20,$93,$37
          bcs   +
          ldy   #$01
          jsr   modify
