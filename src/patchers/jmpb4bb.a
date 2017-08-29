@@ -15,6 +15,7 @@
          !byte $4C,$BB,$B4
          bcs   .exit
          lda   #s_jmpb4bb
+         jsr   PrintByID
          lda   #$0C
          ldx   #$84
          ldy   #$03
