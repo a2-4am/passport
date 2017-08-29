@@ -228,7 +228,7 @@ StringTable
 ; can be set directly before calling PrintByID.
 ;
 .header
-         !text "Passport by 4am               2017-08-18",$00
+         !text "Passport by 4am               2017-08-29",$00
 .mainmenu
          !text "________________________________________",$8D,$8D,$8D,$8D,$8D,$8D,$8D
          !text "              "
@@ -389,7 +389,7 @@ StringTable
 .e7
          !text "T%t,S%0 Found E7 bitstream",$8D,$00
 .jmpb4bb
-         !text "T00,S0C Disk calls a protection check at"
+         !text "T%t,S%0 Disk calls a protection check at"
          !text "$B4BB before initializing DOS.",$8D,$00
 .jmpb400
          !text "T%t,S%0 Disk calls a protection check at"
