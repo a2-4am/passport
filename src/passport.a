@@ -75,6 +75,13 @@ IN0      =     $FE93
 ; Zero-page addresses we use for variables
 !ifdef PASS2 {
 } else {
+;unpacker variables, no need to change these
+src	=	$3c       ; word
+dst	=	$3e       ; word
+ecx	=	$40       ; word
+last	=	$42       ; word
+tmpu	=	$44       ; word
+
 nibsrcindex =  $EC        ; byte
 nibdestindex = $ED        ; byte
 prbuf    =     $EE        ; word
@@ -95,7 +102,7 @@ flag     =     $FF        ; byte
 }
 
 ; Application constants (not zero addresses)
-RELBASE  =     $5700      ; address to move Passport code
+RELBASE  =     $5900      ; address to move Passport code
                           ; so that it's out of the way
 LOWPOINT =     $4300      ; lowest available address for code
 BASEPAGE =     $10        ; Special Delivery tracer assumes
@@ -501,13 +508,22 @@ StartWithUniv
 
 CopyUniversal
          lda   #>universalrwts
-         ldx   #$B8
-         ldy   #$08
-         jsr   CopyMemory
-         lda   #$00
+         sta   src+1
+         lda   #<universalrwts
+         sta   src
+         lda   #$B8
+         sta   dst+1
+         lda   #0
+         sta   dst
+         jsr   Unpack
          sta   callrwts+1
          lda   #$BD
          sta   callrwts+2
+         ldy   #$96
+-        lda   nibtable,y
+         sta   $BA00,y
+         iny
+         bne   -
          rts
 
 Cancel
@@ -850,6 +866,8 @@ gRAMDiskRef
                           ; non-zero if open
 
          !source "universalrwts.a"
+         !source "unpack.a"
+         !source "nibtable.a"
          }
 LastMover
 

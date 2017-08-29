@@ -707,7 +707,7 @@ WriteRAMToDisk
          jsr   WriteTrackMLI
          inc   gTrack
          lda   gTrack
-         cmp   #$22
+         cmp   #$23
          bne   -
 
          lda   #TRUE
