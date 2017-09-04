@@ -1,6 +1,6 @@
 ;-------------------------------
 ; #MEMORYCONFIG
-; modified PRODOS launches MEMORY.CONFIG
+; modified ProDOS launches MEMORY.CONFIG
 ; as startup program, which executes a
 ; protection check before launching the
 ; real startup program

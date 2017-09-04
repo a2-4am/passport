@@ -188,7 +188,7 @@
          !byte $20,$85,$1E ;JSR $1E85
          !byte $80         ;dummy
          !byte $08,$CE,$CF,$CD,$CF,$CE,$C9,$C3,$CF
-                           ;NOMONICO
+                           ;"NOMONICO"
 +        bcc   +
          ldy   #19
          jsr   SearchTrack
