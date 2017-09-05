@@ -1,0 +1,42 @@
+;-------------------------------
+; #DOS32JMPB4BB
+; boot2 jumps to $B4BB for a
+; nibble check (13-sector variant)
+; e.g. Bellhop
+;-------------------------------
+!zone {
+         lda   gIsDOS32  ; if DOS 3.2
+         bne   .exit
+         lda   gTrack
+         cmp   #$01
+         bne   .exit
+         lda   #$00
+         sta   gDisplayBytes
+         ldx   #$84
+         ldy   #$03
+         jsr   compare    ; and T01,S00,$84 ==
+         !byte $4C,$BB,$B4
+         bcs   .exit
+         lda   #s_jmpb4bb
+         jsr   PrintByID
+         lda   #$00
+         ldx   #$84
+         ldy   #$03
+         jsr   modify     ; then set T01,S00,$84 =
+         !byte $AD,$E9,$37
+;
+; also check a variant that redirects the DOS input
+; vector through code that is only loaded by the
+; protection check we just bypassed
+;
+         lda   #$01
+         ldx   #$BA
+         ldy   #$03
+         jsr   compare    ; if T01,S01,$BA ==
+         !byte $4C,$0B,$37
+         bcs   .exit
+         ldy   #$03
+         jsr   modify     ; then set T01,S01,$BA =
+         !byte $6C,$38,00
+.exit
+}
