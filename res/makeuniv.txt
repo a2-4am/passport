@@ -1,0 +1,6 @@
+to create the compressed universalrwts.a:
+1. acme --cpu 6502 --setpc 0 -o universalrwts.bin universalrwts.org
+2. appack c universalrwts.bin universalrwts.pak
+3. use a sector editor to remove the first #$18 bytes of the universalrwts.pak file
+4. convert the binary back to ACME-compatible text (!byte, '$' for hex, no trailing commas)
+5. save in universalrwts.a
