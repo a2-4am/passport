@@ -187,7 +187,7 @@ IDBootloader
          sta   gIsProDOS
          beq   .useuniv   ; always branches
 ;
-;Apple Pascal (all versions)
+; Apple Pascal (all versions)
 ;
 +        jsr   IDPascal
          bcs   +
