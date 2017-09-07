@@ -155,6 +155,7 @@ FirstMover
          !source "id/dos33.a"
          !source "id/prodos.a"
          !source "id/pascal.a"
+         !source "id/rdos.a"
          !source "id/jsr8b3.a"
          !source "id/mecc.a"
          !source "id/datasoft.a"

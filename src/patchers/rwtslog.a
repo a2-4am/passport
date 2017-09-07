@@ -11,36 +11,45 @@
 ; disk allows either $D4 or $D5 for the
 ; first address prologue nibble
 ;-------------------------------
-         lda   gIsRWTS    ; if DOS 3.3 RWTS
-         bne   +
+; DOS 3.3 variant
          lda   #$03
          sta   gDisplayBytes
          ldx   #$4F
          ldy   #$0A
-         jsr   compare    ; and T00,S03,$4F ==
+         jsr   compare    ; if T00,S03,$4F ==
          !byte $BD,$8C,$C0
          !byte $10,$FB
          !byte $4A
          !byte WILDCARD,$6A
          !byte $D0,$EF
-         bcs   +
+         bcc   .yeslsr
+; RDOS variant
+         ldx   #$4D
+         ldy   #$0A
+         jsr   compare    ; or T00,S03,$4D ==
+         !byte $BD,$8C,$C0
+         !byte $10,$FB
+         !byte $4A
+         !byte WILDCARD,$6A
+         !byte $D0,$EF
+         bcs   .endlsr
+.yeslsr
          lda   #s_lsr6a
          jsr   PrintByID
          inc   gPatchCount
-+
+.endlsr
 
 ;-------------------------------
 ; RWTS "CMP #$08 / BCS" identification
 ; disk allows either $DE or a timing bit
 ; for the first address epilogue nibble
 ;-------------------------------
-         lda   gIsRWTS    ; if DOS 3.3 RWTS
-         bne   +
+; DOS 3.3 variant
          lda   #$03
          sta   gDisplayBytes
          ldx   #$8B
          ldy   #$15
-         jsr   compare    ; and T00,S03,$8B ==
+         jsr   compare    ; if T00,S03,$8B ==
          !byte $BD,$8C,$C0
          !byte $10,$FB
          !byte $C9,$DE
@@ -53,53 +62,57 @@
          !byte $EA
          !byte $18
          !byte $60
-         bcs   +
+         bcc   .yesbcs
+; RDOS variant
+         ldx   #$89
+         ldy   #$11
+         jsr   compare    ; or T00,S03,$89 ==
+         !byte $BD,$8C,$C0
+         !byte $10,$FB
+         !byte $C9,$DE
+         !byte $F0,$09
+         !byte $48
+         !byte $68
+         !byte $BD,$8C,$C0
+         !byte $C9,$80
+         !byte $B0
+         bcs   .endbcs
+.yesbcs
          lda   #s_bcs08
          jsr   PrintByID
          inc   gPatchCount
-+
+.endbcs
 
 ;-------------------------------
 ; RWTS "CMP / BNE 0" identification
 ; disk allows any value for
 ; for the first address epilogue nibble
 ;-------------------------------
-         lda   gIsRWTS    ; if DOS 3.3 RWTS
-         bne   +
+; DOS 3.3 variant
          lda   #$03
          sta   gDisplayBytes
          ldx   #$8B
          ldy   #$09
-         jsr   compare    ; and T00,S03,$8B ==
+         jsr   compare    ; if T00,S03,$8B ==
          !byte $BD,$8C,$C0
          !byte $10,$FB
          !byte $C9,WILDCARD
          !byte $D0,$00
-         bcs   +
-         lda   #s_cmpbne0
-         jsr   PrintByID
-         inc   gPatchCount
-+
-
-;-------------------------------
-; RWTS "CMP / BNE 0" identification (David-DOS variant)
-; disk allows any value for
-; for the first address epilogue nibble
-;-------------------------------
-         lda   gIsDavidDOS ; if David-DOS bootloader
-         bne   +
+         bcc   .yesbne0
+; David-DOS variant
          lda   #$05
          sta   gDisplayBytes
          ldx   #$8B
          ldy   #$09
-         jsr   compare    ; and T00,S05,$8B ==
+         jsr   compare    ; or T00,S05,$8B ==
          !byte $BD,$8C,$C0
          !byte $10,$FB
          !byte $C9,WILDCARD
          !byte $D0,$00
-         bcs   +
+         bcs   .endbne0
+.yesbne0
          lda   #s_cmpbne0
          jsr   PrintByID
          inc   gPatchCount
-+
+.endbne0
 }

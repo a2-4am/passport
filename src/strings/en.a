@@ -107,7 +107,8 @@ s_advint =     $58
 s_dos32b0 =    $59
 s_bootwrite =  $5A
 s_rwtswrite =  $5B
-STRINGCOUNT =  $5C
+s_rdos =       $5C
+STRINGCOUNT =  $5D
 
 !zone {
 StringTable
@@ -203,6 +204,7 @@ StringTable
          !word .dos32boot0
          !word .bootwrite
          !word .rwtswrite
+         !word .rdos
 ;
 ; Text can contain substitution strings, which
 ; are replaced by current values at runtime. Each
@@ -228,7 +230,7 @@ StringTable
 ; can be set directly before calling PrintByID.
 ;
 .header
-         !text "Passport by 4am               2017-09-05",$00
+         !text "Passport by 4am               2017-09-07",$00
 .mainmenu
          !text "________________________________________",$8D,$8D,$8D,$8D,$8D,$8D,$8D
          !text "              "
@@ -506,4 +508,6 @@ StringTable
          !text "bootloader",$8D,$00
 .rwtswrite
          !text "T00,S02 Writing built-in RWTS",$8D,$00
+.rdos
+         !text "T00,S00 Found RDOS bootloader",$8D,$00
 }

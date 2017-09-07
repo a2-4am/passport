@@ -221,12 +221,21 @@ IDBootloader
          bcs   +
          lda   #s_micrograms
          jsr   PrintByID
+         bcc   .useuniv   ; always branches
 ;
 ; Quick-DOS
 ;
 +        jsr   IDQuickDOS
          bcs   +
          lda   #s_quickdos
+         jsr   PrintByID
+         bcc   .useuniv   ; always branches
+;
+; RDOS
+;
++        jsr   IDRDOS
+         bcs   +
+         lda   #s_rdos
          jsr   PrintByID
 
 +

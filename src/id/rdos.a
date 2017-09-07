@@ -1,0 +1,26 @@
+;-------------------------------
+; IDRDOS
+; identify RDOS 16-sector bootloader
+;
+; in:  $0800..$08FF contains T00,S00
+;      first page of track buffer also contains T00,S00
+; out: C clear if RDOS 16-sector bootloader found
+;      C set otherwise
+;      all registers clobbered
+;      all other flags clobbered
+;-------------------------------
+!zone {
+IDRDOS
+         lda   #$00
+         ldx   #$00
+         ldy   #$0E
+         jsr   compare    ; if T00,S00,$00 ==
+         !byte $01
+         !byte $A9,$60    ; LDA #$60
+         !byte $8D,$01,$08; STA $0801
+         !byte $A2,$00    ; LDX #$00
+         !byte $A0,$1F    ; LDY #$1F
+         !byte $B9,$00,$08; LDA $0800,Y
+         !byte $49        ; EOR
+         rts
+}
