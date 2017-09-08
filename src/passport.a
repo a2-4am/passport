@@ -508,23 +508,27 @@ StartWithUniv
 ; note: execution falls through here
 
 CopyUniversal
+         lda   #$B8
+CopyUniversalAnywhere
+         sta   dst+1
+         clc
+         adc   #$02
+         sta   .cu+2
+         lda   #$00
+         sta   dst
          lda   #>universalrwts
          sta   src+1
          lda   #<universalrwts
          sta   src
-         lda   #$B8
-         sta   dst+1
-         lda   #0
-         sta   dst
          jsr   Unpack
          sta   callrwts+1
          lda   #$BD
          sta   callrwts+2
          ldy   #$96
--        lda   nibtable,y
-         sta   $BA00,y
+.culoop  lda   nibtable,y
+.cu      sta   $d100,y    ; set at runtime
          iny
-         bne   -
+         bne   .culoop
          rts
 
 Cancel

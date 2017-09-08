@@ -10,10 +10,8 @@
 
 ; sectors 2-9
 
-         lda   #>universalrwts
-         ldx   #$12       ; #BASEPAGE+2
-         ldy   #$08
-         jsr   CopyMemory
+         lda   #$12       ; #BASEPAGE+2
+         jsr   CopyUniversalAnywhere
          lda   #$38
          sta   $1656      ; #BASEPAGE+6
 
