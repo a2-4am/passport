@@ -8,6 +8,16 @@
          bit   gMode      ; nothing to do here in verify-only mode
          bpl   .exit
 
+; sector 1
+
+         lda   callrwts+2
+         sta   .cr+1
+         sec
+         sbc   #$06       ; #$B7 or #$37
+         ldx   #$11       ; #BASEPAGE+1
+         ldy   #$01
+         jsr   CopyMemory
+
 ; sectors 2-9
 
          lda   #$12       ; #BASEPAGE+2
@@ -18,24 +28,16 @@
          lda   #s_rwtswrite
          jsr   PrintByID
 
-; sector 1
-
-         lda   callrwts+2
-         sec
-         sbc   #$06       ; #$B7 or #$37
-         ldx   #$11       ; #BASEPAGE+1
-         ldy   #$01
-         jsr   CopyMemory
-
+; If original disk loads boot1 into $B700, Standard Delivery only needs to
+; load boot1+RWTS (into $B700..$BFFF) and transfer control to boot1 at $B700.
+;
 ; If original disk loads boot1 into $3700 (and expects the RWTS at $3800),
 ; we let Standard Delivery load boot1+RWTS+DOS and patch boot1 here so it
 ; doesn't try to call the RWTS itself. Boot1 will exit via the standard
 ; relocation routine at $1B03, after which both RWTS and DOS will be
-; in higher memory.
-;
-; This will all fail horribly if the relocation routine decides not to
-; relocate (on old Apple II machines with less than 48K), and I have made
-; peace with that.
+; in higher memory. This will fail horribly if the relocation routine decides
+; not to relocate (on old Apple II machines with less than 48K), and I have
+; made peace with that.
 
          lda   #$01
          ldx   #$38
@@ -50,7 +52,7 @@
 
 ; sector 0
 
-         lda   callrwts+2
+.cr      lda   #$d1       ; set at runtime
          cmp   #$3D
          beq   +
          lda   #<SD_DOS32

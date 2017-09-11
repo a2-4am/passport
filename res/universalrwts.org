@@ -18,7 +18,7 @@
 ;-------------------------------
 
 UNIV_A1 = $B956           ; must LSR before setting
-UNIV_A2 = $B95E
+UNIV_A2 = $B95F
 UNIV_A3 = $B968
 UNIV_D1 = $B8E7
 UNIV_D2 = $B8F1
@@ -160,4 +160,3 @@ nibtableff
          !byte $C0,$A9,$00,$8D,$00,$E0,$4C,$44,$B7,$00,$00,$00,$8D,$63,$AA,$8D
          !byte $70,$AA,$8D,$71,$AA,$60,$20,$5B,$A7,$8C,$B7,$AA,$60,$20,$7E,$AE
          !byte $AE,$9B,$B3,$9A,$20,$16,$A3,$BA,$8E,$9B,$B3,$A9,$09,$4C,$85,$B3
-

@@ -18,7 +18,7 @@
 ;-------------------------------
 
 UNIV_A1 = $B956           ; must LSR before setting
-UNIV_A2 = $B95E
+UNIV_A2 = $B95F
 UNIV_A3 = $B968
 UNIV_D1 = $B8E7
 UNIV_D2 = $B8F1
