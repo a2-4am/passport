@@ -77,6 +77,11 @@ TraceLaureate
          iny
          bne   -
 ;
+; use built-in RWTS for track 0
+;
+         lda   #$FE
+         sta   T00S0B
+;
 ; don't read track 0 sectors $0C-$0F
 ; (never read, some disks have intentionally bad sectors there)
 ; (seen on Sound Ideas)
