@@ -754,6 +754,7 @@ _applyToAll
          !source "patchers/jmpb412.a"           ; T02 only
          !source "patchers/jmpb400.a"           ; T02 && gIsBoot0 only
          !source "patchers/advint.a"            ; gAdventureInternational only
+         !source "patchers/jsr8635.a"           ; gIsRWTS only
 
          lda   gPatchCount
          beq   .nopatches

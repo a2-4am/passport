@@ -1,0 +1,39 @@
+;-------------------------------
+; #JSR8635
+; self-decrypting nibble check at $8635 finds D5D5F7 sequence on track 3
+;
+; tested on
+; Moon Bingo (1985, Grolier)
+; Rhyme-A-Line (1985, Grolier)
+; Rhymo's Falling star (1985, Grolier)
+; The Story of Miss Mouse (1985, Grolier)
+; Rhyme Land (1985, Grolier)
+; First Steps to Reading: Phonics I (1985, Grolier)
+; First Steps to Reading: Phonics II (1985, Grolier)
+;-------------------------------
+!zone {
+         lda   gIsBoot0
+         bne   .exit
+         lda   #$0F
+         sta   .sector+1
+.sector  lda   #$FF       ; modified at runtime
+         sta   gDisplayBytes
+         ldx   #$00
+         ldy   #$0A
+         jsr   compare
+         !byte $35,$86    ; BLOAD address
+         !byte WILDCARD,WILDCARD; BLOAD length
+         !byte $4E,$38,$86; LSR $8638
+         !byte $DD,$3B,$86
+         bcs   +
+         lda   #s_d5d5f7
+         jsr   PrintByID
+         lda   gDisplayBytes
+         ldx   #$04
+         ldy   #$01
+         jsr   modify
+         !byte $60
++        dec   .sector+1
+         bpl   .sector
+.exit
+}
