@@ -3,9 +3,7 @@
 ; high-level function to read a single sector.
 ; in:  gIsProtDOS is TRUE or FALSE
 ;      if gProtDOS is FALSE, callrwts+2 has been set to
-;        the RWTS entry point (e.g. $BD or $3D or $FD)
-;      if RWTS is in LC RAM, the appropriate RAM bank
-;        has already been selected for read/write access
+;        the RWTS entry point (e.g. $BD or $3D)
 ; out: all registers clobbered
 ;      C clear if read was successful
 ;      C set if read failed

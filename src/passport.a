@@ -102,7 +102,7 @@ flag     =     $FF        ; byte
 }
 
 ; Application constants (not zero addresses)
-RELBASE  =     $5800      ; address to move Passport code
+RELBASE  =     $5700      ; address to move Passport code
                           ; so that it's out of the way
 LOWPOINT =     $4300      ; lowest available address for code
 BASEPAGE =     $10        ; Special Delivery tracer assumes
@@ -755,6 +755,7 @@ _applyToAll
          !source "patchers/jmpb400.a"           ; T02 && gIsBoot0 only
          !source "patchers/advint.a"            ; gAdventureInternational only
          !source "patchers/jsr8635.a"           ; gIsRWTS only
+         !source "patchers/dos32jmpb4bb.a"      ; T01 && gIsDOS32 only
 
          lda   gPatchCount
          beq   .nopatches

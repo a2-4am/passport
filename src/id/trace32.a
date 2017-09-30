@@ -145,11 +145,18 @@ TraceDOS32LO
          cmp   #$36
          bne   .fail
 +
-; set up RWTS entry point
-
+;
+; set up RWTS entry point and other self-modified vectors
+; that depend on where the RWTS is in memory
+;
          clc
-         adc   #$07
+         adc   #$03       ; $B9 or $39
+         sta   b4bbmodify+2
+         sta   b4bbmodify2+2
+         adc   #$04       ; $BD or $3D
          sta   callrwts+2
+         adc   #$02       ; $BF or $3F
+         sta   b4bbcompare+1
          lda   #$00
          sta   callrwts+1
 

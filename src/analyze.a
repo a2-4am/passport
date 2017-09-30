@@ -322,11 +322,12 @@ xOptimumRes
 
 ;-------------------------------
 ; xB4BB
-; check if disk changes RWTS in
-; late boot after a nibble check
+; check if disk changes RWTS in late boot after a nibble check
+; (very messy because it needs to handle DOS 3.2 and 3.3 variants
+; in either low or high memory)
 ;
 ; in:  $0800..$08FF contains boot0
-;      $B600..$BFFF contains boot1
+;      either $3600..$3FFF or $B600..$BFFF contains boot1
 ; out: C clear if RWTS was modified in this routine
 ;      C set otherwise
 ;-------------------------------
@@ -346,16 +347,32 @@ b4bbcompare
          !byte $3F,$A9,$00,$85,$3C,$85,$42,$E6
          !byte $42,$A9,$FE,$85,$3E,$A0,$00,$AD
          bcs   _b4bbexit
+         lda   gIsDOS32
+         beq   .dos32
+         lda   #$55       ; low byte of address that checks address prologue 1
+         sta   b4bbmodify+1
+         lda   #$91       ; low byte of address that checks address epilogue 1
+         sta   b4bbmodify2+1
+         ldx   #$00       ; track
+         ldy   #$0C       ; sector
+         bne   .all       ; always branches
+.dos32
+         lda   #$76       ; low byte of address that checks address prologue 1
+         sta   b4bbmodify+1
+         lda   #$B2       ; low byte of address that checks address epilogue 1
+         sta   b4bbmodify2+1
+         ldx   #$01       ; track
+         ldy   #$00       ; sector
+.all
+         stx   gTrack
+         sty   gSector
          lda   #$00
-         sta   gTrack
          sta   gAddress
-         lda   #$0C
-         sta   gSector
          lda   #$0C
          clc
          adc   #BASEPAGE
          sta   gAddress+1
-         jsr   ReadSector
+         jsr   ReadSector ; read sector so we can look for 'JMP $B4BB' marker
          bcs   _b4bbexit
          lda   #$0C
          ldx   #$84
@@ -363,21 +380,29 @@ b4bbcompare
          jsr   compare
          !byte $4C,$BB,$B4
          bcs   _b4bbexit
-         lda   #$02
-         sta   gTrack
-         sta   gSector
-         jsr   ReadSector
+         lda   gIsDOS32
+         beq   .dos32b
+         ldx   #$02       ; track
+         ldy   #$02       ; sector
+         bne   .allb      ; always branches
+.dos32b
+         ldx   #$02       ; track
+         ldy   #$09       ; sector
+.allb
+         stx   gTrack
+         sty   gSector
+         jsr   ReadSector ; read sector to get address prologue 3 for rest of disk
          bcs   _b4bbexit
          lda   #$0C
          clc
          adc   #BASEPAGE
          sta   x0+2
-x0       lda   $FFC2      ; modified at runtime (above)
+x0       lda   $FFC2      ; high byte modified at runtime (above)
 b4bbmodify
-         sta   $FF55      ; modified at runtime (in Inspect1)
+         sta   $FFFF      ; modified at runtime (high byte in Inspect1, low byte above)
          lda   #$DE
 b4bbmodify2
-         sta   $FF91      ; modified at runtime (in Inspect1)
+         sta   $FFFF      ; modified at runtime (high byte in Inspect1, low byte above)
 _b4bbexit
          pla
          sta   gSector
