@@ -196,7 +196,7 @@ SDsuccess
 ; mark tracks 0-2 as "skip" in sector map
 
          ldy   #$2F
-         lda   #$00
+         lda   #kSectorIgnore
 skipsectors
          sta   T00,y
          dey

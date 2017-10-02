@@ -1,41 +1,58 @@
-!zone {
-InitSectorMap
- lda #<sectormap
- sta .B+1
- lda #>sectormap
- sta .B+2
- lda #$FF
- ldx #$22
-.A ldy #$0F
-.B sta $FFFF
- inc .B+1
- bne +
- inc .B+2
-+ dey
- bpl .B
- dex
- bpl .A
- rts
-}
-
 ;-------------------------------
-; This is a map of how much we care about each sector
-; on the disk. Each byte is one sector, arranged in
-; increasing logical sector order from T00,S00 to T22,S0F.
-; Some sectors have their own individual labels just for
-; convenience.
-; e.g.   LDA   #$80
+; Passport maintains a table of codes for each sector on the disk.
+; One byte per sector, arranged in increasing logical sector order
+; from T00,S00 to T22,S0F. Some sectors have their own individual
+; labels for convenience, but you can use math to find any specific
+; sector.
+; e.g.
+;        LDA   #kSectorOptional
 ;        STA   T00S0A
 ; will mark T00,S0A as optional
 ;
-; Possible values for each sector:
-; 00 = ignore this sector (don't even read it)
-; 80 = sector is optional -- read, but ignore any errors
-; FE = sector is required, and switch to the built-in RWTS
-;      before reading it (if we haven't already)
-; FF = sector is required -- read, and any error is fatal
-;      (this is the default value for all sectors)
+;        LDA   #kSectorOptional
+;        LDY   #$0A
+;        STA   T00,Y
+; will also mark T00,S0A as optional
+;
+; The sector map is reset for each disk (to #kSectorRequired for
+; all sectors), then modified based on boot sector identification
+; and other factors.
+;
+; Codes are opaque values, not bit flags.
+; Some codes are grouped into ranges that are compared as integers.
+; Always use labels for comparison.
+;
+kSectorIgnore   = $00                ; ignore this sector (don't even read it)
+kSectorOptional = $01                ; sector is optional (read, but errors are non-fatal)
+kSectorSwitchToBuiltinRWTS = $FE     ; sector is required, and switch to built-in RWTS before reading it
+kSectorRequired = $FF                ; sector is required (errors are fatal)
+
+; range of codes that trigger various custom routines before reading a sector
+kSectorCustomFirst = $C0
+kSectorCustomLast = $D0
+; specific codes
+kSectorCustomDOS32B4BB = $C0            ; DOS 3.2 / JMP B4BB RWTS swapper
 ;-------------------------------
+InitSectorMap
+!zone {
+         lda   #<sectormap
+         sta   .B+1
+         lda   #>sectormap
+         sta   .B+2
+         lda   #kSectorRequired
+         ldx   #$22
+.A       ldy   #$0F
+.B       sta   $FFFF
+         inc   .B+1
+         bne   +
+         inc   .B+2
++        dey
+         bpl   .B
+         dex
+         bpl   .A
+         rts
+}
+
 sectormap
 T00S00
 T00      !byte $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
@@ -50,7 +67,9 @@ T01      !byte $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
 T01S0F   !byte                                                             $FF
 T02      !byte $FF,$FF,$FF,$FF,$FF
 T02S05   !byte                     $FF
-         !byte                         $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
+         !byte                         $FF,$FF,$FF,$FF,$FF,$FF
+T02S0C   !byte                                                 $FF
+         !byte                                                     $FF,$FF,$FF
 T03      !byte $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
 T04      !byte $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
 T05      !byte $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF

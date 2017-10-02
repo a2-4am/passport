@@ -142,7 +142,7 @@ _Inspect1a
          bcs   .x7
          lda   #s_milliken
          jsr   PrintByID
-         lda   #$80
+         lda   #kSectorOptional
          sta   T02S05
 ;
 ; Check for Adventure International RWTS (sets flag for patcher)

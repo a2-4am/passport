@@ -212,7 +212,7 @@ TraceDOS32d
          sta   .C+1
          lda   #>sectormap
          sta   .C+2
-         lda   #$00
+         lda   #kSectorIgnore
          ldx   #$22
 .A       ldy   #$0F
 .B       cpy   #$03

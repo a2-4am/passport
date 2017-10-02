@@ -86,7 +86,7 @@ TraceLaureate
 ; (never read, some disks have intentionally bad sectors there)
 ; (seen on Sound Ideas)
 ;
-         lda   #$00
+         lda   #kSectorIgnore
          sta   T00S0C
          sta   T00S0D
          sta   T00S0E

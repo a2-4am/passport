@@ -65,6 +65,32 @@ endprotread
          rts
 }
 
+;-------------------------------
+; PreReadSector
+; in:  A contains sector map code that specifies what to do
+; out: A contains (possibly new) sector map code
+;      assume all other things clobbered
+;-------------------------------
+PreReadSector
+!zone {
+         cmp   #kSectorCustomDOS32B4BB
+         bne   +
+         ldx   callrwts+2
+         dex
+         dex
+         dex
+         dex
+         stx   .a+2
+         stx   .b+2
+         ldx   #$D5
+.a       stx   $FF76
+         ldx   #$ED
+.b       stx   $FFB2
+         bne   .exit      ; always branches
++
+.exit    rts
+}
+
 gRWTSParams               ; used to read each sector
          !byte $01,$60,$01,$00
 gTrack   !byte $00

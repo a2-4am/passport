@@ -256,7 +256,7 @@ xHeredityDog
          !byte $C9,$07,$D0,$EC,$A9,$18,$8D,$42,$B9,$A9,$0A,$8D,$ED,$B7,$D0,$05
          pla
          bcs   .exit
-         lda   #$80
+         lda   #kSectorOptional
          sta   T00S0A
 .exit
          rts
@@ -288,7 +288,7 @@ xSunburst
          !byte $78,$04,$90,$2B
          bcs   .no
 .yes
-         lda   #$80
+         lda   #kSectorOptional
          sta   T11S0F
 .no
          rts
@@ -314,7 +314,7 @@ xOptimumRes
          !byte $B1,WILDCARD,$85,$54
          bcs   .no
 .yes
-         lda   #$80
+         lda   #kSectorOptional
          sta   T01S0F
 .no
          rts
@@ -346,8 +346,9 @@ b4bbcompare
          !byte $08,$85,$3D,$85,$43,$A9,$BF,$85
          !byte $3F,$A9,$00,$85,$3C,$85,$42,$E6
          !byte $42,$A9,$FE,$85,$3E,$A0,$00,$AD
-         bcs   _b4bbexit
-         lda   gIsDOS32
+         bcc   +
+         jmp   _b4bbexit
++        lda   gIsDOS32
          beq   .dos32
          lda   #$55       ; low byte of address that checks address prologue 1
          sta   b4bbmodify+1
@@ -403,6 +404,10 @@ b4bbmodify
          lda   #$DE
 b4bbmodify2
          sta   $FFFF      ; modified at runtime (high byte in Inspect1, low byte above)
+         lda   gIsDOS32
+         bne   _b4bbexit
+         lda   #kSectorCustomDOS32B4BB
+         sta   T02S0C
 _b4bbexit
          pla
          sta   gSector
@@ -438,7 +443,7 @@ xB660
          !byte $30,$02
          bcs   .no
 .yes
-         lda   #$FE
+         lda   #kSectorSwitchToBuiltinRWTS
          sta   T00S09
 .no
          rts

@@ -85,7 +85,7 @@ _restore3
 ; Mark track 0 and part of track 2 as "skip" in sector map
 ;
          ldy   #$0F
-         lda   #$00
+         lda   #kSectorIgnore
 -        sta   T00,y
          dey
          bpl   -

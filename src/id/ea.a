@@ -48,7 +48,7 @@ foundea
 ; mark track $22 as "optional" in sector map
 
          ldy   #$0F
-         lda   #$80
+         lda   #kSectorOptional
 .ignoresectors
          sta   T22,y
          dey
