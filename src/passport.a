@@ -762,6 +762,7 @@ _applyToAll
          !source "patchers/advint.a"            ; gAdventureInternational only
          !source "patchers/jsr8635.a"           ; gIsRWTS only
          !source "patchers/dos32jmpb4bb.a"      ; T01 && gIsDOS32 only
+         !source "patchers/sra.a"               ; gIsDOS32 or gIsRWTS only
 
          lda   gPatchCount
          beq   .nopatches

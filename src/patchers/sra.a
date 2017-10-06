@@ -1,0 +1,43 @@
+;-------------------------------
+; #SRA
+; nibble check hidden inside character generator (file named MPG CODE)
+; seen on 13- and 16-sector disks by Science Research Associates
+;
+; tested on
+; Decimals C-2 (1981, SRA)
+; Decimals C-3 (1981, SRA)
+; Fractions C-2 (1981, SRA)
+; Fractions C-3 (1981, SRA)
+; Multiplication B (1981, SRA)
+; Measurement D-1 (1983, SRA)
+;-------------------------------
+!zone {
+         lda   gIsDOS32
+         bne   +
+         lda   #$0C
+         bne   .start                ; always branches
++        lda   gIsBoot0
+         bne   .exit
+         lda   #$0F
+.start   sta   .sector+1
+.sector  lda   #$FF                  ; modified above
+         sta   gDisplayBytes
+         ldx   #$3A
+         ldy   #$09
+         jsr   compare
+         !byte $20,$00,$7B           ; JSR $7B00
+         !byte $8D,$6C,$7A           ; STA $7A6C
+         !byte $AD,$B1,$78           ; LDA $78B1
+         bcs   .nextsector
+         lda   #s_sra
+         jsr   PrintByID
+         lda   .sector+1
+         inx
+         ldy   #$02
+         jsr   modify
+         !byte $0F,$5A               ; new JSR entry point
+.nextsector
+         dec   .sector+1
+         bpl   .sector
+.exit
+}
