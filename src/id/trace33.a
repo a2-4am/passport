@@ -159,6 +159,21 @@ _Inspect1a
          lda   #TRUE
          sta   gAdventureInternational
 ;
+; Check for Infocom disk (need to massage RWTS a little)
+;
++        lda   $08FE
+         cmp   #$23
+         bne   +
+         lda   #$AD       ; allow $AD..$FF for third data prologue nibble
+         sta   $24FC
+         lda   #$90
+         sta   $24FD
+         ldy   #$0F       ; copy sector order map from boot0 into RWTS
+-        lda   $084D,y
+         sta   $2BB8,y
+         dey
+         bpl   -
+;
 ; good to go
 ;
 +        jmp   ADStyle    ; use this RWTS to read the disk

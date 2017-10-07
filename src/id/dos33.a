@@ -13,21 +13,25 @@
 !zone {
 IDDOS33
 ;
-; $08FE must be either $36 or $B6 (prevents matching on some
-; Infocom disks that would otherwise match but then load
-; boot1 over program space and crash)
+; $08FE must be either $B6 (standard) or $20..$36
+; ($36 is a master DOS that relocates itself later.
+; Others like $22 are used by early Infocom games.)
+; Must weed out some Infocom and TLC disks that would
+; load over program space and crash.
 ;
          lda   $08FE
-         cmp   #$36
-         beq   +
          cmp   #$B6
-         beq   +
-         sec
+         beq   ++
+         cmp   #$37
+         bcc   +
+-        sec
          rts
++        cmp   #$20
+         bcc   -
 ;
 ; Code at $0801 must be standard (with one exception)
 ;
-+        lda   #$00
+++       lda   #$00
          ldx   #$00
          ldy   #$3F
          jsr   compare    ; if T00,S00,$00 ==
