@@ -9,10 +9,23 @@
 ;      C set if read failed
 ;-------------------------------
 ReadSector
-         lda   #$AA       ; lots of custom RWTS routines
-         sta   $31        ; need these zero page locations
-         lda   #$AD       ; set to magic values
+;
+; Lots of custom RWTS routines need these zero page locations
+; set to magic values. Always the same values though!
+;
+         lda   #$AA
+         sta   $31
+         lda   #$AD
          sta   $4E
+;
+; Copy requested track and sector into RWTS parameter table.
+; These are maintained outside the table because some disks
+; alter the values from inside the RWTS. (MUSE)
+;
+         lda   gTrack
+         sta   _track
+         lda   gSector
+         sta   _sector
 
          lda   gIsProtDOS
          beq   _protread
@@ -20,7 +33,7 @@ ReadSector
 setuprwts
          ldy   #<gRWTSParams
          lda   #>gRWTSParams
-callrwts jsr   $FF00      ; modified at runtime (see Inspect1)
+callrwts jsr   $FF00      ; modified at runtime
          bcc   endread
          lda   gOnAClearDayYouCanReadForever
          beq   setuprwts
@@ -91,10 +104,13 @@ PreReadSector
 .exit    rts
 }
 
-gRWTSParams               ; used to read each sector
-         !byte $01,$60,$01,$00
 gTrack   !byte $00
 gSector  !byte $00
+
+gRWTSParams               ; used to read each sector
+         !byte $01,$60,$01,$00
+_track   !byte $00
+_sector  !byte $00
          !word dct
 gAddress !word $1F00
          !byte $00,$00,$01,$00,$FE,$60,$01,$00,$00
