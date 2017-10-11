@@ -2,7 +2,10 @@
 ; #DOS32JMPB4BB
 ; boot2 jumps to $B4BB for a
 ; nibble check (13-sector variant)
-; e.g. Bellhop
+;
+; tested on
+; Bellhop (1982, Imaginative Systems)
+; Property Management System demo (1982, Realty Software Company)
 ;-------------------------------
 !zone {
          lda   gIsDOS32  ; if DOS 3.2
@@ -31,9 +34,9 @@
 ;
          lda   #$01
          ldx   #$BA
-         ldy   #$03
+         ldy   #$01
          jsr   compare    ; if T01,S01,$BA ==
-         !byte $4C,$0B,$37
+         !byte $4C
          bcs   .exit
          ldy   #$03
          jsr   modify     ; then set T01,S01,$BA =

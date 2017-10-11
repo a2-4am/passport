@@ -28,9 +28,9 @@ _jmpb4bbhi
 ;
          lda   #$0D
          ldx   #$BA
-         ldy   #$03
+         ldy   #$01
          jsr   compare    ; if T00,S0D,$BA ==
-         !byte $4C,$0B,$B7
+         !byte $4C
          bcs   .exit
          ldy   #$03
          jsr   modify     ; then set T00,S0D,$BA =

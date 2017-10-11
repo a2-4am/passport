@@ -28,9 +28,9 @@
 ;
          lda   #$0D
          ldx   #$BA
-         ldy   #$03
+         ldy   #$01
          jsr   compare    ; if T00,S0D,$BA ==
-         !byte $4C,$0B,$37
+         !byte $4C
          bcs   .exit
          lda   #$0D
          ldx   #$BA
