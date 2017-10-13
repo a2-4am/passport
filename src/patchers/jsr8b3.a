@@ -9,9 +9,9 @@
 ; e.g. English Achievement I
 ;-------------------------------
 !zone {
-         jsr   ID8b3
-         bcs   .exit
-         bcc   +
+         lda   gIs8b3
+         bne   .exit
+         beq   +
 
 .sectors
          !byte $00,$00,$02,$02,$02,$02,$02,$02,$02,$02

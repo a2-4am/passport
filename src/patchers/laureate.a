@@ -4,9 +4,9 @@
 ; but generally DOS-shaped
 ;-------------------------------
 !zone {
-         jsr   IDLaureate
-         bcs   .exit
-         bcc   +
+         lda   gIsLaureate
+         bne   .exit
+         beq   +
 
 .sectors
          !byte $04,$04,$04,$04,$04,$04,$04,$04,$04,$05,$05,$05,$05,$05,$05,$05,$06,$06,$06

@@ -5,10 +5,9 @@
 ; e.g. Phonics Prime Time series
 ;-------------------------------
 !zone {
-         jsr   IDMECC
-         bcs   .exit
-         jsr   IDMECC2
-         bcs   .exit
+         lda   gIsMECCFastloader
+         ora   gIsMECC2
+         bne   .exit
          lda   #$07
          ldx   #$83
          ldy   #$01

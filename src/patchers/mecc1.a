@@ -5,10 +5,9 @@
 ; e.g. Word Munchers
 ;-------------------------------
 !zone {
-         jsr   IDMECC
-         bcs   .exit
-         jsr   IDMECC1
-         bcs   .exit
+         lda   gIsMECCFastloader
+         ora   gIsMECC1
+         bne   .exit
          lda   #$0B
          ldx   #$08
          ldy   #$01

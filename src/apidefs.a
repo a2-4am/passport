@@ -1,0 +1,80 @@
+TRUE     =     $00        ; Lots of code assumes this is $00
+                          ; so it can branch with BEQ, so
+                          ; don't change it either!
+FALSE    =     $01
+
+;-------------------------------
+;Standard Delivery table indexes
+;-------------------------------
+
+ID_DOS33p =    $00
+ID_DOS32  =    $01
+ID_DOS32LO =   $02
+
+; Zero-page addresses we use for variables
+nibsrcindex =  $EC        ; byte
+nibdestindex = $ED        ; byte
+
+;-------------------------------
+; globally-accessible variables
+; in fixed position to allow
+; compressed code to work
+;-------------------------------
+
+APIEND                        = $B600
+gMode                         = APIEND-$01 ; byte
+gPatchCount                   = APIEND-$02 ; byte
+gTriedUniv                    = APIEND-$03 ; byte
+gSaidWriting                  = APIEND-$04 ; byte
+gChangedPrefs                 = APIEND-$05 ; byte
+gLastTrack                    = APIEND-$06 ; byte
+
+;FIRSTFILTER ; add new gIs* below this line
+gIsDOS32                      = APIEND-$07 ; byte
+gIsBoot0                      = APIEND-$08 ; byte
+gIsBoot1                      = APIEND-$09 ; byte
+gIsMaster                     = APIEND-$0A ; byte
+gIsRWTS                       = APIEND-$0B ; byte
+gIsProDOS                     = APIEND-$0C ; byte
+gIsPascal                     = APIEND-$0D ; byte
+gIsProtDOS                    = APIEND-$0E ; byte
+gIsDavidDOS                   = APIEND-$0F ; byte
+gIsEA                         = APIEND-$10 ; byte
+gPossibleGamco                = APIEND-$11 ; byte
+gIsOptimum                    = APIEND-$12 ; byte
+gIsMECCFastloader             = APIEND-$13 ; byte
+gIsMECC1                      = APIEND-$14 ; byte
+gIsMECC2                      = APIEND-$15 ; byte
+gIsMECC3                      = APIEND-$16 ; byte
+gIsMECC4                      = APIEND-$17 ; byte
+gPossibleD5D5F7               = APIEND-$18 ; byte
+gIs8b3                        = APIEND-$19 ; byte
+gIsMilliken1                  = APIEND-$1A ; byte
+gAdventureInternational       = APIEND-$1B ; byte
+gIsLaureate                   = APIEND-$1C ; byte
+gIsDatasoft                   = APIEND-$1D ; byte
+;LASTFILTER ; add new gIs* above this line
+
+gOnAClearDayYouCanReadForever = APIEND-$1E ; byte
+gUsingRAMDisk                 = APIEND-$1F ; byte
+gRAMDiskRef                   = APIEND-$20 ; byte
+gDisplayBytes                 = APIEND-$2A ; 10 bytes
+jcompare                      = APIEND-$2D ; 3-byte
+jmodify                       = APIEND-$30 ; 3-byte
+jPrintByID                    = APIEND-$33 ; 3-byte
+jSearchTrack                  = APIEND-$36 ; 3-byte
+jCallRWTS                     = APIEND-$39 ; 3-byte
+jCopyMemory                   = APIEND-$3C ; 3-byte
+jCopyUniversalAnywhere        = APIEND-$3F ; 3-byte
+jConstructStandardDelivery    = APIEND-$42 ; 3-byte
+
+!ifdef MODULE {
+compare                   = jcompare
+modify                    = jmodify
+PrintByID                 = jPrintByID
+SearchTrack               = jSearchTrack
+CallRWTS                  = jCallRWTS
+CopyMemory                = jCopyMemory
+CopyUniversalAnywhere     = jCopyUniversalAnywhere
+ConstructStandardDelivery = jConstructStandardDelivery
+}

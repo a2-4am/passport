@@ -1,0 +1,116 @@
+!cpu 6502
+*=$2000
+
+!to "t00only.bin",plain
+
+MODULE=1
+!source "../apidefs.a"
+!source "../strings/enid.a"
+WILDCARD =     $97        ; from compare.a
+
+;-------------------------------
+; AnalyzeT00
+; set additional flags based on contents of track $00
+;
+; in:    Track $00 in data buffer
+; out:   gIsBoot1, gIsMaster, gIsRWTS set to #TRUE or #FALSE
+;        all flags clobbered
+;        all registers clobbered
+;-------------------------------
+!zone {
+AnalyzeT00
+         lda   #$01
+         ldx   #$00
+         ldy   #$38
+         jsr   compare    ; if T00,S01,$00 ==
+         !byte $8E,$E9,$B7,$8E,$F7,$B7,$A9,$01
+         !byte $8D,$F8,$B7,$8D,$EA,$B7,$AD,$E0
+         !byte $B7,$8D,$E1,$B7,$A9,$02,$8D,$EC
+         !byte $B7,$A9,$04,$8D,$ED,$B7,$AC,$E7
+         !byte $B7,$88,$8C,$F1,$B7,$A9,$01,$8D
+         !byte $F4,$B7,$8A,$4A,$4A,$4A,$4A,$AA
+         !byte $A9,$00,$9D,$F8,$04,$9D,$78,$04
+         ldx   #TRUE
+         bcc   .boot1
+         ldx   #FALSE
+.boot1
+         stx   gIsBoot1
+
+         lda   #$01
+         ldx   #$00
+         ldy   #$38
+         jsr   compare    ; if T00,S01,$00 ==
+         !byte $8E,$E9,$37,$8E,$F7,$37,$A9,$01
+         !byte $8D,$F8,$37,$8D,$EA,$37,$AD,$E0
+         !byte $37,$8D,$E1,$37,$A9,$02,$8D,$EC
+         !byte $37,$A9,$04,$8D,$ED,$37,$AC,$E7
+         !byte $37,$88,$8C,$F1,$37,$A9,$01,$8D
+         !byte $F4,$37,$8A,$4A,$4A,$4A,$4A,$AA
+         !byte $A9,$00,$9D,$F8,$04,$9D,$78,$04
+         ldx   #TRUE
+         bcc   .master
+         ldx   #FALSE
+.master
+         stx   gIsMaster
+
+         lda   #$07
+         ldx   #$00
+         ldy   #$40
+         jsr   compare    ; if T00,S07,$00 ==
+         !byte $84,$48,$85,$49,$A0,$02,$8C,$F8
+         !byte $06,$A0,$04,$8C,$F8,$04,$A0,$01
+         !byte $B1,$48,$AA,$A0,$0F,$D1,$48,$F0
+         !byte $1B,$8A,$48,$B1,$48,$AA,$68,$48
+         !byte $91,$48,$BD,$8E,$C0,$A0,$08,$BD
+         !byte $8C,$C0,$DD,$8C,$C0,$D0,$F6,$88
+         !byte $D0,$F8,$68,$AA,$BD,$8E,$C0,$BD
+         !byte $8C,$C0,$A0,$08,$BD,$8C,$C0,$48
+         ldx   #TRUE
+         bcc   .rwts
+         ldx   #FALSE
+.rwts
+         stx   gIsRWTS
+         rts
+}
+
+         !source "../patchers/sunburst.a"
+         !source "../patchers/jmpbcf0.a"
+         !source "../patchers/jmpbeb1.a"
+         !source "../patchers/jmpbeca.a"
+         !source "../patchers/jmpb660.a"
+         !source "../patchers/jmpb720.a"
+         !source "../patchers/bademu.a"
+         !source "../patchers/bademu2.a"
+         !source "../patchers/rwts.a"
+         !source "../patchers/rwtslog.a"
+         !source "../patchers/mecc1.a"
+         !source "../patchers/mecc2.a"
+         !source "../patchers/mecc3.a"
+         !source "../patchers/mecc4.a"
+         !source "../patchers/rol1e.a"
+         !source "../patchers/jmpb4bb.a"
+         !source "../patchers/jmpb4bbhi.a"
+         !source "../patchers/thunder.a"
+         !source "../patchers/jsrbb03.a"
+         !source "../patchers/davidbb03.a"
+         !source "../patchers/rwtsswap.a"
+         !source "../patchers/rwtsswap2.a"
+         !source "../patchers/border.a"
+         !source "../patchers/jmpae8e.a"
+         !source "../patchers/jmpbbfe.a"
+         !source "../patchers/datasoft.a"
+         !source "../patchers/nibtable.a"
+         !source "../patchers/diskvol.a"
+         !source "../patchers/c9ff.a"
+         !source "../patchers/milliken.a"
+         !source "../patchers/methods.a"
+         !source "../patchers/jsr8b3.a"
+         !source "../patchers/laureate.a"
+         !source "../patchers/pascalrwts.a"
+         !source "../patchers/micrograms.a"
+         !source "../patchers/dos32.a"
+         !source "../patchers/dos32dlm.a"
+
+!if * > $4000 {
+  !serious "code is too large to fit in available space!"
+}

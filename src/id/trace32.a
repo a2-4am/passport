@@ -154,11 +154,11 @@ TraceDOS32LO
          sta   b4bbmodify+2
          sta   b4bbmodify2+2
          adc   #$04       ; $BD or $3D
-         sta   callrwts+2
+         sta   jCallRWTS+2
          adc   #$02       ; $BF or $3F
          sta   b4bbcompare+1
          lda   #$00
-         sta   callrwts+1
+         sta   jCallRWTS+1
 
 ; set up final trace
 
@@ -178,7 +178,7 @@ TraceDOS32LO
 .fail    jmp   FatalError
 
 TraceDOS32d
-         lda   callrwts+2
+         lda   jCallRWTS+2
          ldx   #$00       ; check for "STY $48;STA $49"
          ldy   #$04       ; at RWTS entry point
          jsr   CompareMemory ; (e.g. $BD00 or $3D00)
@@ -187,7 +187,7 @@ TraceDOS32d
 
          lda   #$FA
          sta   modsrc
-         lda   callrwts+2
+         lda   jCallRWTS+2
          sec
          sbc   #$05
          sta   modsrc+1
@@ -255,7 +255,7 @@ FFer
          bne   +
          iny
          bne   -
-         ldy   callrwts+2
+         ldy   jCallRWTS+2
          dey
          sty   .G+2
          dey

@@ -34,8 +34,12 @@ IDMilliken1
          jsr   compare
          !byte $A9,$AE,$8D,$00,$04,$4C,$99,$AD
          !byte $AE,$F8,$05,$BD,$89,$C0
+         bcs   +
+         lda   #TRUE
+         sta   gIsMilliken1
          bcc   .exit
 
++
 ; variant 2 (seen in The Writing Workshop)
          ldy   #$0B
          jsr   compare
