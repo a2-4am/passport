@@ -748,7 +748,11 @@ AnalyzeT00                ; placeholder to identify stack of packed data
 LastMover
 
 !if RELBASE = $2000 {
-  !warn "RELBASE = ", $B600 - (LastMover - FirstMover)
+  !ifdef PASS2 {
+  } else { ;PASS2
+    !set PASS2=1
+    !warn "RELBASE = ", $B600 - (LastMover - FirstMover)
+  }
 } else {
   !if ($B600 - (LastMover - FirstMover)) < LOWPOINT {
     !serious "code is too large to fit in available space!"
