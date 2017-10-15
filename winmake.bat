@@ -25,3 +25,8 @@ cd ..
 goto :EOF
 */
 new ActiveXObject("scripting.filesystemobject").createtextfile("tmp").write(String.fromCharCode(parseInt(WScript.arguments(0),16),String.fromCharCode(parseInt(WScript.arguments(1),16))))
+/*
+bat/jscript hybrid make script for Windows environments
+a qkumba monstrosity
+requires acme and exomizer to be in path
+*/

@@ -29,6 +29,10 @@
 ;
 ;-------------------------------
 
+!ifndef VERBOSE {
+VERBOSE  = $00       ; set to $01 to display API label addresses
+}
+
 ; Supported languages
 ; (each has its own localized strings file
 ; and its own output filename)
@@ -103,6 +107,7 @@ flag     =     $FF        ; byte
 
 ; Application constants (not zero addresses)
 !ifdef RELBASE {
+!set VERBOSE = $00        ; override for make script
 } else {
 RELBASE  =     $2000      ; dummy assignment for first build
                           ; to allow calculation of proper value
