@@ -26,7 +26,7 @@ asm:
 	printf "\xB8\x00" | cat - build/universalrwts.tmp > build/universalrwts.pak
 	cd src/mods && $(ACME) t00only.a
 	$(EXOMIZER) raw -q build/t00only.bin -o build/t00only.tmp
-	printf "\x20\x00" | cat - build/t00only.tmp > src/mods/t00only.pak
+	printf "\x20\x00" | cat - build/t00only.tmp > build/t00only.pak
 	cd src && $(ACME) passport.a 2> ../build/relbase.log
 	cd src && $(ACME) -DRELBASE=`cat ../build/relbase.log | cut -d"=" -f2 | cut -d"(" -f2 | cut -d")" -f1` passport.a
 	cp res/work.po $(BUILDDISK)
