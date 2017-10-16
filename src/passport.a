@@ -743,11 +743,11 @@ _applyToAll
          rts
 
 universalrwts
-         !bin "mods/universalrwts.pak"
+         !bin "../build/universalrwts.pak"
          !source "unpack.a"
          !source "nibtable.a"
 AnalyzeT00                ; placeholder to identify stack of packed data
-         !bin "mods/t00only.pak"
+         !bin "../build/t00only.pak"
          !source "apicode.a"
          }
 LastMover

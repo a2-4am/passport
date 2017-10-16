@@ -1,7 +1,7 @@
 !cpu 6502
 *=$2000
 
-!to "t00only.bin",plain
+!to "../../build/t00only.bin",plain
 
 MODULE=1
 !source "../apidefs.a"
