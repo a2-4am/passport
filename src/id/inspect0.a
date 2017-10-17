@@ -90,15 +90,23 @@ IDBootloader
          bcs   .notmecc
          jsr   IDMECC1
          bcs   +
+         lda   #TRUE
+         sta   gIsMECC1
          jmp   foundmecc1
 +        jsr   IDMECC2
          bcs   +
+         lda   #TRUE
+         sta   gIsMECC2
          jmp   foundmecc2
 +        jsr   IDMECC3
          bcs   +
+         lda   #TRUE
+         sta   gIsMECC3
          jmp   foundmecc3
 +        jsr   IDMECC4
          bcs   .notmecc
+         lda   #TRUE
+         sta   gIsMECC4
          jmp   foundmecc4
 .notmecc
 ;

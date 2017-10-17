@@ -70,7 +70,6 @@ AnalyzeT00
          ldx   #FALSE
 .rwts
          stx   gIsRWTS
-         rts
 }
 
          !source "../patchers/sunburst.a"
@@ -110,6 +109,9 @@ AnalyzeT00
          !source "../patchers/micrograms.a"
          !source "../patchers/dos32.a"
          !source "../patchers/dos32dlm.a"
+
+;add only above this line
+         rts
 
 !if * > $4000 {
   !serious "code is too large to fit in available space!"
