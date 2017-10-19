@@ -72,13 +72,13 @@ _Inspect1a
          dex
          stx   .x3+1
          stx   .x4+1
-         stx   callrwts+2
+         stx   jCallRWTS+2
          jsr   ProtectedDOS ; check for a specific (encrypted)
                           ; bootloader called "Protected DOS"
          bcs   .notprotdos
          jmp   ADStyle
 .notprotdos
-         lda   callrwts+2
+         lda   jCallRWTS+2
          ldx   #$00       ; check for "STY $48;STA $49"
          ldy   #$04       ; at RWTS entry point
          jsr   CompareMemory ; (e.g. $BD00 or $3D00)

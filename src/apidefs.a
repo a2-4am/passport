@@ -1,0 +1,126 @@
+TRUE     =     $00        ; Lots of code assumes this is $00
+                          ; so it can branch with BEQ, so
+                          ; don't change it either!
+FALSE    =     $01
+
+;-------------------------------
+;Standard Delivery table indexes
+;-------------------------------
+
+ID_DOS33p =    $00
+ID_DOS32  =    $01
+ID_DOS32LO =   $02
+
+; Zero-page addresses we use for variables
+nibsrcindex =  $EC        ; byte
+nibdestindex = $ED        ; byte
+
+;-------------------------------
+; globally-accessible variables
+; in fixed position to allow
+; compressed code to work
+;-------------------------------
+
+APIEND                        = $B600
+gMode                         = APIEND-$01                        ; byte
+gPatchCount                   = gMode-$01                         ; byte
+gTriedUniv                    = gPatchCount-$01                   ; byte
+gSaidWriting                  = gTriedUniv-$01                    ; byte
+gChangedPrefs                 = gSaidWriting-$01                  ; byte
+gLastTrack                    = gChangedPrefs-$01                 ; byte
+
+;FIRSTFILTER ; add new gIs* below this line
+gIsDOS32                      = gLastTrack-$01                    ; byte
+gIsBoot0                      = gIsDOS32-$01                      ; byte
+gIsBoot1                      = gIsBoot0-$01                      ; byte
+gIsMaster                     = gIsBoot1-$01                      ; byte
+gIsRWTS                       = gIsMaster-$01                     ; byte
+gIsProDOS                     = gIsRWTS-$01                       ; byte
+gIsPascal                     = gIsProDOS-$01                     ; byte
+gIsProtDOS                    = gIsPascal-$01                     ; byte
+gIsDavidDOS                   = gIsProtDOS-$01                    ; byte
+gIsEA                         = gIsDavidDOS-$01                   ; byte
+gPossibleGamco                = gIsEA-$01                         ; byte
+gIsOptimum                    = gPossibleGamco-$01                ; byte
+gIsMECCFastloader             = gIsOptimum-$01                    ; byte
+gIsMECC1                      = gIsMECCFastloader-$01             ; byte
+gIsMECC2                      = gIsMECC1-$01                      ; byte
+gIsMECC3                      = gIsMECC2-$01                      ; byte
+gIsMECC4                      = gIsMECC3-$01                      ; byte
+gPossibleD5D5F7               = gIsMECC4-$01                      ; byte
+gIs8b3                        = gPossibleD5D5F7-$01               ; byte
+gIsMilliken1                  = gIs8b3-$01                        ; byte
+gAdventureInternational       = gIsMilliken1-$01                  ; byte
+gIsLaureate                   = gAdventureInternational-$01       ; byte
+gIsDatasoft                   = gIsLaureate-$01                   ; byte
+;LASTFILTER ; add new gIs* above this line
+
+gOnAClearDayYouCanReadForever = gIsDatasoft-$01                   ; byte
+gUsingRAMDisk                 = gOnAClearDayYouCanReadForever-$01 ; byte
+gRAMDiskRef                   = gUsingRAMDisk-$01                 ; byte
+gDisplayBytes                 = gRAMDiskRef-$0A                   ; 10 bytes
+jcompare                      = gDisplayBytes-$03                 ; 3-byte
+jmodify                       = jcompare-$03                      ; 3-byte
+jPrintByID                    = jmodify-$03                       ; 3-byte
+jSearchTrack                  = jPrintByID-$03                    ; 3-byte
+jCallRWTS                     = jSearchTrack-$03                  ; 3-byte
+jCopyMemory                   = jCallRWTS-$03                     ; 3-byte
+jCopyUniversalAnywhere        = jCopyMemory-$03                   ; 3-byte
+jConstructStandardDelivery    = jCopyUniversalAnywhere-$03        ; 3-byte
+
+!ifdef MODULE {
+compare                   = jcompare
+modify                    = jmodify
+PrintByID                 = jPrintByID
+SearchTrack               = jSearchTrack
+CallRWTS                  = jCallRWTS
+CopyMemory                = jCopyMemory
+CopyUniversalAnywhere     = jCopyUniversalAnywhere
+ConstructStandardDelivery = jConstructStandardDelivery
+}
+
+!ifdef VERBOSE {
+  !if VERBOSE=1 {
+!warn "gMode=",gMode
+!warn "gPatchCount=",gPatchCount
+!warn "gTriedUniv=",gTriedUniv
+!warn "gSaidWriting=",gSaidWriting
+!warn "gChangedPrefs=",gChangedPrefs
+!warn "gLastTrack=",gLastTrack
+!warn "gIsDOS32=",gIsDOS32
+!warn "gIsBoot0=",gIsBoot0
+!warn "gIsBoot1=",gIsBoot1
+!warn "gIsMaster=",gIsMaster
+!warn "gIsRWTS=",gIsRWTS
+!warn "gIsProDOS=",gIsProDOS
+!warn "gIsPascal=",gIsPascal
+!warn "gIsProtDOS=",gIsProtDOS
+!warn "gIsDavidDOS=",gIsDavidDOS
+!warn "gIsEA=",gIsEA
+!warn "gPossibleGamco=",gPossibleGamco
+!warn "gIsOptimum=",gIsOptimum
+!warn "gIsMECCFastloader=",gIsMECCFastloader
+!warn "gIsMECC1=",gIsMECC1
+!warn "gIsMECC2=",gIsMECC2
+!warn "gIsMECC3=",gIsMECC3
+!warn "gIsMECC4=",gIsMECC4
+!warn "gPossibleD5D5F7=",gPossibleD5D5F7
+!warn "gIs8b3=",gIs8b3
+!warn "gIsMilliken1=",gIsMilliken1
+!warn "gAdventureInternational=",gAdventureInternational
+!warn "gIsLaureate=",gIsLaureate
+!warn "gIsDatasoft=",gIsDatasoft
+!warn "gOnAClearDayYouCanReadForever=",gOnAClearDayYouCanReadForever
+!warn "gUsingRAMDisk=",gUsingRAMDisk
+!warn "gRAMDiskRef=",gRAMDiskRef
+!warn "gDisplayBytes=",gDisplayBytes
+!warn "jcompare=",jcompare
+!warn "jmodify=",jmodify
+!warn "jPrintByID=",jPrintByID
+!warn "jSearchTrack=",jSearchTrack
+!warn "jCallRWTS=",jCallRWTS
+!warn "jCopyMemory=",jCopyMemory
+!warn "jCopyUniversalAnywhere=",jCopyUniversalAnywhere
+!warn "jConstructStandardDelivery=",jConstructStandardDelivery
+  }
+}

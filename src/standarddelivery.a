@@ -13,7 +13,26 @@
 ;-------------------------------
 !zone {
 ConstructStandardDelivery
-         sta   .A+1
+         dex
+         beq   .construct32
+         dex
+         beq   .construct32lo
+
+.construct33p
+         lda   #<SD_DOS33p
+         ldx   #>SD_DOS33p
+         bne   +
+
+.construct32
+         lda   #<SD_DOS32
+         ldx   #>SD_DOS32
+         bne   +
+
+.construct32lo
+         lda   #<SD_DOS32LO
+         ldx   #>SD_DOS32LO
+
++        sta   .A+1
          stx   .A+2
          ldx   #$00
          txa

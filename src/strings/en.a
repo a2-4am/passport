@@ -11,106 +11,7 @@ k_slot   =     "S"
 k_quit   =     "Q"
 ; <Esc> will also quit
 
-;
-; String IDs
-; (pass in accumulator to PrintByID)
-;
-s_header =     $00
-s_mainmenu =   $01
-s_progbar =    $02
-s_reading =    $03
-s_diskrwts =   $04
-s_bb00   =     $05
-s_sunburst =   $06
-s_optimum =    $07
-s_builtin =    $08
-s_switch =     $09
-s_writing =    $0A
-s_unformat =   $0B
-s_f7     =     $0C
-s_sync   =     $0D
-s_optbad =     $0E
-s_pass   =     $0F
-s_passdemuf =  $10
-s_passcrack =  $11
-s_passcrack0 = $12
-s_fail   =     $13
-s_fatal0000 =  $14
-s_fatal220f =  $15
-s_done   =     $16
-s_noslot6 =    $17
-s_writeerr =   $18
-s_writeioerr = $19
-s_writenodev = $1A
-s_writeprot =  $1B
-s_othermli =   $1C
-s_canttrace =  $1D
-s_canceled =   $1E
-s_bademu =     $1F
-s_reset  =     $20
-s_modify =     $21
-s_modifyto =   $22
-s_dosb0  =     $23
-s_prodosb0 =   $24
-s_pascalb0 =   $25
-s_mecc =       $26
-s_sierra =     $27
-s_a6bc95 =     $28
-s_jmpbcf0 =    $29
-s_rol1e  =     $2A
-s_runhello =   $2B
-s_e7     =     $2C
-s_jmpb4bb =    $2D
-s_jmpb400 =    $2E
-s_jmpbeca =    $2F
-s_jsrbb03 =    $30
-s_thunder =    $31
-s_jmpae8e =    $32
-s_diskvol =    $33
-s_d5d5f7 =     $34
-s_construct=   $35
-s_datasoftb0 = $36
-s_datasoft =   $37
-s_lsr6a  =     $38
-s_bcs08  =     $39
-s_jmpb660 =    $3A
-s_protdos =    $3B
-s_protdosw =   $3C
-s_protserial = $3D
-s_fbff   =     $3E
-s_encoded44 =  $3F
-s_encoded53 =  $40
-s_specdel =    $41
-s_bytrack =    $42
-s_a5count =    $43
-s_restart =    $44
-s_corrupter=   $45
-s_eab0    =    $46
-s_eatrk6  =    $47
-s_eeef   =     $48
-s_poke   =     $49
-s_bootcounter = $4A
-s_milliken =   $4B
-s_jsr8b3 =     $4C
-s_daviddos =   $4D
-s_quickdos =   $4E
-s_diversidos = $4F
-s_prontodos =  $50
-s_jmpb412 =    $51
-s_laureate =   $52
-s_bbf9   =     $53
-s_micrograms = $54
-s_cmpbne0 =    $55
-s_writeram =   $56
-s_d5timing =   $57
-s_advint =     $58
-s_dos32b0 =    $59
-s_bootwrite =  $5A
-s_rwtswrite =  $5B
-s_rdos =       $5C
-s_sra =        $5D
-STRINGCOUNT =  $5E
-
+!source "strings/enid.a"
 !zone {
 StringTable
          !word .header
@@ -232,7 +133,7 @@ StringTable
 ; can be set directly before calling PrintByID.
 ;
 .header
-         !text "Passport by 4am               2017-10-11",$00
+         !text "Passport by 4am               2017-10-17",$00
 .mainmenu
          !text "________________________________________",$8D,$8D,$8D,$8D,$8D,$8D,$8D
          !text "              "
