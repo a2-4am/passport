@@ -109,7 +109,8 @@ s_bootwrite =  $5A
 s_rwtswrite =  $5B
 s_rdos =       $5C
 s_sra =        $5D
-STRINGCOUNT =  $5E
+s_muse =       $5E
+STRINGCOUNT =  $5F
 
 !zone {
 StringTable
@@ -207,6 +208,7 @@ StringTable
          !word .rwtswrite
          !word .rdos
          !word .sra
+         !word .muse
 ;
 ; Text can contain substitution strings, which
 ; are replaced by current values at runtime. Each
@@ -232,7 +234,7 @@ StringTable
 ; can be set directly before calling PrintByID.
 ;
 .header
-         !text "Passport by 4am               2017-10-11",$00
+         !text "Passport by 4am               2017-10-21",$00
 .mainmenu
          !text "________________________________________",$8D,$8D,$8D,$8D,$8D,$8D,$8D
          !text "              "
@@ -514,4 +516,6 @@ StringTable
          !text "T00,S00 Found RDOS bootloader",$8D,$00
 .sra
          !text "T%t,S%0 Found SRA protection check",$8D,$00
+.muse
+         !text "T00,S08 RWTS doubles every sector ID",$8D,$00
 }

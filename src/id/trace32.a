@@ -239,8 +239,18 @@ TraceDOS32d
          lda   #TRUE
          sta   gIsDOS32
 
-; read the rest of the disk with the original RWTS
+; check for MUSE sector doubling RWTS
+         lda   callrwts+2
+         ldx   #$09
+         ldy   #$02
+         jsr   CompareMemory
+         !byte $20,$DD
+         bcs   +
+         lda   #s_muse
+         jsr   PrintByID
 
+; read the rest of the disk with the original RWTS
++
          jmp   ADStyle
 
 ; callback to check if the data field is missing
