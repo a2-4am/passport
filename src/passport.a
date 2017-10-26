@@ -273,6 +273,7 @@ Action
          lda   #FALSE
          sta   gTriedUniv
          sta   gSaidWriting
+         sta   gIsProtDOS
          lda   #$00
          sta   gTrack
          sta   gSector
@@ -289,17 +290,14 @@ Action
          sta   TEXTTOP
          lda   #s_reading
          jsr   PrintByID
-         ldy   #<gRWTSParams ; call universal RWTS to see
-         lda   #>gRWTSParams ; if T00,S00 is readable
-         jsr   $BD00         ; (only care about the return code)
-         bcc   .checkt00s00
+         jsr   ReadSector
+         bcc   +
          lda   #s_fail
          jsr   PrintByID
          lda   #s_fatal0000
          jsr   PrintByID
          jmp   TheEnd
-.checkt00s00
-         jmp   IDBootloader ; /src/id/inspect0
++        jmp   IDBootloader ; /src/id/inspect0
 
 
 
