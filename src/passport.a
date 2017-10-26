@@ -547,7 +547,11 @@ FatalError
          lda   gSector
          cmp   #$0F
          beq   .failont22s0f
-         jmp   TheEnd
+         ldx   gIsDOS32
+         bne   +
+         cmp   #$0C
+         beq   .failont22s0f
++        jmp   TheEnd
 .failont22s0f
          lda   #s_fatal220f
          jsr   PrintByID

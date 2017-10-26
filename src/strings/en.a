@@ -309,13 +309,13 @@ StringTable
          !text "Possible reasons:",$8D
          !text "- There is no disk in S6,D1.",$8D
          !text "- It is not an Apple ][ disk.",$8D
-         !text "- The disk is DOS 3.2-only.",$8D
+         !text "- The disk is 13-sector only.",$8D
          !text "- The disk is unformatted.",$8D,$00
 .fatal220f
          !byte $8D
          !text "Passport does not work on this disk.",$8D,$8D
          !text "Possible reasons:",$8D
-         !text "- This is not a 16-sector disk.",$8D
+         !text "- This is not a 13- or 16-sector disk.",$8D
          !text "- The disk modifies its RWTS in ways",$8D
          !text "  that Passport is not able to detect.",$8D,$00
 .done
