@@ -289,8 +289,6 @@ Action
          sta   TEXTTOP
          lda   #s_reading
          jsr   PrintByID
-         lda   #$00
-         sta   $b991
          ldy   #<gRWTSParams ; call universal RWTS to see
          lda   #>gRWTSParams ; if T00,S00 is readable
          jsr   $BD00         ; (only care about the return code)
@@ -301,8 +299,6 @@ Action
          jsr   PrintByID
          jmp   TheEnd
 .checkt00s00
-         lda   #$02
-         sta   $b991
          jmp   IDBootloader ; /src/id/inspect0
 
 
