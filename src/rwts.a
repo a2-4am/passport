@@ -104,6 +104,14 @@ PreReadSector
 .exit    rts
 }
 
+IgnoreAddressChecksum
+         lda   #$00
+         !byte $2C        ; hide next LDA
+EnforceAddressChecksum
+         lda   #$B7
+         sta   $B98A
+         rts
+
 gTrack   !byte $00
 gSector  !byte $00
 

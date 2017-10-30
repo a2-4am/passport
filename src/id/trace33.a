@@ -15,6 +15,7 @@ TraceDOS33
          sta   gTrack
          lda   #$09
          sta   gSector
+         jsr   IgnoreAddressChecksum
 precheck
          jsr   ReadSector
          bcc   +

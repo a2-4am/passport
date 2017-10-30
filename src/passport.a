@@ -290,6 +290,7 @@ Action
          sta   TEXTTOP
          lda   #s_reading
          jsr   PrintByID
+         jsr   IgnoreAddressChecksum
          jsr   ReadSector
          bcc   +
          lda   #s_fail
@@ -508,6 +509,10 @@ StartWithUniv
 ; note: execution falls through here
 
 CopyUniversal
+         lda   #>EnforceAddressChecksum-1
+         pha
+         lda   #<EnforceAddressChecksum-1
+         pha
          lda   #$B8
 CopyUniversalAnywhere
          sta   dst+1
