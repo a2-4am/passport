@@ -100,6 +100,8 @@
 
          ;read T01S0F, remains encoded at $BB00-BC55
 
+         lda   #$0F
+         sta   _sector
          ldy   #<gRWTSParams
          lda   #>gRWTSParams
          jsr   $BD00
@@ -266,7 +268,7 @@
          lda   $D104,x
          sbc   tmp
          and   #$0F
-         sta   gSector
+         sta   _sector
          pla
          php
          lsr
@@ -280,7 +282,7 @@
          plp
          bcs   +
          iny
-+        sty   gTrack
++        sty   _track
 
          ;read replaced page
 
@@ -292,11 +294,11 @@
          jsr   $BD00
          lda   .mergelo+1
          beq   ++
-         dec   gSector
+         dec   _sector
          bpl   +
          lda   #$0F
-         sta   gSector
-         dec   gTrack
+         sta   _sector
+         dec   _track
 +        inc   gAddress+1
          ldy   #<gRWTSParams
          lda   #>gRWTSParams
@@ -324,8 +326,8 @@
          ;sector $01 pairs with $0F
 
          lda   #1
-         sta   gTrack
-         sta   gSector
+         sta   _track
+         sta   _sector
          dec   gAddress+1 ; and $2000-20FF
          ldy   #<gRWTSParams
          lda   #>gRWTSParams
@@ -341,12 +343,6 @@
          ldy   #$03       ; parameter count
          jsr   mli
          jsr   SwapProDOS
-
-         ;restore original disk location
-
-         dec   gTrack     ; #0
-         lda   #$0F
-         sta   gSector
 
 .exit
 }
