@@ -100,9 +100,7 @@
 
          ;read T01S0F, remains encoded at $BB00-BC55
 
-         ldy   #<gRWTSParams
-         lda   #>gRWTSParams
-         jsr   $BD00
+         jsr   ReadSector
 
          ;re-enable decoding
 
@@ -287,9 +285,7 @@
 .domerge
          lda   #$21        ; $2100-21FF
          sta   gAddress+1
-         ldy   #<gRWTSParams
-         lda   #>gRWTSParams
-         jsr   $BD00
+         jsr   ReadSector
          lda   .mergelo+1
          beq   ++
          dec   gSector
@@ -298,9 +294,7 @@
          sta   gSector
          dec   gTrack
 +        inc   gAddress+1
-         ldy   #<gRWTSParams
-         lda   #>gRWTSParams
-         jsr   $BD00
+         jsr   ReadSector
          dec   gAddress+1
          ldy   #0
 
@@ -321,15 +315,17 @@
          bne   -
 
          ;read other page in block
-         ;sector $01 pairs with $0F
+         ;sector $01 pairs with $0F on disk, but
+         ;sector $0E pairs with $0F in RAM disk
 
          lda   #1
          sta   gTrack
-         sta   gSector
+         ldx   gUsingRAMDisk
+         bne   +
+         lda   #$0E
++        sta   gSector
          dec   gAddress+1 ; and $2000-20FF
-         ldy   #<gRWTSParams
-         lda   #>gRWTSParams
-         jsr   $BD00
+         jsr   ReadSector
 
          ;write replaced block
 
@@ -337,9 +333,17 @@
          sta   mliparam+3 ; hi byte of data buffer
          dec   mliparam+4 ; lo byte of block number
          jsr   SwapProDOS
+         lda   gUsingRAMDisk
+         beq   +
          lda   #$81       ; 'write block' command
          ldy   #$03       ; parameter count
          jsr   mli
+         bcs   .writeerr
+         bcc   .writedone
++        jsr   WriteToRAMFile
+
+.writeerr
+.writedone
          jsr   SwapProDOS
 
          ;restore original disk location
