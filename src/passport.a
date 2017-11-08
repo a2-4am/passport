@@ -260,14 +260,16 @@ MainMenu
 +
          cmp   #k_crack
          bne   .getkey
-         jsr   CreateRAMFile
          lda   #%11000000
 
 ; note: execution falls through here
 
 Action
          sta   gMode
-         jsr   ResetProgress
+         bit   gMode
+         bpl   +
+         jsr   CreateRAMFile
++        jsr   ResetProgress
          jsr   InitSectorMap
          jsr   CopyUniversal
          lda   #FALSE
