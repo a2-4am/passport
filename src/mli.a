@@ -651,7 +651,7 @@ WriteToRAMFile
          lda   #0
          sta   mliparam+4
          lda   #2
-         sta   mliparam+5         
+         sta   mliparam+5
          lda   gRAMDiskRef
          jsr   WriteFile
 
@@ -705,6 +705,7 @@ WriteRAMToDisk
          jsr   SwapProDOS
          jsr   IncProgress
          jsr   WriteTrackMLI
+         bcs   .exit
          inc   gTrack
          lda   gTrack
          cmp   #$23
@@ -714,7 +715,7 @@ WriteRAMToDisk
          lda   #TRUE
          sta   gUsingRAMDisk
 
-.done
+.exit
          rts
 }
 

@@ -102,7 +102,7 @@ flag     =     $FF        ; byte
 }
 
 ; Application constants (not zero addresses)
-RELBASE  =     $5700      ; address to move Passport code
+RELBASE  =     $5600      ; address to move Passport code
                           ; so that it's out of the way
 LOWPOINT =     $4300      ; lowest available address for code
 BASEPAGE =     $10        ; Special Delivery tracer assumes
@@ -482,12 +482,13 @@ nextsector
          bne   .passprint ; always branches
 .passcrack
          lda   gUsingRAMDisk
-         bne   .skipram
+         bne   +
          lda   #s_writing
          jsr   PrintByID
          jsr   WriteRAMToDisk
-.skipram
-         lda   gPatchCount
+         bcc   +
+         jmp   FatalWriteError
++        lda   gPatchCount
          beq   .passcrack0
          lda   #s_passcrack
          !byte $2C        ; hide next LDA
@@ -610,19 +611,28 @@ WriteTrack
 WriteTrackNA              ; entry point used by Special Delivery tracer
                           ; to write track with "N"o "A"nalysis
          bit   gMode
-         bpl   .done      ; verify mode -> no write
+         bpl   .exit      ; verify mode -> no write
          lda   gSaidWriting
          beq   .write
-         lda   #s_writeram ; only print "writing to" message once
+         lda   #s_writeram ; only print "writing to RAM disk" message once
          ldx   gUsingRAMDisk
          beq   +
-         lda   #s_writing ; only print "writing to" message once
+         lda   #s_writing ; only print "writing to slot/drive" message once
 +        jsr   PrintByID
          lda   #TRUE
          sta   gSaidWriting
 .write
          jsr   WriteTrackMLI
-         bcc   .done
+         bcs   FatalWriteError
+.exit
+         rts
+
+;-------------------------------
+; FatalWriteError
+; in:    A has MLI code (from WriteTrackMLI)
+; out:   exits via TheEnd
+;-------------------------------
+FatalWriteError
          sta   gDisplayBytes ; for use in error messages, if any
          cmp   #MLI_IOERR
          beq   .ioerr
@@ -646,17 +656,15 @@ WriteTrackNA              ; entry point used by Special Delivery tracer
          pla
          jsr   PrintByID
          jmp   TheEnd
-.done
-         rts
 
 ;-------------------------------
 ; ChangeTrack
 ; in:  A = new track
 ;-------------------------------
 ChangeTrack
-         pha
+         sta   .new+1
          jsr   WriteTrack
-         pla
+.new     lda   #$d1       ; modified at runtime
 
 ; note: execution falls through here
 
