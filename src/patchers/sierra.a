@@ -462,16 +462,7 @@
          lda   #s_restart
          jsr   PrintByID
          inc   .foundsierra
-         lda   VPOS
-         pha
-         lda   #1
-         sta   VPOS
-         lda   #s_progbar
-         jsr   PrintByID
-         pla
-         sta   VPOS
-         jsr   $FC22
-         jsr   ResetProgress
+         jsr   RestartProgress
          jsr   IncProgress
          ldx   #$FF
          txs

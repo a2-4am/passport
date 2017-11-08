@@ -596,19 +596,7 @@ FatalNoSlot6
          jsr   WaitForKey
          jmp   CleanExit
 
-ResetProgress
-         lda   #$82       ; reset progress indicator
-         sta   progressind+1
-         lda   #$05
-         sta   progressind+2
-         rts
-
-IncProgress
-         lda   #$20       ; display minimal progress indicator
-progressind
-         sta   $FFFF      ; set at runtime
-         inc   progressind+1
-         rts
+         !source "progress.a"
 
 ;-------------------------------
 ; WriteTrack

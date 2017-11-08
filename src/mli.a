@@ -689,11 +689,10 @@ WriteRAMToDisk
          jsr   SetMark
          jsr   SwapProDOS
 
-         ;prevent track write from calling RAM again
-
+         jsr   RestartProgress       ; restart progress bar
          lda   #FALSE
-         sta   gUsingRAMDisk
-         
+         sta   gUsingRAMDisk         ; prevent track write from calling RAM again
+
 -        lda   #0
          sta   mliparam+2
          sta   mliparam+4
@@ -704,12 +703,14 @@ WriteRAMToDisk
          lda   gRAMDiskRef
          jsr   ReadFile
          jsr   SwapProDOS
+         jsr   IncProgress
          jsr   WriteTrackMLI
          inc   gTrack
          lda   gTrack
          cmp   #$23
          bne   -
 
+         jsr   IncProgress
          lda   #TRUE
          sta   gUsingRAMDisk
 
