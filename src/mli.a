@@ -714,7 +714,7 @@ WriteRAMToDisk
          jsr   IncProgress
          lda   #TRUE
          sta   gUsingRAMDisk
-
+         clc
 .exit
          rts
 }
