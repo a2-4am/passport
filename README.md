@@ -1,5 +1,6 @@
 # Passport
-a verification and copy program for 5.25-inch Apple II floppy disks
+a verification and copy program for
+5.25-inch Apple II floppy disks
 
 Minimum system requirements:
 - Apple //e, //c, IIgs, or ][+ with 64K
@@ -273,6 +274,36 @@ SOFTWARE OR THE USE OR OTHER DEALINGS
 IN THE SOFTWARE.
 
 ## History
+
+Passport.next (unreleased)
+- NEW: DOS 3.2 support (MUSE, Edu-Ware,
+  Hartley, Krell, Hayden, DLM)
+- NEW: patchers/advint.a, an encrypted
+  nibble check (Scott Adams adventures)
+- NEW: patchers/bbf9.a, a desync
+  bitstream (late Sunburst disks)
+- NEW: patchers/jmpb400.a, a self-
+  decrypting nibble check in late boot
+  (Mindscape, DLM, Thunder Mountain)
+- NEW: patchers/memory.config.a, ProDOS
+  startup program with nibble check
+  (DC Heath, Marshware)
+- NEW: patchers/pascalrwts.a
+  (Solar Reading)
+- NEW: patchers/sra.a (SRA)
+- NEW: patchers/rwtslog.a, refactored
+  and expanded log of RWTS variants
+- NEW: id/micrograms.a (Micrograms)
+- NEW: id/rdos.a (SSI)
+- NEW: support for early Infocom disks
+- IMPROVED: patchers/a6bc95.a
+  (fixes Friendly Filer)
+- IMPROVED: patchers/jmpbeb1.a
+  (fixes Spelling Rules)
+- IMPROVED: patchers/sierra.a
+  (fixes Winnie The Pooh)
+- IMPROVED: id/laureate.a
+  (fixes Sound Ideas)
 
 2017-05-14
 - NEW: patcher for Activision (by TRex)
