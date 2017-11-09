@@ -4,8 +4,8 @@
 ; e.g. Video Title Shop, Tomahawk //e
 ;-------------------------------
 !zone {
-         jsr   IDDatasoft
-         bcs   .exit
+         lda   gIsDatasoft
+         bne   .exit
 
          ldy   #$06
          jsr   SearchTrack

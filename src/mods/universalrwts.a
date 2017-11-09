@@ -1,3 +1,8 @@
+!cpu 6502
+*=$B800
+
+!to "../../build/universalrwts.bin",plain
+
 ;-------------------------------
 ; Universal RWTS
 ; a modified DOS 3.3-style RWTS that reads 16-sector (6-and-2 encoded) disks
@@ -16,13 +21,6 @@
 ; Write support has been disabled. Any attempt to pass $02 or $04 RWTS commands
 ; will crash.
 ;-------------------------------
-
-UNIV_A1 = $B956           ; must LSR before setting
-UNIV_A2 = $B95F
-UNIV_A3 = $B968
-UNIV_D1 = $B8E7
-UNIV_D2 = $B8F1
-UNIV_D3 = $B8FC
 
 universalrwts
          !byte $A2,$00,$A0,$02,$88,$B1,$3E,$4A,$3E,$00,$BC,$4A,$3E,$00,$BC,$99
@@ -57,7 +55,6 @@ universalrwts
          !byte $38,$20,$EE,$B9,$B9,$11,$BA,$20,$00,$BA,$A5,$27,$18,$20,$F1,$B9
          !byte $B9,$1D,$BA,$20,$00,$BA,$E6,$26,$D0,$C3,$20,$00,$BA,$18,$AD,$78
          !byte $04,$29,$03,$2A,$05,$2B,$AA,$BD,$80,$C0,$A6,$2B,$60,$AA,$A0,$A0
-nibtable
          !byte $A2,$11,$CA,$D0,$FD,$E6,$46,$D0,$02,$E6,$47,$38,$E9,$01,$D0,$F0
          !byte $60,$01,$30,$28,$24,$20,$1E,$1D,$1C,$1C,$1C,$1C,$1C,$70,$2C,$26
          !byte $22,$1F,$1E,$1D,$1C,$1C,$1C,$1C,$1C,$96,$97,$9A,$9B,$9D,$9E,$9F
@@ -69,15 +66,15 @@ nibtable
 ; these $FF bytes (at $BA80..$BA95) are used by the
 ; routine that checks whether a track is formatted
          !byte $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
-         !byte $FF,$FF,$FF,$FF,$FF,$FF,$00,$01,$98,$99,$02,$03,$9C,$04,$05,$06
-         !byte $A0,$A1,$A2,$A3,$A4,$A5,$07,$08,$A8,$A9,$AA,$09,$0A,$0B,$0C,$0D
-         !byte $B0,$B1,$0E,$0F,$10,$11,$12,$13,$B8,$14,$15,$16,$17,$18,$19,$1A
-         !byte $C0,$C1,$C2,$C3,$C4,$C5,$C6,$C7,$C8,$C9,$CA,$1B,$CC,$1C,$1D,$1E
-         !byte $D0,$D1,$D2,$1F,$D4,$D5,$20,$21,$D8,$22,$23,$24,$25,$26,$27,$28
-         !byte $E0,$E1,$E2,$E3,$E4,$29,$2A,$2B,$E8,$2C,$2D,$2E,$2F,$30,$31,$32
-         !byte $F0,$F1,$33,$34,$35,$36,$37,$38,$F8,$39,$3A,$3B,$3C,$3D,$3E
-nibtableff
-         !byte                                                             $3F
+; the nibble table that lives at $BA96 is copied into here from another location
+; after being potentially modified because of protection
+         !byte $FF,$FF,$FF,$FF,$FF,$FF,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
+         !byte $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
+         !byte $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
+         !byte $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
+         !byte $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
+         !byte $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
+         !byte $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
          !byte $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
          !byte $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
          !byte $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
