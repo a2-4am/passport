@@ -142,8 +142,7 @@ SDsuccess
 
 ; copy Standard Delivery bootloader into place for T00,S00
 
-         lda   #<SD_DOS33p
-         ldx   #>SD_DOS33p
+         ldx   #ID_DOS33p
          jsr   ConstructStandardDelivery
          lda   #s_bootwrite
          jsr   PrintByID
@@ -205,9 +204,9 @@ skipsectors
 ; set up RWTS entry point
 
          lda   #$D5
-         sta   callrwts+1
+         sta   jCallRWTS+1
          lda   #$36
-         sta   callrwts+2
+         sta   jCallRWTS+2
 
 ; read the rest of the disk with the original RWTS
 

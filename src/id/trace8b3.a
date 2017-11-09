@@ -98,9 +98,9 @@ _restore3
 ; Set up RWTS entry point
 ;
          lda   #$00
-         sta   callrwts+1
+         sta   jCallRWTS+1
          lda   #$BD
-         sta   callrwts+2
+         sta   jCallRWTS+2
 ;
 ; Read the rest of the disk with the original RWTS
 ;

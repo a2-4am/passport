@@ -1,0 +1,177 @@
+;-------------------------------
+; globally-accessible variables
+; in fixed position to allow
+; compressed code to work
+; offsets must match t00defs.a
+;-------------------------------
+
+;gNIBTable
+         !byte $80,$81,$82,$83,$84,$85,$86,$87,$88,$89,$8A,$8B,$8C,$8D,$8E,$8F
+         !byte $90,$91,$92,$93,$94,$95,$00,$01,$98,$99,$02,$03,$9C,$04,$05,$06
+         !byte $A0,$A1,$A2,$A3,$A4,$A5,$07,$08,$A8,$A9,$AA,$09,$0A,$0B,$0C,$0D
+         !byte $B0,$B1,$0E,$0F,$10,$11,$12,$13,$B8,$14,$15,$16,$17,$18,$19,$1A
+         !byte $C0,$C1,$C2,$C3,$C4,$C5,$C6,$C7,$C8,$C9,$CA,$1B,$CC,$1C,$1D,$1E
+         !byte $D0,$D1,$D2,$1F,$D4,$D5,$20,$21,$D8,$22,$23,$24,$25,$26,$27,$28
+         !byte $E0,$E1,$E2,$E3,$E4,$29,$2A,$2B,$E8,$2C,$2D,$2E,$2F,$30,$31,$32
+         !byte $F0,$F1,$33,$34,$35,$36,$37,$38,$F8,$39,$3A,$3B,$3C,$3D,$3E
+;gNIBTableFF
+         !byte                                                             $3F
+
+;jConstructStandardDelivery
+         jmp   ConstructStandardDelivery
+;jCopyUniversalAnywhere
+         jmp   CopyUniversalAnywhere
+;jCopyMemory
+         jmp   CopyMemory
+;jCallRWTS
+         jmp   $FF59      ; modified at runtime
+;jSearchTrack
+         jmp   SearchTrack
+;jPrintByID
+         jmp   PrintByID
+;jmodify
+         jmp   modify
+;jcompare
+         jmp   compare
+;gDisplayBytes
+         !fill 10         ; array of ten bytes for use as
+                          ; substitution strings
+;gRAMDiskRef
+         !byte 00         ; handle of RAM disk
+                          ; non-zero if open
+;gUsingRAMDisk
+         !byte FALSE      ; 0=true, 1=false
+
+;gOnAClearDayYouCanReadForever
+         !byte FALSE      ; 0=true, 1=false
+                          ; retry reads with a captured RWTS forever,
+                          ; instead of falling back to built-in RWTS
+                          ; compile-time flag, no way to change at runtime
+
+FIRSTFILTER
+;gIsDatasoft
+         !byte FALSE      ; 0=true, 1=false
+                          ; reset before each operation
+                          ; set in IDBootloader() after reading T00,S00
+;gIsLaureate
+         !byte FALSE      ; 0=true, 1=false
+                          ; reset before each operation
+                          ; set in IDBootloader() after reading T00,S00
+;gAdventureInternational
+         !byte FALSE      ; 0=true, 1=false
+                          ; reset before each operation
+                          ; set in TraceDOS33c() after tracing DOS 3.3-shaped RWTS
+;gIsMilliken1
+         !byte FALSE      ; 0=true, 1=false
+                          ; reset before each operation
+                          ; set in TraceDOS33c() after tracing DOS 3.3-shaped RWTS
+;gIs8b3
+         !byte FALSE      ; 0=true, 1=false
+                          ; reset before each operation
+                          ; set in IDBootloader() after reading T00,S00
+;gPossibleD5D5F7
+         !byte FALSE      ; 0=true, 1=false
+                          ; reset before each operation
+                          ; set in IDBootloader() after reading T00,S00
+;gIsMECC4
+         !byte FALSE      ; 0=true, 1=false
+                          ; reset before each operation
+                          ; set in IDBootloader() after reading T00,S00
+;gIsMECC3
+         !byte FALSE      ; 0=true, 1=false
+                          ; reset before each operation
+                          ; set in IDBootloader() after reading T00,S00
+;gIsMECC2
+         !byte FALSE      ; 0=true, 1=false
+                          ; reset before each operation
+                          ; set in IDBootloader() after reading T00,S00
+;gIsMECC1
+         !byte FALSE      ; 0=true, 1=false
+                          ; reset before each operation
+                          ; set in IDBootloader() after reading T00,S00
+;gIsMECCFastloader
+         !byte FALSE      ; 0=true, 1=false
+                          ; reset before each operation
+                          ; set in IDBootloader() after reading T00,S00
+;gIsOptimum
+         !byte FALSE      ; 0=true, 1=false
+                          ; reset before each operation
+                          ; set in IDBootloader() after reading T00,S00
+;gPossibleGamco
+         !byte FALSE      ; 0=true, 1=false
+                          ; reset before each operation
+                          ; set in SkipTrack() after reading T22
+;gIsEA
+         !byte FALSE      ; 0=true, 1=false
+                          ; reset before each operation
+                          ; set in IDBootloader() after reading T00,S00
+;gIsDavidDOS
+         !byte FALSE      ; 0=true, 1=false
+                          ; reset before each operation
+                          ; set in IDBootloader() after reading T00,S00
+;gIsProtDOS
+         !byte FALSE      ; 0=true, 1=false
+                          ; reset before each operation
+                          ; set in IDBootloader() after reading T00,S00
+;gIsPascal
+         !byte FALSE      ; 0=true, 1=false
+                          ; reset before each operation
+                          ; set in IDBootloader() after reading T00,S00
+;gIsProDOS
+         !byte FALSE      ; 0=true, 1=false
+                          ; reset before each operation
+                          ; set in IDBootloader() after reading T00,S00
+;gIsRWTS
+         !byte FALSE      ; 0=true, 1=false
+                          ; reset before each operation
+                          ; set in AnalyzeT00() after reading T00
+;gIsMaster
+         !byte FALSE      ; 0=true, 1=false
+                          ; reset before each operation
+                          ; set in AnalyzeT00() after reading T00
+;gIsBoot1
+         !byte FALSE      ; 0=true, 1=false
+                          ; reset before each operation
+                          ; set in AnalyzeT00() after reading T00
+;gIsBoot0
+         !byte FALSE      ; 0=true, 1=false
+                          ; reset before each operation
+                          ; set in IDBootloader() after reading T00,S00
+;gIsDOS32
+         !byte FALSE      ; 0=true, 1=false
+                          ; reset before each operation
+                          ; set in IDBootloader() after reading T00,S00
+LASTFILTER
+
+;gLastTrack
+         !byte 00         ; int
+                          ; the last track that we should try to read
+                          ; (assuming reading from T22 down to T00)
+                          ; reset to 0 before each operation, but some
+                          ; disks (like DOS3.3P) will change it because
+                          ; they write out the first few DOS tracks
+                          ; manually before seeking up to T22 to convert
+                          ; the rest of the disk
+;gChangedPrefs
+         !byte FALSE      ; 0=true, 1=false
+                          ; whether we should try to write the configuration file
+                          ; when the program exits
+                          ; set to #TRUE when changing slots
+;gSaidWriting
+         !byte FALSE      ; 0=true, 1=false
+                          ; reset before each operation
+                          ; set to #TRUE after we print WRITING TO S%s,D%d
+;gTriedUniv
+         !byte FALSE      ; 0=true, 1=false
+                          ; whether or not we've already tried the built-in RWTS
+                          ; (and therefore a read error is fatal)
+                          ; reset before each operation
+;gPatchCount
+         !byte 00         ; int
+                          ; number of patches we've applied to this disk
+                          ; reset before each operation
+                          ; incremented in modify()
+;gMode
+         !byte %00000000  ; bit 7 0=verify, 1=see bit 6
+                          ; bit 6 0=demuffin, 1=crack
+                          ; set based on main menu choice

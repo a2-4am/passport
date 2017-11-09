@@ -7,8 +7,8 @@
 ; The Writing Workshop, Math Sequences
 ;-------------------------------
 !zone {
-         jsr   IDMilliken1
-         bcs   .exit
+         lda   gIsMilliken1
+         bne   .exit
          lda   #$01
          ldx   #$48
          ldy   #$02

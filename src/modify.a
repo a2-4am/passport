@@ -61,13 +61,12 @@ modify
          bne   .src
          lda   #$8D
          jsr   PrintA
+         bvc   +
 .mod
-         lda   (modsrc),y
-         dey
-         bmi   .exit
          sta   (moddest),y
-         clv
-         bvc   .mod       ; unconditional branch
++        lda   (modsrc),y
+         dey
+         bpl   .mod
 .exit
          inc   gPatchCount
 .exitnomod

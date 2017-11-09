@@ -29,6 +29,10 @@
 ;
 ;-------------------------------
 
+!ifndef VERBOSE {
+VERBOSE  = $00       ; set to $01 to display API label addresses
+}
+
 ; Supported languages
 ; (each has its own localized strings file
 ; and its own output filename)
@@ -72,55 +76,25 @@ COUT     =     $FDED
 PR0      =     $FE89
 IN0      =     $FE93
 
-; Zero-page addresses we use for variables
-!ifdef PASS2 {
-} else {
-;unpacker variables, no need to change these
-src	=	$3c       ; word
-dst	=	$3e       ; word
-ecx	=	$40       ; word
-last	=	$42       ; word
-tmpu	=	$44       ; word
+;Universal RWTS-specific values
+UNIV_A1 = $B956           ; must LSR before setting
+UNIV_A2 = $B95F
+UNIV_A3 = $B968
+UNIV_D1 = $B8E7
+UNIV_D2 = $B8F1
+UNIV_D3 = $B8FC
 
-nibsrcindex =  $EC        ; byte
-nibdestindex = $ED        ; byte
-prbuf    =     $EE        ; word
-unform   =     $F0        ; word
-nibcount =     $F2        ; byte
-modtmp   =     $F3        ; byte
-modsrc   =     $F4        ; word
-moddest  =     $F6        ; word
-cmp1     =     $F8        ; word
-cmp2     =     $FA        ; word
-counter  =     $FC        ; byte
-tmp      =     $FC        ; byte
-iunit    =     $FC        ; byte
-tmpa     =     $FC        ; byte
-tmpx     =     $FD        ; byte
-tmpy     =     $FE        ; byte
-flag     =     $FF        ; byte
-}
-
-; Application constants (not zero addresses)
-RELBASE  =     $5600      ; address to move Passport code
-                          ; so that it's out of the way
-LOWPOINT =     $4300      ; lowest available address for code
-BASEPAGE =     $10        ; Special Delivery tracer assumes
-                          ; this is $10, so don't change it!
-TRUE     =     $00        ; Lots of code assumes this is $00
-                          ; so it can branch with BEQ, so
-                          ; don't change it either!
-FALSE    =     $01
+!source "apidefs.a"
 
          ldx   #$00
-FM       lda   FirstMover + ((255 + LastMover - FirstMover) & $FF00),x
+FM       lda   LastMover - 256,x
          sta   $B500,x
          inx
          bne   FM
          dec   FM+2
          dec   FM+5
-         lda   FM+2
-         cmp   #$1F
+         lda   FM+5
+         cmp   #(>RELBASE)-((>(RELBASE+255))->RELBASE)-1
          bne   FM
          jmp   OneTimeSetup
 
@@ -266,7 +240,6 @@ MainMenu
 
 Action
          sta   gMode
-         bit   gMode
          bpl   +
          jsr   CreateRAMFile
 +        jsr   ResetProgress
@@ -280,7 +253,7 @@ Action
          sta   gTrack
          sta   gSector
          sta   gPatchCount
-         sta   callrwts+1
+         sta   jCallRWTS+1
          lda   #$08
          sta   gAddress+1
          jsr   ClearScreen
@@ -518,22 +491,20 @@ CopyUniversal
          pha
          lda   #$B8
 CopyUniversalAnywhere
-         sta   dst+1
+         sta   universalrwts
          clc
          adc   #$02
          sta   .cu+2
-         lda   #$00
-         sta   dst
          lda   #>universalrwts
-         sta   src+1
+         sta   _byte_hi
          lda   #<universalrwts
-         sta   src
-         jsr   Unpack
-         sta   callrwts+1
+         sta   _byte_lo
+         jsr   decrunch
+         sta   jCallRWTS+1
          lda   #$BD
-         sta   callrwts+2
+         sta   jCallRWTS+2
          ldy   #$96
-.culoop  lda   nibtable,y
+.culoop  lda   gNIBTable,y
 .cu      sta   $d100,y    ; set at runtime
          iny
          bne   .culoop
@@ -698,47 +669,14 @@ ChangeSector
 ;-------------------------------
 AnalyzeTrack
          lda   gTrack
-         beq   _applyToT00
-         jmp   _applyToAll
+         bne   _applyToAll
 _applyToT00
-         jsr   AnalyzeT00 ; /src/id/inspect0
-         !source "patchers/sunburst.a"
-         !source "patchers/jmpbcf0.a"
-         !source "patchers/jmpbeb1.a"
-         !source "patchers/jmpbeca.a"
-         !source "patchers/jmpb660.a"
-         !source "patchers/jmpb720.a"
-         !source "patchers/bademu.a"
-         !source "patchers/bademu2.a"
-         !source "patchers/rwts.a"
-         !source "patchers/rwtslog.a"
-         !source "patchers/mecc1.a"
-         !source "patchers/mecc2.a"
-         !source "patchers/mecc3.a"
-         !source "patchers/mecc4.a"
-         !source "patchers/rol1e.a"
-         !source "patchers/jmpb4bb.a"
-         !source "patchers/jmpb4bbhi.a"
-         !source "patchers/thunder.a"
-         !source "patchers/jsrbb03.a"
-         !source "patchers/davidbb03.a"
-         !source "patchers/rwtsswap.a"
-         !source "patchers/rwtsswap2.a"
-         !source "patchers/border.a"
-         !source "patchers/jmpae8e.a"
-         !source "patchers/jmpbbfe.a"
-         !source "patchers/datasoft.a"
-         !source "patchers/nibtable.a"
-         !source "patchers/diskvol.a"
-         !source "patchers/c9ff.a"
-         !source "patchers/milliken.a"
-         !source "patchers/methods.a"
-         !source "patchers/jsr8b3.a"
-         !source "patchers/laureate.a"
-         !source "patchers/pascalrwts.a"
-         !source "patchers/micrograms.a"
-         !source "patchers/dos32.a"
-         !source "patchers/dos32dlm.a"
+         lda   #>AnalyzeT00
+         sta   _byte_hi
+         lda   #<AnalyzeT00
+         sta   _byte_lo
+         jsr   decrunch
+         jsr   $2000
 _applyToAll
          !source "patchers/universale7.a"
          !source "patchers/a6bc95.a"            ; gIsPascal only
@@ -773,122 +711,23 @@ _applyToAll
          sec              ; set carry if nothing happened
          rts
 
-;
-; Global variables
-;
-gTriedUniv
-         !byte FALSE      ; 0=true, 1=false
-                          ; whether or not we've already tried the built-in RWTS
-                          ; (and therefore a read error is fatal)
-                          ; reset before each operation
-gMode
-         !byte %00000000  ; bit 7 0=verify, 1=see bit 6
-                          ; bit 6 0=demuffin, 1=crack
-                          ; set based on main menu choice
-gPatchCount
-         !byte 00         ; int
-                          ; number of patches we've applied to this disk
-                          ; reset before each operation
-                          ; incremented in modify()
-gSaidWriting
-         !byte FALSE      ; 0=true, 1=false
-                          ; reset before each operation
-                          ; set to #TRUE after we print WRITING TO S%s,D%d
-gChangedPrefs
-         !byte FALSE      ; 0=true, 1=false
-                          ; whether we should try to write the configuration file
-                          ; when the program exits
-                          ; set to #TRUE when changing slots
-gLastTrack
-         !byte 00         ; int
-                          ; the last track that we should try to read
-                          ; (assuming reading from T22 down to T00)
-                          ; reset to 0 before each operation, but some
-                          ; disks (like DOS3.3P) will change it because
-                          ; they write out the first few DOS tracks
-                          ; manually before seeking up to T22 to convert
-                          ; the rest of the disk
-gIsDOS32
-         !byte FALSE      ; 0=true, 1=false
-                          ; reset before each operation
-                          ; set in IDBootloader() after reading T00,S00
-gIsBoot0
-         !byte FALSE      ; 0=true, 1=false
-                          ; reset before each operation
-                          ; set in IDBootloader() after reading T00,S00
-gIsBoot1
-         !byte FALSE      ; 0=true, 1=false
-                          ; reset before each operation
-                          ; set in AnalyzeT00() after reading T00
-gIsMaster
-         !byte FALSE      ; 0=true, 1=false
-                          ; reset before each operation
-                          ; set in AnalyzeT00() after reading T00
-gIsRWTS
-         !byte FALSE      ; 0=true, 1=false
-                          ; reset before each operation
-                          ; set in AnalyzeT00() after reading T00
-gIsProDOS
-         !byte FALSE      ; 0=true, 1=false
-                          ; reset before each operation
-                          ; set in IDBootloader() after reading T00,S00
-gIsPascal
-         !byte FALSE      ; 0=true, 1=false
-                          ; reset before each operation
-                          ; set in IDBootloader() after reading T00,S00
-gIsProtDOS
-         !byte FALSE      ; 0=true, 1=false
-                          ; reset before each operation
-                          ; set in IDBootloader() after reading T00,S00
-gIsDavidDOS
-         !byte FALSE      ; 0=true, 1=false
-                          ; reset before each operation
-                          ; set in IDBootloader() after reading T00,S00
-gIsEA
-         !byte FALSE      ; 0=true, 1=false
-                          ; reset before each operation
-                          ; set in IDBootloader() after reading T00,S00
-gPossibleGamco
-         !byte FALSE      ; 0=true, 1=false
-                          ; reset before each operation
-                          ; set in SkipTrack() after reading T22
-gIsOptimum
-         !byte FALSE      ; 0=true, 1=false
-                          ; reset before each operation
-                          ; set in IDBootloader() after reading T00,S00
-gIsMECCFastloader
-         !byte FALSE      ; 0=true, 1=false
-                          ; reset before each operation
-                          ; set in IDBootloader() after reading T00,S00
-gPossibleD5D5F7
-         !byte FALSE      ; 0=true, 1=false
-                          ; reset before each operation
-                          ; set in IDBootloader() after reading T00,S00
-gAdventureInternational
-         !byte FALSE      ; 0=true, 1=false
-                          ; reset before each operation
-                          ; set in TraceDOS33c() after tracing DOS 3.3-shaped RWTS
-gOnAClearDayYouCanReadForever
-         !byte FALSE      ; 0=true, 1=false
-                          ; retry reads with a captured RWTS forever,
-                          ; instead of falling back to built-in RWTS
-                          ; compile-time flag, no way to change at runtime
-gUsingRAMDisk
-         !byte FALSE      ; 0=true, 1=false
-
-gRAMDiskRef
-         !byte 00         ; handle of RAM disk
-                          ; non-zero if open
-
-         !source "universalrwts.a"
+universalrwts
+         !bin "../build/universalrwts.pak"
          !source "unpack.a"
-         !source "nibtable.a"
+AnalyzeT00                ; placeholder to identify stack of packed data
+         !bin "../build/t00only.pak"
+         !source "apicode.a"
          }
 LastMover
 
-!if ($B500 - ((255 + LastMover - FirstMover) & $FF00)) != RELBASE {
-  !serious "RELBASE requires adjustment to ", ($B500 - ((255 + LastMover - FirstMover) & $FF00))
-}
-!if ($B500 - ((255 + LastMover - FirstMover) & $FF00)) < LOWPOINT {
-  !serious "code is too large to fit in available space!"
+!if RELBASE = $2000 {
+  !ifdef PASS2 {
+  } else { ;PASS2
+    !set PASS2=1
+    !warn "RELBASE = ", $B600 - (LastMover - FirstMover)
+  }
+} else {
+  !if ($B600 - (LastMover - FirstMover)) < LOWPOINT {
+    !serious "code is too large to fit in available space!"
+  }
 }

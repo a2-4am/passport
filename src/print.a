@@ -1,7 +1,5 @@
 kForceLower !byte $FF     ; AND mask for lowercase letters
                           ; (set at program startup)
-gDisplayBytes !fill 10    ; array of ten bytes for use as
-                          ; substitution strings
 
 ;-------------------------------
 ; PrintByID
