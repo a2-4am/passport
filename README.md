@@ -78,6 +78,9 @@ were common in educational software.
 - Blue Chip
   e.g. Squire, Baron, Tycoon
 
+- DC Heath
+  e.g. What Makes A Dinosaur Sore
+
 - DesignWare
   e.g. Spellicopter, Crypto Cube
 
@@ -106,7 +109,8 @@ were common in educational software.
   Tim and the Cat and the Big Red Hat
 
 - Hayden
-  e.g. SAT Score Improvement System
+  e.g. SAT Score Improvement System,
+  Microscopic Journey
 
 - Heartsoft
   e.g. Electric Chalkboard, Tommy the
@@ -122,17 +126,26 @@ were common in educational software.
   e.g. Building Reading Skills,
   Explorations in Science
 
+- Krell
+  e.g. Time Traveler, College Boards
+
 - Laureate Learning Systems
   e.g. Concentrate on Words & Concepts
 
 - The Learning Company
   e.g. Bumble Games, Gertrude's Secrets
 
+- Learning Multi-Systems
+  e.g. Solar Reading
+
 - Learning Technologies
   e.g. Animal Hotel, Bike Hike
 
 - McCarthy-McCormack
   e.g. Vowel Corral, Library Magic
+
+- Marshware
+  e.g. Squeegee Learns About Drugs
 
 - MECC
   e.g. Word Munchers, Clock Works
@@ -142,6 +155,9 @@ were common in educational software.
 
 - Methods & Solutions
   e.g. Fantasy Land, Behind The Wheel
+
+- Micrograms
+  e.g. Wild West Math
 
 - Millennium Group
   e.g. The Brain Game, Concentration
@@ -154,6 +170,12 @@ were common in educational software.
 
 - Mindscape
   e.g. The Halley Project, Paperboy
+
+- MUSE
+  e.g. Know Your Apple, RobotWar
+
+- National Geographic Society
+  e.g. The Botanist's Apprentice
 
 - Optimum Resource
   e.g. Stickybear Math, Car Builder
@@ -183,6 +205,9 @@ were common in educational software.
 - Scholastic
   e.g. Math Shop, Microzine
 
+- Science Research Associates
+  e.g. Computer Drill and Instruction
+
 - Spinnaker Software
   e.g. Snooper Troops, KidWriter
 
@@ -193,6 +218,9 @@ were common in educational software.
 - Sunburst Communications
   e.g. M-ss-ng L-nks, The Incredible
   Laboratory
+
+- Thunder Mountain
+  e.g. Pathwords, Quink
 
 - Troll Associates
   e.g. Dino Dig, Make A Face
@@ -210,6 +238,9 @@ software, so your mileage may vary.
 
 - Activision (patcher by TRex)
   e.g. Hacker, Rampage
+
+- Adventure International
+  e.g. Adventureland, Strange Odyssey
 
 - Atari
   e.g. Defender, Gremlins
@@ -229,9 +260,16 @@ software, so your mileage may vary.
 - Epyx
   e.g. Summer Games, Deathsword
 
+- Infocom
+  e.g. Planetfall, Zork I/II/III
+
 - Sierra On-Line (patcher by qkumba)
   e.g. BC's Quest for Tires, Sammy
   Lightfoot
+
+- Strategic Simulations
+  e.g. The Eternal Dagger, The Shard of
+  Spring, Roadwar Europa, Warship
 
 ## License
 
@@ -276,6 +314,9 @@ IN THE SOFTWARE.
 ## History
 
 Passport.next (unreleased)
+- Supports ProDOS RAM disks to read an
+  entire disk at once (IIgs RAM disk,
+  RAMFactor, RAMWorks, modern clones)
 - NEW: DOS 3.2 support (MUSE, Edu-Ware,
   Hartley, Krell, Hayden, DLM)
 - NEW: patchers/advint.a, an encrypted
@@ -289,7 +330,7 @@ Passport.next (unreleased)
   startup program with nibble check
   (DC Heath, Marshware)
 - NEW: patchers/pascalrwts.a
-  (Solar Reading)
+  (Learning Multi-Systems)
 - NEW: patchers/sra.a (SRA)
 - NEW: patchers/rwtslog.a, refactored
   and expanded log of RWTS variants
