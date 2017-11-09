@@ -10,7 +10,7 @@
 
 ; sector 1
 
-         lda   callrwts+2
+         lda   jCallRWTS+2
          sta   .cr+1
          sec
          sbc   #$06       ; #$B7 or #$37
@@ -55,13 +55,11 @@
 .cr      lda   #$d1       ; set at runtime
          cmp   #$3D
          beq   +
-         lda   #<SD_DOS32
-         ldx   #>SD_DOS32
+         ldx   #ID_DOS32
          jsr   ConstructStandardDelivery
          jmp   ++
 
-+        lda   #<SD_DOS32LO
-         ldx   #>SD_DOS32LO
++        ldx   #ID_DOS32LO
          jsr   ConstructStandardDelivery
 
 ++       lda   #s_bootwrite

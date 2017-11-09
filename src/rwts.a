@@ -2,8 +2,8 @@
 ; ReadSector
 ; high-level function to read a single sector.
 ; in:  gIsProtDOS is TRUE or FALSE
-;      if gProtDOS is FALSE, callrwts+2 has been set to
-;        the RWTS entry point (e.g. $BD or $3D)
+;      if gProtDOS is FALSE, jCallRWTS has been set to
+;        the RWTS entry point (e.g. $BDxx or $3Dxx)
 ; out: all registers clobbered
 ;      C clear if read was successful
 ;      C set if read failed
@@ -33,7 +33,7 @@ ReadSector
 setuprwts
          ldy   #<gRWTSParams
          lda   #>gRWTSParams
-callrwts jsr   $FF00      ; modified at runtime
+         jsr   jCallRWTS
          bcc   endread
          lda   gOnAClearDayYouCanReadForever
          beq   setuprwts
@@ -88,7 +88,7 @@ PreReadSector
 !zone {
          cmp   #kSectorCustomDOS32B4BB
          bne   +
-         ldx   callrwts+2
+         ldx   jCallRWTS+2
          dex
          dex
          dex

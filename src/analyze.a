@@ -191,10 +191,10 @@ IsEEEF
 ;-------------------------------
 IsSyncBytes
          lda   #$FD
-         sta   nibtableff
+         sta   gNIBTableFF
          jsr   IsUnformatted
          lda   #$3F
-         sta   nibtableff
+         sta   gNIBTableFF
          rts
 
 ;-------------------------------
@@ -216,7 +216,7 @@ IsUnformatted
          ldy   #$00
 nibloop  ldx   $C0EC
          bpl   nibloop
-         lda   nibtable,x
+         lda   gNIBTable,x
          bpl   +
          inc   unform
          bne   +

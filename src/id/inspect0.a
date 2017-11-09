@@ -11,23 +11,12 @@ IDBootloader
 ; Reset all per-disk globals.
 ; These are used as filters later so irrelevant patchers can be skipped.
 ;
+         ldx   #(LASTFILTER-FIRSTFILTER)
          lda   #FALSE
-         sta   gIsDOS32
-         sta   gIsBoot0
-         sta   gIsBoot1
-         sta   gIsMaster
-         sta   gIsRWTS
-         sta   gIsProDOS
-         sta   gIsPascal
-         sta   gIsProtDOS
-         sta   gIsDavidDOS
-         sta   gIsEA
-         sta   gIsMECCFastloader
-         sta   gPossibleGamco
-         sta   gPossibleD5D5F7
-         sta   gAdventureInternational
-         lda   #$00
-         sta   gLastTrack
+-        sta   FIRSTFILTER-1,x
+         dex
+         bne   -
+         stx   gLastTrack
 ;
 ; Quick sanity check -- only recognized values for $0800
 ; are 1 or 2 for regular disks, and 5 for possible Electronic Arts.
@@ -84,6 +73,8 @@ IDBootloader
          bcs   +
          lda   #s_jsr8b3
          jsr   PrintByID
+         lda   #TRUE
+         sta   gIs8b3
          jmp   Trace8B3
 ;
 ; Try to identify all the different MECC fastloader variants.
@@ -99,15 +90,23 @@ IDBootloader
          bcs   .notmecc
          jsr   IDMECC1
          bcs   +
+         lda   #TRUE
+         sta   gIsMECC1
          jmp   foundmecc1
 +        jsr   IDMECC2
          bcs   +
+         lda   #TRUE
+         sta   gIsMECC2
          jmp   foundmecc2
 +        jsr   IDMECC3
          bcs   +
+         lda   #TRUE
+         sta   gIsMECC3
          jmp   foundmecc3
 +        jsr   IDMECC4
          bcs   .notmecc
+         lda   #TRUE
+         sta   gIsMECC4
          jmp   foundmecc4
 .notmecc
 ;
@@ -127,6 +126,8 @@ IDBootloader
          bcs   +
          lda   #s_laureate
          jsr   PrintByID
+         lda   #TRUE
+         sta   gIsLaureate
          lda   #$0B
          jsr   PrereadT00Partial
          bcs   +
@@ -213,7 +214,9 @@ IDBootloader
          bcs   +
          lda   #s_datasoftb0
          jsr   PrintByID
-         bcc   .useuniv   ; always branches
+         lda   #TRUE
+         sta   gIsDatasoft
+         beq   .useuniv   ; always branches
 ;
 ; Micrograms bootloader
 ;
@@ -241,71 +244,6 @@ IDBootloader
 +
 .useuniv
          jmp   UseUniversal
-}
-
-;-------------------------------
-; AnalyzeT00
-; set additional flags based on contents of track $00
-;
-; in:    Track $00 in data buffer
-; out:   gIsBoot1, gIsMaster, gIsRWTS set to #TRUE or #FALSE
-;        all flags clobbered
-;        all registers clobbered
-;-------------------------------
-!zone {
-AnalyzeT00
-         lda   #$01
-         ldx   #$00
-         ldy   #$38
-         jsr   compare    ; if T00,S01,$00 ==
-         !byte $8E,$E9,$B7,$8E,$F7,$B7,$A9,$01
-         !byte $8D,$F8,$B7,$8D,$EA,$B7,$AD,$E0
-         !byte $B7,$8D,$E1,$B7,$A9,$02,$8D,$EC
-         !byte $B7,$A9,$04,$8D,$ED,$B7,$AC,$E7
-         !byte $B7,$88,$8C,$F1,$B7,$A9,$01,$8D
-         !byte $F4,$B7,$8A,$4A,$4A,$4A,$4A,$AA
-         !byte $A9,$00,$9D,$F8,$04,$9D,$78,$04
-         ldx   #TRUE
-         bcc   .boot1
-         ldx   #FALSE
-.boot1
-         stx   gIsBoot1
-
-         lda   #$01
-         ldx   #$00
-         ldy   #$38
-         jsr   compare    ; if T00,S01,$00 ==
-         !byte $8E,$E9,$37,$8E,$F7,$37,$A9,$01
-         !byte $8D,$F8,$37,$8D,$EA,$37,$AD,$E0
-         !byte $37,$8D,$E1,$37,$A9,$02,$8D,$EC
-         !byte $37,$A9,$04,$8D,$ED,$37,$AC,$E7
-         !byte $37,$88,$8C,$F1,$37,$A9,$01,$8D
-         !byte $F4,$37,$8A,$4A,$4A,$4A,$4A,$AA
-         !byte $A9,$00,$9D,$F8,$04,$9D,$78,$04
-         ldx   #TRUE
-         bcc   .master
-         ldx   #FALSE
-.master
-         stx   gIsMaster
-
-         lda   #$07
-         ldx   #$00
-         ldy   #$40
-         jsr   compare    ; if T00,S07,$00 ==
-         !byte $84,$48,$85,$49,$A0,$02,$8C,$F8
-         !byte $06,$A0,$04,$8C,$F8,$04,$A0,$01
-         !byte $B1,$48,$AA,$A0,$0F,$D1,$48,$F0
-         !byte $1B,$8A,$48,$B1,$48,$AA,$68,$48
-         !byte $91,$48,$BD,$8E,$C0,$A0,$08,$BD
-         !byte $8C,$C0,$DD,$8C,$C0,$D0,$F6,$88
-         !byte $D0,$F8,$68,$AA,$BD,$8E,$C0,$BD
-         !byte $8C,$C0,$A0,$08,$BD,$8C,$C0,$48
-         ldx   #TRUE
-         bcc   .rwts
-         ldx   #FALSE
-.rwts
-         stx   gIsRWTS
-         rts
 }
 
 !zone {

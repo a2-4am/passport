@@ -5,10 +5,9 @@
 ; e.g. A-201 Conquering Whole Numbers
 ;-------------------------------
 !zone {
-         jsr   IDMECC
-         bcs   .exit
-         jsr   IDMECC4
-         bcs   .exit
+         lda   gIsMECCFastloader
+         ora   gIsMECC4
+         bne   .exit
          lda   #$08
          ldx   #$83
          ldy   #$01

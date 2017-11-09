@@ -54,9 +54,7 @@ WriteTrackMLI
          lda   gUsingRAMDisk
          beq   +
          jsr   ReorderBuffer
-+        lda   #$81       ; 'write block' command
-         sta   mlicmd
-         lda   DRIVE      ; ProDOS "unit number" is
++        lda   DRIVE      ; ProDOS "unit number" is
          sec
          sbc   #$31
          lsr              ; DSSS0000, where D is the
@@ -90,7 +88,7 @@ WriteTrackMLI
 .writeloop
          lda   gUsingRAMDisk
          beq   +
-         lda   mlicmd
+         lda   #$81       ; 'write block' command
          ldy   #$03       ; parameter count
          jsr   mli
          bcs   .writeerr
@@ -118,46 +116,6 @@ WriteTrackMLI
          rts
 
 .blockcount !byte $FF
-}
-;-------------------------------
-; ReorderBuffer - convert data
-;   buffer between ProDOS and
-;   DOS 3.3 ordering (use after
-;   read or before write under
-;   ProDOS)
-; in:  none
-; out: all flags clobbered
-;      all registers clobbered
-;      @cmp1, @cmp2 clobbered
-;-------------------------------
-!zone {
-ReorderBuffer
-         lda   #$00
-         sta   cmp1
-         sta   cmp2
-         tay
-         lda   #$01
-         clc
-         adc   #BASEPAGE
-         sta   cmp1+1
-         lda   #$0E
-         clc
-         adc   #BASEPAGE
-         sta   cmp2+1
-         ldx   #$07
-.L       lda   (cmp1),y
-         pha
-         lda   (cmp2),y
-         sta   (cmp1),y
-         pla
-         sta   (cmp2),y
-         iny
-         bne   .L
-         inc   cmp1+1
-         dec   cmp2+1
-         dex
-         bne   .L
-         rts
 }
 
 ;-------------------------------
@@ -497,13 +455,13 @@ accessbits =   $C3        ; full access
 CreateFile
          lda   #accessbits
          sta   mliparam+3 ; access bits (full access)
-         lda   #1
-         sta   mliparam+7 ; storage type (file)
-         lda   #0
-         sta   mliparam+8 ; creation date (current)
-         sta   mliparam+9
-         sta   mliparam+10 ; creation time (current)
-         sta   mliparam+11
+         ldy   #1
+         sty   mliparam+7 ; storage type (file)
+         dey
+         sty   mliparam+8 ; creation date (current)
+         sty   mliparam+9
+         sty   mliparam+10 ; creation time (current)
+         sty   mliparam+11
          lda   #CMD_CREATE ; MLI create command
          ldy   #PC_CREATE ; number of parameters for 'create' command
          jsr   mli
@@ -706,6 +664,8 @@ WriteRAMToDisk
          jsr   IncProgress
          jsr   WriteTrackMLI
          bcs   .exit
+         lda   KEY
+         bmi   .cancel
          inc   gTrack
          lda   gTrack
          cmp   #$23
@@ -715,8 +675,13 @@ WriteRAMToDisk
          lda   #TRUE
          sta   gUsingRAMDisk
          clc
+
 .exit
          rts
+
+.cancel
+         jmp   Cancel
+
 }
 
 ;-------------------------------
