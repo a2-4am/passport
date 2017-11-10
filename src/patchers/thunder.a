@@ -1,3 +1,5 @@
+; /!\ CURRENTLY UNUSED, REQUIRES ADDITIONAL TRACE SUPPORT, KEEP IN REPO FOR FUTURE RELEASE /!\
+
 ;-------------------------------
 ; #THUNDER
 ; boot1 jumps to $B3C1 to change RWTS,
