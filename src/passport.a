@@ -244,7 +244,6 @@ Action
          jsr   CreateRAMFile
 +        jsr   ResetProgress
          jsr   InitSectorMap
-         jsr   CopyUniversal
          lda   #FALSE
          sta   gTriedUniv
          sta   gSaidWriting
@@ -265,6 +264,7 @@ Action
          sta   TEXTTOP
          lda   #s_reading
          jsr   PrintByID
+         jsr   CopyUniversal
          jsr   IgnoreAddressChecksum
          jsr   ReadSector
          bcc   +
@@ -485,10 +485,6 @@ StartWithUniv
 ; note: execution falls through here
 
 CopyUniversal
-         lda   #>EnforceAddressChecksum-1
-         pha
-         lda   #<EnforceAddressChecksum-1
-         pha
          lda   #$B8
 CopyUniversalAnywhere
          sta   universalrwts
