@@ -313,7 +313,7 @@ IN THE SOFTWARE.
 
 ## History
 
-Passport.next (unreleased)
+2017-11-14
 - Supports ProDOS RAM disks to read an
   entire disk at once (IIgs RAM disk,
   RAMFactor, RAMWorks, modern clones)
