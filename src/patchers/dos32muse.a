@@ -1,0 +1,24 @@
+;-------------------------------
+; #DOS32MUSE
+; $A5D6 jumps to $BFD5 for no good reason
+;
+; tested on
+; Castle Wolfenstein (1981, MUSE)
+;-------------------------------
+!zone {
+         lda   gIsDOS32
+         bne   .exit
+         lda   gTrack
+         cmp   #$01
+         bne   .exit
+         lda   #$08
+         ldx   #$D6
+         ldy   #$02
+         jsr   compare    ; if T01,S08,$D6 ==
+         !byte $4C,$D5
+         bcs   .exit
+         ldy   #$03
+         jsr   modify     ; then set T01,S08,$D6 =
+         !byte $E8,$D0,$32
+.exit
+}
