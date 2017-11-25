@@ -5,37 +5,35 @@
 ; e.g. Troll's Tale
 ;-------------------------------
 !zone {
-         lda   gIsMaster  ; if DOS 3.3 lomem bootloader
+         lda   gTrack
+         cmp   #$02
          bne   .exit
-         lda   #$0C
+         lda   gIsDOS32
+         bne   +
+         lda   #$0A
+         !byte $2C        ; hide next LDA
++        lda   #$03
          sta   gDisplayBytes
-         ldx   #$84
-         ldy   #$03
-         jsr   compare    ; and T00,S0C,$84 ==
-         !byte $4C,$BB,$B4
+         ldx   #$D7
+         ldy   #$04
+         jsr   compare    ; and T02,S0x,$D7 ==
+         !byte $D8        ; CLD
+         !byte $AD,$FF,$CF; LDA $CFFF
+         bcc   .found
+         ldx   #$DD
+         ldy   #$04
+         jsr   compare    ; or T02,S0x,$DD ==
+         !byte $D8        ; CLD
+         !byte $AD,$FF,$CF; LDA $CFFF
          bcs   .exit
+.found
+         pha
          lda   #s_jmpb4bb
          jsr   PrintByID
-         lda   #$0C
-         ldx   #$84
+         pla
+         inx
          ldy   #$03
-         jsr   modify     ; then set T00,S0C,$84 =
-         !byte $AD,$E9,$37
-;
-; also check a variant that redirects the DOS input
-; vector through code that is only loaded by the
-; protection check we just bypassed
-;
-         lda   #$0D
-         ldx   #$BA
-         ldy   #$01
-         jsr   compare    ; if T00,S0D,$BA ==
-         !byte $4C
-         bcs   .exit
-         lda   #$0D
-         ldx   #$BA
-         ldy   #$03
-         jsr   modify     ; then set T00,S0D,$BA =
-         !byte $6C,$38,00
+         jsr   modify     ; then set offset+1 to
+         !byte $4C,$84,$9D
 .exit
 }

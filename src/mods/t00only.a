@@ -87,8 +87,6 @@ AnalyzeT00
          !source "../patchers/mecc3.a"
          !source "../patchers/mecc4.a"
          !source "../patchers/rol1e.a"
-         !source "../patchers/jmpb4bb.a"
-         !source "../patchers/jmpb4bbhi.a"
 ;         !source "../patchers/thunder.a"
          !source "../patchers/jsrbb03.a"
          !source "../patchers/davidbb03.a"

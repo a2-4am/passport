@@ -696,7 +696,7 @@ _applyToAll
          !source "patchers/jmpb400.a"           ; T02 && gIsBoot0 only
          !source "patchers/advint.a"            ; gAdventureInternational only
          !source "patchers/jsr8635.a"           ; gIsRWTS only
-         !source "patchers/dos32jmpb4bb.a"      ; T01 && gIsDOS32 only
+         !source "patchers/jmpb4bb.a"           ; T02 && gIsDOS32 only
          !source "patchers/dos32muse.a"         ; T01 && gIsDOS32 only
          !source "patchers/sra.a"               ; gIsDOS32 or gIsRWTS only
 
