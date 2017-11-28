@@ -5,6 +5,7 @@
 ; disks
 ;
 ; Cranston Manor
+; Missile Defense
 ; Pegasus ][
 ; Threshold
 ;
@@ -12,9 +13,58 @@
 ;-------------------------------
 !zone {
          lda   gIsDOS32
-         bne   .exit
+         bne   .jmpexit
 
-         ldy   #14
+         lda   gIsSierra13
+         bne   +
+
+         ;Cranston Manor-specific
+         ;secondary protection
+
+         ldy   #10
+         jsr   SearchTrack
+         !byte $A9,$24     ;LDA #$24
+         !byte $8D,$1E,$B9 ;STA $B91E
+         !byte $A9,$00     ;LDA #$00
+         !byte $8D,$7F,$89 ;STA $897F
+         bcs   .jmpexit
+         inx
+         inx ;patch the STA
+         ldy   #$01
+         jsr   modify
+         !byte $AD ;LDA
+.jmpexit
+         jmp   .exit
+
+         ;Missile Defense
+
++        ldy   #17
+         jsr   SearchTrack
+         !byte $20,$00,$8F ;JSR $8F00
+         !byte $20,$00,$90 ;JSR $9000
+         !byte $20,$00,$8F ;JSR $8F00
+         !byte $A9,$00     ;LDA #$00
+         !byte $85,$03     ;STA $03
+         !byte $A9,$20     ;LDA #$20
+         !byte $85,$02     ;STA $02
+         bcs   +
+         pha
+         lda   #s_sierra
+         jsr   PrintByID
+         pla
+         inx
+         inx
+         inx ;patch the second JSR
+         ldy   #$01
+         jsr   modify
+         !byte $2C ;LDA
+         jmp   .exit
+
+         ;Cranston Manor, etc.
+         ;requires decryption because Cranston Manor
+         ;pushes return address from inside the routine
+
++        ldy   #14
          jsr   SearchTrack
          !byte $A0,$00               ;LDY #$00
          !byte $A9,$55               ;LDA #$55
@@ -30,17 +80,19 @@
          sta   .decode+2
          stx   .decode+1
          stx   .adjust1+1
+         lda   #s_sierra
+         jsr   PrintByID
          ldy   #$6a
 -        lda   #$55
 .decode  eor   $d1d1,y
-         sta   $2000,y     ;must be page-aligned
+         sta   $2000,y ;must be page-aligned
          dey
          bpl   -
          lda   #$20
          ldy   #4
          jsr   SearchSector
-         !byte $AE, $E9, $B7 ;LDX $B7E9
-         !byte $BD           ;LDA $....,X
+         !byte $AE,$E9,$B7 ;LDX $B7E9
+         !byte $BD         ;LDA $....,X
          bcs   .exit
          txa
 .adjust1 adc   #$d1
@@ -48,7 +100,9 @@
 .adjust2 lda   #$d1
          ldy   #$01
          jsr   modify
-         !byte $35         ;encoded RTS
+         !byte $35 ;encoded RTS
+         lda   #TRUE
+         sta   gIsSierra13
 
 .exit
 }
