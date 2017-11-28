@@ -1,0 +1,54 @@
+;-------------------------------
+; #SIERRA13
+; search and disable a self-decrypting
+; protection check used on some Sierra
+; disks
+;
+; Cranston Manor
+; Pegasus ][
+; Threshold
+;
+; module by qkumba
+;-------------------------------
+!zone {
+         lda   gIsDOS32
+         bne   .exit
+
+         ldy   #14
+         jsr   SearchTrack
+         !byte $A0,$00               ;LDY #$00
+         !byte $A9,$55               ;LDA #$55
+         !byte $59,WILDCARD,WILDCARD ;EOR $xxxx,Y
+         !byte $99,WILDCARD,WILDCARD ;STA $xxxx,Y
+         !byte $88                   ;DEY
+         !byte $D0,$F5               ;BNE *-9
+         !byte $EA                   ;NOP
+         bcs   .exit
+
+         sta   .adjust2+1
+         adc   #BASEPAGE
+         sta   .decode+2
+         stx   .decode+1
+         stx   .adjust1+1
+         ldy   #$6a
+-        lda   #$55
+.decode  eor   $d1d1,y
+         sta   $2000,y     ;must be page-aligned
+         dey
+         bpl   -
+         lda   #$20
+         ldy   #4
+         jsr   SearchSector
+         !byte $AE, $E9, $B7 ;LDX $B7E9
+         !byte $BD           ;LDA $....,X
+         bcs   .exit
+         txa
+.adjust1 adc   #$d1
+         tax
+.adjust2 lda   #$d1
+         ldy   #$01
+         jsr   modify
+         !byte $35         ;encoded RTS
+
+.exit
+}
