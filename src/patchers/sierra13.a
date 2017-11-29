@@ -13,7 +13,7 @@
 ;-------------------------------
 !zone {
          lda   gIsDOS32
-         bne   .jmpexit
+;;         bne   .jmpexit
 
          lda   gIsSierra13
          bne   +
@@ -61,8 +61,6 @@
          jmp   .exit
 
          ;Cranston Manor, etc.
-         ;requires decryption because Cranston Manor
-         ;pushes return address from inside the routine
 
 +        ldy   #14
          jsr   SearchTrack
@@ -75,32 +73,31 @@
          !byte $EA                   ;NOP
          bcs   .exit
 
-         sta   .adjust2+1
+         dex
+         dex
+         dex
+         bmi   +
+         tay
+         dey ;Pegasus code spans pages
+         tya
++        sta   .adjust+1
          adc   #BASEPAGE
-         sta   .decode+2
-         stx   .decode+1
-         stx   .adjust1+1
+         pha
          lda   #s_sierra
          jsr   PrintByID
-         ldy   #$6a
--        lda   #$55
-.decode  eor   $d1d1,y
-         sta   $2000,y ;must be page-aligned
-         dey
-         bpl   -
-         lda   #$20
-         ldy   #4
+         pla
+         ldy   #8
          jsr   SearchSector
-         !byte $AE,$E9,$B7 ;LDX $B7E9
-         !byte $BD         ;LDA $....,X
+         !byte $85,WILDCARD ;encoded BNE *+xx
+         !byte $DD          ;encoded DEY
+         !byte WILDCARD,$A0 ;encoded Bxx *-9
+         !byte $E8,$DD,$95  ;encoded LDA $C088,X
          bcs   .exit
-         txa
-.adjust1 adc   #$d1
-         tax
-.adjust2 lda   #$d1
+         inx
+.adjust  lda   #$d1
          ldy   #$01
          jsr   modify
-         !byte $35 ;encoded RTS
+         !byte $55 ;encoded zero
          lda   #TRUE
          sta   gIsSierra13
 
