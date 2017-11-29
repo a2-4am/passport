@@ -699,6 +699,7 @@ _applyToAll
          !source "patchers/jmpb4bb.a"           ; T02 only
          !source "patchers/dos32muse.a"         ; T01 && gIsDOS32 only
          !source "patchers/sra.a"               ; gIsDOS32 or gIsRWTS only
+         !source "patchers/sierra13.a"          ; gIsDOS32 only
 
          lda   gPatchCount
          beq   .nopatches

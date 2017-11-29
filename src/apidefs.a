@@ -79,9 +79,10 @@ gIsMilliken1                  = gIs8b3-$01                        ; byte
 gAdventureInternational       = gIsMilliken1-$01                  ; byte
 gIsLaureate                   = gAdventureInternational-$01       ; byte
 gIsDatasoft                   = gIsLaureate-$01                   ; byte
+gIsSierra13                   = gIsDatasoft-$01                   ; byte
 ;LASTFILTER ; add new gIs* above this line
 
-gOnAClearDayYouCanReadForever = gIsDatasoft-$01                   ; byte
+gOnAClearDayYouCanReadForever = gIsSierra13-$01                   ; byte
 gUsingRAMDisk                 = gOnAClearDayYouCanReadForever-$01 ; byte
 gRAMDiskRef                   = gUsingRAMDisk-$01                 ; byte
 gDisplayBytes                 = gRAMDiskRef-$0A                   ; 10 bytes
@@ -139,6 +140,7 @@ ConstructStandardDelivery = jConstructStandardDelivery
 !warn "gAdventureInternational=",gAdventureInternational
 !warn "gIsLaureate=",gIsLaureate
 !warn "gIsDatasoft=",gIsDatasoft
+!warn "gIsSierra13=",gIsSierra13
 !warn "gOnAClearDayYouCanReadForever=",gOnAClearDayYouCanReadForever
 !warn "gUsingRAMDisk=",gUsingRAMDisk
 !warn "gRAMDiskRef=",gRAMDiskRef
