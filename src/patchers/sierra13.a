@@ -31,6 +31,46 @@
          ldy   #$01
          jsr   modify
          !byte $AD ;LDA
+.jmpexit
+         jmp   .exit
+
+         ;Cranston Manor/Wizard and the Princess
+         ;tertiary protection
+
++        ldy   #10
+         jsr   SearchTrack
+         !byte $A9,$1E     ;LDA #$1E
+         !byte $8D,$7D,$BE ;STA $BE7D
+         !byte $A9,$BA     ;LDA #$BA
+         !byte $8D,$7E,$BE ;STA $BE7E
+         bcs   +
+         pha
+         tay
+         txa
+         pha
+         tya
+         ldy   #10
+         jsr   modify
+         !byte $A9,$A0     ;LDA #$A0
+         !byte $8D,$8C,$BE ;STA $BE8C
+         !byte $A9,$B9     ;LDA #$B9
+         !byte $8D,$8D,$BE ;STA $BE8D
+         pla
+         sec
+         sbc   #$0B
+         tax
+         pla
+         ldy   #8
+         jsr   compare
+         !byte $8D,$7D,$BE ;STA $BE7D
+         !byte $A9,$6B     ;LDA #$6B
+         !byte $8D,$7E,$BE ;STA $BE7E
+         bcs   +
+         ldy   #8
+         jsr   modify
+         !byte $8D,$8C,$BE ;STA $BE8C
+         !byte $A9,$6B     ;LDA #$6B
+         !byte $8D,$8D,$BE ;STA $BE8D
          jmp   .exit
 
          ;Missile Defense
