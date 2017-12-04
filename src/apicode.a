@@ -49,6 +49,11 @@
                           ; compile-time flag, no way to change at runtime
 
 FIRSTFILTER
+;gIsSierra
+         !byte FALSE      ; 0=true, 1=false
+                          ; reset before each operation
+                          ; set in sierra patcher after patching
+                          ; used to avoid an expensive search
 ;gIsSierra13
          !byte FALSE      ; 0=true, 1=false
                           ; reset before each operation
