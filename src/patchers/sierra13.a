@@ -49,6 +49,10 @@
          txa
          pha
          tya
+         pha
+         txa
+         pha
+         tya
          ldy   #10
          jsr   modify
          !byte $A9,$A0     ;LDA #$A0
@@ -65,12 +69,20 @@
          !byte $8D,$7D,$BE ;STA $BE7D
          !byte $A9,$6B     ;LDA #$6B
          !byte $8D,$7E,$BE ;STA $BE7E
-         bcs   +
+         bcs   ++
          ldy   #8
          jsr   modify
          !byte $8D,$8C,$BE ;STA $BE8C
          !byte $A9,$6B     ;LDA #$6B
          !byte $8D,$8D,$BE ;STA $BE8D
+++       pla
+         clc
+         adc   #$48
+         tax
+         pla
+         ldy   #2
+         jsr   modify
+         !byte $A0,$B9
          jmp   .exit
 
          ;Missile Defense
