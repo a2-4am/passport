@@ -26,3 +26,20 @@ IDProDOS
          !byte $4C        ; JMP
          rts
 }
+
+!zone {
+PatchUniversalRWTSForOrigin
+         ldy   #$0F
+-        lda   .a, y
+         sta   $b990, y
+         dey
+         bpl   -
+         ldy   #$14
+-        lda   .b, y
+         sta   $b92f, y
+         dey
+         bpl   -
+         rts
+.a       !byte $C9,$AB,$D0,$0A,$EA,$BD,$8C,$C0,$C9,$AB,$F0,$95,$D0,$00,$18,$60
+.b       !byte $18,$60,$38,$A5,$2D,$E9,$11,$85,$2D,$18,$60,$00,$00,$00,$00,$00,$00,$00,$00,$38,$60
+}

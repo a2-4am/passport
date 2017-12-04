@@ -1,0 +1,43 @@
+;-------------------------------
+; #ORIGIN
+; disk allows either $DE or $AB + timing bit
+; for the address epilogue -- if it finds the latter,
+; it also munges the sector number from the address field
+; (no patches required, but we want to
+; log it and pretend we patched something
+; so we get a nice CRACK COMPLETE message)
+;
+; tested on
+; - Times of Lore
+; - Ultima V
+;-------------------------------
+!zone {
+         lda   gIsProDOS  ; only if ProDOS
+         bne   .exit
+         lda   #$0F
+         sta   .sector+1
+.sector  lda   #$FF       ; modified at runtime
+         sta   gDisplayBytes
+         ldx   #$81
+         ldy   #$18
+         jsr   compare
+         !byte $BD,$8C,$C0; LDA $C08C,X
+         !byte $10,$FB    ; BPL -
+         !byte $C9,$DE    ; CMP #$DE
+         !byte $F0,$0E    ; BEQ +
+         !byte $EA        ; NOP
+         !byte $BD,$8C,$C0; LDA $C08C,X
+         !byte $C9,$AB    ; CMP #$AB
+         !byte $D0,$0C    ; BNE +
+         !byte $38        ; SEC
+         !byte $A5,$5D    ; LDA $5D
+         !byte $E9,$11    ; SBC #$11
+         !byte $85,$5D    ; STA $5D
+         bcs   +
+         lda   #s_origin
+         jsr   PrintByID
+         inc   gPatchCount
++        dec   .sector+1
+         bpl   .sector
+.exit
+}

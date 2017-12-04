@@ -97,4 +97,5 @@ s_rwtswrite =  $5B
 s_rdos =       $5C
 s_sra =        $5D
 s_muse =       $5E
-STRINGCOUNT =  $5F
+s_origin =     $5F
+STRINGCOUNT =  $60

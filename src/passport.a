@@ -319,6 +319,16 @@ ADStyle
 UseUniversal
          jsr   IncProgress
          jsr   StartWithUniv
+         lda   gIsProDOS
+         bne   ReadWithRWTS
+; On disks with a ProDOS bootloader, we patch the universal RWTS in memory
+; so it can also read protected Origin disks like Ultima V and Times of Lore.
+; These disks use a hybrid RWTS that alters the sector number in the
+; address field based on the address epilogue. Once we normalize the
+; sector numbers, no further patches are required, since the RWTS can also
+; read unprotected disks. A separate patcher finds the actual code that
+; alters the sector number to print it to the log.
+         jsr   PatchUniversalRWTSForOrigin
 
 ; note: execution falls through here
 
@@ -683,6 +693,7 @@ _applyToAll
          !source "patchers/prodosmecc.a"        ; gIsProDOS only
          !source "patchers/bbf9.a"              ; gIsProDOS only
          !source "patchers/memory.config.a"     ; gIsProDOS only
+         !source "patchers/origin.a"            ; gIsProDOS only
          !source "patchers/rwtsswapmecc.a"      ; gIsMECCFastloader only
          !source "patchers/protecteddos.a"      ; gIsProtDOS only
          !source "patchers/fbff.a"
