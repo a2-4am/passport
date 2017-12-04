@@ -28,12 +28,9 @@
 ; module by qkumba
 ;-------------------------------
 !zone {
-         lda   .foundsierra
-         bne   +
+         lda   gIsSierra
+         beq   +
          jmp   .dosearch
-+        lda   gTrack
-         bne   +
-         dec   .foundsierra
 +        ldy   #3
          jsr   SearchTrack
 .call
@@ -167,8 +164,6 @@
          jsr   modify
          !byte $2C ;BIT $xxxx
 +        jmp   .exit
-.foundsierra
-         !byte $00
 
 .trybox
          ldy   #17
@@ -381,7 +376,7 @@
          ldy   #11
          jsr   compare
          !byte $8C,$F4,$B7      ;STY $B7F4
-         !byte WILDCARD,$EC,$B7 ;STx $B7EC
+         !byte WILDCARD,$EC,$B7 ;STX $B7EC
          !byte $A9,$B7          ;LDA #$B7
          !byte $A0,$E8          ;LDY #$E8
          !byte $20              ;JSR $xxxx
@@ -461,7 +456,8 @@
          bvc   .exit
          lda   #s_restart
          jsr   PrintByID
-         inc   .foundsierra
+         lda   #TRUE
+         sta   gIsSierra
          jsr   RestartProgress
          jsr   IncProgress
          ldx   #$FF
