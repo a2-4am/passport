@@ -362,52 +362,50 @@ checksector
          jsr   SwitchToUniv
 +        jsr   ReadSector
          bcc   nextsector
-         pla
-         pha
 ;
 ; Uh oh, we got a read error. But do we care?
-; Maybe we marked this sector as optional based
-; on markers in the bootloader.
-;
-         cmp   #kSectorOptional
-         beq   .optional
-;
-; (13-sector only)
 ; If we just got to this track, check for whole-track protections.
 ;
+         ldx   #$0F ;16-sector
          lda   gIsDOS32
          bne   +
-         lda   gSector
-         cmp   #$0C
-         beq   .tryskip
-;
-; If we're in the middle of a track, try switching to the
-; universal RWTS and see if that helps. (Many disks contain
-; an RWTS that can't read the early tracks or sectors that
-; contain the RWTS code, since those are loaded by the
-; disk controller firmware.)
-;
-+        lda   gSector
-         cmp   #$0F
-         bne   .tryuniversal
-;
-; We just got to this track, so check for a variety
-; of whole-track conditions that might indicate we should
-; just skip the entire track
-.tryskip
-         sta   .sub+1
+         ldx   #$0C ;13-sector
++        cpx   gSector
+         bne   .checkoptional
+         stx   .sub+1
          jsr   SkipTrack
-         bcs   .tryuniversal
+         bcs   .checkoptional
 ; Skip this track (we already printed the reason)
          lda   #$00
          jsr   ChangeSector
          lda   checksector+1
          sec
-.sub     sbc   #$0F
+.sub     sbc   #$0F ;self-modified according to sectors per track
          sta   checksector+1
          bcs   +
          dec   checksector+2
 +        jmp   nextsector
+
+; do this only *after* checking for track-skip
+; to avoid fatal errors on unformatted tracks
+
+.checkoptional
+         pla
+         pha
+;
+; Maybe we marked this sector as optional based
+; on markers in the bootloader.
+;
+         cmp   #kSectorOptional
+         beq   .optional
+
+;
+; Otherwise we're in the middle of a track, so try switching to
+; the universal RWTS and see if that helps. (Many disks contain
+; an RWTS that can't read the early tracks or sectors that
+; contain the RWTS code, since those are loaded by the
+; disk controller firmware.)
+;
 
 .tryuniversal
          lda   gIsDOS32   ; is this a DOS 3.2 disk?
@@ -710,6 +708,7 @@ _applyToAll
          !source "patchers/jmpb4bb.a"           ; T02 only
          !source "patchers/dos32muse.a"         ; T01 && gIsDOS32 only
          !source "patchers/sra.a"               ; gIsDOS32 or gIsRWTS only
+         !source "patchers/sierra13.a"          ; gIsDOS32 only
 
          lda   gPatchCount
          beq   .nopatches

@@ -1,0 +1,153 @@
+;-------------------------------
+; #SIERRA13
+; search and disable a self-decrypting
+; protection check used on some Sierra
+; disks
+;
+; Cranston Manor
+; Jawbreaker ][
+; Missile Defense
+; Pegasus ][
+; Threshold
+;
+; module by qkumba
+;-------------------------------
+!zone {
+         lda   gIsDOS32
+         bne   .jmpexit
+
+         ;Cranston Manor/Wizard and the Princess
+         ;secondary protection
+
+         ldy   #10
+         jsr   SearchTrack
+         !byte $A9,$24     ;LDA #$24
+         !byte $8D,$1E,$B9 ;STA $B91E
+         !byte $A9,$00     ;LDA #$00
+         !byte $8D,$7F,$89 ;STA $897F
+         bcs   +
+         inx
+         inx ;patch the STA
+         ldy   #$01
+         jsr   modify
+         !byte $AD ;LDA
+.jmpexit
+         jmp   .exit
+
+         ;Cranston Manor/Wizard and the Princess
+         ;tertiary protection
+
++        ldy   #10
+         jsr   SearchTrack
+         !byte $A9,$1E     ;LDA #$1E
+         !byte $8D,$7D,$BE ;STA $BE7D
+         !byte $A9,$BA     ;LDA #$BA
+         !byte $8D,$7E,$BE ;STA $BE7E
+         bcs   +
+         pha
+         tay
+         txa
+         pha
+         tya
+         pha
+         txa
+         pha
+         tya
+         ldy   #10
+         jsr   modify
+         !byte $A9,$A0     ;LDA #$A0
+         !byte $8D,$8C,$BE ;STA $BE8C
+         !byte $A9,$B9     ;LDA #$B9
+         !byte $8D,$8D,$BE ;STA $BE8D
+         pla
+         sec
+         sbc   #$0B
+         tax
+         pla
+         ldy   #8
+         jsr   compare
+         !byte $8D,$7D,$BE ;STA $BE7D
+         !byte $A9,$6B     ;LDA #$6B
+         !byte $8D,$7E,$BE ;STA $BE7E
+         bcs   ++
+         ldy   #8
+         jsr   modify
+         !byte $8D,$8C,$BE ;STA $BE8C
+         !byte $A9,$6B     ;LDA #$6B
+         !byte $8D,$8D,$BE ;STA $BE8D
+++       pla
+         clc
+         adc   #$48
+         tax
+         pla
+         ldy   #2
+         jsr   modify
+         !byte $A0,$B9
+         jmp   .exit
+
+         ;Missile Defense
+
++        ldy   #17
+         jsr   SearchTrack
+         !byte $20,$00,$8F ;JSR $8F00
+         !byte $20,$00,$90 ;JSR $9000
+         !byte $20,$00,$8F ;JSR $8F00
+         !byte $A9,$00     ;LDA #$00
+         !byte $85,$03     ;STA $03
+         !byte $A9,$20     ;LDA #$20
+         !byte $85,$02     ;STA $02
+         bcs   +
+         pha
+         lda   #s_sierra
+         jsr   PrintByID
+         pla
+         inx
+         inx
+         inx ;patch the second JSR
+         ldy   #$01
+         jsr   modify
+         !byte $2C ;LDA
+         jmp   .exit
+
+         ;Cranston Manor, etc.
+
++        ldy   #14
+         jsr   SearchTrack
+         !byte $A0,$00               ;LDY #$00
+         !byte $A9,$55               ;LDA #$55
+         !byte $59,WILDCARD,WILDCARD ;EOR $xxxx,Y
+         !byte $99,WILDCARD,WILDCARD ;STA $xxxx,Y
+         !byte $88                   ;DEY
+         !byte $D0,$F5               ;BNE *-9
+         !byte $EA                   ;NOP
+         bcs   .exit
+
+         cpx   #$50
+         bcc   +
+         tay
+         dey ;Pegasus code spans pages
+         tya
+         clc
++        sta   .adjust+1
+         adc   #BASEPAGE
+         pha
+         lda   #s_sierra
+         jsr   PrintByID
+         pla
+         ldy   #8
+         jsr   SearchSector
+         !byte $85,WILDCARD ;encoded BNE *+xx
+         !byte $DD          ;encoded DEY
+         !byte WILDCARD,$A0 ;encoded Bxx *-9
+         !byte $E8,$DD,$95  ;encoded LDA $C088,X
+         bcs   .exit
+         inx
+.adjust  lda   #$d1
+         ldy   #$01
+         jsr   modify
+         !byte $55 ;encoded zero
+         lda   #TRUE
+         sta   gIsSierra13
+
+.exit
+}
