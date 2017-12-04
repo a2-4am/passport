@@ -5,7 +5,7 @@
 ; disks
 ;
 ; Cranston Manor
-; Jawbreaker ][
+; Jawbreaker
 ; Missile Defense
 ; Pegasus ][
 ; Threshold
@@ -83,6 +83,27 @@
          ldy   #2
          jsr   modify
          !byte $A0,$B9
+         jmp   .exit
+
+         ;Threshold secondary protection
+
++        ldy   #11
+         jsr   SearchTrack
+         !byte $A9,$00     ;LDA #$00
+         !byte $AA         ;TAX
+         !byte $5D,$00,$96 ;EOR $9600,X
+         !byte $E8         ;INX
+         !byte $D0,$FA     ;BNE *-4
+         !byte $C9,$F3     ;CMP #$F3
+         bcs   +
+         pha
+         txa
+         adc   #$0A
+         tax
+         pla
+         ldy   #$01
+         jsr   modify
+         !byte $FC
          jmp   .exit
 
          ;Missile Defense
