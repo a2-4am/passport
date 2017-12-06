@@ -1,10 +1,11 @@
 ;-------------------------------
-; IDVolumeNameProDOS
-; identify and print ProDOS volume name if found
+; IDVolumeName
+; identify and print volume name if found
+; (ProDOS and Pascal supported)
 ;
 ; in:  $0800..$08FF contains T00,S00
 ;      first page of track buffer also contains T00,S00
-;      gIsProDOS is true
+;      gIsProDOS or gIsPascal is true
 ; out: C clear if disk volume name was found and printed
 ;      C set otherwise
 ;      oVerflow always clear
@@ -12,7 +13,7 @@
 ;      all other flags clobbered
 ;-------------------------------
 !zone {
-IDVolumeNameProDOS
+IDVolumeName
 ; read T00,S0B (volume key block)
          lda   #$00
          sta   gTrack
@@ -27,6 +28,9 @@ IDVolumeNameProDOS
          jsr   ReadSector
          bcs   .error
 
+         lda   gIsPascal
+         beq   .pascal
+
 ; sanity check the volume name length byte
          ldy   #$04
          lda   (cmp1), y
@@ -34,12 +38,33 @@ IDVolumeNameProDOS
          bcc   .error
          and   #$0F
          tax
+         lda   #$05
+         sta   .offset+1
+         bne   .print     ; always branches
+
+.pascal
+         ldy   #$02
+         lda   (cmp1), y
+         cmp   #$06
+         bne   .error
+         ldy   #$06
+         lda   (cmp1), y
+         beq   .error
+         cmp   #$08
+         bcs   .error
+         tax
+         lda   #$07
+         sta   .offset+1
+
+; note: execution falls through here
+
+.print
 ; X (now the volume name length) is preserved by the PrintByID call
          lda   #s_volumename
          jsr   PrintByID
 
 ; print the volume name
-         ldy   #$05
+.offset  ldy   #$d1       ; set at runtime
 -        lda   (cmp1), y
          ora   #$80
          jsr   PrintA
