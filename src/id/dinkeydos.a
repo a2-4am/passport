@@ -1,0 +1,19 @@
+;-------------------------------
+; IDDinkeyDOS
+; identify Dinkey-DOS by filename in ProDOS catalog
+;
+; in:  track buffer contains T00,S0B
+; out: C clear if Dinkey-DOS found
+;      C set otherwise
+;      all registers clobbered
+;      all other flags clobbered
+;-------------------------------
+!zone {
+IDDinkeyDOS
+         lda   #$0B
+         ldx   #$2B
+         ldy   #$0B
+         jsr   compare    ; if T00,S0B,$2B ==
+         !byte $29,$44,$49,$4E,$4B,$45,$59,$44,$4F,$53,$00
+         rts
+}

@@ -111,6 +111,7 @@ StringTable
          !word .muse
          !word .origin
          !word .volumename
+         !word .dinkeydos
 ;
 ; Text can contain substitution strings, which
 ; are replaced by current values at runtime. Each
@@ -136,7 +137,7 @@ StringTable
 ; can be set directly before calling PrintByID.
 ;
 .header
-         !text "Passport by 4am               2017-12-05",$00
+         !text "Passport by 4am               2017-12-06",$00
 .mainmenu
          !text "________________________________________",$8D,$8D,$8D,$8D,$8D,$8D,$8D
          !text "              "
@@ -425,4 +426,6 @@ StringTable
          !text "address epilogue contains a timing bit.",$8D,$00
 .volumename
          !text "T%t,S%0 Volume name is ",$00
+.dinkeydos
+         !text "T00,S0B Found Dinkey-DOS",$8D,$00
 }

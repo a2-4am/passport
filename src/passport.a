@@ -146,6 +146,7 @@ FirstMover
          !source "id/laureate.a"
          !source "id/micrograms.a"
          !source "id/volumename.a"
+         !source "id/dinkeydos.a"
          !source "print.a"
          !source "compare.a"
          !source "modify.a"
@@ -320,7 +321,7 @@ ADStyle
 UseUniversal
          jsr   IncProgress
          jsr   StartWithUniv
-         lda   gIsProDOS
+         lda   gIsDinkeyDOS
          bne   ReadWithRWTS
 ; On disks with a ProDOS bootloader, we patch the universal RWTS in memory
 ; so it can also read protected Origin disks like Ultima V and Times of Lore.

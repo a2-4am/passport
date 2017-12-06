@@ -99,4 +99,5 @@ s_sra =        $5D
 s_muse =       $5E
 s_origin =     $5F
 s_volumename = $60
-STRINGCOUNT =  $61
+s_dinkeydos =  $61
+STRINGCOUNT =  $62

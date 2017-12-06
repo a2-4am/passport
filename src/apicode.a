@@ -2,7 +2,7 @@
 ; globally-accessible variables
 ; in fixed position to allow
 ; compressed code to work
-; offsets must match t00defs.a
+; offsets must match apidefs.a
 ;-------------------------------
 
 ;gNIBTable
@@ -119,6 +119,10 @@ FIRSTFILTER
                           ; reset before each operation
                           ; set in IDBootloader() after reading T00,S00
 ;gIsPascal
+         !byte FALSE      ; 0=true, 1=false
+                          ; reset before each operation
+                          ; set in IDBootloader() after reading T00,S00
+;gIsDinkeyDOS
          !byte FALSE      ; 0=true, 1=false
                           ; reset before each operation
                           ; set in IDBootloader() after reading T00,S00

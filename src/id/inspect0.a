@@ -187,7 +187,20 @@ IDBootloader
          lda   #TRUE
          sta   gIsProDOS
          jsr   IDVolumeName
-         bvc   .useuniv   ; always branches
+         bcs   .useuniv
+; [note: execution may fall through here]
+;
+; Dinkey-DOS (ProDOS file structure with DOS 3.3-ish RWTS in language card)
+; detectable now because IDVolumeName just read the first sector of the
+; volume directory into memory so we can look for a unique filename
+;
+         jsr   IDDinkeyDOS
+         bcs   .useuniv
+         lda   #s_dinkeydos
+         jsr   PrintByID
+         lda   #TRUE
+         sta   gIsDinkeyDOS
+         beq   .useuniv   ; always branches
 ;
 ; Apple Pascal (all versions)
 ;
