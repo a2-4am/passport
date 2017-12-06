@@ -4,7 +4,7 @@
 ;
 ; in:  $0800..$08FF contains T00,S00
 ;      first page of track buffer also contains T00,S00
-; out: C clear if Apple Pascal bootloader found
+; out: C clear if ProDOS bootloader found
 ;      C set otherwise
 ;      all registers clobbered
 ;      all other flags clobbered

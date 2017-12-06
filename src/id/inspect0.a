@@ -186,7 +186,8 @@ IDBootloader
          jsr   PrintByID
          lda   #TRUE
          sta   gIsProDOS
-         beq   .useuniv   ; always branches
+         jsr   IDVolumeNameProDOS
+         bvc   .useuniv   ; always branches
 ;
 ; Apple Pascal (all versions)
 ;

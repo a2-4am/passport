@@ -98,4 +98,5 @@ s_rdos =       $5C
 s_sra =        $5D
 s_muse =       $5E
 s_origin =     $5F
-STRINGCOUNT =  $60
+s_volumename = $60
+STRINGCOUNT =  $61
