@@ -1,0 +1,173 @@
+;-------------------------------
+; PanglosDOS
+; in:  $0800..$08FF contains boot0
+;      $3600..$3FFF contains boot1
+; out: C clear if "Panglossian DOS" was found
+;      C set if "Panglossian DOS" was not found
+;      gIsPanglosDOS is set to TRUE or FALSE
+;
+; module by qkumba
+;-------------------------------
+!zone {
+PanglosDOS
+         lda   jCallRWTS+2
+         ldx   #$00       ; check for "STY $48;STA $49"
+         ldy   #$04       ; at RWTS entry point
+         jsr   CompareMemory
+         !byte $84,$48,$85,$49
+         bcs   .jmpexit
+         lda   #$38       ; check for "SEC;RTS" at $38C3
+         ldx   #$C3
+         ldy   #$02
+         jsr   CompareMemory
+         !byte $38,$60
+         bcs   .jmpexit
+         lda   #$38       ; check for "LDA $C08C,X" at $3862
+         ldx   #$62
+         ldy   #$03
+         jsr   CompareMemory
+         !byte $BD,$8C,$C0
+         bcs   .jmpexit
+         lda   #$3D       ; check for "JSR $3BF9" at $3DB9
+         ldx   #$B9
+         ldy   #$03
+         jsr   CompareMemory
+         !byte $20,$F9,$3B
+         bcc   +
+.jmpexit
+         jmp   .exit
+
++        lda   #s_panglosdos
+         jsr   PrintByID
+
+         bit   gMode
+         sec
+         bpl   .jmpexit
+         bvc   .jmpexit
+
+         lda   #s_gathering
+         jsr   PrintByID
+
+         ;$230 (560) bytes for address keys
+         ;$230 (560) bytes for data keys
+         ;=$460 bytes total
+
+         ldy   #0
+         tya
+-        sta   $900,y
+         sta   $A00,y
+         ;$B00-B2F is partial
+         sta   $C00,y
+         sta   $D00,y
+         ;$E00-E2F is partial
+         iny
+         bne   -
+         ldy   #$2F
+-        sta   $B00,y
+         sta   $E00,y
+         dey
+         bpl   -
+         sta   $3881
+         sta   $38EF
+         lda   #$A9
+         sta   $3880
+         sta   $38EE
+         lda   #$0F
+         sta   .sector+1
+.readdir lda   #$11
+         sta   gTrack
+.sector  lda   #$D1
+         sta   gSector
+         lda   #BASEPAGE
+         sta   gAddress+1
+         jsr   ReadSector
+         bcs   .jmpexit
+         inc   gAddress+1
+         lda   #$0B ;entry offset
+.parsedir
+         sta   .diroff+1
+.diroff  ldy   #$D1
+         lda   BASEPAGE<<8,Y
+         beq   .setpanglos
+         cmp   #$FF ;skip deleted files
+         beq   +
+         sta   gTrack
+         lda   (BASEPAGE<<8)+1,Y
+         sta   gSector
+         jsr   ReadSector
+         bcs   .jmpexit
+         ldx   #0
+         ldy   #0
+.parsets
+         lda   ((BASEPAGE+1)<<8)+$0C,X
+         beq   +
+         asl
+         asl
+         asl
+         sty   modsrc+1
+         rol   modsrc+1
+         asl
+         rol   modsrc+1
+         ora   ((BASEPAGE+1)<<8)+$0D,X
+         sta   modsrc
+         lda   modsrc+1
+         adc   #9 ;$900+
+         sta   modsrc+1
+         lda   ((BASEPAGE+1)<<8)+$0A
+         sta   (modsrc),Y
+         lda   modsrc+1
+         adc   #3
+         sta   modsrc+1
+         lda   ((BASEPAGE+1)<<8)+$0B
+         sta   (modsrc),Y
+         inx
+         inx
+         bne   .parsets
++        lda   .diroff+1
+         clc
+         adc   #$23
+         bne   .parsedir
+         dec   .sector+1
+         bne   .readdir
+
+.setpanglos
+         lda   #$20
+         sta   $3DBE
+         lda   #<.callback
+         sta   $3DBF
+         lda   #>.callback
+         sta   $3DC0
+         lda   #TRUE
+         sta   gIsPanglosDOS
+
+         clc
+         jmp   .exit
+
+.callback
+         sty   $578
+         lda   gTrack
+         asl
+         asl
+         asl
+         ldy   #0
+         sty   modsrc+1
+         rol   modsrc+1
+         asl
+         rol   modsrc+1
+         ora   gSector
+         sta   modsrc
+         lda   modsrc+1
+         adc   #9
+         sta   modsrc+1
+         lda   (modsrc),Y
+         sta   $38EF ;address sum
+         lda   modsrc+1
+         adc   #3
+         sta   modsrc+1
+         lda   (modsrc),Y
+         sta   $3881 ;data sum
+         rts
+
+.exit
+         rts
+}

@@ -145,6 +145,7 @@ FirstMover
          !source "id/d5d5f7.a"
          !source "id/laureate.a"
          !source "id/micrograms.a"
+         !source "id/panglosdos.a"
          !source "print.a"
          !source "compare.a"
          !source "modify.a"

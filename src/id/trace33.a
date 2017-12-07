@@ -75,6 +75,11 @@ _Inspect1a
          bcs   .notprotdos
          jmp   ADStyle
 .notprotdos
+         jsr   PanglosDOS ; check for a specific bootloader
+                              ; that uses per-file sector encoding
+         bcs   .notpanglosdos
+         jmp   ADStyle
+.notpanglosdos
          lda   jCallRWTS+2
          ldx   #$00       ; check for "STY $48;STA $49"
          ldy   #$04       ; at RWTS entry point

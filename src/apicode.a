@@ -49,6 +49,10 @@
                           ; compile-time flag, no way to change at runtime
 
 FIRSTFILTER
+;gIsPanglosDOS
+         !byte FALSE      ; 0=true, 1=false
+                          ; reset before each operation
+                          ; set in IDBootloader() after reading T00,S00
 ;gIsSierra
          !byte FALSE      ; 0=true, 1=false
                           ; reset before each operation
