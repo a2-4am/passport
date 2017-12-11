@@ -37,15 +37,7 @@ PanglosDOS
 .jmpexit
          jmp   .exit
 
-+        lda   #s_panglosdos
-         jsr   PrintByID
-
-         bit   gMode
-         sec
-         bpl   .jmpexit
-         bvc   .jmpexit
-
-         lda   #s_gathering
++        lda   #s_gathering
          jsr   PrintByID
 
          ;$230 (560) bytes for address keys

@@ -200,6 +200,10 @@ MainMenu
          jsr   PrintByID
          lda   #s_mainmenu
          jsr   PrintByID
+         lda   gOnAClearDayYouCanReadForever
+         bne   .getkey
+         lda   #$D2
+         sta   $415
 .getkey
          jsr   WaitForKey
          cmp   #$80
@@ -221,7 +225,14 @@ MainMenu
          jsr   NextSlot
          lda   #TRUE
          sta   gChangedPrefs
-         jmp   MainMenu
+-        jmp   MainMenu
++
+         cmp   #$92       ; ctrl-R
+         bne   +
+         lda   gOnAClearDayYouCanReadForever
+         eor   #FALSE
+         sta   gOnAClearDayYouCanReadForever
+         bcs   -
 +
          cmp   #k_verify
          bne   +
