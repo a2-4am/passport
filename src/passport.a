@@ -322,18 +322,39 @@ UseUniversal
          jsr   IncProgress
          jsr   StartWithUniv
          lda   gIsDinkeyDOS
-         bne   ReadWithRWTS
-; On disks with a ProDOS bootloader, we patch the universal RWTS in memory
-; so it can also read protected Origin disks like Ultima V and Times of Lore.
+         bne   +
+;
+; On Dinkey-DOS disks (e.g. Ultima V, Times of Lore), we start with the
+; universal RWTS then apply a patch in memory.
 ; These disks use a hybrid RWTS that alters the sector number in the
 ; address field based on the address epilogue. Once we normalize the
 ; sector numbers, no further patches are required, since the RWTS can also
 ; read unprotected disks. A separate patcher finds the actual code that
 ; alters the sector number to print it to the log.
+;
          jsr   PatchUniversalRWTSForOrigin
-
+         bmi   ReadWithRWTS          ; always branches
+;
+; On other disks that use the universal RWTS for the entire disk, we use
+; an adaptive RWTS that accepts any epilogue on the first sector but then
+; enforces all other sectors to have the same epilogue.
+;
++        jsr   PatchUniversalRWTSForAdaptive
+;
+; Some disks have different epilogues on track 0, so we stop using the
+; adaptive RWTS so we don't falsely accuse those disks of being damaged.
+;
+         lda   #kSectorResetAdaptiveRWTS
+         sta   T00S0F
+;
+; Some disks have an intentionally invalid checksum on T00,S00 (read by
+; the drive firmware, which doesn't verify it).
+;
+         lda   #kSectorIgnoreAddressChecksum
+         sta   T00S00
+;
 ; note: execution falls through here
-
+;
 ReadWithRWTS
          lda   #$22
          jsr   ChangeTrackNW
@@ -355,6 +376,10 @@ checksector
          cmp   #kSectorCustomLast
          bcs   +
          jsr   PreReadSector
+         tax
+         pla
+         txa
+         pha                                    ; replace status (on stack) with new status returned from PreReadSector
 +        cmp   #kSectorIgnore                   ; skip this sector?
          beq   nextsector
 +        cmp   #kSectorSwitchToBuiltinRWTS      ; switch to built-in RWTS before reading this sector?

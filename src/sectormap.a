@@ -31,7 +31,9 @@ kSectorRequired = $FF                ; sector is required (errors are fatal)
 kSectorCustomFirst = $C0
 kSectorCustomLast = $D0
 ; specific codes
-kSectorCustomDOS32B4BB = $C0            ; DOS 3.2 / JMP B4BB RWTS swapper
+kSectorResetAdaptiveRWTS = $C0       ; will accept any epilogue on next sector, then remember it
+kSectorIgnoreAddressChecksum = $C1   ; will ignore address field checksum
+kSectorCustomDOS32B4BB = $C2         ; DOS 3.2 / JMP B4BB RWTS swapper
 ;-------------------------------
 InitSectorMap
 !zone {
