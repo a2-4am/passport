@@ -54,14 +54,15 @@ gTriedUniv                    = gPatchCount-$01                   ; byte
 gSaidWriting                  = gTriedUniv-$01                    ; byte
 gChangedPrefs                 = gSaidWriting-$01                  ; byte
 gLastTrack                    = gChangedPrefs-$01                 ; byte
-
+gDiskVolumeNumber             = gLastTrack-$01                    ; byte
 ;FIRSTFILTER ; add new gIs* below this line
-gIsDOS32                      = gLastTrack-$01                    ; byte
+gIsDOS32                      = gDiskVolumeNumber-$01             ; byte
 gIsBoot0                      = gIsDOS32-$01                      ; byte
 gIsBoot1                      = gIsBoot0-$01                      ; byte
 gIsMaster                     = gIsBoot1-$01                      ; byte
 gIsRWTS                       = gIsMaster-$01                     ; byte
-gIsProDOS                     = gIsRWTS-$01                       ; byte
+gCapturedDiskVolumeNumber     = gIsRWTS-$01                       ; byte
+gIsProDOS                     = gCapturedDiskVolumeNumber-$01     ; byte
 gIsDinkeyDOS                  = gIsProDOS-$01                     ; byte
 gIsPascal                     = gIsDinkeyDOS-$01                  ; byte
 gIsProtDOS                    = gIsPascal-$01                     ; byte
@@ -123,6 +124,7 @@ ConstructStandardDelivery = jConstructStandardDelivery
 !warn "gIsBoot1=",gIsBoot1
 !warn "gIsMaster=",gIsMaster
 !warn "gIsRWTS=",gIsRWTS
+!warn "gCapturedDiskVolumeNumber=",gCapturedDiskVolumeNumber
 !warn "gIsProDOS=",gIsProDOS
 !warn "gIsDinkeyDOS=",gIsDinkeyDOS
 !warn "gIsPascal=",gIsPascal

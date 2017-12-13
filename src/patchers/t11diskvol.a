@@ -1,0 +1,24 @@
+;-------------------------------
+; #T11DISKVOL
+; capture disk volume number after reading T11,S00
+;-------------------------------
+!zone {
+         lda   gTrack
+         cmp   #$11
+         bne   .exit
+         lda   gTriedUniv
+         beq   .exit
+         lda   jCallRWTS+2; #$3D or #$BD
+         sec
+         sbc   #$04       ; #$39 or #$B9
+         ldx   #$80
+         ldy   #$03
+         jsr   CompareMemory
+         !byte $99,$2C,$00; STA $002C,Y
+         bcs   .exit
+         lda   $2F        ; disk volume number of last sector read
+         sta   gDiskVolumeNumber
+         lda   #TRUE
+         sta   gCapturedDiskVolumeNumber
+.exit
+}

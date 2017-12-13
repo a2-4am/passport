@@ -1,0 +1,81 @@
+;-------------------------------
+; #T02VOLUMENAME
+; print disk volume name and number after reading track 2
+;-------------------------------
+!zone {
+         lda   gTrack
+         cmp   #$02
+         bne   .exit
+         lda   gIsBoot0
+         bne   .exit
+         lda   #$00                  ; look for volume name on T02,S00 (Pronto-DOS)
+         jsr   .findVolumeName
+         bcc   +
+         lda   #$02                  ; also look on T02,S02 (DOS 3.3, Diversi-DOS)
+         jsr   .findVolumeName
+         bcs   .exit
+
+;
+; We've found what looks like a DOS 3.3-ish disk volume name, so print it
+;
++        sta   gDisplayBytes
+         adc   #BASEPAGE             ; carry is guaranteed to be clear here
+         sta   .a+2
+         lda   #s_volumename
+         jsr   PrintByID
+         ldy   #$0B
+.a       lda   $d1AF,Y    ; high byte set at runtime (low byte is constant)
+         ora   #$80
+         jsr   PrintA
+         dey
+         bpl   .a
+
+         lda   gCapturedDiskVolumeNumber
+         bne   .exitwithCR
+
+;
+; We captured a disk volume number earlier (probably on track $11), so print that too
+; (This hex-to-decimal routine was lifted from DOS 3.3 @ $AE42)
+;
+         lda   gDiskVolumeNumber
+         sta   cmp1
+         lda   #$FF
+         sta   cmp2
+         ldy   #$02
+.loop1   lda   #$00
+         pha
+.loop2   lda   cmp1
+         cmp   .digits,y
+         bcc   +
+         sbc   .digits,y
+         sta   cmp1
+         lda   cmp2
+         sbc   #$00
+         sta   cmp2
+         pla
+         adc   #$00
+         pha
+         jmp   .loop2
++        pla
+         ora   #$B0
+         jsr   PrintA
+         dey
+         bpl   .loop1
+         bmi   .exitwithCR           ; always branches
+
+.digits
+         !byte $01,$0A,$64
+
+.findVolumeName
+         ldx   #$A7
+         ldy   #$08
+         jsr   compare
+         !byte $D4,$C9,$C1,$C2,$D3,$D2,$C1,$C2
+         rts
+
+
+.exitwithCR
+         lda   #$8D
+         jsr   PrintA
+.exit
+}

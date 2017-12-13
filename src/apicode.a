@@ -130,6 +130,10 @@ FIRSTFILTER
          !byte FALSE      ; 0=true, 1=false
                           ; reset before each operation
                           ; set in IDBootloader() after reading T00,S00
+;gCapturedDiskVolumeNumber
+         !byte FALSE      ; 0=true, 1=false
+                          ; reset before each operation
+                          ; set in patchers/t11diskvol.a after reading T11,S00
 ;gIsRWTS
          !byte FALSE      ; 0=true, 1=false
                           ; reset before each operation
@@ -152,6 +156,11 @@ FIRSTFILTER
                           ; set in IDBootloader() after reading T00,S00
 LASTFILTER
 
+;gDiskVolumeNumber
+         !byte 00         ; int
+                          ; disk volume number from address field of T11,S00
+                          ; only valid if gCapturedDiskVolumeNumber is TRUE
+                          ; never explicitly reset to any default value
 ;gLastTrack
          !byte 00         ; int
                           ; the last track that we should try to read
