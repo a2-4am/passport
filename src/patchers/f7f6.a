@@ -1,0 +1,62 @@
+;-------------------------------
+; #F7F6
+; nibble check hidden inside encrypted startup program SSPROT$$1
+;
+; tested on
+; Grammar Lab 1 (1986, Southwell)
+; Grammar Lab 2 (1986, Southwell)
+; Mathematics Activities Courseware Level 4 (1983, Houghton Mifflin)
+; Mathematics Activities Courseware Level 6 (1983, Houghton Mifflin)
+; Sailing Through Story Problems (1987, DLM)
+; Spanish Grammar Review - Future and Conditional Tenses of Regular and Irregular Verbs (1984, Gessler)
+; Spanish Grammar Review - Familiar and Formal Commands in the Affirmative and Negative (1984, Gessler)
+; Spanish Grammar Review - Por vs. Para (1984, Gessler)
+; Water in the Air Quiz (1985, EME)
+;-------------------------------
+!zone {
+         lda   gIsBoot0
+         bne   .exit
+         lda   #$0F
+         sta   .sector+1
+.sector  lda   #$FF                  ; modified above
+         sta   gDisplayBytes
+         ldx   #$00
+         ldy   #$08
+         jsr   compare
+         !byte $00,$08,$02,$03
+         !byte $D8                   ; CLD
+         !byte $20,$0B,$08           ; JSR $080B
+         bcs   .nextsector
+         ldx   #$17
+         ldy   #$0C
+         jsr   compare
+         !byte $A9,$00               ; LDA #$00
+         !byte $AA                   ; TAX
+         !byte $5D,$00,$08           ; EOR $0800,X
+         !byte $CA                   ; DEX
+         !byte $F0,$03               ; BEQ +3
+         !byte $4C,$16,$08           ; JMP $0816
+         bcs   .nextsector
+         ldx   #$76
+         ldy   #$03
+         jsr   compare
+         !byte $23,$2A,$28
+         bcs   .nextsector
+         lda   #s_f7f6
+         jsr   PrintByID
+         lda   .sector+1
+         ldx   #$20
+         ldy   #$03
+         jsr   modify
+         !byte $EA                   ; NOP
+         !byte $A9,$35               ; LDA #$35
+         lda   .sector+1
+         ldx   #$76
+         ldy   #$02
+         jsr   modify
+         !byte $AA,$A2               ; new JMP entry point ($0900 when decrypted)
+.nextsector
+         dec   .sector+1
+         bpl   .sector
+.exit
+}

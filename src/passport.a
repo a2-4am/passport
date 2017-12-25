@@ -738,6 +738,7 @@ _applyToAll
          !source "patchers/sierra13.a"          ; gIsDOS32 only
          !source "patchers/t11diskvol.a"        ; T11 && gIsRWTS only
          !source "patchers/t02volumename.a"     ; T02 && gIsBoot0 only
+         !source "patchers/f7f6.a"              ; gIsBoot0 only
 
          lda   gPatchCount
          beq   .nopatches
