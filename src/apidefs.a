@@ -84,9 +84,10 @@ gIsDatasoft                   = gIsLaureate-$01                   ; byte
 gIsSierra                     = gIsDatasoft-$01                   ; byte
 gIsSierra13                   = gIsSierra-$01                     ; byte
 gIsF7F6                       = gIsSierra13-$01                   ; byte
+gForceDiskVol                 = gIsF7F6-$01                       ; byte
 ;LASTFILTER ; add new gIs* above this line
 
-gOnAClearDayYouCanReadForever = gIsF7F6-$01                       ; byte
+gOnAClearDayYouCanReadForever = gForceDiskVol-$01                 ; byte
 gUsingRAMDisk                 = gOnAClearDayYouCanReadForever-$01 ; byte
 gRAMDiskRef                   = gUsingRAMDisk-$01                 ; byte
 gDisplayBytes                 = gRAMDiskRef-$0A                   ; 10 bytes

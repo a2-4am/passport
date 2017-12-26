@@ -42,8 +42,6 @@
          jsr   compare
          !byte $23,$2A,$28
          bcs   .nextsector
-         lda   #s_f7f6
-         jsr   PrintByID
          lda   .sector+1
          ldx   #$20
          ldy   #$03

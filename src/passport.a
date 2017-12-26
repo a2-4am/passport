@@ -757,6 +757,7 @@ _applyToAll
          !source "patchers/sra.a"               ; gIsDOS32 or gIsRWTS only
          !source "patchers/sierra13.a"          ; gIsDOS32 only
          !source "patchers/ssprot.a"            ; gIsF7F6 only
+         !source "patchers/f7f6.a"              ; gIsF7F6 only
 
          lda   gPatchCount
          beq   .nopatches

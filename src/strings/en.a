@@ -112,7 +112,6 @@ StringTable
          !word .origin
          !word .volumename
          !word .dinkeydos
-         !word .f7f6
 ;
 ; Text can contain substitution strings, which
 ; are replaced by current values at runtime. Each
@@ -429,6 +428,4 @@ StringTable
          !text "T%t,S%0 Volume name is ",$00
 .dinkeydos
          !text "T00,S0B Found Dinkey-DOS",$8D,$00
-.f7f6
-         !text "T%t,S%0 Found F7F6 protection check",$8D,$00
 }

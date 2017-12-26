@@ -1,0 +1,40 @@
+;-------------------------------
+; #F7F6
+; protection check that counts groups of F7F6EFEEAB nibbles
+;
+; hidden behind a global flag (gIsF7F6)
+; because it relies on an expensive search
+;
+; tested on
+; I, Damiano (1985, Bantam)
+; Might and Magic (1986, New World Computing)
+; Sherlock Holmes in Another Bow (1985, Bantam)
+; Chipwits (1984, Brain Power)
+; The Complete Scarsdale Medical Diet (1985, Bantam)
+; Create With Garfield Deluxe Edition (1987, DLM)
+; Teddy Bearrels of Fun (1987, DLM)
+;-------------------------------
+!zone {
+         lda   gIsF7F6
+         bne   .exit
+
+         ldy   #$08
+         jsr   SearchTrack
+         !byte $A9,$40               ; LDA #$40
+         !byte $85,$FA               ; STA $FA
+         !byte $A2,$60               ; LDX #$60
+         !byte $BD,$8E               ; LDA $..8E,X
+         bcs   .exit
+
+         inx
+         inx
+         inx
+         inx
+         ldy   #$01
+         jsr   modify
+         !byte $18                   ; CLC
+
+         lda   #TRUE                 ; needed for Might & Magic
+         sta   gForceDiskVol
+.exit
+}

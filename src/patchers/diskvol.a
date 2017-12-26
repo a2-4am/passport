@@ -6,26 +6,34 @@
 !zone {
          lda   gIsRWTS    ; if DOS 3.3 RWTS
          bne   .exit
+
          lda   #$01
          ldx   #$EE
          ldy   #$01
          jsr   compare    ; and T00,S01,$EE ==
          !byte $FB
          bcs   .exit
+
          ldx   #$FB
          ldy   #$04
          jsr   compare    ; and T00,S01,$FB ==
          !byte $00,$01,$EF,$D8
          bcs   .exit
+
+         lda   gForceDiskVol
+         beq   .yes
+
          ldx   #$EB
          ldy   #$01
          jsr   compare    ; and T00,S01,$EB !=
          !byte $FE
          bcc   .exit
+
          ldy   #$01
          jsr   compare    ; and T00,S01,$EB !=
          !byte $00
          bcc   .exit
+.yes
          lda   #$08
          ldx   #$10
          ldy   #$05
@@ -34,8 +42,10 @@
          !byte $B1,$48    ; LDA ($48),Y
          !byte $48        ; PHA
          bcs   .exit
+
          lda   #s_diskvol
          jsr   PrintByID
+
          lda   #$08
          ldx   #$12
          ldy   #$02

@@ -49,10 +49,14 @@
                           ; compile-time flag, no way to change at runtime
 
 FIRSTFILTER
+;gForceDiskVol
+         !byte FALSE      ; 0=true, 1=false
+                          ; reset before each operation
+                          ; set in patchers/f7f6
 ;gIsF7F6
          !byte FALSE      ; 0=true, 1=false
                           ; reset before each operation
-                          ; set in analyze/SetupF7F6SecondRound
+                          ; set in analyze (SetupF7F6SecondRound)
                           ; used to avoid an expensive search
 ;gIsSierra13
          !byte FALSE      ; 0=true, 1=false
