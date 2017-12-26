@@ -727,6 +727,8 @@ _applyToT00
          jsr   decrunch
          jsr   $2000
 _applyToAll
+         !source "patchers/t11diskvol.a"        ; T11 && gIsRWTS only
+         !source "patchers/t02volumename.a"     ; T02 && gIsBoot0 only
          !source "patchers/universale7.a"
          !source "patchers/a6bc95.a"            ; gIsPascal only
          !source "patchers/a5count.a"           ; gIsPascal only
@@ -754,9 +756,7 @@ _applyToAll
          !source "patchers/dos32muse.a"         ; T01 && gIsDOS32 only
          !source "patchers/sra.a"               ; gIsDOS32 or gIsRWTS only
          !source "patchers/sierra13.a"          ; gIsDOS32 only
-         !source "patchers/t11diskvol.a"        ; T11 && gIsRWTS only
-         !source "patchers/t02volumename.a"     ; T02 && gIsBoot0 only
-         !source "patchers/f7f6.a"              ; gIsBoot0 only
+         !source "patchers/ssprot.a"            ; gIsF7F6 only
 
          lda   gPatchCount
          beq   .nopatches

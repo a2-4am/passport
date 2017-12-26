@@ -1,5 +1,5 @@
 ;-------------------------------
-; #F7F6
+; #SSPROT
 ; nibble check hidden inside encrypted startup program SSPROT$$1
 ;
 ; tested on
