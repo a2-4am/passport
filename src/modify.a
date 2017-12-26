@@ -11,7 +11,8 @@
 ;      stack set to return to
 ;        code after string
 ;      all registers clobbered
-;      all flags clobbered
+;      oVerflow bit clear
+;      all other flags clobbered
 ;-------------------------------
 !zone {
 modify
@@ -70,5 +71,6 @@ modify
 .exit
          inc   gPatchCount
 .exitnomod
+         clv
          rts
 }
