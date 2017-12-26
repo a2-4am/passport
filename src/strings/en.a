@@ -138,7 +138,7 @@ StringTable
 ; can be set directly before calling PrintByID.
 ;
 .header
-         !text "Passport by 4am               2017-12-24",$00
+         !text "Passport by 4am               2017-12-26",$00
 .mainmenu
          !text "________________________________________",$8D,$8D,$8D,$8D,$8D,$8D,$8D
          !text "              "
@@ -185,9 +185,9 @@ StringTable
 .unformat
          !text "T%t is unformatted",$8D,$00
 .f7
-         !text "T%t Found $F7F6EFEEAB protection",$8D,$00
+         !text "T%t Found $F7F6EFEEAB protection track",$8D,$00
 .sync
-         !text "T%t Found nibble count protection",$8D,$00
+         !text "T%t Found nibble count protection track",$8D,$00
 .optbad
          !text "T%t,S%s is unreadable (ignoring)",$8D,$00
 .passver
@@ -371,7 +371,7 @@ StringTable
 .eatrk6
          !text "T06 Found EA protection track",$8D,$00
 .eeef
-         !text "T%t Found $EEEFBBBA protection",$8D,$00
+         !text "T%t Found $EEEFBBBA protection track",$8D,$00
 .poke
          !text "T%t,S%0 BASIC program POKEs protection",$8D
          !text "check into memory and CALLs it.",$8D,$00

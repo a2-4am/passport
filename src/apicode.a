@@ -49,10 +49,20 @@
                           ; compile-time flag, no way to change at runtime
 
 FIRSTFILTER
+;gIsF7F6
+         !byte FALSE      ; 0=true, 1=false
+                          ; reset before each operation
+                          ; set in analyze/SetupF7F6SecondRound
+                          ; used to avoid an expensive search
 ;gIsSierra13
          !byte FALSE      ; 0=true, 1=false
                           ; reset before each operation
-                          ; set in sierra13 patcher after patching
+                          ; set in sierra13 patcher
+                          ; used to avoid an expensive search
+;gIsSierra
+         !byte FALSE      ; 0=true, 1=false
+                          ; reset before each operation
+                          ; set in sierra patcher
                           ; used to avoid an expensive search
 ;gIsDatasoft
          !byte FALSE      ; 0=true, 1=false

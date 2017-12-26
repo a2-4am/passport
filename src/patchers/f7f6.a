@@ -14,7 +14,7 @@
 ; Water in the Air Quiz (1985, EME)
 ;-------------------------------
 !zone {
-         lda   gIsBoot0
+         lda   gIsF7F6
          bne   .exit
          lda   #$0F
          sta   .sector+1

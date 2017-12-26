@@ -23,17 +23,20 @@ SkipTrack
 ;
 .checkunformat
          jsr   IsUnformatted
-         bcs   .checkf7
+         bcs   .checkf7f6
 +        lda   #s_unformat
          bcc  .skiptrack ; always taken
 ;
-; 3) $F7 protection track (F7F6EFEAAB nibble sequence)
+; 3) $F7F6 protection track (F7F6EFEAAB nibble sequence)
 ;
-.checkf7
-         jsr   IsF7
+.checkf7f6
+         jsr   IsF7F6
          bcs   .checksync
-         lda   #s_f7
-         bcc   .skiptrack ; always taken
+         bit   gMode
+         bpl   .checksync
+         bvc   .checksync
+; if we're in 'crack' mode, restart the scan to find the protection code
+         jmp   SetupF7F6SecondRound
 ;
 ; 4) nibble count track (mostly $FF sync bytes)
 ;
@@ -76,7 +79,7 @@ SkipTrack
 }
 
 ;-------------------------------
-; IsF7
+; IsF7F6
 ; check for a specific nibble sequence
 ; ("F7 F6 EF EE AB") that is used by a
 ; whole-track protection scheme
@@ -86,7 +89,7 @@ SkipTrack
 ;     C set if sequence was not found
 ;-------------------------------
 !zone {
-IsF7
+IsF7F6
          lda   $C0E9
          lda   #$00
          jsr   WAIT
@@ -125,6 +128,38 @@ IsF7
          lda   $C0E8
          rts
 }
+
+;-------------------------------
+; SetupF7F6SecondRound
+;
+; Print that we found the F7F6 protection track,
+; then restart the scan so we can search every sector
+; for the protection code.
+; Never returns.
+; Exits via RestartScan.
+;-------------------------------
+SetupF7F6SecondRound
+; Mark in the sector map that we should ignore
+; this protection track the second time around.
+         lda   checksector+1
+         sta   .a+1
+         lda   checksector+2
+         sta   .a+2
+         ldy   gSector
+         lda   #kSectorIgnore
+.a       sta   $D1D1      ; modifed at runtime
+         dec   .a+1
+         bne   +
+         dec   .a+2
++        dey
+         bpl   .a
+; print that we found the protection track
+         lda   #s_f7
+         jsr   PrintByID
+; set global to activate expensive patcher
+         lda   #TRUE
+         sta   gIsF7F6
+         jmp   RestartScan
 
 ;-------------------------------
 ; IsEEEF

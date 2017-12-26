@@ -81,10 +81,12 @@ gIsMilliken1                  = gIs8b3-$01                        ; byte
 gAdventureInternational       = gIsMilliken1-$01                  ; byte
 gIsLaureate                   = gAdventureInternational-$01       ; byte
 gIsDatasoft                   = gIsLaureate-$01                   ; byte
-gIsSierra13                   = gIsDatasoft-$01                   ; byte
+gIsSierra                     = gIsDatasoft-$01                   ; byte
+gIsSierra13                   = gIsSierra-$01                     ; byte
+gIsF7F6                       = gIsSierra13-$01                   ; byte
 ;LASTFILTER ; add new gIs* above this line
 
-gOnAClearDayYouCanReadForever = gIsSierra13-$01                   ; byte
+gOnAClearDayYouCanReadForever = gIsF7F6-$01                       ; byte
 gUsingRAMDisk                 = gOnAClearDayYouCanReadForever-$01 ; byte
 gRAMDiskRef                   = gUsingRAMDisk-$01                 ; byte
 gDisplayBytes                 = gRAMDiskRef-$0A                   ; 10 bytes

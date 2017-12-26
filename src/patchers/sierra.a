@@ -28,12 +28,11 @@
 ; module by qkumba
 ;-------------------------------
 !zone {
-         lda   .foundsierra
-         bne   +
+         lda   gIsSierra
+         beq   +
          jmp   .dosearch
 +        lda   gTrack
          bne   +
-         dec   .foundsierra
 +        ldy   #3
          jsr   SearchTrack
 .call
@@ -167,8 +166,6 @@
          jsr   modify
          !byte $2C ;BIT $xxxx
 +        jmp   .exit
-.foundsierra
-         !byte $00
 
 .trybox
          ldy   #17
@@ -459,13 +456,8 @@
          bit   gMode
          bpl   .exit
          bvc   .exit
-         lda   #s_restart
-         jsr   PrintByID
-         inc   .foundsierra
-         jsr   RestartProgress
-         jsr   IncProgress
-         ldx   #$FF
-         txs
-         jmp   ReadWithRWTS
+         lda   #TRUE
+         sta   gIsSierra
+         jmp   RestartScan
 .exit
 }

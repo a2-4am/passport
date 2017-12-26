@@ -687,6 +687,24 @@ ChangeSector
          rts
 
 ;-------------------------------
+; RestartScan
+; Print 'Restarting scan...' then do exactly that.
+; Used by several patchers that find evidence of a protection
+; then activate an expensive search the second time around.
+; Can be called from anywhere.
+; Resets stack, never returns.
+; Exits via ReadWithRWTS
+;-------------------------------
+RestartScan
+         lda   #s_restart
+         jsr   PrintByID
+         jsr   RestartProgress
+         jsr   IncProgress
+         ldx   #$FF
+         txs
+         jmp   ReadWithRWTS
+
+;-------------------------------
 ; AnalyzeTrack routine
 ; Looks at buffer in memory to detect known
 ; copy protections and disable/revert/modify them
