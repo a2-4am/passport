@@ -6,55 +6,37 @@
 !zone {
 SkipTrack
 ;
-; 1) $EEEF protection track (EEEFBBBAFAAE nibble sequence)
-;    [must come first because track would otherwise pass the IsUnformatted test below]
-;    [speed optimization: only check on track $22]
+; Electronic Arts protection track?
 ;
-.checkeeef
-         lda   gTrack
-         cmp   #$22
-         bne   .checkunformat
-         jsr   IsEEEF
-         bcs   .checkunformat
-         lda   #s_eeef
-         bcc   .skiptrack ; always taken
+         jsr   IsEATrack6
+         lda   #s_eatrk6
+         bcc   .print
 ;
-; 2) unformatted track
+; Unformatted track?
 ;
-.checkunformat
          jsr   IsUnformatted
-         bcs   .checkf7f6
-+        lda   #s_unformat
-         bcc  .skiptrack ; always taken
+         bcs   +
 ;
-; 3) $F7F6 protection track (F7F6EFEAAB nibble sequence)
+; $F7F6EFEAAB protection track?
+; (initially presents as unformatted, needs separate test because it
+; triggers special handling)
 ;
-.checkf7f6
          jsr   IsF7F6
-         bcs   .checksync
+         lda   #s_unformat
+         bcs   .print
+         lda   #s_f7
          bit   gMode
-         bpl   .checksync
-         bvc   .checksync
+         bpl   .print
+         bvc   .print
 ; if we're in 'crack' mode, restart the scan to find the protection code
          jmp   SetupF7F6SecondRound
 ;
-; 4) nibble count track (mostly $FF sync bytes)
+; Nibble count track?
 ;
-.checksync
-         jsr   IsSyncBytes
-         bcs   .checktrack6
++        jsr   JustTheSameDamnThingOverAndOver
+         bcs   .donotskip
          lda   #s_sync
-         bcc   .skiptrack ; always taken
-
-;
-; 5) track simply does not exist (Electronic Arts in particular)
-;
-.checktrack6
-         jsr   IsEATrack6
-         bcs   .fail
-         lda   #s_eatrk6
-; note: execution falls through here
-.skiptrack
+.print
          jsr   PrintByID
 ;
 ; Skipping T22 on a ProDOS disk might indicate the presence of a
@@ -73,7 +55,7 @@ SkipTrack
          sta   gPossibleGamco
 +        clc
          !byte $24        ; hides next SEC
-.fail
+.donotskip
          sec
          rts
 }
@@ -93,7 +75,7 @@ IsF7F6
          lda   $C0E9
          lda   #$00
          jsr   WAIT
-         lda   #$20
+         lda   #$19
          sta   nibcount
          ldy   #$00
 -        lda   $C0EC
@@ -162,108 +144,87 @@ SetupF7F6SecondRound
          jmp   RestartScan
 
 ;-------------------------------
-; IsEEEF
-; check for a specific nibble sequence
-; ("EE EF BB BA FA AE") that is used by a
-; whole-track protection scheme
+; JustTheSameDamnThingOverAndOver
+; check if track has a large sequence of repeated bytes
 ;
 ; in  slot 6, drive 1 is on track to test
-; out C clear if sequence was found
-;     C set if sequence was not found
+; out C clear if found
+;     C set otherwise
 ;-------------------------------
 !zone {
-IsEEEF
+JustTheSameDamnThingOverAndOver
          lda   $C0E9
-         lda   #$00
          jsr   WAIT
-         lda   #$20
-         sta   nibcount
-         ldy   #$00
--        lda   $C0EC
-         bpl   -
-         cmp   #$EE
-         beq   +
-.restart iny
-         bne   -
-         dec   nibcount
-         bne   -
-         beq   .fail
-+
--        lda   $C0EC
-         bpl   -
-         cmp   #$EF
-         bne   .restart
--        lda   $C0EC
-         bpl   -
-         cmp   #$BB
-         bne   .restart
--        lda   $C0EC
-         bpl   -
-         cmp   #$BA
-         bne   .restart
--        lda   $C0EC
-         bpl   -
-         cmp   #$FA
-         bne   .restart
--        lda   $C0EC
-         bpl   -
-         cmp   #$AE
-         bne   .restart
+         lda   #$19
+         sta   unform+1
+         ldx   #$00
+;
+; Timing-sensitive code! Cycle counts in margin for worst case path
+;
+.reset   ldy   #$00       ; 2
+         sta   .cmp+1     ; 4
+.loop    lda   $C0EC
+         bpl   .loop      ; 3 when not taken
+         dex              ; 2
+         bne   .cmp       ; 3 when not taken
+         dec   unform+1   ; 5
+         beq   .notfound  ; 3 when not taken
+.cmp     cmp   #$d1       ; 2
+         bne   .reset     ; 3 when not taken
+         iny              ; 2
+         bne   .loop      ; 2 when taken
          clc
-         !byte $24        ; hides SEC
-.fail    sec
+         !byte $24
+.notfound
+         sec
          lda   $C0E8
          rts
 }
 
 ;-------------------------------
-; IsSyncBytes
-; check if track is mostly $FF bytes
-;
-; in  slot 6, drive 1 is on track to test
-; out C clear if track is mostly just $FF bytes
-;     C set otherwise
-;-------------------------------
-IsSyncBytes
-         lda   #$FD
-         sta   gNIBTableFF
-         jsr   IsUnformatted
-         lda   #$3F
-         sta   gNIBTableFF
-         rts
-
-;-------------------------------
 ; IsUnformatted
-; check if track is unformatted
+; check if track is unformatted by counting
+; the number of valid nibbles in a row
 ;
 ; in  slot 6, drive 1 is on track to test
 ; out C clear if track is unformatted
 ;     C set if track is formatted
 ;-------------------------------
+!zone {
 IsUnformatted
+         lda   #$FD
+         sta   gNIBTableFF
+
          lda   $C0E9
+         jsr   WAIT
          lda   #$00
          sta   unform
+         lda   #$19
          sta   unform+1
-         jsr   WAIT
-         lda   #$20
-         sta   nibcount
-         ldy   #$00
-nibloop  ldx   $C0EC
-         bpl   nibloop
-         lda   gNIBTable,x
-         bpl   +
-         inc   unform
-         bne   +
-         inc   unform+1
-+        iny
-         bne   nibloop
-         dec   nibcount
-         bne   nibloop
+;
+; Timing-sensitive code! Cycle counts in margin for worst case path
+;
+.reset   ldy   #$00
+.loop    ldx   $C0EC
+         bpl   .loop      ; 3 when not taken
+         dec   unform     ; 5
+         bne   +          ; 3 when not taken
+         dec   unform+1   ; 5
+         beq   .unformatted;3 when not taken
++        lda   gNIBTable,x; 4
+         bmi   .reset     ; 3 when not taken
+         iny              ; 2
+         bne   .loop      ; 2 when taken
+         sec
+         !byte $24
+.unformatted
+         clc
          lda   $C0E8
-         lda   #$18
-         cmp   unform+1
+
+         lda   #$3F
+         sta   gNIBTableFF
          rts
+}
 
 ;-------------------------------
 ; xHeredityDog
