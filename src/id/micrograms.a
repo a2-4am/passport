@@ -22,8 +22,8 @@ IDMicrograms
          !byte $85,$3F
          bcs   .exit
          ldx   #$42
-         ldy   #$03
+         ldy   #$02
          jsr   compare
-         !byte $4C,$00,$0D
+         !byte $4C,$00
 .exit    rts
 }

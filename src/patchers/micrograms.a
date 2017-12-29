@@ -7,26 +7,16 @@
 ; Wild West Math Level 3
 ; Wild West Math Level 4
 ; Wild West Math Level 5
+; Shapes and Patterns
 ;-------------------------------
 !zone {
-         lda   #$06
-         ldx   #$01
          ldy   #$09
-         jsr   compare    ; if T00,S06,$01 ==
-         !byte $AD,$EC,$C0
-         !byte $10,$FB
-         !byte $C9,$BE
-         !byte $D0,$E5
-         bcc   .patch
-         ldx   #$07
-         ldy   #$09
-         jsr   compare    ; or if T00,S06,$07 ==
+         jsr   SearchTrack
          !byte $AD,$EC,$C0
          !byte $10,$FB
          !byte $C9,$BE
          !byte $D0,$E5
          bcs   .exit
-.patch
          inx
          inx
          inx
@@ -36,7 +26,7 @@
          inx
          inx
          ldy   #$01
-         jsr   modify     ; then set T00,S06,$xx =
+         jsr   modify     ; change BNE to continue instead
          !byte $00
 .exit
 }
