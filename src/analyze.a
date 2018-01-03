@@ -5,6 +5,9 @@
 ;-------------------------------
 !zone {
 SkipTrack
+; don't look for whole-track protections on track 0, that's silly
+         lda   gTrack
+         beq   .donotskip
 ;
 ; Electronic Arts protection track?
 ;
