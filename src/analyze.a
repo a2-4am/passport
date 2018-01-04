@@ -15,10 +15,16 @@ SkipTrack
          lda   #s_eatrk6
          bcc   .print
 ;
+; Nibble count track?
+;
+         jsr   JustTheSameDamnThingOverAndOver
+         lda   #s_sync
+         bcc   .print     ; always branches
+;
 ; Unformatted track?
 ;
          jsr   IsUnformatted
-         bcs   +
+         bcs   .donotskip
 ;
 ; $F7F6EFEAAB protection track?
 ; (initially presents as unformatted, needs separate test because it
@@ -33,12 +39,7 @@ SkipTrack
          bvc   .print
 ; if we're in 'crack' mode, restart the scan to find the protection code
          jmp   SetupF7F6SecondRound
-;
-; Nibble count track?
-;
-+        jsr   JustTheSameDamnThingOverAndOver
-         bcs   .donotskip
-         lda   #s_sync
+
 .print
          jsr   PrintByID
 ;
@@ -148,7 +149,7 @@ SetupF7F6SecondRound
 
 ;-------------------------------
 ; JustTheSameDamnThingOverAndOver
-; check if track has a large sequence of repeated bytes
+; check if track has 512 repeated nibbles
 ;
 ; in  slot 6, drive 1 is on track to test
 ; out C clear if found
@@ -156,26 +157,32 @@ SetupF7F6SecondRound
 ;-------------------------------
 !zone {
 JustTheSameDamnThingOverAndOver
-         lda   $C0E9
-         jsr   WAIT
+         lda   $C0E9      ; turn on drive motor, but we assume it's already spun up from previous reads so no waiting
+         lda   #$60
+         sta   tmp
          lda   #$19
          sta   unform+1
          ldx   #$00
 ;
 ; Timing-sensitive code! Cycle counts in margin for worst case path
 ;
-.reset   ldy   #$00       ; 2
+.reset   clv              ; 2
+         ldy   #$00       ; 2
          sta   .cmp+1     ; 4
-.loop    lda   $C0EC
-         bpl   .loop      ; 3 when not taken
+.loop    lda   $C0EC      ; 4
+         bpl   .loop      ; 2 when not taken
          dex              ; 2
-         bne   .cmp       ; 3 when not taken
+         bne   .cmp       ; 2 when not taken
          dec   unform+1   ; 5
-         beq   .notfound  ; 3 when not taken
+         beq   .notfound  ; 2 when not taken
 .cmp     cmp   #$d1       ; 2
-         bne   .reset     ; 3 when not taken
+         bne   .reset     ; 2 when not taken
          iny              ; 2
-         bne   .loop      ; 2 when taken
+         bne   .loop      ; 2 when not taken (3 when taken)
+         bvs   .found     ; 2 when not taken
+         bit   tmp        ; 3 (sets overflow flag)
+         bvs   .loop      ; 3 (always taken)
+.found
          clc
          !byte $24
 .notfound
@@ -198,8 +205,7 @@ IsUnformatted
          lda   #$FD
          sta   gNIBTableFF
 
-         lda   $C0E9
-         jsr   WAIT
+         lda   $C0E9      ; turn on drive motor, but we assume it's already spun up from previous reads so no waiting
          lda   #$00
          sta   unform
          lda   #$19
@@ -208,16 +214,16 @@ IsUnformatted
 ; Timing-sensitive code! Cycle counts in margin for worst case path
 ;
 .reset   ldy   #$00
-.loop    ldx   $C0EC
-         bpl   .loop      ; 3 when not taken
+.loop    ldx   $C0EC      ; 4
+         bpl   .loop      ; 2 when not taken
          dec   unform     ; 5
-         bne   +          ; 3 when not taken
+         bne   +          ; 2 when not taken
          dec   unform+1   ; 5
-         beq   .unformatted;3 when not taken
+         beq   .unformatted;2 when not taken
 +        lda   gNIBTable,x; 4
-         bmi   .reset     ; 3 when not taken
+         bmi   .reset     ; 2 when not taken
          iny              ; 2
-         bne   .loop      ; 2 when taken
+         bne   .loop      ; 3 when taken
          sec
          !byte $24
 .unformatted
