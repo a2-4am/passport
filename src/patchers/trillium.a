@@ -1,0 +1,38 @@
+;-------------------------------
+; #TRILLIUM
+;
+; tested on
+; Rendezvous with Rama rev. 2
+; Fahrenheit 451 rev. 2
+;-------------------------------
+!zone {
+         lda   gIsTrillium
+         beq   .search
+         lda   gTrack
+         cmp   #$11
+         bne   .exit
+         lda   #$0F
+         ldx   #$31
+         ldy   #$03
+         jsr   compare
+         !byte $C9,$CF,$A0
+         bcs   .exit
+         lda   #TRUE
+         sta   gIsTrillium
+         bcc   .exit
+.search  ldy   #$09
+         jsr   SearchTrack
+         !byte $20,$30,$E0; JSR $E030
+         !byte $AD,$83,$C0; LDA $C083
+         !byte $AD,$83,$C0; LDA $C083
+         bcs   .exit
+         sta   gDisplayBytes
+         pha
+         lda   #s_trillium
+         jsr   PrintByID
+         pla
+         ldy   #$01
+         jsr   modify
+         !byte $2C        ; BIT
+.exit
+}

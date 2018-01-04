@@ -100,4 +100,5 @@ s_muse =       $5E
 s_origin =     $5F
 s_volumename = $60
 s_dinkeydos =  $61
-STRINGCOUNT =  $62
+s_trillium =   $62
+STRINGCOUNT =  $63

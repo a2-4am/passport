@@ -84,7 +84,8 @@ gIsDatasoft                   = gIsLaureate-$01                   ; byte
 gIsSierra                     = gIsDatasoft-$01                   ; byte
 gIsSierra13                   = gIsSierra-$01                     ; byte
 gIsF7F6                       = gIsSierra13-$01                   ; byte
-gForceDiskVol                 = gIsF7F6-$01                       ; byte
+gIsTrillium                   = gIsF7F6-$01                       ; byte
+gForceDiskVol                 = gIsTrillium-$01                   ; byte
 ;LASTFILTER ; add new gIs* above this line
 
 gOnAClearDayYouCanReadForever = gForceDiskVol-$01                 ; byte
@@ -147,7 +148,11 @@ ConstructStandardDelivery = jConstructStandardDelivery
 !warn "gAdventureInternational=",gAdventureInternational
 !warn "gIsLaureate=",gIsLaureate
 !warn "gIsDatasoft=",gIsDatasoft
+!warn "gIsSierra=",gIsSierra
 !warn "gIsSierra13=",gIsSierra13
+!warn "gIsF7F6=",gIsF7F6
+!warn "gIsTrillium=",gIsTrillium
+!warn "gForceDiskVol=",gIsForceDiskVol
 !warn "gOnAClearDayYouCanReadForever=",gOnAClearDayYouCanReadForever
 !warn "gUsingRAMDisk=",gUsingRAMDisk
 !warn "gRAMDiskRef=",gRAMDiskRef
