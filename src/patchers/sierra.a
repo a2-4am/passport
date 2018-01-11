@@ -24,6 +24,7 @@
 ; Leisure Suit Larry
 ; Space Quest
 ; The Black Cauldron
+; The Dark Crystal
 ;
 ; module by qkumba
 ;-------------------------------
@@ -31,8 +32,6 @@
          lda   gIsSierra
          beq   +
          jmp   .dosearch
-+        lda   gTrack
-         bne   +
 +        ldy   #3
          jsr   SearchTrack
 .call
@@ -165,6 +164,30 @@
          ldy   #$01
          jsr   modify
          !byte $2C ;BIT $xxxx
++        ldy   #15
+         jsr   SearchTrack
+         !byte $EA         ;NOP
+         !byte $EA         ;NOP
+         !byte $EA         ;NOP
+         !byte $BD,$48,$4A ;LDA $4A48,X
+         !byte $48         ;PHA
+         !byte $BD,$47,$4A ;LDA $4A47,X
+         !byte $48         ;PHA
+         !byte $60         ;RTS
+         !byte $EA         ;NOP
+         !byte $EA         ;NOP
+         !byte $EA         ;NOP
+         bcs   +
+         pha
+         txa
+         adc   #6
+         tax
+         pla
+         ldy   #$05
+         jsr   modify
+         !byte $EA         ;NOP
+         !byte $BD,$47,$4A ;LDA $4A47,X
+         !byte $EA         ;NOP
 +        jmp   .exit
 
 .trybox
