@@ -10,7 +10,8 @@
 ;      $moddest zero page clobbered
 ;      stack set to return to
 ;        code after string
-;      all registers clobbered
+;      A,X preserved
+;      Y clobbered
 ;      oVerflow bit clear
 ;      all other flags clobbered
 ;-------------------------------
@@ -71,6 +72,8 @@ modify
 .exit
          inc   gPatchCount
 .exitnomod
+         lda   gDisplayBytes
+         ldx   moddest
          clv
          rts
 }

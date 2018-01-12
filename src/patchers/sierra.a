@@ -183,10 +183,15 @@
          adc   #6
          tax
          pla
-         ldy   #$05
+         ldy   #$01
          jsr   modify
          !byte $EA         ;NOP
-         !byte $BD,$47,$4A ;LDA $4A47,X
+         inx
+         inx
+         inx
+         inx
+         ldy   #$01
+         jsr   modify
          !byte $EA         ;NOP
 +        jmp   .exit
 
