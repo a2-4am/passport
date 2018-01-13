@@ -196,6 +196,8 @@
 +        jmp   .exit
 
 .trybox
+         lda   #$2C ;BIT $xxxx
+         sta   patchstyle
          ldy   #17
          jsr   SearchTrack
          !byte $20,$00,$1D ;JSR $1D00
@@ -234,44 +236,51 @@
          !byte $84,$C2,$CC,$CF,$C1,$C4,$A0,$D7,$C1,$CC,$D4
                            ;"BLOAD WALT..."
 +        bcc   +
-         ldy   #11
+         lda   #$60 ;RTS
+         sta   patchstyle
+         ldy   #14
          jsr   SearchTrack
-         !byte $20,$00,$FF ;JSR $FF00
-         !byte $18         ;CLC
-         !byte $A9,$7A     ;LDA #$7A
-         !byte $65,$08     ;ADC $08
-         !byte $8D,$65,$66 ;STA $6665
-+        bcc   +
-         ldy   #18
-         jsr   SearchTrack
-         !byte $20,$00,$FF ;JSR $FF00
          !byte $A9,$00     ;LDA #$00
-         !byte $85,$A6     ;STA $A6
-         !byte $85,$A7     ;STA $A7
+         !byte $AA         ;TAX
+         !byte $A8         ;TAY
+         !byte $20,$B7,$FF ;JSR $FFB7
          !byte $A9,$00     ;LDA #$00
-         !byte $85,$A8     ;STA $A8
-         !byte $85,$A9     ;STA $A9
-         !byte $20,WILDCARD,$53 ;JSR $53xx
+         !byte $85,$48     ;STA $48
+         !byte $BD,$89,$C0 ;LDA $C089,X
+         inx
+         inx
+         inx
+         inx
 +        bcc   +
-         ldy   #21
+         lda   #$DD ;checksum
+         sta   patchstyle
+         ldy   #17
          jsr   SearchTrack
-         !byte $20,$00,$FF ;JSR $FF00
-         !byte $A5,$AC     ;LDA $AC
-         !byte $8D,$E0,$7E ;STA $7EE0
-         !byte $A5,$AD     ;LDA $AD
-         !byte $8D,$E1,$7E ;STA $7EE1
-         !byte $A5,$06     ;LDA $06
-         !byte $85,$AC     ;STA $AC
-         !byte $A5,$07     ;LDA $07
-         !byte $85,$AD     ;STA $AD
+         !byte $A5,$12 ;LDA $12
+         !byte $C9,$FC ;CMP #$FC
+         !byte $D0,$06 ;BNE *+8
+         !byte $A5,$13 ;LDA $13
+         !byte $C9,$D5 ;CMP #$D5
+         !byte $F0,$08 ;BEQ *+10
+         !byte $A9,$00 ;LDA #$00
+         !byte $AA     ;TAX
+         !byte $95,$00 ;STA $00,X
          bcs   ++
+         pha
+         txa
+         adc   #9
+         tax
+         pla
+         bcc   modonly
 +        sta   gDisplayBytes
          pha
          lda   #s_sierra
          jsr   PrintByID
          pla
+modonly
          ldy   #$01
          jsr   modify
+patchstyle
          !byte $2C ;BIT $xxxx
 ++       jmp   .exit
 
