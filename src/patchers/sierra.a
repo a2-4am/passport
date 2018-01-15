@@ -20,11 +20,12 @@
 ; Winnie the Pooh
 ; Donald Duck
 ; Mickey's Space Adventure
-; King's Quest
+; King's Quest I, II, III
 ; Leisure Suit Larry
-; Space Quest
+; Space Quest I, II
 ; The Black Cauldron
 ; The Dark Crystal
+; Mixed Up Mother Goose
 ;
 ; module by qkumba
 ;-------------------------------
@@ -251,10 +252,21 @@
          inx
          inx
          inx
-+        bcc   +
-         lda   #$DD ;checksum
-         sta   patchstyle
-         ldy   #17
+         bcs   ++
++        sta   gDisplayBytes
+         pha
+         lda   #s_sierra
+         jsr   PrintByID
+         pla
+         ldy   #$01
+         jsr   modify
+patchstyle
+         !byte $2C ;BIT $xxxx
+         jmp   .exit
+
+         ;two of these are on the same track
+
+++       ldy   #17
          jsr   SearchTrack
          !byte $A5,$12 ;LDA $12
          !byte $C9,$FC ;CMP #$FC
@@ -265,24 +277,53 @@
          !byte $A9,$00 ;LDA #$00
          !byte $AA     ;TAX
          !byte $95,$00 ;STA $00,X
-         bcs   ++
+         bcs   +
          pha
          txa
          adc   #9
          tax
          pla
-         bcc   modonly
-+        sta   gDisplayBytes
-         pha
-         lda   #s_sierra
-         jsr   PrintByID
-         pla
-modonly
          ldy   #$01
          jsr   modify
-patchstyle
-         !byte $2C ;BIT $xxxx
-++       jmp   .exit
+         !byte $DD ;checksum
+         sta   patchstyle
+         ldy   #11
+         jsr   SearchTrack
+         !byte $A5,$12 ;LDA $12
+         !byte $C9,$F9 ;CMP #$F9
+         !byte $F0,$08 ;BEQ *+10
+         !byte $A9,$00 ;LDA #$00
+         !byte $AA     ;TAX
+         !byte $95,$00 ;STA $00,X
++        bcs   +
+         inx
+         inx
+         inx
+         ldy   #$01
+         jsr   modify
+         !byte $F8 ;checksum
+         jmp   .exit
+
++        ldy   #19
+         jsr   SearchTrack
+         !byte $A5,$12     ;LDA $12
+         !byte $C9,$1B     ;CMP #$1B
+         !byte $D0,$07     ;BNE *+9
+         !byte $A5,$13     ;LDA $13
+         !byte $C9,$37     ;CMP #$37
+         !byte $D0,$01     ;BNE *+3
+         !byte $60         ;RTS
+         !byte $A9,$00     ;LDA #$00
+         !byte $AA         ;TAX
+         !byte $9D,$00,$01 ;STA $0100,X
+         bcs   +
+         inx
+         inx
+         inx
+         ldy   #$01
+         jsr   modify
+         !byte $19 ;checksum
++        jmp   .exit
 
 .dosearch
          lda   gIsBoot0
