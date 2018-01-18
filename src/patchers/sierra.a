@@ -26,6 +26,7 @@
 ; The Black Cauldron
 ; The Dark Crystal
 ; Mixed Up Mother Goose
+; The Artist
 ;
 ; module by qkumba
 ;-------------------------------
@@ -41,6 +42,25 @@
          ldy   #$01
          jsr   modify
          !byte $2C
+
+         ;there are two of these on the same track
+
++        ldy   #3
+         jsr   SearchTrack
+.jmp1
+         !byte $4C,$D1,$D1 ;JMP $xxxx
+         bcs   +
+         ldy   #$01
+         jsr   modify
+         !byte $60
+         ldy   #3
+         jsr   SearchTrack
+.jmp2
+         !byte $4C,$D1,$D1 ;JMP $xxxx
+         bcs   +
+         ldy   #$01
+         jsr   modify
+         !byte $60
 +        ldy   #3
          jsr   SearchTrack
 .load
@@ -194,6 +214,16 @@
          ldy   #$01
          jsr   modify
          !byte $EA         ;NOP
++        ldy   #7
+         jsr   SearchTrack
+         !byte $60         ;encoded NOP
+         !byte $AA,$AA,$C8 ;encoded JSR $4220
+         !byte $4C,$BF,$48 ;JMP $48BF
+         bcs   +
+         inx
+         ldy   #$01
+         jsr   modify
+         !byte $A6 ;encoded BIT
 +        jmp   .exit
 
 .trybox
@@ -404,9 +434,13 @@ patchstyle
 .page3
          lda   $D101,x
          sta   .call+1
+         sta   .jmp1+1
+         sta   .jmp2+1
 .page4
          lda   $D102,x
          sta   .call+2
+         sta   .jmp1+2
+         sta   .jmp2+2
          txa
          adc   #9
          tax
@@ -507,12 +541,25 @@ patchstyle
          bcs   .exit
 .page8
          lda   $D109,x
+         pha
 .adj
          adc   #$D1
          tax
+         pla
+         adc   #4
+         sta   .tryalt+1
 .cmp6
          lda   #$D1
          pha
+         ldy   #3
+         jsr   compare
+         !byte $A9,$1C ;LDA #$1C
+         !byte $8D     ;STA $xxxx
+         pla
+         bcc   .yes
+         pha
+.tryalt
+         ldx   #$D1
          ldy   #3
          jsr   compare
          !byte $A9,$1C ;LDA #$1C
