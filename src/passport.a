@@ -507,6 +507,8 @@ nextsector
          jmp   TheEnd
 
 SwitchToUniv
+         lda   gSector
+         sta   gDisplayBytes
          lda   #s_switch
          !byte $2C        ; hide next LDA
 StartWithUniv

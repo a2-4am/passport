@@ -138,7 +138,7 @@ StringTable
 ; can be set directly before calling PrintByID.
 ;
 .header
-         !text "Passport by 4am               2018-01-17",$00
+         !text "Passport by 4am               2018-01-19",$00
 .mainmenu
          !text "________________________________________",$8D,$8D,$8D,$8D,$8D,$8D,$8D
          !text "              "
@@ -179,7 +179,7 @@ StringTable
 .builtin
          !text "Using built-in RWTS",$8D,$00
 .switch
-         !text "Switching to built-in RWTS",$8D,$00
+         !text "T%t,S%s Switching to built-in RWTS",$8D,$00
 .writing
          !text "Writing to S%S,D%D",$8D,$00
 .unformat
@@ -191,11 +191,11 @@ StringTable
 .optbad
          !text "T%t,S%s is unreadable (ignoring)",$8D,$00
 .passver
-         !text "Verification complete. The disk is good.",$00
+         !text "Verification complete. The disk is good.",$8D,$00
 .passdemuf
-         !text "Demuffin complete.",$8D,$00
+         !text "Demuffin complete. ",$00
 .passcrack
-         !text "Crack complete.",$8D,$00
+         !text "Crack complete. ",$00
 .passcrack0
          !byte $8D
          !text "The disk was copied successfully, but",$8D
@@ -204,27 +204,26 @@ StringTable
          !text "- The source disk is not copy protected."
          !text "- The target disk works without patches."
          !text "- The disk uses an unknown protection,",$8D
-         !text "  and Passport can not help any further.",$00
+         !text "  and Passport can not help any further.",$8D,$00
 .fail
          !byte $8D
-         !text "T%t,S%s Fatal read error",$8D,$00
+         !text "T%t,S%s Fatal read error",$8D,$8D,$00
 .fatal0000
          !byte $8D
          !text "Possible reasons:",$8D
          !text "- There is no disk in S6,D1.",$8D
          !text "- It is not an Apple ][ disk.",$8D
          !text "- The disk is 13-sector only.",$8D
-         !text "- The disk is unformatted.",$8D,$00
+         !text "- The disk is unformatted.",$8D,$8D,$00
 .fatal220f
          !byte $8D
          !text "Passport does not work on this disk.",$8D,$8D
          !text "Possible reasons:",$8D
          !text "- This is not a 13- or 16-sector disk.",$8D
          !text "- The disk modifies its RWTS in ways",$8D
-         !text "  that Passport is not able to detect.",$8D,$00
+         !text "  that Passport is not able to detect.",$8D,$8D,$00
 .done
-         !byte $8D
-         !text "Press any key to continue "
+         !text "Press any key "
          !scrxor $40, " ",$00
 .noslot6
          !text "Passport requires a Disk II drive in S6.",$8D
@@ -245,28 +244,28 @@ StringTable
 ; MLI error $28
 ;
 .writenodev
-         !text "S%S,D%D does not exist.",$8D,$00
+         !text "S%S,D%D does not exist.",$8D,$8D,$00
 ;
 ; MLI error $2B
 ;
 .writeprot
-         !text "The disk in S%S,D%D is write-protected.",$8D,$00
+         !text "The disk in S%S,D%D is write-protected.",$8D,$8D,$00
 ;
 ; other MLI error
 ;
 .othermli
          !text "MLI error $%0.",$8D
-         !text "Please contact the developer.",$8D,$00
+         !text "Please contact the developer.",$8D,$8D,$00
 
 .canttrace
          !text "Unrecognized drive, tracing is disabled",$8D,$00
 .canceled
-         !text "Canceled at your request.",$8D,$00
+         !text "Canceled at your request. ",$00
 .bademu
          !byte 00
 .reset
          !byte $8D
-         !text "Press <Ctrl-Reset> to continue.",$8D,$00
+         !text "Press <Ctrl-Reset> to resume.",$8D,$00
 .modify
          !text "T%t,S%0,$%1: ",$00
 .modifyto
