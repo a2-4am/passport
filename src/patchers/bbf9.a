@@ -18,15 +18,18 @@
 !zone {
          lda   gIsProDOS
          bne   .exit
-         ldy   #$0E
+         ldy   #$08
          jsr   SearchTrack
-         !byte $A6,WILDCARD
-         !byte $BD,$89,$C0
-         !byte $BD,$8E,$C0
+         !byte $8E,$C0
          !byte $18
          !byte $A5,WILDCARD
          !byte $69,$8C
          !byte $8D
+         bcs   .exit
+         ldy   #$05
+         jsr   SearchTrack
+         !byte $A6,WILDCARD
+         !byte $BD,$89,$C0
          bcs   .exit
          sta   gDisplayBytes
          pha
