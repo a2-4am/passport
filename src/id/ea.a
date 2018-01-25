@@ -30,6 +30,13 @@ IDEA
          !byte $8D,$F4,$03,$A9,$00,$8D,$C7,$09
          !byte $AD,$E9,$C0,$A9,$B7,$48,$A9,$B0
          !byte $85,$3E,$A9,$00,$20,$00,$0C
+         bcc   +
+         lda   #$00
+         tax
+         ldy   #16
+         jsr   compare
+         !byte $01,$A5,$27,$C9,$09,$D0,$2E,$A2
+         !byte $10,$8A,$9D,$EF,$03,$CA,$D0,$F9
 +        rts
 
 foundea
