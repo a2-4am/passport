@@ -305,6 +305,30 @@
          jsr   modify
          !byte $E0         ;lda from known-zero instead
 
++        ldy   #31
+         jsr   SearchTrack
+         !byte $03,$4C     ;LDI  #$00
+         !byte $06,$E1,$7B ;STA  $a2e2
+         !byte $03,$AB     ;LDI  #$e7
+         !byte $05,$02,$78 ;JSRA $a101
+         !byte $03,$AD     ;LDI  #$e1
+         !byte $05,$02,$78 ;JSRA $a101
+         !byte $03,$AB     ;LDI  #$e7
+         !byte $05,$02,$78 ;JSRA $a101
+         !byte $03,$A9     ;LDI  #$e5
+         !byte $05,$02,$78 ;JSRA $a101
+         !byte $04,$EB,$19 ;LDA  $c0e8
+         !byte $04,$E1,$7B ;LDA  $a2e2
+         bcs   +
+         pha
+         txa
+         adc   #29
+         tax
+         pla
+         ldy   #1
+         jsr   modify
+         !byte $D1         ;lda from known-zero instead
+
 +        ldy   #16
          jsr   SearchTrack
          !byte $49,$4E     ;EOR #$4E
@@ -332,7 +356,7 @@
          !byte $D0,$FA
          !byte $C9,$A0
          !byte $F0
-         bcs   .exit
+         bcs   +
          pha
          txa
          adc   #12
@@ -341,6 +365,27 @@
          ldy   #1
          jsr   modify
          !byte $A1         ;new checksum value for eor
+
++        ldy   #25
+         jsr   SearchTrack
+         !byte $04,$4F,$D9 ;LDA $004c
+         !byte $0A,$03,$7B ;LDX ($a200,A)
+         !byte $10,$F1,$70 ;SUB $a9f2
+         !byte $06,$F1,$70 ;STA $a9f2
+         !byte $0C,$4F,$D9 ;INC $004c
+         !byte $07,$AC     ;CMP #$e0
+         !byte $0F,$E5,$71 ;BNE $a8e6
+         !byte $04,$F1,$70 ;LDA $a9f2
+         !byte $07,$AB     ;CMP #$e7
+         bcs   .exit
+         pha
+         txa
+         adc   #24
+         tax
+         pla
+         ldy   #1
+         jsr   modify
+         !byte $BB         ;new checksum value for eor
 
 .dostitles
          lda   gIsBoot0
