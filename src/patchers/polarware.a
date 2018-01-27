@@ -1,0 +1,38 @@
+;-------------------------------
+; #POLARWARE
+; a delayed secondary protection check
+; seen on Polarware games
+; similar to #FBFFENCRYPTED but the encryption key is different
+; and the routine ultimately returns regardless of success or failure
+; (but the value in the accumulator is different and is used later
+; to trigger hilarious in-game failure)
+;
+; tested on
+; The Spy's Adventures in North America
+; The Spy's Adventures in Europe
+; The Crimson Crown
+; Oo-Topos
+;
+;-------------------------------
+!zone {
+         lda   gIsProDOS             ; only seen this protection on ProDOS disks
+         bne   .exit
+         ldy   #$06
+         jsr   SearchTrack
+         !byte $29,$6D
+         !byte $3F,$EB
+         !byte $29,$60
+         bcs   .exit
+         inx
+         inx
+         inx
+         sta   gDisplayBytes
+         pha
+         lda   #s_fbff
+         jsr   PrintByID
+         pla
+         ldy   #$01
+         jsr   modify
+         !byte $B2
+.exit
+}

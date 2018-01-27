@@ -744,6 +744,8 @@ _applyToAll
          !source "patchers/rwtsswapmecc.a"      ; gIsMECCFastloader only
          !source "patchers/protecteddos.a"      ; gIsProtDOS only
          !source "patchers/fbff.a"
+         !source "patchers/fbffencrypted.a"     ; gIsProDOS only
+         !source "patchers/polarware.a"         ; gIsProDOS only
          !source "patchers/sierra.a"            ; gIsBoot0 only
          !source "patchers/corrupter.a"         ; T13 only
          !source "patchers/ea.a"                ; (gIsEA || gIsBoot0) only

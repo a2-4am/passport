@@ -1,0 +1,45 @@
+;-------------------------------
+; #FBFFENCRYPTED
+; an encrypted variant of Activision's Timing Bit Detection
+;
+; see 4am crack no. 622 The Electric Crayon: ABCs
+; for full explanation
+;
+; tested on many Polarware disks:
+; The Electric Crayon: ABCs (1986)
+; The Electric Crayon: Fun on the Farm (1986)
+; The Electric Crayon: This Land is Your Land (1986)
+; The Spy's Adventures in North America
+; The Spy's Adventures in Europe
+; The Crimson Crown
+; Oo-Topos
+;
+; and several non-Polarware disks:
+; Clue Master Detective
+; RISK (1988, Leisure Genius)
+; ESL Writer (1989, Scholastic)
+; Magic Spells v2.1 (1985, The Learning Company)
+;
+;-------------------------------
+!zone {
+         lda   gIsProDOS             ; only seen this protection on ProDOS disks
+         bne   .exit
+         ldy   #$06
+         jsr   SearchTrack
+         !byte $39,$FD
+         !byte $2F,$FB
+         !byte $39,$FC
+         bcs   .exit
+         inx
+         inx
+         inx
+         sta   gDisplayBytes
+         pha
+         lda   #s_fbff
+         jsr   PrintByID
+         pla
+         ldy   #$01
+         jsr   modify
+         !byte $A2
+.exit
+}
