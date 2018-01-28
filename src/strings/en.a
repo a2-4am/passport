@@ -138,7 +138,7 @@ StringTable
 ; can be set directly before calling PrintByID.
 ;
 .header
-         !text "Passport by 4am               2018-01-26",$00
+         !text "Passport by 4am               2018-01-28",$00
 .mainmenu
          !text "________________________________________",$8D,$8D,$8D,$8D,$8D,$8D,$8D
          !text "              "

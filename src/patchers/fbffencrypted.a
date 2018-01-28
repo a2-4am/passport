@@ -25,10 +25,10 @@
          lda   gIsProDOS             ; only seen this protection on ProDOS disks
          bne   .exit
          ldy   #$06
-         jsr   SearchTrack
-         !byte $39,$FD
-         !byte $2F,$FB
-         !byte $39,$FC
+         jsr   SearchTrack           ; (all bytes are XOR #$FF)
+         !byte $39,$FD               ; DEC $02
+         !byte $2F,$FB               ; BNE +4
+         !byte $39,$FC               ; DEC $03
          bcs   .exit
          inx
          inx
@@ -40,6 +40,6 @@
          pla
          ldy   #$01
          jsr   modify
-         !byte $A2
+         !byte $A2                   ; change encrypted BNE +4 to +5D so code exits with Death Counter > 0
 .exit
 }

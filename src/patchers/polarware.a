@@ -1,6 +1,6 @@
 ;-------------------------------
 ; #POLARWARE
-; a delayed secondary protection check
+; a delayed secondary protection check and anti-tamper check
 ; seen on Polarware games
 ; similar to #FBFFENCRYPTED but the encryption key is different
 ; and the routine ultimately returns regardless of success or failure
@@ -18,11 +18,11 @@
          lda   gIsProDOS             ; only seen this protection on ProDOS disks
          bne   .exit
          ldy   #$06
-         jsr   SearchTrack
-         !byte $29,$6D
-         !byte $3F,$EB
-         !byte $29,$60
-         bcs   .exit
+         jsr   SearchTrack           ; (all bytes are XOR #$EF)
+         !byte $29,$6D               ; DEC $82
+         !byte $3F,$EB               ; BNE +4
+         !byte $29,$60               ; DEC $8F
+         bcs   .tamper
          inx
          inx
          inx
@@ -33,6 +33,26 @@
          pla
          ldy   #$01
          jsr   modify
-         !byte $B2
+         !byte $B2                   ; change encrypted BNE +4 to +5D so code exits with Death Counter > 0
+         lda   #TRUE
+         sta   gPolarwareTamperCheck
+.tamper  lda   gPolarwareTamperCheck
+         bne   .exit
+         ldy   #$0C
+         jsr   SearchTrack
+         !byte $01,$02,$03,$03,$03,$03;prologue marker (not code)
+         !byte $EC,WILDCARD,WILDCARD ; CPX absolute
+         !byte $F0,$09               ; BEQ +9
+         !byte $AE                   ; LDX
+         bcs   .exit
+         pha
+         txa
+         adc   #$09
+         tax
+         stx   gDisplayBytes
+         pla
+         ldy   #$01
+         jsr   modify
+         !byte $50                   ; change BEQ to BVC which acts as a branch-always
 .exit
 }

@@ -53,6 +53,11 @@ FIRSTFILTER
          !byte FALSE      ; 0=true, 1=false
                           ; reset before each operation
                           ; set in patchers/f7f6
+;gPolarwareTamperCheck
+         !byte FALSE      ; 0=true, 1=false
+                          ; reset before each operation
+                          ; set in patchers/polarware
+                          ; used to avoid an expensive search
 ;gIsTrillium
          !byte FALSE      ; 0=true, 1=false
                           ; reset before each operation
