@@ -45,11 +45,13 @@
          !byte $F0,$09               ; BEQ +9
          !byte $AE                   ; LDX
          bcs   .exit
+         sta   gDisplayBytes
          pha
          txa
          adc   #$09
          tax
-         stx   gDisplayBytes
+         lda   #s_tamper
+         jsr   PrintByID
          pla
          ldy   #$01
          jsr   modify

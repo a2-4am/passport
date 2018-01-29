@@ -101,4 +101,5 @@ s_origin =     $5F
 s_volumename = $60
 s_dinkeydos =  $61
 s_trillium =   $62
-STRINGCOUNT =  $63
+s_tamper =     $63
+STRINGCOUNT =  $64
