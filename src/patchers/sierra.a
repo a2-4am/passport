@@ -85,6 +85,10 @@
          !byte $C9,$1D ;CMP #$1D
          !byte $B0     ;BCS *+xx
          bcs   +
+         pha
+         lda   #s_tamper
+         jsr   PrintByID
+         pla
          inx
          inx
          inx
@@ -309,6 +313,8 @@ patchstyle
          !byte $95,$00 ;STA $00,X
          bcs   +
          pha
+         lda   #s_tamper
+         jsr   PrintByID
          txa
          adc   #9
          tax
@@ -326,6 +332,10 @@ patchstyle
          !byte $AA     ;TAX
          !byte $95,$00 ;STA $00,X
 +        bcs   +
+         pha
+         lda   #s_tamper
+         jsr   PrintByID
+         pla
          inx
          inx
          inx
@@ -347,6 +357,10 @@ patchstyle
          !byte $AA         ;TAX
          !byte $9D,$00,$01 ;STA $0100,X
          bcs   +
+         pha
+         lda   #s_tamper
+         jsr   PrintByID
+         pla
          inx
          inx
          inx
