@@ -104,6 +104,8 @@
          !byte $0F,$F5,$70 ;BNE  $a9f6
          bcs   +
          pha
+         lda   #s_tamper
+         jsr   PrintByID
          txa
          adc   #7
          tax
@@ -132,6 +134,8 @@
          !byte $60         ;RTS
          bcs   +
          pha
+         lda   #s_tamper
+         jsr   PrintByID
          txa
          adc   #11
          tax
@@ -150,6 +154,8 @@
          !byte $0F,$78,$60 ;BNE $B97B
          bcs   +
          pha
+         lda   #s_tamper
+         jsr   PrintByID
          txa
          adc   #11
          tax
@@ -167,6 +173,10 @@
          !byte $20,$67,$67 ;JSR $6767
          !byte $20,$AA,$BF ;JSR $BFAA
          bcs   +
+         pha
+         lda   #s_tamper
+         jsr   PrintByID
+         pla
          inx
          inx
          inx
@@ -183,6 +193,10 @@
          !byte $C9,$52     ;CMP #$52
          !byte $F0,$03     ;BEQ +$03
          bcs   +
+         pha
+         lda   #s_tamper
+         jsr   PrintByID
+         pla
          inx
          inx
          inx
@@ -199,6 +213,10 @@
          !byte $C9,$52     ;CMP #$52
          !byte $D0,$DB     ;BNE -$DB
          bcs   +
+         pha
+         lda   #s_tamper
+         jsr   PrintByID
+         pla
          inx
          inx
          inx
@@ -342,6 +360,10 @@
          !byte $E9,$00     ;SBC #$00
          !byte $48         ;PHA
          bcs   +
+         pha
+         lda   #s_tamper
+         jsr   PrintByID
+         pla
          inx
          ldy   #1
          jsr   modify
@@ -358,6 +380,8 @@
          !byte $F0
          bcs   +
          pha
+         lda   #s_tamper
+         jsr   PrintByID
          txa
          adc   #12
          tax
@@ -379,6 +403,8 @@
          !byte $07,$AB     ;CMP #$e7
          bcs   .exit
          pha
+         lda   #s_tamper
+         jsr   PrintByID
          txa
          adc   #24
          tax
