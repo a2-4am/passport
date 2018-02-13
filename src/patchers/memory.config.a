@@ -6,36 +6,33 @@
 ; real startup program
 ;
 ; tested on
+; Rosie the Counting Rabbit (1987, DC Heath)
 ; What Makes A Dinosaur Sore (1987, DC Heath)
 ; Squeegee Learns About Drugs (1989, Marshware)
-; The Botanist's Apprentice (1989, National Geographic Society)
-; Journey to the Age of the Dinosaurs (1990, National Geographic Society)
+; Where Did My Toothbruth Go (1988, DC Heath)
+; The Weather Machine (1988, National Geographic Society)
+; The Botanist's Apprentice: Desert, Forest, and Wetland (1989, National Geographic Society)
+; The Botanist's Apprentice: Farmland, Grassland, and Town (1989, National Geographic Society)
+; Journey to the Age of the Dinosaurs: Europe and Asia (1990, National Geographic Society)
+; Journey to the Age of the Dinosaurs: North America (1990, National Geographic Society)
+; GeoWhiz (1990, Silver Burdett and Ginn)
 ;-------------------------------
 !zone {
          lda   gIsProDOS  ; only if ProDOS
          bne   .exit
-         lda   #$0F
-         sta   .sector+1
-.sector  lda   #$FF       ; modified at runtime
+         ldy   #$0C
+         jsr   SearchTrack
+         !byte $AE,$C3,$CF,$CE,$C6,$C9,$C7      ; ".CONFIG"
+         !byte $8D,$08,$C0                      ; STA $C008
+         !byte $B5,$42                          ; LDA $42,X
+         bcs   .exit
          sta   gDisplayBytes
-         ldx   #$33
-         ldy   #$10
-         jsr   compare
-         !byte $4C,$00,$10; JMP $1000
-         !byte $A9,$00    ; LDA #$00
-         !byte $85,$04    ; STA $04
-         !byte $AE,$30,$BF; LDX $BF30
-         !byte $BD,$89,$C0; LDA $C089,X
-         !byte $BD,$8E,$C0; LDA $C08E,X
-         bcs   +
          lda   #s_runhello
          jsr   PrintByID
          lda   gDisplayBytes
-         ldx   #$36
-         ldy   #$01
+         inx
+         ldy   #$06
          jsr   modify
-         !byte $60
-+        dec   .sector+1
-         bpl   .sector
+         !byte $D3,$D9,$D3,$D4,$C5,$CD          ; "SYSTEM" instead of "CONFIG"
 .exit
 }
