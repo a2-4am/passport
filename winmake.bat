@@ -19,7 +19,7 @@ cscript /nologo //e:jscript %~f0 "20" "00"
 1>nul copy /b tmp+t00only.tmp t00only.pak
 cd ..\src
 for /f "tokens=*" %%q in ('2^>^&1 acme passport.a') do set _make=%%q
-acme -DRELBASE=$%_make:~-5,4% passport.a
+acme -r ..\build\passport.lst -DRELBASE=$%_make:~-5,4% passport.a
 set _make=
 cd ..
 1>nul copy res\work.po build\passport.po
