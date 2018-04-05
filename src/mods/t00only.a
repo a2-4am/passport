@@ -57,8 +57,8 @@ AnalyzeT00
          ldx   #$00
          ldy   #$40
          jsr   compare    ; if T00,S07,$00 ==
-         !byte $84,$48,$85,$49,$A0,$02,$8C,$F8
-         !byte $06,$A0,$04,$8C,$F8,$04,$A0,$01
+         !byte $84,$48,$85,$49,$A0,$02,$8C,WILDCARD
+         !byte WILDCARD,$A0,$04,$8C,WILDCARD,WILDCARD,$A0,$01
          !byte $B1,$48,$AA,$A0,$0F,$D1,$48,$F0
          !byte $1B,$8A,$48,$B1,$48,$AA,$68,$48
          !byte $91,$48,$BD,$8E,$C0,$A0,$08,$BD
@@ -107,6 +107,7 @@ AnalyzeT00
          !source "../patchers/micrograms.a"
          !source "../patchers/dos32.a"
          !source "../patchers/dos32dlm.a"
+         !source "../patchers/microfun.a"
 
 ;add only above this line
          rts

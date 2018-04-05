@@ -102,4 +102,5 @@ s_volumename = $60
 s_dinkeydos =  $61
 s_trillium =   $62
 s_tamper =     $63
-STRINGCOUNT =  $64
+s_microfun =   $64
+STRINGCOUNT =  $65
