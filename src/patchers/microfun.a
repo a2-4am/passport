@@ -1,35 +1,33 @@
 ;-------------------------------
 ; #MICROFUN
-; RWTS jumps to nibble check
-; from $BE38
-; e.g. Station 5, re-releases of
-; The Heist and Miner 2049er
+; RWTS jumps to nibble check after
+; reading certain sectors
+;
+; tested on
+; - Station 5
+; - The Heist
+; - Miner 2049er (re-release)
+; - Miner 2049er II
+; - Short Circuit
 ;-------------------------------
 !zone {
          lda   gIsRWTS   ; if DOS 3.3-shaped RWTS
          bne   .exit
-         lda   #$08
-         ldx   #$AF
          ldy   #$09
-         jsr   compare    ; and T00,S08,$AF ==
+         jsr   SearchTrack
          !byte $A0,$00    ; LDY #$00
          !byte $84,$26    ; STY $26
          !byte $84,$27    ; STY $27
          !byte $BD,$8C,$C0; LDA $C08C,X
-         bcs   .exit
-         ldx   #$38
-         ldy   #$03
-         jsr   compare    ; and T00,S08,$38 ==
-         !byte $4C,$6A,$BA; JMP $BA6A
          bcs   .exit
          sta   gDisplayBytes
          pha
          lda   #s_microfun
          jsr   PrintByID
          pla
-         ldy   #$03
-         jsr   modify     ; then set T00,S08,$38 =
-         !byte $08        ; PHP
-         !byte $B0,$8E    ; BCS -
+         ldy   #$02
+         jsr   modify
+         !byte $18        ; CLC
+         !byte $60        ; RTS
 .exit
 }

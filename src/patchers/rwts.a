@@ -92,10 +92,9 @@
          !byte $C9
          bcs   +
          ldx   #$92
-         ldy   #$03
+         ldy   #$02
          jsr   compare    ; and T00,S03,$92 ==
          !byte $D0,$AE
-         !byte $EA
          bcs   +
          ldx   #$91
          ldy   #$01
