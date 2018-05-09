@@ -69,6 +69,8 @@ _Inspect1a
          dex
          stx   .x3+1
          stx   .x4+1
+         stx   .x8+2
+         stx   .x9+2
          stx   jCallRWTS+2
          jsr   ProtectedDOS ; check for a specific (encrypted)
                           ; bootloader called "Protected DOS"
@@ -82,21 +84,21 @@ _Inspect1a
          !byte $84,$48,$85,$49
          bcc   .x1
          jmp   UseUniversal
-.x1      lda   #$FF       ; check for "SEC;RTS" at $B942
+.x1      lda   #$B9       ; check for "SEC;RTS" at $B942
          ldx   #$42
          ldy   #$02
          jsr   CompareMemory
          !byte $38,$60
          bcc   .x2
          jmp   UseUniversal
-.x2      lda   #$FF       ; check for "LDA $C08C,X" at $B94F
+.x2      lda   #$B9       ; check for "LDA $C08C,X" at $B94F
          ldx   #$4F
          ldy   #$03
          jsr   CompareMemory
          !byte $BD,$8C,$C0
          bcc   .x3
          jmp   UseUniversal
-.x3      lda   #$FF       ; check for "JSR $xx00" at $BDB9
+.x3      lda   #$BD       ; check for "JSR $xx00" at $BDB9
          ldx   #$B9
          ldy   #$02
          jsr   CompareMemory
@@ -106,7 +108,7 @@ _Inspect1a
 ; Check for RWTS variant that has extra code before
 ; JSR $B800 e.g. Verb Viper (DLM), Advanced Analogies (Hartley)
 ;
-.x4      lda   #$FF       ; check for "JSR $xx00" at $BDC5
+.x4      lda   #$BD       ; check for "JSR $xx00" at $BDC5
          ldx   #$C5
          ldy   #$02
          jsr   CompareMemory
@@ -118,7 +120,7 @@ _Inspect1a
 ; LDX $1FE8 e.g. Pinball Construction Set (1983)
 ; we don't like that one
 ;
-.x5      lda   #$FF       ; check for "LDX $1FE8" at $BE43
+.x5      lda   #$BE       ; check for "LDX $1FE8" at $BE43
          ldx   #$43
          ldy   #$03
          jsr   CompareMemory
@@ -129,7 +131,7 @@ _Inspect1a
 ; Check for Milliken protection routine in late-stage boot
 ; (affects readable/ignoreable sector map, so must ID now)
 ;
-.x6      lda   #$FF       ; check for "JMP $9B03" at $B747
+.x6      lda   #$B7       ; check for "JMP $9B03" at $B747
          ldx   #$47
          ldy   #$03
          jsr   CompareMemory
@@ -144,7 +146,7 @@ _Inspect1a
 ;
 ; Check for Adventure International RWTS (sets flag for patcher)
 ;
-.x7      lda   #$FF       ; check for code at $B936
+.x7      lda   #$B9       ; check for code at $B936
          ldx   #$36
          ldy   #$0A
          jsr   CompareMemory
@@ -155,6 +157,21 @@ _Inspect1a
          bcs   +
          lda   #TRUE
          sta   gAdventureInternational
+;
+; Turn off drive recalibration
+;
++        lda   jCallRWTS+2; check for code at $BDD2
+         ldx   #$D2
+         ldy   #$06
+         jsr   CompareMemory
+         !byte $A9,$60    ; LDA #$60
+         !byte $20,$95,$BE; JSR $BE95
+         !byte $CE        ; DEC $xxxx
+         bcs   +
+         lda   #$B0
+.x8      sta   $BDD2
+         lda   #$30
+.x9      sta   $BDD3
 ;
 ; Check for Infocom disk (need to massage RWTS a little)
 ;
