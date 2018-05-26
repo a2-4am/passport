@@ -9,7 +9,16 @@
 ; module by qkumba
 ;-------------------------------
 !zone {
-         clc
+         lda   gIsAdvent
+         bne   .exit
+
+         ;carry controls how many times to run on one track
+         ;Mindshadow and Tracer Sanction have two copies
+         ;of the protection on track 0, loaded to two
+         ;different addresses at different stages of play
+
+         lda   gTrack
+         cmp   #1
 .again   php
          ldy   #29
          jsr   SearchTrack
@@ -72,7 +81,7 @@
          plp
          bcs   .exit
          sec
-         jmp   .again
+         bcs   .again
 
 .pop
          plp

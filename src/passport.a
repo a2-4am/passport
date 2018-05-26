@@ -764,6 +764,7 @@ _applyToAll
          !source "patchers/ssprot.a"            ; gIsF7F6 only
          !source "patchers/f7f6.a"              ; gIsF7F6 only
          !source "patchers/trillium.a"          ; gIsTrillium only
+         !source "patchers/advent.a"            ; gIsAdvent only
 
          lda   gPatchCount
          beq   .nopatches

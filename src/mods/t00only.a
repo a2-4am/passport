@@ -108,7 +108,6 @@ AnalyzeT00
          !source "../patchers/dos32.a"
          !source "../patchers/dos32dlm.a"
          !source "../patchers/microfun.a"
-         !source "../patchers/advent.a"
 
 ;add only above this line
          rts
