@@ -147,6 +147,7 @@ FirstMover
          !source "id/micrograms.a"
          !source "id/volumename.a"
          !source "id/dinkeydos.a"
+         !source "id/advent.a"
          !source "print.a"
          !source "compare.a"
          !source "modify.a"
