@@ -115,6 +115,7 @@ StringTable
          !word .trillium
          !word .tamper
          !word .microfun
+         !word .advent
 ;
 ; Text can contain substitution strings, which
 ; are replaced by current values at runtime. Each
@@ -140,7 +141,7 @@ StringTable
 ; can be set directly before calling PrintByID.
 ;
 .header
-         !text "Passport by 4am               2018-05-08",$00
+         !text "Passport by 4am               2018-05-25",$00
 .mainmenu
          !text "________________________________________",$8D,$8D,$8D,$8D,$8D,$8D,$8D
          !text "              "
@@ -436,4 +437,6 @@ StringTable
          !text "T%t,S%0 Found anti-tamper check",$8D,$00
 .microfun
          !text "T%t,S%0 Found Micro Fun protection check",$00
+.advent
+         !text "T%t,S%0 Found Interplay protection check",$00
 }

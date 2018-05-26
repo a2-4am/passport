@@ -103,4 +103,5 @@ s_dinkeydos =  $61
 s_trillium =   $62
 s_tamper =     $63
 s_microfun =   $64
-STRINGCOUNT =  $65
+s_advent =     $65
+STRINGCOUNT =  $66

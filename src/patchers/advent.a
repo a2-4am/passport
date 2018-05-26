@@ -1,0 +1,80 @@
+;-------------------------------
+; #Advent
+; patched RWTS
+;
+; Borrowed Time
+; Mindshadow
+; Tracer Sanction
+;
+; module by qkumba
+;-------------------------------
+!zone {
+         clc
+.again   php
+         ldy   #29
+         jsr   SearchTrack
+         !byte $F0,$10               ;BEQ $+12
+         !byte $29,$0F               ;AND #$0F
+         !byte $A8                   ;TAY
+         !byte $B9,WILDCARD,WILDCARD ;LDA $xxxx,Y
+         !byte $8D,WILDCARD,WILDCARD ;STA $xxxx
+         !byte $B9,WILDCARD,WILDCARD ;LDA $xxxx,Y
+         !byte $8D,WILDCARD,WILDCARD ;STA $xxxx
+         !byte $60                   ;RTS
+         !byte $A9,$AA               ;LDA #$AA
+         !byte $8D,WILDCARD,WILDCARD ;STA $xxxx
+         !byte $A9,$96               ;LDA #$96
+         !byte $8D,WILDCARD,WILDCARD ;STA $xxxx
+         !byte $60                   ;RTS
+         bcs   .pop
+         ldy   #1
+         jsr   modify
+         !byte $10                   ;BEQ -> BPL
+         ldy   #23
+         jsr   SearchTrack
+         !byte $A4,WILDCARD          ;LDY $xx
+         !byte $BD,$8C,$C0           ;LDA $C08C,X
+         !byte $10,$FB               ;BPL $-3
+         !byte $D9,WILDCARD,WILDCARD ;CMP $xxxx,Y
+         !byte $D0,$AB               ;BNE $-53
+         !byte $EA                   ;NOP
+         !byte $BD,$8C,$C0           ;LDA $C08C,X
+         !byte $10,$FB               ;BPL $-3
+         !byte $D9,WILDCARD,WILDCARD ;CMP $xxxx,Y
+         !byte $D0,$A0               ;BNE $-5E
+         bcs   .pop
+         pha
+         txa
+         adc   #7
+         tax
+         pla
+         adc   #0
+         pha
+         txa
+         adc   #11
+         sta   .patch+1
+         pla
+         tay
+         adc   #0
+         pha
+         tya
+         ldy   #3
+         jsr   modify
+         !byte $C9,$DE               ;CMP #$DE
+         !byte $EA                   ;NOP
+         pla
+.patch
+         ldx   #0
+         ldy   #3
+         jsr   modify
+         !byte $C9,$AA               ;CMP #$AA
+         !byte $EA                   ;NOP
+         plp
+         bcs   .exit
+         sec
+         jmp   .again
+
+.pop
+         plp
+.exit
+}

@@ -140,6 +140,13 @@ IDBootloader
          bcs   +
          jmp   foundea
 ;
+; Try to identify Interplay bootloader.
+; Exit via custom trace function if found.
+;
++        jsr   IDAdvent
+         bcs   +
+         jmp   foundadvent
+;
 ; Try to identify hybrid 16-/13-sector bootloader on
 ; DOS 3.2 disks.
 ; Exit via custom trace function if found.

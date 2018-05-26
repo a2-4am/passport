@@ -1,0 +1,71 @@
+;-------------------------------
+; IDAdvent
+; identify Interplay custom bootloader
+;
+; in:  track buffer contains T00,S00
+; out: C clear if Interplay bootloader was found
+;      C set if not found
+;      all other flags clobbered
+;      all registers clobbered
+;
+; module by qkumba
+;-------------------------------
+IDAdvent
+         lda   #BASEPAGE
+         ldy   #33
+         jsr   SearchSector
+         !byte $2C,$83,$C0      ;BIT $C083
+         !byte $2C,$83,$C0      ;BIT $C083
+         !byte $A9,$FF          ;LDA #$FF
+         !byte $8D,$00,$E0      ;STA $E000
+         !byte $EE,$00,$E0      ;INC $E000
+         !byte $D0,WILDCARD     ;BNE $+xx
+         !byte $A2,$00          ;LDX #$00
+         !byte $BD,WILDCARD,$08 ;LDA $08xx,X
+         !byte $F0,$06          ;BEQ $+8
+         !byte $9D,$D8,$07      ;STA $07D8,X
+         !byte $E8              ;INX
+         !byte $D0,$F5          ;BNE $-8
+         !byte $A6,$2B          ;LDX $2B
+         !byte $4C,$00          ;JMP $xx00
+         rts
+
+foundadvent
+;
+; We found an Interplay bootloader. Now we create
+; an RWTS that can read the rest of the disk.
+; Starting with our built-in RWTS, we modify address
+; and data prologues based on the parameters of the
+; original disk.
+;
+!zone {
+         lda   #s_advent
+         jsr   PrintByID
+         jsr   CopyUniversal
+
+;hook read address prologue
+         lda   #<.checktrk
+         sta   $BDC5
+         lda   #>.checktrk
+         sta   $BDC6
+         jmp   ADStyle
+
+.prologtbl1
+         !byte $96, $97, $9A, $9B, $9D, $9E, $9F, $A6
+         !byte $ED, $EE, $EF, $F2, $F3, $F4, $F5, $F6
+
+.prologtbl2
+         !byte $ED, $EE, $EF, $F2, $F3, $F4, $FF, $F7
+         !byte $96, $A6, $AA, $D5, $DF, $EA, $AE, $FE
+
+.checktrk
+         lda   gTrack
+         beq   +
+         and   #$0f
+         tay
+         lda   .prologtbl1, y
+         sta   UNIV_A2
+         lda   .prologtbl2, y
+         sta   UNIV_A3
++        jmp   $B944
+}
