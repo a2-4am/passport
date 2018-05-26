@@ -48,6 +48,14 @@ foundadvent
          sta   $BDC5
          lda   #>.checktrk
          sta   $BDC6
+
+;
+; this RWTS alters the data prologue in a routine
+; on a non-zero track, so we need to set a flag so
+; we know to search for it later
+;
+         lda   #TRUE
+         sta   gIsAdvent
          jmp   ADStyle
 
 .prologtbl1

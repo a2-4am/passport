@@ -87,9 +87,10 @@ gIsF7F6                       = gIsSierra13-$01                   ; byte
 gIsTrillium                   = gIsF7F6-$01                       ; byte
 gPolarwareTamperCheck         = gIsTrillium-$01                   ; byte
 gForceDiskVol                 = gPolarwareTamperCheck-$01         ; byte
+gIsAdvent                     = gForceDiskVol-$01                 ; byte
 ;LASTFILTER ; add new gIs* above this line
 
-gOnAClearDayYouCanReadForever = gForceDiskVol-$01                 ; byte
+gOnAClearDayYouCanReadForever = gIsAdvent-$01                     ; byte
 gUsingRAMDisk                 = gOnAClearDayYouCanReadForever-$01 ; byte
 gRAMDiskRef                   = gUsingRAMDisk-$01                 ; byte
 gDisplayBytes                 = gRAMDiskRef-$0A                   ; 10 bytes
@@ -156,6 +157,7 @@ ConstructStandardDelivery = jConstructStandardDelivery
 !warn "gPolarwareTamperCheck=",gPolarwareTamperCheck
 !warn "gForceDiskVol=",gIsForceDiskVol
 !warn "gOnAClearDayYouCanReadForever=",gOnAClearDayYouCanReadForever
+!warn "gIsAdvent=",gIsAdvent
 !warn "gUsingRAMDisk=",gUsingRAMDisk
 !warn "gRAMDiskRef=",gRAMDiskRef
 !warn "gDisplayBytes=",gDisplayBytes
