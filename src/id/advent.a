@@ -61,19 +61,22 @@ foundadvent
 .prologtbl1
          !byte $96, $97, $9A, $9B, $9D, $9E, $9F, $A6
          !byte $ED, $EE, $EF, $F2, $F3, $F4, $F5, $F6
+         !byte $AA ;extra entry for unprotected sectors
 
 .prologtbl2
          !byte $ED, $EE, $EF, $F2, $F3, $F4, $FF, $F7
          !byte $96, $A6, $AA, $D5, $DF, $EA, $AE, $FE
+         !byte $96 ;extra entry for unprotected sectors
 
 .checktrk
+         ldy   #$10
          lda   gTrack
          beq   +
          and   #$0f
          tay
-         lda   .prologtbl1, y
++        lda   .prologtbl1, y
          sta   UNIV_A2
          lda   .prologtbl2, y
          sta   UNIV_A3
-+        jmp   $B944
+         jmp   $B944
 }

@@ -578,7 +578,21 @@ TheEnd
          jsr   WaitForKey
          cmp   #$9B
          beq   CleanExit
+         cmp   #k_redo
+         beq   HandleRedo
          jmp   MainMenu
+
+HandleRedo
+         jsr   ClearScreen
+         lda   #s_header
+         jsr   PrintByID
+         lda   #s_progbar
+         jsr   PrintByID
+         lda   VPOS
+         sta   TEXTTOP
+         lda   #s_reading
+         jsr   PrintByID
+         jmp   RestartScan
 
 CleanExit
          jsr   SwapProDOS
