@@ -148,6 +148,7 @@ FirstMover
          !source "id/volumename.a"
          !source "id/dinkeydos.a"
          !source "id/advent.a"
+         !source "id/panglosdos.a"
          !source "print.a"
          !source "compare.a"
          !source "modify.a"

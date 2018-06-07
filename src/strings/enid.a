@@ -104,4 +104,5 @@ s_trillium =   $62
 s_tamper =     $63
 s_microfun =   $64
 s_advent =     $65
-STRINGCOUNT =  $66
+s_gathering  = $66
+STRINGCOUNT =  $67
