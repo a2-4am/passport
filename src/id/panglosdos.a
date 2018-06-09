@@ -36,7 +36,7 @@ PanglosDOS
          bcs   .jmpexit1
          lda   jCallRWTS+2
          ldx   #$B9       ; check for "JSR $xxF9" at $xDB9
-         ldy   #$03
+         ldy   #$02
          jsr   CompareMemory
          !byte $20,$F9
          bcc   +
