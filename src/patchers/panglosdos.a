@@ -1,0 +1,37 @@
+;-------------------------------
+; #PanglosDOS
+; RWTS with per-file encryption keys
+;
+; module by qkumba
+;-------------------------------
+!zone {
+         lda   gIsPanglosDOS  ; only if PanglossianDOS
+         bne   .exit
+         ldy   #6
+         jsr   SearchTrack
+         !byte $C9,$AD ;CMP #$AD
+         !byte $D0,$E7 ;BNE *-$17
+         !byte $A5,$46 ;LDA $46
+         bcs   .exit
+         inx
+         inx
+         inx
+         inx
+         ldy   #$02
+         jsr   modify
+         !byte $A9,$00 ;LDA #$00
+         ldy   #6
+         jsr   SearchTrack
+         !byte $C9,$96 ;CMP #$96
+         !byte $D0,$E7 ;BNE *-$17
+         !byte $A5,$46 ;LDA $46
+         bcs   .exit
+         inx
+         inx
+         inx
+         inx
+         ldy   #$02
+         jsr   modify
+         !byte $A9,$00 ;LDA #$00
+.exit
+}

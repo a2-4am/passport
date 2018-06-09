@@ -1,0 +1,198 @@
+;-------------------------------
+; PanglosDOS
+; in:  $0800..$08FF contains boot0
+;      $3600..$3FFF contains boot1
+; out: C clear if "Panglossian DOS" was found
+;      C set if "Panglossian DOS" was not found
+;      gIsPanglosDOS is set to TRUE or FALSE
+;
+; module by qkumba
+;-------------------------------
+!zone {
+PanglosDOS
+         lda   jCallRWTS+2
+         ldx   #$00       ; check for "STY $48;STA $49"
+         ldy   #$04       ; at RWTS entry point
+         pha
+         jsr   CompareMemory
+         !byte $84,$48,$85,$49
+         pla
+         bcs   .jmpexit1
+         sec
+         sbc   #5
+         ldx   #$C3       ; check for "SEC;RTS" at $x8C3
+         ldy   #$02
+         pha
+         jsr   CompareMemory
+         !byte $38,$60
+         pla
+         bcs   .jmpexit1
+         ldx   #$62       ; check for "LDA $C08C,X" at $x862
+         ldy   #$03
+         pha
+         jsr   CompareMemory
+         !byte $BD,$8C,$C0
+         pla
+         bcs   .jmpexit1
+         lda   jCallRWTS+2
+         ldx   #$B9       ; check for "JSR $xxF9" at $xDB9
+         ldy   #$03
+         jsr   CompareMemory
+         !byte $20,$F9
+         bcc   +
+.jmpexit1
+         jmp   .exit
+
++        lda   #s_gathering
+         jsr   PrintByID
+
+         ;$230 (560) bytes for address keys
+         ;$230 (560) bytes for data keys
+         ;=$460 bytes total
+
+         lda   jCallRWTS+2
+         sta   .patch5+2
+         sta   .patch6+2
+         sta   .patch7+2
+         sec
+         sbc   #5
+         sta   .patch1+2
+         sta   .patch2+2
+         sta   .patch3+2
+         sta   .patch4+2
+         sta   .patch8+2
+         sta   .patch9+2
+         ldy   #0
+         tya
+-        sta   $900,y
+         sta   $A00,y
+         ;$B00-B2F is partial
+         sta   $C00,y
+         sta   $D00,y
+         ;$E00-E2F is partial
+         iny
+         bne   -
+         ldy   #$2F
+-        sta   $B00,y
+         sta   $E00,y
+         dey
+         bpl   -
+.patch1
+         sta   $3881
+.patch2
+         sta   $38EF
+         lda   #$A9
+.patch3
+         sta   $3880
+.patch4
+         sta   $38EE
+         lda   #$0F
+         sta   .sector+1
+.readdir lda   #$11
+         sta   gTrack
+.sector  lda   #$D1
+         sta   gSector
+         lda   #BASEPAGE
+         sta   gAddress+1
+         jsr   ReadSector
+         bcs   .jmpexit1
+         inc   gAddress+1
+         lda   #$0B ;entry offset
+.parsedir
+         sta   .diroff+1
+.diroff  ldy   #$D1
+         lda   BASEPAGE<<8,Y
+         beq   .setpanglos
+         cmp   #$FF ;skip deleted files
+         beq   .nextent
+         ldx   (BASEPAGE<<8)+1,Y
+.reparse
+         sta   gTrack
+         stx   gSector
+         jsr   ReadSector
+         bcs   .jmpexit2
+         ldx   #0
+         ldy   #0
+.parsets
+         lda   ((BASEPAGE+1)<<8)+$0C,X
+         beq   .chkextend
+         asl
+         asl
+         asl
+         sty   modsrc+1
+         rol   modsrc+1
+         asl
+         rol   modsrc+1
+         ora   ((BASEPAGE+1)<<8)+$0D,X
+         sta   modsrc
+         lda   modsrc+1
+         adc   #9 ;$900+
+         sta   modsrc+1
+         lda   ((BASEPAGE+1)<<8)+$0A
+         sta   (modsrc),Y
+         lda   modsrc+1
+         adc   #3
+         sta   modsrc+1
+         lda   ((BASEPAGE+1)<<8)+$0B
+         sta   (modsrc),Y
+         inx
+         inx
+         bne   .parsets
+.chkextend
+         ldx   ((BASEPAGE+1)<<8)+2
+         lda   ((BASEPAGE+1)<<8)+1
+         bne   .reparse
+.nextent
+         lda   .diroff+1
+         clc
+         adc   #$23
+         bne   .parsedir
+         dec   .sector+1
+         bne   .readdir
+
+.setpanglos
+         lda   #$20
+.patch5
+         sta   $3DBE
+         lda   #<.callback
+.patch6
+         sta   $3DBF
+         lda   #>.callback
+.patch7
+         sta   $3DC0
+         lda   #TRUE
+         sta   gIsPanglosDOS
+
+         clc
+.jmpexit2
+         jmp   .exit
+
+.callback
+         sty   $578
+         lda   gTrack
+         asl
+         asl
+         asl
+         ldy   #0
+         sty   modsrc+1
+         rol   modsrc+1
+         asl
+         rol   modsrc+1
+         ora   gSector
+         sta   modsrc
+         lda   modsrc+1
+         adc   #9
+         sta   modsrc+1
+         lda   (modsrc),Y
+.patch8
+         sta   $38EF ;address sum
+         lda   modsrc+1
+         adc   #3
+         sta   modsrc+1
+         lda   (modsrc),Y
+.patch9
+         sta   $3881 ;data sum
+
+.exit
+         rts
+}
