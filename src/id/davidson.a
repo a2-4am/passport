@@ -1,0 +1,34 @@
+;-------------------------------
+; IDDavidson
+; identify Davidson disk after failing to read T22,S00
+;
+; in:  track buffer contains track $22
+; out: C clear if Davidson disk found
+;      C set otherwise
+;      all registers clobbered
+;      all other flags clobbered
+;-------------------------------
+!zone {
+IDDavidson
+         lda   gIsProDOS  ; ProDOS?
+         bne   .no        ; no, give up
+         lda   gTrack     ; track $22?
+         cmp   #$22
+         bne   .no        ; no, give up
+         lda   gSector    ; sector $00?
+         bne   .no        ; no, give up
+         lda   #$00       ; try re-reading the sector but
+         sta   $B92E      ; ignore data field checksum failure
+         jsr   ReadSector
+         lda   #$13
+         sta   $B92E
+         bcs   .no        ; didn't work, give up
+         lda   #s_davidson
+         jsr   PrintByID
+         lda   #TRUE
+         sta   gIsDavidson
+         clc
+         !byte $24
+.no      sec
+         rts
+}

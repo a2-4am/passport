@@ -149,6 +149,7 @@ FirstMover
          !source "id/dinkeydos.a"
          !source "id/advent.a"
          !source "id/panglosdos.a"
+         !source "id/davidson.a"
          !source "print.a"
          !source "compare.a"
          !source "modify.a"
@@ -440,9 +441,13 @@ checksector
          lda   gIsDOS32   ; is this a DOS 3.2 disk?
          beq   .fatal     ; yes, so read error is fatal
          lda   gTriedUniv ; have we tried the universal RWTS?
-         beq   .fatal     ; yes, so read error is fatal
+         beq   .maybedavidson ; yes, but check one last thing
          jsr   SwitchToUniv ; no, switch it in now
          jmp   .read      ; and re-read this sector
+
+.maybedavidson
+         jsr   IDDavidson
+         bcc   .optional
 
 .fatal   pla              ; if we get to here, we've
          jmp   FatalError ; decided the read error is fatal
@@ -780,6 +785,8 @@ _applyToAll
          !source "patchers/f7f6.a"              ; gIsF7F6 only
          !source "patchers/trillium.a"          ; gIsTrillium only
          !source "patchers/advent.a"            ; gIsAdvent only
+         !source "patchers/davidsonforth.a"     ; gIsDavidson only
+         !source "patchers/davidsonasm.a"       ; gIsDavidson only
 
          lda   gPatchCount
          beq   .nopatches

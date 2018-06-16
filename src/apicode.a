@@ -49,6 +49,10 @@
                           ; compile-time flag, no way to change at runtime
 
 FIRSTFILTER
+;gIsDavidson
+         !byte FALSE      ; 0=true, 1=false
+                          ; reset before each operation
+                          ; set after reading T22,S00
 ;gIsPanglosDOS
          !byte FALSE      ; 0=true, 1=false
                           ; reset before each operation

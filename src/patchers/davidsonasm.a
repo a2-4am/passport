@@ -1,0 +1,36 @@
+;-------------------------------
+; #DAVIDSONASM
+; bad block check of T22,S00
+; implemented in assembly
+;
+; tested on
+; - Alge-Blaster Plus 1.0
+; - Math Blaster Mystery 1.0
+; - Math Blaster Mystery 1.3
+; - Reading and Me
+; - Spell It Plus
+; - Word Attack Plus 1.2
+; - Word Attack Plus French 1.2
+; - Word Attack Plus Spanish 1.2
+;-------------------------------
+!zone {
+         lda   gIsDavidson
+         bne   .exit
+
+         lda   #$0F
+         sta   .sector+1
+.sector  lda   #$FF       ; modified at runtime
+         ldx   #$00
+         ldy   #$06
+         jsr   compare
+         !byte $20,$D2,$25; JSR $25D2
+         !byte $4C,$74,$08; JMP $0874
+         bcs   +
+         ldx   #$04
+         ldy   #$01
+         jsr   modify
+         !byte $79        ; JMP to $0879 instead
++        dec   .sector+1
+         bpl   .sector
+.exit
+}

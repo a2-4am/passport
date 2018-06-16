@@ -1,0 +1,26 @@
+;-------------------------------
+; #DAVIDSONFORTH
+; bad block check of T22,S00
+; implemented in FORTH
+;
+; tested on
+; - Math Blaster Plus 1.6
+; - Read N Roll 1.0
+; - Read N Roll 1.1
+; - Math and Me 1.0
+;-------------------------------
+!zone {
+         lda   gIsDavidson
+         bne   .exit
+
+         ldy   #$08
+         jsr   SearchTrack
+         !byte $08,$80,$00,$FD,$1C,$D1,$0D,$EC
+         bcs   .exit
+         sta   gDisplayBytes
+         inx
+         ldy   #$01
+         jsr   modify
+         !byte $CC        ; MLI CLOSE command (instead of BLOCKREAD)
+.exit
+}

@@ -105,4 +105,5 @@ s_tamper =     $63
 s_microfun =   $64
 s_advent =     $65
 s_gathering  = $66
-STRINGCOUNT =  $67
+s_davidson =   $67
+STRINGCOUNT =  $68
