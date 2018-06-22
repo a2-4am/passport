@@ -371,13 +371,13 @@
 
 +        ldy   #14
          jsr   SearchTrack
-         !byte $AD,$00,$05
-         !byte $A2,$FF
-         !byte $5D,$00,$05
-         !byte $CA
-         !byte $D0,$FA
-         !byte $C9,$A0
-         !byte $F0
+         !byte $AD,$00,$05 ;LDA $0500
+         !byte $A2,$FF     ;LDX #$FF
+         !byte $5D,$00,$05 ;EOR $0500,X
+         !byte $CA         ;DEX
+         !byte $D0,$FA     ;BNE *-4
+         !byte $C9,$A0     ;CMP #$A0
+         !byte $F0         ;BEQ *+xx
          bcs   +
          pha
          lda   #s_tamper
@@ -390,7 +390,7 @@
          jsr   modify
          !byte $A1         ;new checksum value for eor
 
-+        ldy   #25
++        ldy   #24
          jsr   SearchTrack
          !byte $04,$4F,$D9 ;LDA $004c
          !byte $0A,$03,$7B ;LDX ($a200,A)
@@ -400,8 +400,8 @@
          !byte $07,$AC     ;CMP #$e0
          !byte $0F,$E5,$71 ;BNE $a8e6
          !byte $04,$F1,$70 ;LDA $a9f2
-         !byte $07,$AB     ;CMP #$e7
-         bcs   .exit
+         !byte $07         ;CMP #$xx
+         bcs   +
          pha
          lda   #s_tamper
          jsr   PrintByID
@@ -410,8 +410,83 @@
          tax
          pla
          ldy   #1
+         jsr   compare
+         !byte $AB
+         bcs   ++
+         ldy   #1
          jsr   modify
          !byte $BB         ;new checksum value for eor
+         jmp   +
+++       ldy   #1
+         jsr   compare
+         !byte $DB
+         bcs   ++
+         ldy   #1
+         jsr   modify
+         !byte $D4         ;new checksum value for eor
+++
+
++        ldy   #23
+         jsr   SearchTrack
+         !byte $03,$4C     ;LDI  #$00
+         !byte $06,$E1,$7b ;STA  $a2e2
+         !byte $05,$CC,$79 ;JSRA $a0cf
+         !byte $05,$CC,$79 ;JSRA $a0cf
+         !byte $05,$CC,$79 ;JSRA $a0cf
+         !byte $05,$CC,$79 ;JSRA $a0cf
+         !byte $04,$EB,$19 ;LDA  $c0e8
+         !byte $04,$E1,$7b ;LDA  $a2e2
+         bcs   +
+         pha
+         txa
+         adc   #21
+         tax
+         pla
+         ldy   #1
+         jsr   modify
+         !byte $E0         ;lda from known-zero instead
+
++        ldy   #23
+         jsr   SearchTrack
+         !byte $03,$9C     ;LDI  #$00
+         !byte $06,$31,$66 ;STA  $bfe2
+         !byte $D5,$CC,$B4 ;JSRA $bdcf
+         !byte $05,$1C,$64 ;JSRA $bdcf
+         !byte $D5,$CC,$B4 ;JSRA $bdcf
+         !byte $05,$1C,$64 ;JSRA $bdcf
+         !byte $D4,$EB,$C9 ;LDA  $c0e8
+         !byte $04,$31,$66 ;LDA  $bfe2
+         bcs   +
+         pha
+         txa
+         adc   #21
+         tax
+         pla
+         ldy   #1
+         jsr   modify
+         !byte $30         ;lda from known-zero instead
+
++        ldy   #14
+         jsr   SearchTrack
+         !byte $58,$0D
+         !byte $F1,$5D
+         !byte $5A,$0D
+         !byte $74,$00
+         !byte $5C,$0D
+         !byte $5E,$00
+         !byte $5E,$0D
+         bcs   .exit
+         pha
+         lda   #s_tamper
+         jsr   PrintByID
+         pla
+         inx
+         inx
+         ldy   #1
+         jsr   modify
+         !byte $F0         ;new checksum value for eor
+
++
 
 .dostitles
          lda   gIsBoot0
