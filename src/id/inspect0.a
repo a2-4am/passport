@@ -16,6 +16,7 @@ IDBootloader
 -        sta   FIRSTFILTER-1,x
          dex
          bne   -
+         stx   gMECCFastloadType
          stx   gLastTrack
 ;
 ; Quick sanity check -- only recognized values for $0800
@@ -82,31 +83,31 @@ IDBootloader
 ;
 +        jsr   IDMECC
          bcs   .notmecc
-         lda   #TRUE
-         sta   gIsMECCFastloader
+         lda   #ID_MECC_UNK
+         sta   gMECCFastloadType
          lda   #s_mecc
          jsr   PrintByID
          jsr   PrereadT00
          bcs   .notmecc
          jsr   IDMECC1
          bcs   +
-         lda   #TRUE
-         sta   gIsMECC1
+         lda   #ID_MECC1
+         sta   gMECCFastloadType
          jmp   foundmecc1
 +        jsr   IDMECC2
          bcs   +
-         lda   #TRUE
-         sta   gIsMECC2
+         lda   #ID_MECC2
+         sta   gMECCFastloadType
          jmp   foundmecc2
 +        jsr   IDMECC3
          bcs   +
-         lda   #TRUE
-         sta   gIsMECC3
+         lda   #ID_MECC3
+         sta   gMECCFastloadType
          jmp   foundmecc3
 +        jsr   IDMECC4
          bcs   .notmecc
-         lda   #TRUE
-         sta   gIsMECC4
+         lda   #ID_MECC4
+         sta   gMECCFastloadType
          jmp   foundmecc4
 .notmecc
 ;

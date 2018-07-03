@@ -5,8 +5,8 @@
 ; e.g. A-201 Conquering Whole Numbers
 ;-------------------------------
 !zone {
-         lda   gIsMECCFastloader
-         ora   gIsMECC4
+         lda   gMECCFastloadType
+         cmp   #ID_MECC4
          bne   .exit
          lda   #$08
          ldx   #$83
