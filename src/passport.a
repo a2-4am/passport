@@ -762,7 +762,7 @@ _applyToAll
          !source "patchers/bbf9.a"              ; gIsProDOS only
          !source "patchers/memory.config.a"     ; gIsProDOS only
          !source "patchers/origin.a"            ; gIsProDOS only
-         !source "patchers/rwtsswapmecc.a"      ; gIsMECCFastloader only
+         !source "patchers/rwtsswapmecc.a"      ; gMECCFastloadType only
          !source "patchers/protecteddos.a"      ; gIsProtDOS only
          !source "patchers/fbff.a"
          !source "patchers/fbffencrypted.a"     ; gIsProDOS only

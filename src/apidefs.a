@@ -11,6 +11,16 @@ ID_DOS33p =    $00
 ID_DOS32  =    $01
 ID_DOS32LO =   $02
 
+;-------------------------------
+;MECC fast-load variants
+;-------------------------------
+
+ID_MECC1    = $01
+ID_MECC2    = $02
+ID_MECC3    = $03
+ID_MECC4    = $04
+ID_MECC_UNK = $FF
+
 ; Zero-page addresses we use for variables
 nibsrcindex =  $EC        ; byte
 nibdestindex = $ED        ; byte
@@ -70,12 +80,7 @@ gIsDavidDOS                   = gIsProtDOS-$01                    ; byte
 gIsEA                         = gIsDavidDOS-$01                   ; byte
 gPossibleGamco                = gIsEA-$01                         ; byte
 gIsOptimum                    = gPossibleGamco-$01                ; byte
-gIsMECCFastloader             = gIsOptimum-$01                    ; byte
-gIsMECC1                      = gIsMECCFastloader-$01             ; byte
-gIsMECC2                      = gIsMECC1-$01                      ; byte
-gIsMECC3                      = gIsMECC2-$01                      ; byte
-gIsMECC4                      = gIsMECC3-$01                      ; byte
-gPossibleD5D5F7               = gIsMECC4-$01                      ; byte
+gPossibleD5D5F7               = gIsOptimum-$01                    ; byte
 gIs8b3                        = gPossibleD5D5F7-$01               ; byte
 gIsMilliken1                  = gIs8b3-$01                        ; byte
 gAdventureInternational       = gIsMilliken1-$01                  ; byte
@@ -91,8 +96,10 @@ gIsAdvent                     = gForceDiskVol-$01                 ; byte
 gIsPanglosDOS                 = gIsAdvent-$01                     ; byte
 gIsDavidson                   = gIsPanglosDOS-$01                 ; byte
 ;LASTFILTER ; add new gIs* above this line
+;gMECCFastloadType is a special case integer whose default value cannot be #FALSE
+gMECCFastloadType             = gIsDavidson-$01                   ; byte
 
-gOnAClearDayYouCanReadForever = gIsDavidson-$01                   ; byte
+gOnAClearDayYouCanReadForever = gMECCFastloadType-$01             ; byte
 gUsingRAMDisk                 = gOnAClearDayYouCanReadForever-$01 ; byte
 gRAMDiskRef                   = gUsingRAMDisk-$01                 ; byte
 gDisplayBytes                 = gRAMDiskRef-$0A                   ; 10 bytes
@@ -141,11 +148,7 @@ ConstructStandardDelivery = jConstructStandardDelivery
 !warn "gIsEA=",gIsEA
 !warn "gPossibleGamco=",gPossibleGamco
 !warn "gIsOptimum=",gIsOptimum
-!warn "gIsMECCFastloader=",gIsMECCFastloader
-!warn "gIsMECC1=",gIsMECC1
-!warn "gIsMECC2=",gIsMECC2
-!warn "gIsMECC3=",gIsMECC3
-!warn "gIsMECC4=",gIsMECC4
+!warn "gMECCFastloadType=",gMECCFastloadType
 !warn "gPossibleD5D5F7=",gPossibleD5D5F7
 !warn "gIs8b3=",gIs8b3
 !warn "gIsMilliken1=",gIsMilliken1

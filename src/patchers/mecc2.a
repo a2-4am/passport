@@ -5,8 +5,8 @@
 ; e.g. Phonics Prime Time series
 ;-------------------------------
 !zone {
-         lda   gIsMECCFastloader
-         ora   gIsMECC2
+         lda   gMECCFastloadType
+         cmp   #ID_MECC2
          bne   .exit
          lda   #$07
          ldx   #$83

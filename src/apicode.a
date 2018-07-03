@@ -48,6 +48,11 @@
                           ; instead of falling back to built-in RWTS
                           ; compile-time flag, no way to change at runtime
 
+;gMECCFastloadType
+         !byte 00         ; int
+                          ; reset before each operation
+                          ; set in IDBootloader() after reading T00,S00
+
 FIRSTFILTER
 ;gIsDavidson
          !byte FALSE      ; 0=true, 1=false
@@ -111,26 +116,6 @@ FIRSTFILTER
                           ; reset before each operation
                           ; set in IDBootloader() after reading T00,S00
 ;gPossibleD5D5F7
-         !byte FALSE      ; 0=true, 1=false
-                          ; reset before each operation
-                          ; set in IDBootloader() after reading T00,S00
-;gIsMECC4
-         !byte FALSE      ; 0=true, 1=false
-                          ; reset before each operation
-                          ; set in IDBootloader() after reading T00,S00
-;gIsMECC3
-         !byte FALSE      ; 0=true, 1=false
-                          ; reset before each operation
-                          ; set in IDBootloader() after reading T00,S00
-;gIsMECC2
-         !byte FALSE      ; 0=true, 1=false
-                          ; reset before each operation
-                          ; set in IDBootloader() after reading T00,S00
-;gIsMECC1
-         !byte FALSE      ; 0=true, 1=false
-                          ; reset before each operation
-                          ; set in IDBootloader() after reading T00,S00
-;gIsMECCFastloader
          !byte FALSE      ; 0=true, 1=false
                           ; reset before each operation
                           ; set in IDBootloader() after reading T00,S00

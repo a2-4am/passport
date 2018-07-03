@@ -5,8 +5,8 @@
 ; e.g. Word Munchers v1.1
 ;-------------------------------
 !zone {
-         lda   gIsMECCFastloader
-         ora   gIsMECC3
+         lda   gMECCFastloadType
+         cmp   #ID_MECC3
          bne   .exit
          lda   #$0A
          ldx   #$E8

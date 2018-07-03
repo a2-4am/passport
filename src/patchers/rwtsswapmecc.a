@@ -4,8 +4,8 @@
 ; fastloader disks
 ;-------------------------------
 !zone {
-         lda   gIsMECCFastloader
-         bne   .exit
+         lda   gMECCFastloadType
+         beq   .exit
 
          ldy   #$11
          jsr   SearchTrack
