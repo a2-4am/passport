@@ -1,0 +1,48 @@
+;-------------------------------
+; #FBFF
+; a variant of Activision's Timing Bit Detection
+; linked as an Apple Pascal module
+; (soft switches are hard-coded to slot 6)
+;
+; tested on several 'Courses By Computers' disks:
+; Geometry: Simple Closed Curves (1985)
+; Multiplication: Advanced Level (1985)
+; Basic Fraction Concepts (1985)
+;-------------------------------
+!zone {
+         lda   gIsPascal  ; only seen this protection on Pascal disks
+         bne   .exit
+         ldy   #$26
+         jsr   SearchTrack
+         !byte $AD,$E9,$C0; LDA $C0E9
+         !byte $A9,$A0    ; LDA #$A0
+         !byte $85,$03    ; STA $03
+         !byte $A9,$08    ; LDA #$08
+         !byte $C6,$02    ; DEC $02
+         !byte $D0,$04    ; BNE +
+         !byte $C6,$03    ; DEC $03
+         !byte $F0,$55    ; BEQ +55
+         !byte $AC,$EC,$C0; LDY $C0EC
+         !byte $10,$FB    ; BPL -
+         !byte $C0,$FB    ; CPY #$FB
+         !byte $D0,$ED    ; BNE -
+         !byte $F0,$00    ; BEQ +
+         !byte $EA        ; NOP
+         !byte $EA        ; NOP
+         !byte $AC,$EC,$C0; LDY $C0EC
+         !byte $C0,$08    ; CMP #$08
+         !byte $2A        ; ROL
+         !byte $B0,$0B    ; BCS +
+         bcs   .exit
+         sta   gDisplayBytes
+         pha
+         lda   #s_fbff
+         jsr   PrintByID
+         pla
+         ldy   #$03
+         jsr   modify
+                          ; unconditional jump to success path
+         !byte $18        ; CLC
+         !byte $90,$5F    ; BCC +
+.exit
+}
