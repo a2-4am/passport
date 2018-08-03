@@ -3,6 +3,8 @@
 ; construct new bootloader and RWTS for converted DOS 3.2 disks
 ;-------------------------------
 !zone {
+         bit   gMode      ; nothing to do here in verify-only mode
+         bpl   .exit
          lda   gIsDOS32
          bne   .exit
          bit   gMode      ; nothing to do here in verify-only mode

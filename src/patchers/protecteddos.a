@@ -9,8 +9,11 @@
 ; Math Blaster, Moebius
 ;-------------------------------
 !zone {
+         bit   gMode      ; nothing to do here in verify-only mode
+         bpl   .jmpexit
          lda   gIsProtDOS
          beq   +
+.jmpexit
          jmp   .exit
 +
 ;
@@ -83,11 +86,8 @@
          iny
          cpy   #$03
          bne   .serialloop
-         bit   gMode
-         bpl   +
          lda   #s_protserial
          jsr   PrintByID
-+
          lda   gTrack
          beq   .track0
 

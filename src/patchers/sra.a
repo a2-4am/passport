@@ -12,6 +12,8 @@
 ; Measurement D-1 (1983, SRA)
 ;-------------------------------
 !zone {
+         bit   gMode      ; nothing to do here in verify-only mode
+         bpl   .exit
          lda   gIsDOS32
          bne   +
          lda   #$0C

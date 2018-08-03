@@ -7,6 +7,8 @@
 ;-------------------------------
 !zone {
 _jmpb720
+         bit   gMode      ; nothing to do here in verify-only mode
+         bpl   .exit
          lda   gIsRWTS    ; if DOS 3.3-shaped RWTS
          bne   .exit
          lda   #$0B

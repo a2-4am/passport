@@ -10,6 +10,8 @@
 ; - Math and Me 1.0
 ;-------------------------------
 !zone {
+         bit   gMode      ; nothing to do here in verify-only mode
+         bpl   .exit
          lda   gIsDavidson
          bne   .exit
 

@@ -16,6 +16,8 @@
 ; Wortgefecht (Word Attack German) (1984, Gessler)
 ;-------------------------------
 !zone {
+         bit   gMode      ; nothing to do here in verify-only mode
+         bpl   .exit
          lda   gIsF7F6
          bne   .exit
          lda   #$0F

@@ -11,6 +11,8 @@
 ; America Coast to Coast (Mindscape release)
 ;-------------------------------
 !zone {
+         bit   gMode      ; nothing to do here in verify-only mode
+         bpl   .exit
          lda   gTrack
          cmp   #$02
          bne   .exit

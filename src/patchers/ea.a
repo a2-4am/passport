@@ -5,9 +5,13 @@
 ; module by qkumba
 ;-------------------------------
 !zone {
+         bit   gMode      ; nothing to do here in verify-only mode
+         bpl   .jmpexit
          lda   gIsEA      ; only ever seen this protection
          beq   +          ; on Electronic Arts titles
          jmp   .dostitles
+.jmpexit
+         jmp   .exit
 
 +        ldy   #40
          jsr   SearchTrack

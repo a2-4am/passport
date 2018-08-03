@@ -9,6 +9,8 @@
 ; Module by Brian Troha
 ;-------------------------------
 !zone {
+         bit   gMode      ; nothing to do here in verify-only mode
+         bpl   .exit
          ldy   #$45
          jsr   SearchTrack
          !byte $BD,$89,$C0

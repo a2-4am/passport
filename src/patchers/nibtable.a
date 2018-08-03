@@ -19,6 +19,8 @@ _nibtable
          !byte $F7,$F9,$FA,$FB,$FC,$FD,$FE,$FF
 
 .checkread
+         bit   gMode      ; nothing to do here in verify-only mode
+         bpl   .exit
          lda   gIsRWTS    ; if DOS 3.3 RWTS
          bne   .exit
          lda   #$02

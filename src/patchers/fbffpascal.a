@@ -10,6 +10,8 @@
 ; Basic Fraction Concepts (1985)
 ;-------------------------------
 !zone {
+         bit   gMode      ; nothing to do here in verify-only mode
+         bpl   .exit
          lda   gIsPascal  ; only seen this protection on Pascal disks
          bne   .exit
          ldy   #$26

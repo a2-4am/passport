@@ -5,6 +5,8 @@
 ; module by qkumba
 ;-------------------------------
 !zone {
+         bit   gMode      ; nothing to do here in verify-only mode
+         bpl   .exit
          lda   gIsPanglosDOS  ; only if PanglossianDOS
          bne   .exit
          ldy   #6

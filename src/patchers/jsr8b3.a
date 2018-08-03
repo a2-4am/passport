@@ -9,6 +9,8 @@
 ; e.g. English Achievement I
 ;-------------------------------
 !zone {
+         bit   gMode      ; nothing to do here in verify-only mode
+         bpl   .exit
          lda   gIs8b3
          bne   .exit
          beq   +

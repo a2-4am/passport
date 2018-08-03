@@ -10,6 +10,9 @@
 ; Mystery of the Witch's Shoes
 ;-------------------------------
 !zone {
+         sec
+         bit   gMode      ; nothing to do here in verify-only mode
+         bpl   .branchexit
          lda   #$00
          ldx   #$00
          ldy   #$38
@@ -21,6 +24,7 @@
          !byte $08,$30,$15,$BD,$ED,$08,$85,$3D
          !byte $CE,$FF,$08,$AD,$FE,$08,$85,$27
          !byte $CE,$FE,$08,$A6,$2B,$6C,$3E,$00
+.branchexit
          bcs   .exit
          lda   #$00
          ldx   #$8B

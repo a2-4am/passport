@@ -5,6 +5,8 @@
 ; e.g. Essential Grammar, Math Football
 ;-------------------------------
 !zone {
+         bit   gMode      ; nothing to do here in verify-only mode
+         bpl   .exit
 ; [speed optimization: only ever seen this protection on disks with
 ;  a specific nibble sequence on track $22, or an unformatted T22 --
 ;  if this global variable is set in SkipTrack() after failing to read T22S0F,

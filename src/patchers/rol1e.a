@@ -5,6 +5,8 @@
 ;-------------------------------
 !zone {
 _rol1e
+         bit   gMode      ; nothing to do here in verify-only mode
+         bpl   .exit
          lda   #$03
          ldx   #$00
          ldy   #$2F

@@ -34,6 +34,7 @@
          lda   gIsSierra
          beq   +
          jmp   .dosearch
+
 +        ldy   #3
          jsr   SearchTrack
 .call
@@ -232,7 +233,7 @@
 
 .trybox
          lda   #$2C ;BIT $xxxx
-         sta   patchstyle
+         sta   .patchstyle
          ldy   #17
          jsr   SearchTrack
          !byte $20,$00,$1D ;JSR $1D00
@@ -272,7 +273,7 @@
                            ;"BLOAD WALT..."
 +        bcc   +
          lda   #$60 ;RTS
-         sta   patchstyle
+         sta   .patchstyle
          ldy   #14
          jsr   SearchTrack
          !byte $A9,$00     ;LDA #$00
@@ -294,7 +295,7 @@
          pla
          ldy   #$01
          jsr   modify
-patchstyle
+.patchstyle
          !byte $2C ;BIT $xxxx
          jmp   .exit
 
@@ -322,7 +323,7 @@ patchstyle
          ldy   #$01
          jsr   modify
          !byte $DD ;checksum
-         sta   patchstyle
+         sta   .patchstyle
          ldy   #11
          jsr   SearchTrack
          !byte $A5,$12 ;LDA $12
