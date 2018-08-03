@@ -3,8 +3,11 @@
 ;-------------------------------
 
 !zone {
+         bit   gMode      ; nothing to do here in verify-only mode
+         bpl   .jmpexit
          lda   gIsRWTS    ; DOS 3.3-shaped RWTSen only
          beq   +
+.jmpexit
          jmp   .exit
 ;
 ; address prologue byte 1 (read)

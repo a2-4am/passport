@@ -9,9 +9,14 @@
 ; module by qkumba
 ;-------------------------------
 !zone {
+         bit   gMode      ; nothing to do here in verify-only mode
+         bpl   .jmpexit
          lda   gIsAdvent
-         bne   .exit
+         beq   +
+.jmpexit
+         jmp   .exit
 
++
          ;carry controls how many times to run on one track
          ;Mindshadow and Tracer Sanction have two copies
          ;of the protection on track 0, loaded to two

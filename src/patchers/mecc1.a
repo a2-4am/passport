@@ -5,6 +5,8 @@
 ; e.g. Word Munchers
 ;-------------------------------
 !zone {
+         bit   gMode      ; nothing to do here in verify-only mode
+         bpl   .exit
          lda   gMECCFastloadType
          cmp   #ID_MECC1
          bne   .exit

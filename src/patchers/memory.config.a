@@ -18,6 +18,8 @@
 ; GeoWhiz (1990, Silver Burdett and Ginn)
 ;-------------------------------
 !zone {
+         bit   gMode      ; nothing to do here in verify-only mode
+         bpl   .exit
          lda   gIsProDOS  ; only if ProDOS
          bne   .exit
          ldy   #$0C

@@ -11,6 +11,8 @@
 ; - Short Circuit
 ;-------------------------------
 !zone {
+         bit   gMode      ; nothing to do here in verify-only mode
+         bpl   .exit
          lda   gIsRWTS   ; if DOS 3.3-shaped RWTS
          bne   .exit
          ldy   #$09

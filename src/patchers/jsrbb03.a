@@ -7,6 +7,8 @@
 ; Backbones, EduCalc
 ;-------------------------------
 !zone {
+         bit   gMode      ; nothing to do here in verify-only mode
+         bpl   .exit
          lda   gIsBoot0   ; if DOS 3.3 boot0 loader
          bne   .exit
          lda   gIsBoot1   ; and DOS 3.3 boot1 loader

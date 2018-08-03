@@ -31,9 +31,14 @@
 ; module by qkumba
 ;-------------------------------
 !zone {
+         bit   gMode      ; nothing to do here in verify-only mode
+         bpl   .jmpexit
          lda   gIsSierra
          beq   +
          jmp   .dosearch
+.jmpexit
+         jmp   .exit
+
 +        ldy   #3
          jsr   SearchTrack
 .call

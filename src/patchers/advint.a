@@ -10,6 +10,8 @@
 ; SAGA6 - Strange Odyssey v2.1-119
 ;-------------------------------
 !zone {
+         bit   gMode      ; nothing to do here in verify-only mode
+         bpl   .exit
          lda   gAdventureInternational
          bne   .exit
          ldy   #$0A

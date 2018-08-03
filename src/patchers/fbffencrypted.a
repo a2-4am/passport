@@ -22,6 +22,8 @@
 ;
 ;-------------------------------
 !zone {
+         bit   gMode      ; nothing to do here in verify-only mode
+         bpl   .exit
          lda   gIsProDOS             ; only seen this protection on ProDOS disks
          bne   .exit
          ldy   #$06

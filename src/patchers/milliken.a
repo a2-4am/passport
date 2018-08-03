@@ -7,6 +7,8 @@
 ; The Writing Workshop, Math Sequences
 ;-------------------------------
 !zone {
+         bit   gMode      ; nothing to do here in verify-only mode
+         bpl   .exit
          lda   gIsMilliken1
          bne   .exit
          lda   #$01

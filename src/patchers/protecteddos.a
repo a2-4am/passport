@@ -9,8 +9,11 @@
 ; Math Blaster, Moebius
 ;-------------------------------
 !zone {
+         bit   gMode      ; nothing to do here in verify-only mode
+         bpl   .jmpexit
          lda   gIsProtDOS
          beq   +
+.jmpexit
          jmp   .exit
 +
 ;

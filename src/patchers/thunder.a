@@ -10,6 +10,8 @@
 ; Dig Dug, Pac-Man, Galaxian
 ;-------------------------------
 !zone {
+         bit   gMode      ; nothing to do here in verify-only mode
+         bpl   .no
          lda   gIsBoot0   ; if DOS 3.3 boot0 loader
          bne   .no
          lda   gIsBoot1   ; and DOS 3.3 boot1 loader

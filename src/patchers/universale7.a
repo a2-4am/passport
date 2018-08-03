@@ -8,6 +8,8 @@
 ;-------------------------------
 !zone {
 universale7
+         bit   gMode      ; nothing to do here in verify-only mode
+         bpl   .jmpexit
          lda   #$0F
          sta   .sector+1
 .sector  lda   #$FF       ; modified at runtime
@@ -28,6 +30,9 @@ universale7
          !byte $AC,$00,$AC,$00,$AC,$00,$AC,$00
          bcc   +
          jmp   .nextsector
+.jmpexit
+         jmp   .exit
+
 +
          lda   .sector+1
          ldx   #$00

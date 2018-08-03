@@ -6,6 +6,8 @@
 ; Castle Wolfenstein (1981, MUSE)
 ;-------------------------------
 !zone {
+         bit   gMode      ; nothing to do here in verify-only mode
+         bpl   .exit
          lda   gIsDOS32
          bne   .exit
          lda   gTrack

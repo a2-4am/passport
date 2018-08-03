@@ -6,6 +6,8 @@
 ; Fahrenheit 451 rev. 2
 ;-------------------------------
 !zone {
+         bit   gMode      ; nothing to do here in verify-only mode
+         bpl   .exit
          lda   gIsTrillium
          beq   .search
          lda   gTrack

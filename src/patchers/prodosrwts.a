@@ -5,6 +5,8 @@
 ;-------------------------------
 !zone {
 _prodosrwts
+         bit   gMode      ; nothing to do here in verify-only mode
+         bpl   .exit
          lda   gIsProDOS
          bne   .exit
          ldy   #$14

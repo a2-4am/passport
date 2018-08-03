@@ -5,8 +5,11 @@
 ; [thanks LoGo]
 ;-------------------------------
 !zone {
+         bit   gMode      ; nothing to do here in verify-only mode
+         bpl   .jmpexit
          lda   gIsProDOS
          beq   +
+.jmpexit
          jmp   .exit
 +
          ldy   #$0E
