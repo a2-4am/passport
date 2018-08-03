@@ -86,11 +86,8 @@
          iny
          cpy   #$03
          bne   .serialloop
-         bit   gMode
-         bpl   +
          lda   #s_protserial
          jsr   PrintByID
-+
          lda   gTrack
          beq   .track0
 
