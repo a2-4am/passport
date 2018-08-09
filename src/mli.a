@@ -501,6 +501,7 @@ CreateRAMFile
 
          ;no, create a new one
 
+         jsr   SwapProDOS
          lda   OnlineReturn
          tay
          clc
@@ -546,7 +547,7 @@ CreateRAMFile
          php
          jsr   SaveGlobal
          plp
-         bcc   .done
+         bcc   .restore
 
          lda   gRAMDiskRef
          jsr   CloseFile
@@ -560,6 +561,13 @@ CreateRAMFile
 .createfail
          ldx   #FALSE
          stx   gUsingRAMDisk
+
+.restore
+         php
+         pha
+         jsr   SwapProDOS
+         pla
+         plp
 
 .done
          rts
