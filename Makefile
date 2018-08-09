@@ -27,7 +27,7 @@ asm:
 	cd src/mods && $(ACME) t00only.a
 	$(EXOMIZER) raw -q build/t00only.bin -o build/t00only.tmp
 	printf "\x20\x00" | cat - build/t00only.tmp > build/t00only.pak
-	cd src && $(ACME) passport.a 2> ../build/relbase.log
+	cd src && $(ACME) -r ../build/passport.lst passport.a 2> ../build/relbase.log
 	cd src && $(ACME) -DRELBASE=`cat ../build/relbase.log | cut -d"=" -f2 | cut -d"(" -f2 | cut -d")" -f1` passport.a
 	cp res/work.po $(BUILDDISK)
 	java -jar $(AC) -p $(BUILDDISK) "PASSPORT.SYSTEM" sys 0x2000 < build/PASSPORT.SYSTEM
