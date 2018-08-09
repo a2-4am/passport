@@ -121,8 +121,7 @@ universalrwts
          !byte $88,$D0,$FD,$E6,$46,$D0,$F7,$E6,$47,$D0,$F3,$A0,$0C,$B1,$48,$F0
          !byte $5A,$C9,$04,$F0,$58,$6A,$08,$B0,$03,$20,$00,$B8,$A0,$30,$8C,$78
          !byte $05,$AE,$F8,$05,$20,$44,$B9,$90,$24,$CE,$78,$05,$10,$F3,$AD,$78
-; $BDD2 is patched to disable track recalibration after failing to find an address prologue 48 times
-         !byte $04,$48,$B0,$30,$20,$95,$BE,$CE,$F8,$06,$F0,$28,$A9,$04,$8D,$F8
+         !byte $04,$48,$A9,$60,$20,$95,$BE,$CE,$F8,$06,$F0,$28,$A9,$04,$8D,$F8
          !byte $04,$A9,$00,$20,$5A,$BE,$68,$20,$5A,$BE,$4C,$BC,$BD,$A4,$2E,$CC
          !byte $78,$04,$F0,$1C,$AD,$78,$04,$48,$98,$20,$95,$BE,$68,$CE,$F8,$04
          !byte $D0,$E5,$F0,$CA,$68,$A9,$40,$28,$4C,$48,$BE,$F0,$39,$4C,$AF,$BE

@@ -124,6 +124,15 @@ IgnoreAddressChecksum
 }
 
 !zone {
+PatchUniversalRWTSForNoRecal
+         lda   #$B0
+.x8      sta   $BDD2
+         lda   #$30
+.x9      sta   $BDD3
+         rts
+}
+
+!zone {
 PatchUniversalRWTSForAdaptive
 ; out:    N flag set
          ldy   #$09

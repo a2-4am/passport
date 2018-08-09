@@ -344,6 +344,11 @@ UseUniversal
 ;
 +        jsr   PatchUniversalRWTSForAdaptive
 ;
+; Disable drive recalibration on bad sectors so we give up on bad sectors
+; faster and detect unformatted or specially structured tracks faster.
+;
+         jsr   PatchUniversalRWTSForNoRecal
+;
 ; Some disks have different epilogues on track 0, so we stop using the
 ; adaptive RWTS so we don't falsely accuse those disks of being damaged.
 ;
