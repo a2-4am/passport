@@ -126,9 +126,9 @@ IgnoreAddressChecksum
 !zone {
 PatchUniversalRWTSForNoRecal
          lda   #$B0
-.x8      sta   $BDD2
+         sta   $BDD2
          lda   #$30
-.x9      sta   $BDD3
+         sta   $BDD3
          rts
 }
 
