@@ -64,17 +64,17 @@ PanglosDOS
          sta   .patch9+2
          ldy   #0
          tya
--        sta   $900,y
-         sta   $A00,y
-         ;$B00-B2F is partial
-         sta   $C00,y
-         sta   $D00,y
-         ;$E00-E2F is partial
+-        sta   $2000,y
+         sta   $2100,y
+         ;$2200-222F is partial
+         sta   $2300,y
+         sta   $2400,y
+         ;$2500-252F is partial
          iny
          bne   -
          ldy   #$2F
--        sta   $B00,y
-         sta   $E00,y
+-        sta   $2200,y
+         sta   $2500,y
          dey
          bpl   -
 .patch1
@@ -126,7 +126,7 @@ PanglosDOS
          ora   ((BASEPAGE+1)<<8)+$0D,X
          sta   modsrc
          lda   modsrc+1
-         adc   #9 ;$900+
+         adc   #$20 ;$2000+
          sta   modsrc+1
          lda   ((BASEPAGE+1)<<8)+$0A
          sta   (modsrc),Y
@@ -181,7 +181,7 @@ PanglosDOS
          ora   gSector
          sta   modsrc
          lda   modsrc+1
-         adc   #9
+         adc   #$20
          sta   modsrc+1
          lda   (modsrc),Y
 .patch8
