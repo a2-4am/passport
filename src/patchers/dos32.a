@@ -64,8 +64,11 @@
 +        ldx   #ID_DOS32LO
          jsr   ConstructStandardDelivery
 
-++       lda   #s_bootwrite
+++       bit   gMode      ; do not print in verify mode
+         bpl   +++
+
+         lda   #s_bootwrite
          jsr   PrintByID
-         inc   gPatchCount
++++      inc   gPatchCount
 .exit
 }
