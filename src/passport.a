@@ -790,6 +790,7 @@ _applyToAll
          !source "patchers/ssprot.a"            ; gIsF7F6 only
          !source "patchers/f7f6.a"              ; gIsF7F6 only
          !source "patchers/trillium.a"          ; gIsTrillium only
+         !source "patchers/trillium2.a"         ; T17 only
          !source "patchers/advent.a"            ; gIsAdvent only
          !source "patchers/davidsonforth.a"     ; gIsDavidson only
          !source "patchers/davidsonasm.a"       ; gIsDavidson only

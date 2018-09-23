@@ -1,0 +1,42 @@
+;-------------------------------
+; #TRILLIUM2
+;
+; tested on
+; Nine Princes of Amber
+; Perry Mason
+;-------------------------------
+!zone {
+         bit   gMode      ; nothing to do here in verify-only mode
+         bpl   .exit
+         lda   gTrack
+         cmp   #$17
+         bne   .exit
+         lda   #$0C
+         ldx   #$C1
+         ldy   #$09
+         jsr   compare
+         !byte $A2,$A7
+         !byte $A0,$19
+         !byte $20,$2D,$F1
+         !byte $C9,$00
+         bcs   .exit
+         sta   gDisplayBytes
+         pha
+         lda   #s_trillium
+         jsr   PrintByID
+         pla
+         inx
+         inx
+         inx
+         inx
+         ldy   #$01
+         jsr   modify
+         !byte $2C        ; BIT
+         inx
+         inx
+         inx
+         ldy   #$01
+         jsr   modify
+         !byte $A9        ; LDA
+.exit
+}
