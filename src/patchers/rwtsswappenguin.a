@@ -1,0 +1,32 @@
+;-------------------------------
+; #RWTSSWAPPENGUIN
+; routine in DOS to change epilogues when swapping between program disk
+; and user disk for saved games
+;
+; Tested on
+; Arcade Boot Camp
+; Transylvania 48K (1982 release)
+; Transylvania 128K (1982 release)
+; Xyphus
+;-------------------------------
+!zone {
+         bit   gMode      ; nothing to do here in verify-only mode
+         bpl   .exit
+         lda   gTrack     ; and track 1
+         cmp   #$01
+         bne   .exit
+         lda   #$04
+         ldx   #$52
+         ldy   #$0B
+         jsr   compare    ; and T01,S04,$52 ==
+         !byte $A9,$DA
+         !byte $8D,$91,$B9
+         !byte $8D,$35,$B9
+         !byte $8D,$9E,$B8
+         bcs   .exit
+         inx
+         ldy   #$01
+         jsr   modify     ; then set T01,S04,$53 =
+         !byte $DE
+.exit
+}
