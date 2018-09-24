@@ -3,14 +3,14 @@
 ; a custom RWTS-like routine to
 ; position the disk for an E7
 ; protection check
-; e.g. Bank Street Writer II,
+;
+; tested on
+; Bank Street Writer II
+; Fact and Fiction Toolkit
+; Mr. Pixel's Cartoon Kit
+; Mr. Pixel's Programming Paint Set
 ; Story Maker
-; NOTE: I've only ever seen this on
-; track 0, so as a speed optimization
-; that's the only track where this
-; runs. It needs to search the entire
-; track because there is no fixed
-; position for it to start.
+; Swiss Family Robinson
 ;-------------------------------
 !zone {
          bit   gMode      ; nothing to do here in verify-only mode

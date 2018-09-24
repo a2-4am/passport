@@ -98,7 +98,6 @@ AnalyzeT00
          !source "../patchers/datasoft.a"
          !source "../patchers/nibtable.a"
          !source "../patchers/diskvol.a"
-         !source "../patchers/c9ff.a"
          !source "../patchers/milliken.a"
          !source "../patchers/methods.a"
          !source "../patchers/jsr8b3.a"
