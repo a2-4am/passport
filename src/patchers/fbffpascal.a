@@ -4,10 +4,12 @@
 ; linked as an Apple Pascal module
 ; (soft switches are hard-coded to slot 6)
 ;
-; tested on several 'Courses By Computers' disks:
+; tested on
 ; Geometry: Simple Closed Curves (1985)
 ; Multiplication: Advanced Level (1985)
 ; Basic Fraction Concepts (1985)
+; Widespread
+; Power Up! The Typewriter
 ;-------------------------------
 !zone {
          bit   gMode      ; nothing to do here in verify-only mode
@@ -17,13 +19,13 @@
          ldy   #$26
          jsr   SearchTrack
          !byte $AD,$E9,$C0; LDA $C0E9
-         !byte $A9,$A0    ; LDA #$A0
+         !byte $A9,WILDCARD; LDA ...
          !byte $85,$03    ; STA $03
          !byte $A9,$08    ; LDA #$08
          !byte $C6,$02    ; DEC $02
          !byte $D0,$04    ; BNE +
          !byte $C6,$03    ; DEC $03
-         !byte $F0,$55    ; BEQ +55
+         !byte $F0,WILDCARD; BEQ ... (this branch offset will be used later to build the patch)
          !byte $AC,$EC,$C0; LDY $C0EC
          !byte $10,$FB    ; BPL -
          !byte $C0,$FB    ; CPY #$FB
@@ -36,15 +38,22 @@
          !byte $2A        ; ROL
          !byte $B0,$0B    ; BCS +
          bcs   .exit
+         stx   .a+1
          sta   gDisplayBytes
-         pha
+         adc   #BASEPAGE  ; carry is guaranteed to be clear here
+         sta   .a+2
+         ldy   #$10       ; get the branch offset from the WILDCARD above
+.a       lda   $FDFD,y    ; set at runtime
+         adc   #$0A       ; calculate new branch offset (note: carry still guaranteed to be clear here)
+         sta   .branch    ; store offset in patch bytes below
          lda   #s_fbff
          jsr   PrintByID
-         pla
+         lda   gDisplayBytes
          ldy   #$03
          jsr   modify
                           ; unconditional jump to success path
          !byte $18        ; CLC
-         !byte $90,$5F    ; BCC +
+         !byte $90        ; BCC +
+.branch  !byte $FD        ; set at runtime
 .exit
 }
