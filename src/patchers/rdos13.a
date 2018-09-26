@@ -7,16 +7,74 @@
 !zone {
          bit   gMode      ; nothing to do here in verify-only mode
          bpl   .jmpexit
-         ldy   gIsRDOS13
+         lda   gIsRDOS13
          beq   .okay
 .jmpexit
          jmp   .exit
 
 .okay
 
+         lda   #8
+         ldx   #$C9
+         ldy   #3
+         jsr   modify
+         !byte $20,$2A,$BB ;JSR $BB2A
+
+;adjust write-timing
+
+         lda   #$9
+         ldx   #$89
+         ldy   #3
+         jsr   modify
+         !byte $04         ;sync delay
+         !byte $48         ;PHA
+         !byte $68         ;PLA
+
+         lda   #$0A
+         ldx   #$16
+         ldy   #1
+         jsr   modify
+         !byte $56
+
+         lda   #$0A
+         ldx   #$2B
+         ldy   #2
+         jsr   modify
+         !byte $23,$B8
+
+         lda   #$0A
+         ldx   #$3C
+         ldy   #2
+         jsr   modify
+         !byte $23,$B8
+
+         lda   #$0A
+         ldx   #$4C
+         ldy   #2
+         jsr   modify
+         !byte $23,$B8
+
+;enable 16-sector address prologue
+
+         lda   #$0A
+         ldx   #$75
+         ldy   #2
+         jsr   modify
+         !byte $C9,$D5     ;CMP #$D5
+
+         lda   #$0A
+         ldx   #$8B
+         ldy   #1
+         jsr   modify
+         !byte $96
+
+         lda   #s_rwtswrite
+         jsr   PrintByID
+
 ;build 6-and-2 denibbilisation table for reading
 
          ldx   #$16
+         ldy   #0
 --       stx   $48
          txa
          asl
@@ -40,33 +98,32 @@
 +        inx
          bpl   --
 
-         lda   #8
-         ldx   #$C9
-         ldy   #3
-         jsr   modify
-         !byte $20,$2A,$BB ;JSR $BB2A
-
-;enable 16-sector address prologue
-
-         lda   #$0A
-         ldx   #$75
-         ldy   #2
-         jsr   modify
-         !byte $C9,$D5     ;CMP #$D5
-
-         lda   #$0A
-         ldx   #$8B
-         ldy   #1
-         jsr   modify
-         !byte $96
-
 ;replace 6-and-2 encoder routine
 ;and introduce DOS-order lookup
 
-         lda   #9
-         ldx   #0
          ldy   #$41
-         jsr   modify
+-        lda   .writemod - 1, y
+         sta   (BASEPAGE * $100) + $900 - 1, y
+         dey
+         bne   -
+
+;replace 6-and-2 decoder routine
+
+         ldy   #$18
+-        lda   .readmod - 1, y
+         sta   (BASEPAGE * $100) + $AC1 - 1, y
+         dey
+         bne   -
+
+         ldx   #ID_RDOS13
+         jsr   ConstructStandardDelivery
+
+         lda   #s_bootwrite
+         jsr   PrintByID
+
+         jmp   .exit
+
+.writemod
          !byte $A2,$00     ;LDX #$00
          !byte $A0,$02     ;LDY #$00
          !byte $88         ;DEY
@@ -95,44 +152,7 @@
          !byte $00,$0D,$0B,$09,$07,$05,$03,$01
          !byte $0E,$0C,$0A,$08,$06,$04,$02,$0F
 
-         lda   #$9
-         ldx   #$89
-         ldy   #3
-         jsr   modify
-         !byte $04         ;sync delay
-         !byte $48         ;PHA
-         !byte $68         ;PLA
-
-;replace 6-and-2 decoder routine
-
-         lda   #$0A
-         ldx   #$16
-         ldy   #1
-         jsr   modify
-         !byte $56
-
-         lda   #$0A
-         ldx   #$2B
-         ldy   #2
-         jsr   modify
-         !byte $23,$B8
-
-         lda   #$0A
-         ldx   #$3C
-         ldy   #2
-         jsr   modify
-         !byte $23,$B8
-
-         lda   #$0A
-         ldx   #$4C
-         ldy   #2
-         jsr   modify
-         !byte $23,$B8
-
-         lda   #$0A
-         ldx   #$C1
-         ldy   #$18
-         jsr   modify
+.readmod
          !byte $A0,$00     ;LDY #$00
          !byte $A2,$56     ;LDX #$56
          !byte $CA         ;DEX
@@ -146,12 +166,6 @@
          !byte $C8         ;INY
          !byte $D0,$ED     ;BNE $BCC5
          !byte $60         ;RTS
-
-         ldx   #ID_RDOS13
-         jsr   ConstructStandardDelivery
-
-         lda   #s_bootwrite
-         jsr   PrintByID
 
 .exit
 }
