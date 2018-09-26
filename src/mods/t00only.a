@@ -108,6 +108,7 @@ AnalyzeT00
          !source "../patchers/dos32dlm.a"
          !source "../patchers/microfun.a"
          !source "../patchers/panglosdos.a"
+         !source "../patchers/rdos13.a"
 
 ;add only above this line
          rts

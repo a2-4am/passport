@@ -106,4 +106,6 @@ s_microfun =   $64
 s_advent =     $65
 s_gathering  = $66
 s_davidson =   $67
-STRINGCOUNT =  $68
+s_rdos13   =   $68
+s_ssi      =   $69
+STRINGCOUNT =  $6A

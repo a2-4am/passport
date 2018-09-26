@@ -7,8 +7,8 @@
          bpl   .exit
          lda   gIsDOS32
          bne   .exit
-         bit   gMode      ; nothing to do here in verify-only mode
-         bpl   .exit
+         lda   gIsRDOS13
+         beq   .exit
 
 ; sector 1
 
@@ -54,21 +54,15 @@
 
 ; sector 0
 
+         ldx   #ID_DOS32LO
 .cr      lda   #$d1       ; set at runtime
          cmp   #$3D
          beq   +
          ldx   #ID_DOS32
-         jsr   ConstructStandardDelivery
-         jmp   ++
-
-+        ldx   #ID_DOS32LO
-         jsr   ConstructStandardDelivery
-
-++       bit   gMode      ; do not print in verify mode
-         bpl   +++
++        jsr   ConstructStandardDelivery
 
          lda   #s_bootwrite
          jsr   PrintByID
-+++      inc   gPatchCount
+         inc   gPatchCount
 .exit
 }

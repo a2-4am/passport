@@ -24,7 +24,7 @@ asm:
 	cd src/mods && $(ACME) universalrwts.a
 	$(EXOMIZER) raw -q build/universalrwts.bin -o build/universalrwts.tmp
 	printf "\xB8\x00" | cat - build/universalrwts.tmp > build/universalrwts.pak
-	cd src/mods && $(ACME) t00only.a
+	cd src/mods && $(ACME) -r ../../build/t00only.lst t00only.a
 	$(EXOMIZER) raw -q build/t00only.bin -o build/t00only.tmp
 	printf "\x20\x00" | cat - build/t00only.tmp > build/t00only.pak
 	cd src && $(ACME) -r ../build/passport.lst passport.a 2> ../build/relbase.log

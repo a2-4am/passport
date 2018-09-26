@@ -1,0 +1,157 @@
+;-------------------------------
+; #RDOS13
+; patch RDOS to be 16-sector compatible
+;
+; module by qkumba
+;-------------------------------
+!zone {
+         bit   gMode      ; nothing to do here in verify-only mode
+         bpl   .jmpexit
+         ldy   gIsRDOS13
+         beq   .okay
+.jmpexit
+         jmp   .exit
+
+.okay
+
+;build 6-and-2 denibbilisation table for reading
+
+         ldx   #$16
+--       stx   $48
+         txa
+         asl
+         bit   $48
+         beq   +
+         ora   $48
+         eor   #$ff
+         and   #$7e
+-        bcs   +
+         lsr
+         bne   -
+         tya
+         sta   (BASEPAGE * $100) + $6B9 - $16, x
+
+;and 6-and-2 nibbilisation table for writing
+
+         txa
+         ora   #$80
+         sta   (BASEPAGE * $100) + $B70, y
+         iny
++        inx
+         bpl   --
+
+         lda   #8
+         ldx   #$C9
+         ldy   #3
+         jsr   modify
+         !byte $20,$2A,$BB ;JSR $BB2A
+
+;enable 16-sector address prologue
+
+         lda   #$0A
+         ldx   #$75
+         ldy   #2
+         jsr   modify
+         !byte $C9,$D5     ;CMP #$D5
+
+         lda   #$0A
+         ldx   #$8B
+         ldy   #1
+         jsr   modify
+         !byte $96
+
+;replace 6-and-2 encoder routine
+;and introduce DOS-order lookup
+
+         lda   #9
+         ldx   #0
+         ldy   #$41
+         jsr   modify
+         !byte $A2,$00     ;LDX #$00
+         !byte $A0,$02     ;LDY #$00
+         !byte $88         ;DEY
+         !byte $B1,$3E     ;LDA ($3E),Y
+         !byte $4A         ;LSR
+         !byte $3E,$00,$BF ;ROL $BF00,X
+         !byte $4A         ;LSR
+         !byte $3E,$00,$BF ;ROL $BF00,X
+         !byte $99,$00,$BE ;STA $BE00,Y
+         !byte $E8         ;INX
+         !byte $E0,$56     ;CPX #$56
+         !byte $90,$ED     ;BCC $BC04
+         !byte $A2,$00     ;LDX #$00
+         !byte $98         ;TYA
+         !byte $D0,$E8     ;BNE $BC04
+         !byte $A2,$55     ;LDX #$55
+         !byte $BD,$00,$BF ;LDA $BF00,X
+         !byte $29,$3F     ;AND #$3F
+         !byte $9D,$00,$BF ;STA $BF00,X
+         !byte $CA         ;DEX
+         !byte $10,$F5     ;BPL $BC1E
+         !byte $60         ;RTS
+         !byte $AC,$F6,$BA ;LDY $BAF6
+         !byte $B9,$31,$BB ;LDA $BB31,Y
+         !byte $60         ;RTS
+         !byte $00,$0D,$0B,$09,$07,$05,$03,$01
+         !byte $0E,$0C,$0A,$08,$06,$04,$02,$0F
+
+         lda   #$9
+         ldx   #$89
+         ldy   #3
+         jsr   modify
+         !byte $04         ;sync delay
+         !byte $48         ;PHA
+         !byte $68         ;PLA
+
+;replace 6-and-2 decoder routine
+
+         lda   #$0A
+         ldx   #$16
+         ldy   #1
+         jsr   modify
+         !byte $56
+
+         lda   #$0A
+         ldx   #$2B
+         ldy   #2
+         jsr   modify
+         !byte $23,$B8
+
+         lda   #$0A
+         ldx   #$3C
+         ldy   #2
+         jsr   modify
+         !byte $23,$B8
+
+         lda   #$0A
+         ldx   #$4C
+         ldy   #2
+         jsr   modify
+         !byte $23,$B8
+
+         lda   #$0A
+         ldx   #$C1
+         ldy   #$18
+         jsr   modify
+         !byte $A0,$00     ;LDY #$00
+         !byte $A2,$56     ;LDX #$56
+         !byte $CA         ;DEX
+         !byte $30,$FB     ;BMI $BCC3
+         !byte $B9,$00,$BE ;LDA $BE00,Y
+         !byte $5E,$00,$BF ;LSR $BF00,X
+         !byte $2A         ;ROL
+         !byte $5E,$00,$BF ;LSR $BF00,X
+         !byte $2A         ;ROL
+         !byte $91,$3E     ;STA ($3E),Y
+         !byte $C8         ;INY
+         !byte $D0,$ED     ;BNE $BCC5
+         !byte $60         ;RTS
+
+         ldx   #ID_RDOS13
+         jsr   ConstructStandardDelivery
+
+         lda   #s_bootwrite
+         jsr   PrintByID
+
+.exit
+}
