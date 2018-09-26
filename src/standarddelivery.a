@@ -17,6 +17,8 @@ ConstructStandardDelivery
          beq   .construct32
          dex
          beq   .construct32lo
+         dex
+         beq   .constructrdos
 
 .construct33p
          lda   #<SD_DOS33p
@@ -31,6 +33,11 @@ ConstructStandardDelivery
 .construct32lo
          lda   #<SD_DOS32LO
          ldx   #>SD_DOS32LO
+         bne   +
+
+.constructrdos
+         lda   #<SD_RDOS13
+         ldx   #>SD_RDOS13
 
 +        sta   .A+1
          stx   .A+2
@@ -136,3 +143,11 @@ SD_DOS32LO
 ; track 2
          !byte $2A,$00,$00,$00,$35,$34,$33,$32,$31,$30,$2F,$2E,$2D,$2C,$2B,$00
          !byte $C0
+
+SD_RDOS13
+; exit via JMP $B300
+         !byte $00,$B3
+; track 0
+         !byte     $00,$00,$00,$BD,$BC,$BB,$BA,$B9,$B8,$B7,$B6,$B5,$B4,$B3
+         !byte $C0
+

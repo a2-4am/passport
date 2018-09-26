@@ -680,14 +680,16 @@ WriteRAMToDisk
          bne   -
 
          jsr   IncProgress
-         lda   #TRUE
-         sta   gUsingRAMDisk
          clc
 
 .exit
+         lda   #TRUE
+         sta   gUsingRAMDisk
          rts
 
 .cancel
+         lda   #TRUE
+         sta   gUsingRAMDisk
          jmp   Cancel
 
 }

@@ -4,7 +4,7 @@
 ;-------------------------------
 ; Passport
 ; a 4am hack
-; (c) 2016-7 by 4am
+; (c) 2016-8 by 4am
 ;
 ; Permission is hereby granted, free of charge, to any
 ; person obtaining a copy of this software and associated
@@ -88,7 +88,7 @@ UNIV_D3 = $B8FC
 
          ldx   #$00
 FM       lda   LastMover - 256,x
-         sta   $B500,x
+         sta   HIGHPOINT-$100,x
          inx
          bne   FM
          dec   FM+2
@@ -375,6 +375,9 @@ ReadWithRWTS
 .read
          lda   KEY
          bpl   checksector
+         bit   STROBE
+         cmp   #$e0 ;ignore backtick (MAME debug break)
+         beq   checksector
          jmp   Cancel
 checksector
          lda   $FFFF                            ; status of current sector in sector map (modified above)
@@ -796,6 +799,7 @@ _applyToAll
          !source "patchers/advent.a"            ; gIsAdvent only
          !source "patchers/davidsonforth.a"     ; gIsDavidson only
          !source "patchers/davidsonasm.a"       ; gIsDavidson only
+         !source "patchers/ssi.a"               ; gIsRDOS13 only
 
          lda   gPatchCount
          beq   .nopatches
@@ -818,10 +822,10 @@ LastMover
   !ifdef PASS2 {
   } else { ;PASS2
     !set PASS2=1
-    !warn "RELBASE = ", $B600 - (LastMover - FirstMover)
+    !warn "RELBASE = ", HIGHPOINT - (LastMover - FirstMover)
   }
 } else {
-  !if ($B600 - (LastMover - FirstMover)) < LOWPOINT {
+  !if (HIGHPOINT - (LastMover - FirstMover)) < LOWPOINT {
     !serious "code is too large to fit in available space!"
   }
 }

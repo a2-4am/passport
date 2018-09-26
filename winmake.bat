@@ -15,7 +15,7 @@ cd ..\..\build
 cscript /nologo //e:jscript %~f0 "b8" "00"
 1>nul copy /b tmp+universalrwts.tmp universalrwts.pak
 cd ..\src\mods
-%ACME% t00only.a
+%ACME% -r ..\..\build\t00only.lst t00only.a
 cd ..\..\build
 %EXOMIZER% raw -q t00only.bin -o t00only.tmp
 cscript /nologo //e:jscript %~f0 "20" "00"

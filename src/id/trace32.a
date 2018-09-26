@@ -143,8 +143,11 @@ TraceDOS32LO
          cmp   #$B6
          beq   +
          cmp   #$36
+         beq   +
+         cmp   #$B2 ;RDOS
          bne   .fail
-+
+         clc
++        php
 ;
 ; set up RWTS entry point and other self-modified vectors
 ; that depend on where the RWTS is in memory
@@ -177,7 +180,32 @@ TraceDOS32LO
 
 .fail    jmp   FatalError
 
+.RDOSPatch
+         lda   #$B3
+         ldx   #$00       ; check for "JMP $B974;LDY #$00"
+         ldy   #$05       ; at RWTS entry point
+         jsr   CompareMemory ; (i.e. $B300)
+         !byte $4C,$74,$B9,$A0,$00
+         bcs   .fail
+         lda   #TRUE
+         sta   gIsRDOS13
+         lda   #s_rdos13
+         jsr   PrintByID
+
+         lda   #<.RDOS13Hook
+         sta   jCallRWTS+1
+         lda   #>.RDOS13Hook
+         sta   jCallRWTS+2
+
+         lda   #$C9       ; override address prologue to avoid reliance on $48
+         sta   $BC75
+         lda   #$D4
+         sta   $BC76
+         bne   .patchmap
+
 TraceDOS32d
+         plp
+         bcc   .RDOSPatch
          lda   jCallRWTS+2
          ldx   #$00       ; check for "STY $48;STA $49"
          ldy   #$04       ; at RWTS entry point
@@ -205,6 +233,8 @@ TraceDOS32d
                           ; if data prologue is not found
          sta   (modsrc),y
 
+.patchmap
+
 ; skip sectors $0D, $0E, and $0F on all tracks
 ; since this is a 13-sector disk
 
@@ -226,6 +256,16 @@ TraceDOS32d
          dex
          bpl   .A
 
+; set flag for patcher
+
+         lda   #TRUE
+         sta   gIsDOS32
+
+;retain track 00 for RDOS because we can
+
+         ldy   gIsRDOS13
+         beq   +
+
 ; skip T00,S00-S0A
 ; since we're going to construct our own bootloader later
 
@@ -233,11 +273,6 @@ TraceDOS32d
 -        sta   T00,y
          dey
          bpl   -
-
-; set flag for patcher
-
-         lda   #TRUE
-         sta   gIsDOS32
 
 ; check for MUSE sector doubling RWTS
          lda   jCallRWTS+2
@@ -279,8 +314,34 @@ FFer
          iny
          cpy   #$9A
          bne   .G
-         clc
+-        clc
          rts
 +        sec
          rts
+
+.RDOS13Hook
+         ldx   _sector
+         stx   $BAF6
+         lda   _track
+         sta   $BAF5
+         bne   +
+         cpx   #$0C
+         beq   -     ;lie that T00S0C exists
+
+;standard 13-sector prologue on T00
+;because we can't decode the 16-sector version
+         lda   #$D5
+         sta   $BC76
+         lda   #$B5
+         sta   $BC8B
+
++        lda   gAddress
+         sta   $BAF7
+         lda   gAddress+1
+         sta   $BAF8
+         ldx   #1
+         stx   $B718  ;count of sectors (low part)
+         dex
+         stx   $B719  ;count of sectors (high part)
+         jmp   $BA00
 }

@@ -119,6 +119,8 @@ StringTable
          !word .advent
          !word .gathering
          !word .davidson
+         !word .rdos13
+         !word .ssi
 ;
 ; Text can contain substitution strings, which
 ; are replaced by current values at runtime. Each
@@ -144,7 +146,7 @@ StringTable
 ; can be set directly before calling PrintByID.
 ;
 .header
-         !text "Passport by 4am               2018-09-25",$00
+         !text "Passport by 4am               2018-09-26",$00
 .mainmenu
          !text "________________________________________",$8D,$8D,$8D,$8D,$8D,$8D,$8D
          !text "              "
@@ -422,7 +424,7 @@ StringTable
 .rwtswrite
          !text "T00,S02 Writing built-in RWTS",$8D,$00
 .rdos
-         !text "T00,S00 Found RDOS bootloader",$8D,$00
+         !text "T00,S00 Found RDOS 16-sector bootloader",$8D,$00
 .sra
          !text "T%t,S%0 Found SRA protection check",$8D,$00
 .muse
@@ -446,4 +448,8 @@ StringTable
          !text "Gathering per-file encryption keys",$8D,$00
 .davidson
          !text "T%t Found Davidson & Associates disk",$8D,$00
+.rdos13
+         !text "T00,S00 Found RDOS 13-sector bootloader",$8D,$00
+.ssi
+         !text "T%t,S%0 Found SSI protection check",$8D,$00
 }

@@ -10,6 +10,7 @@ FALSE    =     $01
 ID_DOS33p =    $00
 ID_DOS32  =    $01
 ID_DOS32LO =   $02
+ID_RDOS13 =    $03
 
 ;-------------------------------
 ;MECC fast-load variants
@@ -48,6 +49,7 @@ RELBASE  =     $2000      ; dummy assignment for first build
                           ; to allow calculation of proper value
 }
 LOWPOINT =     $4300      ; lowest available address for code
+HIGHPOINT =    $B200      ; highest available address+1 for code
 BASEPAGE =     $10        ; Special Delivery tracer assumes
                           ; this is $10, so don't change it!
 
@@ -57,7 +59,7 @@ BASEPAGE =     $10        ; Special Delivery tracer assumes
 ; compressed code to work
 ;-------------------------------
 
-APIEND                        = $B600
+APIEND                        = HIGHPOINT
 gMode                         = APIEND-$01                        ; byte
 gPatchCount                   = gMode-$01                         ; byte
 gTriedUniv                    = gPatchCount-$01                   ; byte
@@ -95,9 +97,10 @@ gForceDiskVol                 = gPolarwareTamperCheck-$01         ; byte
 gIsAdvent                     = gForceDiskVol-$01                 ; byte
 gIsPanglosDOS                 = gIsAdvent-$01                     ; byte
 gIsDavidson                   = gIsPanglosDOS-$01                 ; byte
+gIsRDOS13                     = gIsDavidson-$01                   ; byte
 ;LASTFILTER ; add new gIs* above this line
 ;gMECCFastloadType is a special case integer whose default value cannot be #FALSE
-gMECCFastloadType             = gIsDavidson-$01                   ; byte
+gMECCFastloadType             = gIsRDOS13-$01                     ; byte
 
 gOnAClearDayYouCanReadForever = gMECCFastloadType-$01             ; byte
 gUsingRAMDisk                 = gOnAClearDayYouCanReadForever-$01 ; byte
@@ -164,6 +167,7 @@ ConstructStandardDelivery = jConstructStandardDelivery
 !warn "gIsAdvent=",gIsAdvent
 !warn "gIsPanglosDOS=",gIsPanglosDOS
 !warn "gIsDavidson=",gIsDavidson
+!warn "gIsRDOS13=",gIsRDOS13
 !warn "gOnAClearDayYouCanReadForever=",gOnAClearDayYouCanReadForever
 !warn "gUsingRAMDisk=",gUsingRAMDisk
 !warn "gRAMDiskRef=",gRAMDiskRef
