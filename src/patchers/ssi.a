@@ -9,8 +9,9 @@
          ldy   gIsRDOS13
          bne   .exit
 
-         ldy   #$0D
+         ldy   #$0F
          jsr   SearchTrack
+         !byte $85,$00    ; STA $00
          !byte $F0,$17    ; BEQ *+$19
          !byte $20,$65,$BC; JSR $BC65
          !byte $B0,$F7    ; BCS *-7
@@ -27,7 +28,7 @@
          pla
          ldy   #$01
          jsr   modify
-         !byte $D0        ; BNE
+         !byte $A9        ; LDA #$..
 
 .exit
 }
