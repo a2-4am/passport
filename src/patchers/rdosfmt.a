@@ -1,0 +1,38 @@
+;-------------------------------
+; #RDOS format interception
+; support disk tools that format 13-sectors
+;
+; module by qkumba
+;-------------------------------
+!zone {
+         bit   gMode      ; nothing to do here in verify-only mode
+         bpl   .exit
+         lda   gIsRDOS13
+         bne   .exit
+
+         ldy   #$0F
+         jsr   SearchTrack
+         !byte $A9,$D4    ; LDA #$D4
+         !byte $20,$CC,$09; JSR $09CC
+         !byte $A9,$AA    ; LDA #$AA
+         !byte $20,$CD,$09; JSR $09CD
+         !byte $A9,$B7    ; LDA #$B7
+         !byte $20,$CD,$09; JSR $09CD
+         bcs   .exit
+
+         inx
+         ldy   #1
+         jsr   modify
+         !byte $D5
+         pha
+         txa
+         clc
+         adc   #9
+         tax
+         pla
+         ldy   #1
+         jsr   modify
+         !byte $96
+
+.exit
+}
