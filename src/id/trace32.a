@@ -197,6 +197,9 @@ TraceDOS32LO
          lda   #>.RDOS13Hook
          sta   jCallRWTS+2
 
+         lda   $BC76
+         cmp   #$D5
+         beq   .patchmap
          lda   #$C9       ; override address prologue to avoid reliance on $48
          sta   $BC75
          lda   #$D4
