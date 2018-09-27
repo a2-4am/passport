@@ -30,38 +30,33 @@
          !byte $48         ;PHA
          !byte $68         ;PLA
 
-         lda   #$0A
-         ldx   #$16
-         ldy   #1
-         jsr   modify
-         !byte $56
+         lda   #$56
+         sta   (BASEPAGE * $100) + $9A3
+         sta   (BASEPAGE * $100) + $A16
 
-         lda   #$0A
-         ldx   #$2B
-         ldy   #2
-         jsr   modify
-         !byte $23,$B8
+         lda   #$23
+         sta   (BASEPAGE * $100) + $A2B
+         sta   (BASEPAGE * $100) + $A3C
+         sta   (BASEPAGE * $100) + $A4C
 
-         lda   #$0A
-         ldx   #$3C
-         ldy   #2
-         jsr   modify
-         !byte $23,$B8
+         lda   #$B8
+         sta   (BASEPAGE * $100) + $A2C
+         sta   (BASEPAGE * $100) + $A3D
+         sta   (BASEPAGE * $100) + $A4D
 
-         lda   #$0A
-         ldx   #$4C
-         ldy   #2
-         jsr   modify
-         !byte $23,$B8
-
-;enable 16-sector address prologue
+;enable 16-sector address prologue as needed
 
          lda   #$0A
          ldx   #$75
          ldy   #2
+         jsr   compare
+         !byte $C9,$D5     ;CMP #$D5
+         bcc   +
+         ldy   #2
          jsr   modify
          !byte $C9,$D5     ;CMP #$D5
 
++
          lda   #$0A
          ldx   #$8B
          ldy   #1
