@@ -11,7 +11,7 @@
 
          ldy   #$0F
          jsr   SearchTrack
-         !byte $85,$00    ; STA $00
+         !byte WILDCARD,$00; xxx $00 (sometimes DEC, sometimes CMP)
          !byte $F0,$17    ; BEQ *+$19
          !byte $20,$65,$BC; JSR $BC65
          !byte $B0,$F7    ; BCS *-7
