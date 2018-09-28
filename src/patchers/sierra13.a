@@ -87,7 +87,7 @@
          ldy   #2
          jsr   modify
          !byte $A0,$B9
-         jmp   .exit
+         bvc   .jmpexit
 
          ;Threshold secondary protection
 
@@ -108,7 +108,7 @@
          ldy   #$01
          jsr   modify
          !byte $FC
-         jmp   .exit
+         bvc   .exit
 
          ;Missile Defense
 
@@ -132,7 +132,7 @@
          ldy   #$01
          jsr   modify
          !byte $2C ;LDA
-         jmp   .exit
+         bvc   .exit
 
          ;Cranston Manor, etc.
 

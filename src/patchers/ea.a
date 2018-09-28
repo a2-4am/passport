@@ -420,7 +420,7 @@
          ldy   #1
          jsr   modify
          !byte $BB         ;new checksum value for eor
-         jmp   +
+         bvc   +
 ++       ldy   #1
          jsr   compare
          !byte $DB

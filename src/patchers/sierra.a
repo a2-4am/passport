@@ -343,7 +343,7 @@
          ldy   #$01
          jsr   modify
          !byte $F8 ;checksum
-         jmp   .exit
+         bvc   .jmpexit
 
 +        ldy   #19
          jsr   SearchTrack
@@ -357,7 +357,7 @@
          !byte $A9,$00     ;LDA #$00
          !byte $AA         ;TAX
          !byte $9D,$00,$01 ;STA $0100,X
-         bcs   +
+         bcs   .jmpexit
          pha
          lda   #s_tamper
          jsr   PrintByID
@@ -368,13 +368,13 @@
          ldy   #$01
          jsr   modify
          !byte $19 ;checksum
-+        jmp   .exit
+.jmpexit
+         jmp   .exit
 
 .dosearch
          lda   gIsBoot0
-         beq   +
-         jmp   .exit
-+        ldy   #15
+         bne   .jmpexit
+         ldy   #15
          jsr   SearchTrack
          !byte $CE,WILDCARD,WILDCARD ;DEC $xxxx
          !byte $EF,WILDCARD,WILDCARD ;mod->INC $xxxx
