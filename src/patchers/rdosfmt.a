@@ -27,7 +27,7 @@
          pha
          txa
          clc
-         adc   #9
+         adc   #$0a
          tax
          pla
          ldy   #1
