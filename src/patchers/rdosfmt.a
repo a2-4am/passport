@@ -10,29 +10,19 @@
          lda   gIsRDOS13
          bne   .exit
 
-         ldy   #$0F
+         ldy   #$0E
          jsr   SearchTrack
-         !byte $A9,$D4    ; LDA #$D4
-         !byte $20,$CC,$09; JSR $09CC
-         !byte $A9,$AA    ; LDA #$AA
-         !byte $20,$CD,$09; JSR $09CD
-         !byte $A9,$B7    ; LDA #$B7
-         !byte $20,$CD,$09; JSR $09CD
+         !byte $20,$A0,$08; JSR $08A0
+         !byte $B0,$40    ; BCS $085E
+         !byte $20,$6C,$08; JSR $086C
+         !byte $BD,$76,$08; LDA $0876,X
+         !byte $9D,$00,$02; STA $0200,X
          bcs   .exit
 
-         inx
-         ldy   #1
+         ldy   #4
          jsr   modify
-         !byte $D5
-         pha
-         txa
-         clc
-         adc   #$0a
-         tax
-         pla
-         ldy   #1
-         jsr   modify
-         !byte $96
+         !byte $BD,$88,$C0;LDA $C088,X
+         !byte $90        ;BCC ...
 
 .exit
 }
