@@ -13,9 +13,9 @@
          ldy   #$0E
          jsr   SearchTrack
          !byte $20,$A0,$08; JSR $08A0
-         !byte $B0,$40    ; BCS $085E
-         !byte $20,$6C,$08; JSR $086C
-         !byte $BD,$76,$08; LDA $0876,X
+         !byte $B0,WILDCARD; BCS +
+         !byte $20,WILDCARD,$08; JSR $08xx
+         !byte $BD,WILDCARD,$08; LDA $08xx,X
          !byte $9D,$00,$02; STA $0200,X
          bcs   .exit
 
