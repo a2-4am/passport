@@ -1,0 +1,96 @@
+;-------------------------------
+; #BB03
+; boot1 calls $BB03 for a self-decrypting nibble check
+;
+; variant 1 (JSR $BB03)
+; Classifying Animals with Backbones
+; EduCalc
+;
+; variant 2 (JSR $BB03 but David-DOS)
+; Case of the Great Train Robbery
+; Case of the Missing Chick
+; Mrs. Wigglesworth's Secret
+; Mystery of the Witch's Shoes
+;
+; variant 3 (JMP $BB03)
+; Sum Ducks
+; Alice in Wonderland
+;-------------------------------
+!zone {
+         sec
+         bit   gMode      ; nothing to do here in verify-only mode
+         bpl   .noButInYellow
+         lda   #$07       ; sector to check for David-DOS variant
+         ldx   gIsDavidDOS
+         beq   .maybe
+         ldx   gIsBoot0   ; if DOS 3.3 boot0 loader
+         bne   .noButInYellow
+         ldx   gIsBoot1   ; and DOS 3.3 boot1 loader
+         bne   .noButInYellow
+         lda   #$05       ; sector to check for DOS 3.3 variant
+.maybe
+         ldx   #$03
+         ldy   #$25
+         jsr   compare    ; if T00,S0(5|7),$03 ==
+         !byte $4E,$06,$BB,$71,$6E
+         !byte $0A,$BB,$40,$27,$6E,$0F,$BB,$DD
+         !byte $1B,$BB,$6E,$15,$BB,$DC,$1E,$BB
+         !byte $6E,$25,$BB,$72,$00,$BB,$B3,$00
+         !byte $B8,$99,$00,$BB,$C8,$A0,$F4,$B0
+         bcs   .no
+         sta   gDisplayBytes
+         lda   #s_bb03
+         jsr   PrintByID
+         lda   gIsDavidDOS
+         beq   .variant2
+         lda   #$01
+         ldx   #$38
+         ldy   #$03
+         jsr   compare    ; if T00,S01,$38 ==
+         !byte $20,$03,$BB; JSR $BB03
+         bcc   .variant1
+         ldy   #$03
+         jsr   compare    ; if T00,S01,$38 ==
+         !byte $4C,$03,$BB; JMP $BB03
+         bcs   .no
+         lda   #$05
+         ldx   #$6B
+         ldy   #$05
+         jsr   compare    ; if T00,S05,$6B ==
+         !byte $06,$26,$7D,$39,$41; encrypted, decrypts to 'LDA $C08C,X / BPL -'
+.noButInYellow
+         bcs   .no
+.variant3
+         ldy   #$02
+         jsr   modify     ; then set T00,S05,$6B =
+         !byte $6B,$F6    ; encrypted, decrypts to 'BNE +$5C' which will unconditionally branch to success path at $BBC9
+         lda   #$06
+         ldx   #$0F
+         ldy   #$01
+         jsr   modify     ; and set T00,S06,$0F =
+         !byte $89        ; encrypted, decrypts to $10 which is the expected nibble count value
+         bvc   .no        ; unconditional branch
+.variant1
+         lda   #$05
+         ldx   #$03
+         ldy   #$09
+         jsr   modify     ; then set T00,S05,$03 =
+         !byte $A9,$B5
+         !byte $48
+         !byte $A9,$18
+         !byte $48
+         !byte $4C,$93,$B7
+         bvc   .no        ; uncondtional branch
+.variant2
+         lda   #$07
+         ldx   #$03
+         ldy   #$0B
+         jsr   modify     ; then set T00,S07,$03 =
+         !byte $A9,$B5
+         !byte $48
+         !byte $A9,$18
+         !byte $48
+         !byte $A0,$04
+         !byte $4C,$A9,$B7
+.no
+}
