@@ -1,0 +1,36 @@
+;-------------------------------
+; #AACount
+; self-decrypting and re-encrypting nibble count
+;
+; tested on
+; Battle Group (SSI)
+; Moebius (Origin)
+;-------------------------------
+!zone {
+         bit   gMode      ; nothing to do here in verify-only mode
+         bpl   .exit
+
+         lda   #$0F
+         sta   gDisplayBytes
+.loop    lda   gDisplayBytes
+         ldx   #$04
+         ldy   #$0E
+         jsr   compare
+         !byte $CE,$07,$02; DEC $0207
+         !byte $EF,$07,$02; ??? $0207 (becomes INC)
+         !byte $A0,$27    ; LDY #$27
+         !byte $D0,$02    ; BNE *+4
+         !byte $00        ; BRK
+         !byte $6C,$B9,$00; JMP ($00B9)
+         bcs   +
+         lda   #s_aacount
+         jsr   PrintByID
+         lda   gDisplayBytes
+         ldy   #$01
+         jsr   modify
+         !byte $60        ; RTS
++
+         dec   gDisplayBytes
+         bpl   .loop
+.exit
+}

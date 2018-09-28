@@ -801,6 +801,7 @@ _applyToAll
          !source "patchers/davidsonasm.a"       ; gIsDavidson only
          !source "patchers/ssi.a"               ; gIsRDOS13 only
          !source "patchers/rdosfmt.a"           ; gIsRDOS13 only
+         !source "patchers/aacount.a"
 
          lda   gPatchCount
          beq   .nopatches

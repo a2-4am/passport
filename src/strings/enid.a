@@ -108,4 +108,5 @@ s_gathering  = $66
 s_davidson =   $67
 s_rdos13   =   $68
 s_ssi      =   $69
-STRINGCOUNT =  $6A
+s_aacount =    $6A
+STRINGCOUNT =  $6B

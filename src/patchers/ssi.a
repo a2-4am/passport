@@ -20,7 +20,7 @@
          !byte $C1,$00    ; CMP ($00,X)
          !byte $EA        ; NOP
          !byte $EA        ; NOP
-         bcs   +
+         bcs   .exit
 
          sta   gDisplayBytes
          pha
@@ -30,21 +30,5 @@
          ldy   #$01
          jsr   modify
          !byte $A9        ; LDA #$..
-         bvc   .exit
-
-+
-         ldy   #$0E
-         jsr   SearchTrack
-         !byte $CE,$07,$02; DEC $0207
-         !byte $EF,$07,$02; ??? $0207
-         !byte $A0,$27    ; LDY #$27
-         !byte $D0,$02    ; BNE *+4
-         !byte $00        ; BRK
-         !byte $6C,$B9,$00; JMP ($00B9)
-         bcs   .exit
-         ldy   #1
-         jsr   modify
-         !byte $60        ; RTS
-
 .exit
 }
