@@ -98,9 +98,10 @@ gIsAdvent                     = gForceDiskVol-$01                 ; byte
 gIsPanglosDOS                 = gIsAdvent-$01                     ; byte
 gIsDavidson                   = gIsPanglosDOS-$01                 ; byte
 gIsRDOS13                     = gIsDavidson-$01                   ; byte
+gIsSierraDOS                  = gIsRDOS13-$01                     ; byte
 ;LASTFILTER ; add new gIs* above this line
 ;gMECCFastloadType is a special case integer whose default value cannot be #FALSE
-gMECCFastloadType             = gIsRDOS13-$01                     ; byte
+gMECCFastloadType             = gIsSierraDOS-$01                  ; byte
 
 gOnAClearDayYouCanReadForever = gMECCFastloadType-$01             ; byte
 gUsingRAMDisk                 = gOnAClearDayYouCanReadForever-$01 ; byte
@@ -168,6 +169,7 @@ ConstructStandardDelivery = jConstructStandardDelivery
 !warn "gIsPanglosDOS=",gIsPanglosDOS
 !warn "gIsDavidson=",gIsDavidson
 !warn "gIsRDOS13=",gIsRDOS13
+!warn "gIsSierraDOS=",gIsSierraDOS
 !warn "gOnAClearDayYouCanReadForever=",gOnAClearDayYouCanReadForever
 !warn "gUsingRAMDisk=",gUsingRAMDisk
 !warn "gRAMDiskRef=",gRAMDiskRef

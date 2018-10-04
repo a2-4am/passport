@@ -802,7 +802,7 @@ _applyToAll
          !source "patchers/ssi.a"               ; gIsRDOS13 only
          !source "patchers/rdosfmt.a"           ; gIsRDOS13 only
          !source "patchers/aacount.a"
-         !source "patchers/sierraone.a"         ; gIsBoot0 only
+         !source "patchers/sierraone.a"         ; gIsSierraDOS only
 
          lda   gPatchCount
          beq   .nopatches

@@ -193,6 +193,23 @@ _Inspect1a
          dey
          bpl   -
 ;
+; Check for Sierra DOS (to enable filtering)
+;
++        lda   #$B7
+         ldx   #$38
+         ldy   #$12
+         jsr   CompareMemory
+         !byte $20,$93,$B7 ;JSR $B793
+         !byte $A2,$FF     ;LDX #$FF
+         !byte $9A         ;TXS
+         !byte $8E,$EB,$B7 ;STX $B7EB
+         !byte $4C,$C8,$BF ;JMP $BFC8
+         !byte $20,$89,$FE ;JSR $FE89
+         !byte $4C,$00,$9B ;JMP $9B00
+         bcs   +
+         lda   #TRUE
+         sta   gIsSierraDOS
+;
 ; good to go
 ;
 +        jmp   ADStyle    ; use this RWTS to read the disk

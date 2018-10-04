@@ -9,7 +9,7 @@
 !zone {
          bit   gMode      ; nothing to do here in verify-only mode
          bpl   .exit
-         lda   gIsBoot0
+         lda   gIsSierraDOS
          bne   .exit
 
          ldy   #$0F
@@ -22,6 +22,7 @@
          !byte $A9,$05     ;LDA #$05
          !byte $8D,$00,$BB ;STA $BB00
          bcs   .exit
+         sta   gDisplayBytes
          pha
          lda   #s_sierraone
          jsr   PrintByID
