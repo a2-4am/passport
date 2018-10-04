@@ -1,0 +1,34 @@
+;-------------------------------
+; #SIERRA one-off?
+; search and disable a nibble-check
+;
+; Gelfling Adventure
+;
+; module by qkumba
+;-------------------------------
+!zone {
+         bit   gMode      ; nothing to do here in verify-only mode
+         bpl   .exit
+         lda   gIsBoot0
+         bne   .exit
+
+         ldy   #$0F
+         jsr   SearchTrack
+         !byte $A9,$00     ;LDA #$00
+         !byte $AA         ;TAX
+         !byte $A8         ;TAY
+         !byte $20,$52,$B0 ;JSR $B052
+         !byte $BD,$89,$C0 ;LDA $C089,X
+         !byte $A9,$05     ;LDA #$05
+         !byte $8D,$00,$BB ;STA $BB00
+         bcs   .exit
+         pha
+         lda   #s_sierraone
+         jsr   PrintByID
+         pla
+         ldy   #$01
+         jsr   modify
+         !byte $60
+
+.exit
+}

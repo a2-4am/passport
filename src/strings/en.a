@@ -122,6 +122,7 @@ StringTable
          !word .rdos13
          !word .ssi
          !word .aacount
+         !word .sierraone
 ;
 ; Text can contain substitution strings, which
 ; are replaced by current values at runtime. Each
@@ -455,4 +456,6 @@ StringTable
          !text "T%t,S%0 Found SSI protection check",$8D,$00
 .aacount
          !text "T%t,S%0 Found AA nibble count",$8D,$00
+.sierraone
+         !text "T%t,S%0 Found Sierra nibble count",$8D,$00
 }
