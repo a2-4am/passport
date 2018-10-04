@@ -209,6 +209,35 @@ _Inspect1a
          bcs   +
          jsr   $BC61
 ;
+; Check for alternate RWTS entry point (e.g. Swordthrust)
+;
++        lda   jCallRWTS+2
+         sec
+         sbc   #$06
+         ldx   #$75
+         ldy   #(@end_swordthrust-@begin_swordthrust)
+         jsr   CompareMemory
+@begin_swordthrust
+         PHP
+         SEI
+         PHA
+         LDX   $B7EC
+         LDA   $BED0,X
+         EOR   $B942
+         STA   $B8FC
+         STA   $B85D
+         PLA
+         JSR   $BD00
+@end_swordthrust
+         bcs   +
+         stx   jCallRWTS+1; set new RWTS entry point to $B775
+         lda   #$B7
+         sta   jCallRWTS+2
+         lda   #<gTrack   ; this entry point assumes track number is in $B7EC
+         sta   $B779      ; which isn't true, so change the code to look at
+         lda   #>gTrack   ; Passport's gTrack instead
+         sta   $B77A
+;
 ; good to go
 ;
 +        jmp   ADStyle    ; use this RWTS to read the disk

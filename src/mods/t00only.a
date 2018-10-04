@@ -110,6 +110,7 @@ AnalyzeT00
          !source "../patchers/microfun2.a"
          !source "../patchers/panglosdos.a"
          !source "../patchers/rdos13.a"
+         !source "../patchers/swordthrust.a"
 
 ;add only above this line
          rts

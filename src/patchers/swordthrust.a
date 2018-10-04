@@ -1,0 +1,41 @@
+;-------------------------------
+; #SWORDTHRUST
+; custom RWTS entry point at $B775 changes parameters based on track
+;
+; Tested on
+; - Swordthrust
+;-------------------------------
+!zone {
+         bit   gMode      ; nothing to do here in verify-only mode
+         bpl   .exit
+         lda   #$01
+         ldx   #$75
+         ldy   #(@end_swordthrust-@begin_swordthrust)
+         jsr   compare
+@begin_swordthrust
+         PHP
+         SEI
+         PHA
+         LDX   $B7EC
+         LDA   $BED0,X
+         EOR   $B942
+         STA   $B8FC
+         STA   $B85D
+         PLA
+         JSR   $BD00
+@end_swordthrust
+         bcs   .exit
+         sta   gDisplayBytes
+         lda   #s_bytrack
+         jsr   PrintByID
+         lda   #$01
+         ldx   #$81
+         ldy   #$01
+         jsr   modify
+         !byte $2C
+         ldx   #$84
+         ldy   #$01
+         jsr   modify
+         !byte $2C
+.exit
+}
