@@ -193,6 +193,22 @@ _Inspect1a
          dey
          bpl   -
 ;
+; Check for Micro Fun RWTS swapper (called from outside RWTS so
+; we need to call it ourselves)
++        ldx   jCallRWTS+2
+         dex
+         txa
+         ldx   #$61
+         ldy   #$0B
+         jsr   CompareMemory
+         !byte $A9,$01
+         !byte $8D,$00,$B9
+         !byte $A9,$B5
+         !byte $8D,$FC,$B8
+         !byte $60
+         bcs   +
+         jsr   $BC61
+;
 ; good to go
 ;
 +        jmp   ADStyle    ; use this RWTS to read the disk

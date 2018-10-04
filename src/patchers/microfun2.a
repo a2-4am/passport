@@ -1,0 +1,24 @@
+;-------------------------------
+; #MICROFUN2
+; RWTS jumps to $B6B8 to burn cycles during write
+;
+; tested on
+; - Crown Of Arthain
+;-------------------------------
+!zone {
+         bit   gMode      ; nothing to do here in verify-only mode
+         bpl   .exit
+         lda   gIsRWTS   ; if DOS 3.3-shaped RWTS
+         bne   .exit
+         lda   #$02
+         ldx   #$5E
+         ldy   #$03
+         jsr   compare
+         !byte $4C,$B8,$B6
+         bcs   .exit
+         sta   gDisplayBytes
+         ldy   #$03
+         jsr   modify
+         !byte $20,$B8,$B8
+.exit
+}

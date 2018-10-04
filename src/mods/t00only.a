@@ -91,6 +91,7 @@ AnalyzeT00
          !source "../patchers/bb03.a"
          !source "../patchers/rwtsswap.a"
          !source "../patchers/rwtsswap2.a"
+         !source "../patchers/rwtsswapmicrofun.a"
          !source "../patchers/border.a"
          !source "../patchers/jmpae8e.a"
          !source "../patchers/jmpbbfe.a"
@@ -106,6 +107,7 @@ AnalyzeT00
          !source "../patchers/dos32.a"
          !source "../patchers/dos32dlm.a"
          !source "../patchers/microfun.a"
+         !source "../patchers/microfun2.a"
          !source "../patchers/panglosdos.a"
          !source "../patchers/rdos13.a"
 

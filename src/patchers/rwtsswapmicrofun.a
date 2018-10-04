@@ -1,0 +1,32 @@
+;-------------------------------
+; #RWTSSWAPMICROFUN
+; RWTS swappers at $BC56 and $BC61
+;
+; Tested on
+; - Crown of Arthain
+;-------------------------------
+!zone {
+         bit   gMode      ; nothing to do here in verify-only mode
+         bpl   .exit
+         lda   #$06
+         ldx   #$56
+         ldy   #$05
+         jsr   compare
+         !byte $A9,$00
+         !byte $8D,$00,$B9
+         bcs   +
+         ldy   #$01
+         jsr   modify
+         !byte $60
++
+         ldx   #$61
+         ldy   #$05
+         jsr   compare
+         !byte $A9,$01
+         !byte $8D,$00,$B9
+         bcs   .exit
+         ldy   #$01
+         jsr   modify
+         !byte $60
+.exit
+}
