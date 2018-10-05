@@ -272,6 +272,18 @@
          !byte $84,$C2,$CC,$CF,$C1,$C4,$A0,$D7,$C1,$CC,$D4
                            ;"BLOAD WALT..."
 +        bcc   +
+         ldy   #26
+         jsr   SearchTrack
+         !byte $20,$0D,$09 ;JSR $090D
+         !byte $AD,$F1,$08 ;LDA $08F1
+         !byte $D0,$6B     ;BNE $08C3
+         !byte $A9,$01     ;LDA #$01
+         !byte $8D,$F1,$08 ;STA $08F1
+         !byte $20,$16,$16 ;JSR $1616
+         !byte $20,$3D,$18 ;JSR $183D
+         !byte $80,$1B,$C2,$CC,$CF,$C1,$C4
+                           ;"BLOAD ..."
+         bcc   +
          lda   #$60 ;RTS
          sta   .patchstyle
          ldy   #14
