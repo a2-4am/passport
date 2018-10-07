@@ -182,10 +182,10 @@ TraceDOS32LO
 
 .RDOSPatch
          lda   #$B3
-         ldx   #$00       ; check for "JMP $B974;LDY #$00"
+         ldx   #$00       ; check for "JMP $B9xx;LDY #$00"
          ldy   #$05       ; at RWTS entry point
          jsr   CompareMemory ; (i.e. $B300)
-         !byte $4C,$74,$B9,$A0,$00
+         !byte $4C,WILDCARD,$B9,$A0,$00
          bcs   .fail
          lda   #TRUE
          sta   gIsRDOS13
