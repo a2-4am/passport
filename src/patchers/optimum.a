@@ -64,7 +64,10 @@
 
 .iob2
          lda   $D108,X
-         sta   .mergelo+1
+         cmp   #$a9
+         bne   +
+         lda   #0
++        sta   .mergelo+1
 
 .checktrack
          lda   gTrack
