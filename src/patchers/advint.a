@@ -14,13 +14,12 @@
          bpl   .exit
          lda   gAdventureInternational
          bne   .exit
-         ldy   #$0A
+         ldy   #$08
          jsr   SearchTrack
          ; bytes are XORd with #$C9 on disk -- comments show decrypted code
          !byte $85,WILDCARD,WILDCARD ;JMP $****
          !byte $74,$45,$09           ;LDA $C08C,X
          !byte $D9,$32               ;BPL -$FB
-         !byte $0C,$30               ;CMP $F9
          bcs   .exit
          sta   gDisplayBytes
          pha
