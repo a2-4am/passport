@@ -197,6 +197,11 @@ TraceDOS32LO
          lda   #>.RDOS13Hook
          sta   jCallRWTS+2
 
+         lda   #<.RDOS13Seek
+         sta   $BAC7
+         lda   #>.RDOS13Seek
+         sta   $BAC8
+
          lda   $BC76
          cmp   #$D5
          beq   .patchmap
@@ -347,4 +352,14 @@ FFer
          dex
          stx   $B719  ;count of sectors (high part)
          jmp   $BA00
+
+.RDOS13Seek
+         jsr   $BC65  ;read address
+         lda   $2E
+         cmp   $BAF5
+         bne   +
+         jmp   $BAC9
++        sec ;fail on the tracks that don't exist
+         rts
+
 }
