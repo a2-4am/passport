@@ -35,13 +35,16 @@ kSectorResetAdaptiveRWTS = $C0       ; will accept any epilogue on next sector, 
 kSectorIgnoreAddressChecksum = $C1   ; will ignore address field checksum
 kSectorCustomDOS32B4BB = $C2         ; DOS 3.2 / JMP B4BB RWTS swapper
 ;-------------------------------
-InitSectorMap
 !zone {
-         lda   #<sectormap
-         sta   .B+1
-         lda   #>sectormap
-         sta   .B+2
+InitSectorMapWithIgnore
+         lda   #kSectorOptional
+         !byte $2C
+InitSectorMap
          lda   #kSectorRequired
+         ldx   #<sectormap
+         stx   .B+1
+         ldx   #>sectormap
+         stx   .B+2
          ldx   #$22
 .A       ldy   #$0F
 .B       sta   $FFFF

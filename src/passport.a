@@ -594,8 +594,13 @@ TheEnd
          beq   CleanExit
          cmp   #k_redo
          beq   HandleRedo
+         cmp   #k_redo_with_ignore
+         beq   HandleRedoWithIgnore
          jmp   MainMenu
 
+HandleRedoWithIgnore
+         jsr   InitSectorMapWithIgnore
+         ; note: execution falls through here
 HandleRedo
          jsr   ClearScreen
          lda   #s_header
