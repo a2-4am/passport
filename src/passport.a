@@ -249,6 +249,7 @@ Action
          jsr   CreateRAMFile
 +        jsr   ResetProgress
          jsr   InitSectorMap
+Reaction
          lda   #FALSE
          sta   gTriedUniv
          sta   gSaidWriting
@@ -599,8 +600,10 @@ TheEnd
          jmp   MainMenu
 
 HandleRedoWithIgnore
+         jsr   ResetProgress
          jsr   InitSectorMapWithIgnore
-         ; note: execution falls through here
+         jmp   Reaction
+
 HandleRedo
          jsr   ClearScreen
          lda   #s_header
