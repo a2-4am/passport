@@ -78,6 +78,9 @@ were common in educational software.
 - Blue Chip
   e.g. Squire, Baron, Tycoon
 
+- Davidson & Associates
+  e.g. Math Blaster Plus, Read N Roll
+
 - DC Heath
   e.g. What Makes A Dinosaur Sore
 
@@ -263,6 +266,21 @@ software, so your mileage may vary.
 - Infocom
   e.g. Planetfall, Zork I/II/III
 
+- Interplay
+  e.g. Borrowed Time, Tracer Sanction
+
+- MicroFun
+  e.g. Crown of Arthain, Miner 2049er
+
+- Origin Systems
+  e.g. Ultima V, Times of Lore
+
+- Penguin Software
+  e.g. Xyphus, Arcade Boot Camp
+
+- Polarware
+  e.g. Oo-topos, The Crimson Crown
+
 - Sierra On-Line (patcher by qkumba)
   e.g. BC's Quest for Tires, Sammy
   Lightfoot
@@ -271,13 +289,17 @@ software, so your mileage may vary.
   e.g. The Eternal Dagger, The Shard of
   Spring, Roadwar Europa, Warship
 
+- Trillium
+  e.g. Rendezvous with Rama, Fahrenheit
+  451
+
 ## License
 
 Passport is open source and is
 distributed under the MIT license.
 
 Passport
-Copyright (c) 2016-7 by 4am
+Copyright (c) 2016-8 by 4am
 
 Permission is hereby granted, free of
 charge, to any person obtaining a copy
@@ -312,6 +334,56 @@ SOFTWARE OR THE USE OR OTHER DEALINGS
 IN THE SOFTWARE.
 
 ## History
+
+2018-10-14
+- NEW: 13-sector MUSE support
+- NEW: 13-sector Sierra support (by
+  qkumba)
+- NEW: 13-sector RDOS support (SSI) (by
+  qkumba)
+- NEW: PanglosDOS (per-file encryption)
+  (by qkumba)
+- NEW: Dinkey-DOS support (Ultima V)
+- NEW: Interplay support (The Tracer
+  Sanction, Borrowed Time)
+- NEW: Davidson & Associates support
+  (Math Blaster Plus)
+- NEW: Penguin RWTS (Xyphus)
+- NEW: MicroFun RWTS (Crown of Arthain)
+- NEW: Swordthrust RWTS
+- NEW: patchers/f7f6.a (Might & Magic)
+- NEW: patchers/trillium (Rendezvous
+  with Rama, Fahrenheit 451)
+- NEW: patchers/fbffencrypted.a
+  (Clue, RISK, ESL Writer)
+- NEW: patchers/fbffpascal.a
+  (Widespread, The Typewriter)
+- NEW: patchers/polarware.a
+  (Oo-topos, The Crimson Crown)
+- NEW: patchers/microfun.a (The Heist,
+  Station 5, Miner 2049er)
+- NEW: print volume name on ProDOS,
+  Pascal, and DOS 3.3 + variants
+- IMPROVED: patchers/jmpb4bb.a
+  (fixes Rubik's Cube Unlocked)
+- IMPROVED: id/advint.a
+  (fixes The Curse of Crowley Manor)
+- IMPROVED: detection of unformatted
+  tracks (fixes Thunder Bombs)
+- IMPROVED: Micrograms detection
+  (fixes Shapes and Patterns)
+- IMPROVED: patchers/bbf9.a
+  (fixes Magic Slate II 20-column)
+- IMPROVED: patchers/memory.config.a
+  (fixes Where Did My Toothbrush Go)
+- IMPROVED: patchers/c9ff.a
+  (fixes Swiss Family Robinson)
+- IMPROVED: patchers/bb03.a
+  (fixes Alice in Wonderland)
+- IMPROVED: patchers/optimum.a
+  (fixes Fat City)
+- IMPROVED: logging track and sector
+  when switching to built-in RWTS
 
 2017-11-14
 - Supports ProDOS RAM disks to read an

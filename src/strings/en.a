@@ -10,7 +10,7 @@ k_crack  =     "C"
 k_slot   =     "S"
 k_quit   =     "Q"
 k_redo   =     "2" ;for some side 'B'
-k_redo_with_ignore = "0";
+k_redo_with_ignore = $92; <Ctrl-R>
 ; <Esc> will also quit
 
 !source "strings/enid.a"
@@ -148,7 +148,7 @@ StringTable
 ; can be set directly before calling PrintByID.
 ;
 .header
-         !text "Passport by 4am               2018-10-12",$00
+         !text "Passport by 4am               2018-10-14",$00
 .mainmenu
          !text "________________________________________",$8D,$8D,$8D,$8D,$8D,$8D,$8D
          !text "              "
