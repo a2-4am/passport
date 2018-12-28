@@ -18,6 +18,14 @@ IDBootloader
          bne   -
          stx   gMECCFastloadType
          stx   gLastTrack
+
+         lda   gIsInfocom18
+         bne   .sanity
+         lda   #s_infocom18
+         jsr   PrintByID
+         jmp   UseUniversal
+
+.sanity
 ;
 ; Quick sanity check -- only recognized values for $0800
 ; are 1 or 2 for regular disks, and 5 for possible Electronic Arts.
@@ -287,4 +295,93 @@ PrereadT00Partial
          bne   -
 .exit
          rts
+}
+
+;-------------------------------
+; IDBootFailure
+; main entry point to identify the bootloader
+; when the initial read failed
+; identifies Infocom 18-sector side B disks
+; doubles as verification routine after ID
+; written by qkumba
+;
+; in:    nothing
+; out:   carry set if we can't ID it
+;-------------------------------
+!zone {
+IDBootFailure
+         lda   #FALSE
+         sta   gIsInfocom18
+         bit   gMode      ; only in verify-mode
+         bmi   .branchno
+
+VerifyInfocom18
+         lda   $C0E9
+         lda   #$1A       ; the length of a track
+         sta   tmp        ; keep X register free
+         ldy   #0
+
+-        iny
+         bne   +
+         dec   tmp
+         beq   .branchno
++        lda   $C0EC
+         bpl   -
+--       cmp   #$D5
+         bne   -
+-        lda   $C0EC
+         bpl   -
+         cmp   #$AA
+         bne   --
+-        lda   $C0EC
+         bpl   -
+         cmp   #$AD
+         beq   .tryinfocom
+         ldx   gIsInfocom18
+         beq   --         ; resume if already in Infocom mode
+         ;;other things here in future
+.branchno
+         jmp   .no
+
+.tryinfocom
+-        lda   $C0EC
+         bpl   -
+         nop
+         nop              ; ignore half of 4x4 track number
+-        lda   $C0EC
+         bpl   -          ; ignore half of 4x4 track number
+
+         lda   #$12       ; all 18 sectors when in verify mode
+         ldx   gIsInfocom18
+         beq   .setcount
+         lda   #$01       ; only one sector when in ID mode
+.setcount
+         sta   tmp        ; sector counter
+
+         lda   #$00
+--       ldy   #$56
+-        ldx   $C0EC
+         bpl   -
+         eor   $BA00,x    ; from universal RWTS
+         dey
+         bne   -
+-        ldx   $C0EC
+         bpl   -
+         eor   $BA00,x    ; from universal RWTS
+         iny
+         bne   -
+-        ldx   $C0EC
+         bpl   -
+         eor   $BA00,x    ; from universal RWTS
+         bne   .no
+         dec   tmp
+         bne   --
+         sta   gIsInfocom18
+         clc              ; all clear
+         !byte $24
+.no
+         sec
+         lda   $C0E8
+         rts
+
 }

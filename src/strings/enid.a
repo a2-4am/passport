@@ -109,4 +109,5 @@ s_davidson =   $67
 s_rdos13   =   $68
 s_ssi      =   $69
 s_aacount =    $6A
-STRINGCOUNT =  $6B
+s_infocom18 =  $6B
+STRINGCOUNT =  $6C

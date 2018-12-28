@@ -53,6 +53,11 @@
                           ; reset before each operation
                           ; set in IDBootloader() after reading T00,S00
 
+;gIsInfocom18
+         !byte FALSE      ; 0=true, 1=false
+                          ; reset before each operation
+                          ; set in IDBootFailure() after reading T00
+
 FIRSTFILTER
 ;gIsRDOS
          !byte FALSE      ; 0=true, 1=false
