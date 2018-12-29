@@ -432,7 +432,7 @@ read13
 
 .readaddr
          dec   tmp
-         bmi   .badread
+         bmi   .badread2
          clc
          ldx   #$02       ; 512 nibbles
          ldy   #0
@@ -442,7 +442,7 @@ read13
 ---      iny
          bne   +
          dex
-         beq   .badread
+         beq   .badread1
 +
 -        lda   $C0EC
          bpl   -
@@ -473,7 +473,7 @@ read13
 +        plp
          bcc   .readaddr
          eor   #$AD
-         bne   read13
+         bne   .readaddr
 --       ldy   #$9A
 -        ldx   $C0EC
          bpl   -
@@ -489,8 +489,10 @@ read13
          bpl   -
          eor   $800,x
          cmp   #$01       ; set carry if non-zero
-         !byte $24
-.badread
+         !byte $2c
+.badread1
+         plp
+.badread2
          sec
          lda   $C0E8
          rts
