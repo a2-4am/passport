@@ -110,4 +110,6 @@ s_rdos13   =   $68
 s_ssi      =   $69
 s_aacount =    $6A
 s_infocom18 =  $6B
-STRINGCOUNT =  $6C
+s_toverify =   $6C
+s_13sector =   $6D
+STRINGCOUNT =  $6E

@@ -20,8 +20,15 @@ IDBootloader
          stx   gLastTrack
 
          lda   gIsInfocom18
-         bne   .sanity
+         bne   .check13
          lda   #s_infocom18
+         jsr   PrintByID
+         jmp   UseUniversal
+
+.check13
+         lda   gIs13Sector
+         bne   .sanity
+         lda   #s_13sector
          jsr   PrintByID
          jmp   UseUniversal
 
@@ -302,7 +309,8 @@ PrereadT00Partial
 ; main entry point to identify the bootloader
 ; when the initial read failed
 ; identifies Infocom 18-sector side B disks
-; doubles as verification routine after ID
+; and pure 13-sector disks
+; doubles as Infocom verification routine after ID
 ; written by qkumba
 ;
 ; in:    nothing
@@ -310,40 +318,44 @@ PrereadT00Partial
 ;-------------------------------
 !zone {
 IDBootFailure
-         lda   #FALSE
-         sta   gIsInfocom18
-         bit   gMode      ; only in verify-mode
-         bmi   .branchno
 
 VerifyInfocom18
          lda   $C0E9
-         lda   #$1A       ; the length of a track
-         sta   tmp        ; keep X register free
+.retry13
+         ldx   #$1A       ; the length of a track
          ldy   #0
 
--        iny
+---      iny
          bne   +
-         dec   tmp
-         beq   .branchno
-+        lda   $C0EC
+         dex
+         bne   +
+
+.no      sec
+         lda   $C0E8
+         rts
+
+.badsect
+         lda   gIsInfocom18
+         beq   .no        ; if in Infocom mode already then we have a true failure
+         bne   .retry13   ; otherwise, try to identify 13-sector instead
+                          ; the issue being that both have a D5 AA AD sequence
+
++
+-        lda   $C0EC
          bpl   -
 --       cmp   #$D5
-         bne   -
+         bne   ---
 -        lda   $C0EC
          bpl   -
          cmp   #$AA
          bne   --
 -        lda   $C0EC
          bpl   -
+         cmp   #$B5      ; 13-sector only
+         beq   .build13
          cmp   #$AD
-         beq   .tryinfocom
-         ldx   gIsInfocom18
-         beq   --         ; resume if already in Infocom mode
-         ;;other things here in future
-.branchno
-         jmp   .no
+         bne   --
 
-.tryinfocom
 -        lda   $C0EC
          bpl   -
          nop
@@ -373,15 +385,113 @@ VerifyInfocom18
 -        ldx   $C0EC
          bpl   -
          eor   $BA00,x    ; from universal RWTS
-         bne   .no
+         bne   .badsect
          dec   tmp
          bne   --
          sta   gIsInfocom18
-         clc              ; all clear
-         !byte $24
-.no
-         sec
+
+.checkmode
+         bit   gMode      ; verify-mode already?
+         bpl   +          ; yes, continue
+
+         lda   #%00000000 ; 
+         sta   gMode      ; no, switch to verify-mode
+         lda   #s_toverify
+         jsr   PrintByID  ; and say so
+
++        clc              ; all clear
          lda   $C0E8
          rts
 
+         ;build 5-and-3 decoding table
+         ;for 13-sector support
+
+.build13
+         ldx   #$00
+         ldy   #$AB
+-        tya
+         sta   tmp
+         lsr
+         ora   tmp
+         cmp   #$FF
+         bne   +
+         cpy   #$D5
+         beq   +
+         txa
+         sta   $800,y
+         inx
++        iny
+         bne   -
+         sty   gIs13Sector
+         beq   .checkmode  ; always taken
+
+read13
+         lda   $C0E9
+         lda   #$1C        ; retry count
+         sta   tmp
+
+.readaddr
+         dec   tmp
+         bmi   .badread
+         clc
+         ldx   #$02       ; 512 nibbles
+         ldy   #0
+
+.readdata
+         php
+---      iny
+         bne   +
+         dex
+         beq   .badread
++
+-        lda   $C0EC
+         bpl   -
+--       cmp   #$D5
+         bne   ---
+-        lda   $C0EC
+         bpl   -
+         cmp   #$AA
+         bne   --
+-        lda   $C0EC
+         bpl   -
+         cmp   #$B5
+         bne   +
+         ldy   #$03
+--       lda   $C0EC
+         bpl   --
+         rol
+         sta   $3C
+-        lda   $C0EC
+         bpl   -
+         and   $3C
+         dey
+         bne   --
+         plp
+         cmp   gSector
+         bne   .readaddr
+         bcs   .readdata
++        plp
+         bcc   .readaddr
+         eor   #$AD
+         bne   read13
+--       ldy   #$9A
+-        ldx   $C0EC
+         bpl   -
+         eor   $800,x
+         dey
+         bne   -
+-        ldx   $C0EC
+         bpl   -
+         eor   $800,x
+         iny
+         bne   -
+-        ldx   $C0EC
+         bpl   -
+         eor   $800,x
+         cmp   #$01       ; set carry if non-zero
+         !byte $24
+.badread
+         sec
+         lda   $C0E8
+         rts
 }

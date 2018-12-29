@@ -124,6 +124,8 @@ StringTable
          !word .ssi
          !word .aacount
          !word .infocom18
+         !word .toverify
+         !word .sector13
 ;
 ; Text can contain substitution strings, which
 ; are replaced by current values at runtime. Each
@@ -149,7 +151,7 @@ StringTable
 ; can be set directly before calling PrintByID.
 ;
 .header
-         !text "Passport by 4am               2018-12-28",$00
+         !text "Passport by 4am               2018-12-29",$00
 .mainmenu
          !text "________________________________________",$8D,$8D,$8D,$8D,$8D,$8D,$8D
          !text "              "
@@ -459,4 +461,8 @@ StringTable
          !text "T%t,S%0 Found AA nibble count",$8D,$00
 .infocom18
          !text "T00,S00 Found Infocom 18-sector format",$8D,$00
+.toverify
+         !text "Switching to verify-only mode",$8D,$00
+.sector13
+         !text "T00,S00 Found 13-sector format",$8D,$00
 }
