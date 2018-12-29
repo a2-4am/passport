@@ -254,6 +254,8 @@ Reaction
          sta   gTriedUniv
          sta   gSaidWriting
          sta   gIsProtDOS
+         sta   gIsInfocom18
+         sta   gIs13Sector
          lda   #$00
          sta   gTrack
          sta   gSector
@@ -273,6 +275,8 @@ Reaction
          jsr   CopyUniversal
          jsr   IgnoreAddressChecksum
          jsr   ReadSector
+         bcc   +
+         jsr   IDBootFailure ; /src/id/inspect0
          bcc   +
          lda   #s_fail
          jsr   PrintByID
@@ -339,6 +343,17 @@ UseUniversal
          jsr   PatchUniversalRWTSForOrigin
          bmi   ReadWithRWTS          ; always branches
 ;
+; On pure 13-sector disks, we just hijack the read routine to perform a
+; verification instead.
+;
++        lda   gIs13Sector
+         bne   +
+         lda   #<read13
+         sta   jCallRWTS+1
+         lda   #>read13
+         sta   jCallRWTS+2
+         bne   ReadWithRWTS          ; always branches
+;
 ; On other disks that use the universal RWTS for the entire disk, we use
 ; an adaptive RWTS that accepts any epilogue on the first sector but then
 ; enforces all other sectors to have the same epilogue.
@@ -368,18 +383,30 @@ ReadWithRWTS
          lda   #$22
          jsr   ChangeTrackNW
          lda   #$0F
-         jsr   ChangeSector
+         ldx   gIs13Sector
+         bne   +
+         lda   #$0C
++        jsr   ChangeSector
          lda   #<T22S0F
          sta   checksector+1
          lda   #>T22S0F
          sta   checksector+2
 .read
          lda   KEY
-         bpl   checksector
+         bpl   .checkinfocom
          bit   STROBE
          cmp   #$e0 ;ignore backtick (MAME debug break)
-         beq   checksector
+         beq   .checkinfocom
          jmp   Cancel
+.checkinfocom
+         lda   gIsInfocom18
+         bne   checksector
+         jsr   VerifyInfocom18
+         bcc   .passtrack
+         jmp   FatalError
+.passtrack
+         jmp   .prevtrack
+
 checksector
          lda   $FFFF                            ; status of current sector in sector map (modified above)
          pha
@@ -387,10 +414,8 @@ checksector
          bcc   +
          cmp   #kSectorCustomLast
          bcs   +
-         jsr   PreReadSector
-         tax
          pla
-         txa
+         jsr   PreReadSector
          pha                                    ; replace status (on stack) with new status returned from PreReadSector
 +        cmp   #kSectorIgnore                   ; skip this sector?
          beq   nextsector
@@ -406,8 +431,11 @@ checksector
 ; If we just got to this track, check for whole-track protections.
 ;
          ldx   #$0F ;16-sector
+         lda   gIs13Sector
+         beq   .expect13
          lda   gIsDOS32
          bne   +
+.expect13
          ldx   #$0C ;13-sector
 +        cpx   gSector
          bne   .checkoptional
@@ -484,7 +512,10 @@ nextsector
          jmp   .read
 .prevtrack
          lda   #$0F
-         jsr   ChangeSector
+         ldx   gIs13Sector
+         bne   +
+         lda   #$0C
++        jsr   ChangeSector
          lda   gTrack
          sec
          sbc   #$01

@@ -48,6 +48,16 @@
                           ; instead of falling back to built-in RWTS
                           ; compile-time flag, no way to change at runtime
 
+;gIs13Sector
+         !byte FALSE      ; 0=true, 1=false
+                          ; reset before each operation
+                          ; set in IDBootFailure() after reading T00
+
+;gIsInfocom18
+         !byte FALSE      ; 0=true, 1=false
+                          ; reset before each operation
+                          ; set in IDBootFailure() after reading T00
+
 ;gMECCFastloadType
          !byte 00         ; int
                           ; reset before each operation

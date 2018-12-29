@@ -18,6 +18,21 @@ IDBootloader
          bne   -
          stx   gMECCFastloadType
          stx   gLastTrack
+
+         lda   gIsInfocom18
+         bne   .check13
+         lda   #s_infocom18
+         jsr   PrintByID
+         jmp   UseUniversal
+
+.check13
+         lda   gIs13Sector
+         bne   .sanity
+         lda   #s_13sector
+         jsr   PrintByID
+         jmp   UseUniversal
+
+.sanity
 ;
 ; Quick sanity check -- only recognized values for $0800
 ; are 1 or 2 for regular disks, and 5 for possible Electronic Arts.
@@ -286,5 +301,197 @@ PrereadT00Partial
          dec   gSector
          bne   -
 .exit
+         rts
+}
+
+;-------------------------------
+; IDBootFailure
+; main entry point to identify the bootloader
+; when the initial read failed
+; identifies Infocom 18-sector side B disks
+; and pure 13-sector disks
+; doubles as Infocom verification routine after ID
+; written by qkumba
+;
+; in:    nothing
+; out:   carry set if we can't ID it
+;-------------------------------
+!zone {
+IDBootFailure
+
+VerifyInfocom18
+         lda   $C0E9
+.retry13
+         ldx   #$1A       ; the length of a track
+         ldy   #0
+
+---      iny
+         bne   +
+         dex
+         bne   +
+
+.no      sec
+         lda   $C0E8
+         rts
+
+.badsect
+         lda   gIsInfocom18
+         beq   .no        ; if in Infocom mode already then we have a true failure
+         bne   .retry13   ; otherwise, try to identify 13-sector instead
+                          ; the issue being that both have a D5 AA AD sequence
+
++
+-        lda   $C0EC
+         bpl   -
+--       cmp   #$D5
+         bne   ---
+-        lda   $C0EC
+         bpl   -
+         cmp   #$AA
+         bne   --
+-        lda   $C0EC
+         bpl   -
+         cmp   #$B5      ; 13-sector only
+         beq   .build13
+         cmp   #$AD
+         bne   --
+
+-        lda   $C0EC
+         bpl   -
+         nop
+         nop              ; ignore half of 4x4 track number
+-        lda   $C0EC
+         bpl   -          ; ignore half of 4x4 track number
+
+         lda   #$12       ; all 18 sectors when in verify mode
+         ldx   gIsInfocom18
+         beq   .setcount
+         lda   #$01       ; only one sector when in ID mode
+.setcount
+         sta   tmp        ; sector counter
+
+         lda   #$00
+--       ldy   #$56
+-        ldx   $C0EC
+         bpl   -
+         eor   $BA00,x    ; from universal RWTS
+         dey
+         bne   -
+-        ldx   $C0EC
+         bpl   -
+         eor   $BA00,x    ; from universal RWTS
+         iny
+         bne   -
+-        ldx   $C0EC
+         bpl   -
+         eor   $BA00,x    ; from universal RWTS
+         bne   .badsect
+         dec   tmp
+         bne   --
+         sta   gIsInfocom18
+
+.checkmode
+         bit   gMode      ; verify-mode already?
+         bpl   +          ; yes, continue
+
+         lda   #%00000000 ; 
+         sta   gMode      ; no, switch to verify-mode
+         lda   #s_toverify
+         jsr   PrintByID  ; and say so
+
++        clc              ; all clear
+         lda   $C0E8
+         rts
+
+         ;build 5-and-3 decoding table
+         ;for 13-sector support
+
+.build13
+         ldx   #$00
+         ldy   #$AB
+-        tya
+         sta   tmp
+         lsr
+         ora   tmp
+         cmp   #$FF
+         bne   +
+         cpy   #$D5
+         beq   +
+         txa
+         sta   $800,y
+         inx
++        iny
+         bne   -
+         sty   gIs13Sector
+         beq   .checkmode  ; always taken
+
+read13
+         lda   $C0E9
+         lda   #$1C        ; retry count
+         sta   tmp
+
+.readaddr
+         dec   tmp
+         bmi   .badread
+         clc
+         ldx   #$02       ; 512 nibbles
+         ldy   #0
+
+.readdata
+         php
+---      iny
+         bne   +
+         dex
+         beq   .badread
++
+-        lda   $C0EC
+         bpl   -
+--       cmp   #$D5
+         bne   ---
+-        lda   $C0EC
+         bpl   -
+         cmp   #$AA
+         bne   --
+-        lda   $C0EC
+         bpl   -
+         cmp   #$B5
+         bne   +
+         ldy   #$03
+--       lda   $C0EC
+         bpl   --
+         rol
+         sta   $3C
+-        lda   $C0EC
+         bpl   -
+         and   $3C
+         dey
+         bne   --
+         plp
+         cmp   gSector
+         bne   .readaddr
+         bcs   .readdata
++        plp
+         bcc   .readaddr
+         eor   #$AD
+         bne   read13
+--       ldy   #$9A
+-        ldx   $C0EC
+         bpl   -
+         eor   $800,x
+         dey
+         bne   -
+-        ldx   $C0EC
+         bpl   -
+         eor   $800,x
+         iny
+         bne   -
+-        ldx   $C0EC
+         bpl   -
+         eor   $800,x
+         cmp   #$01       ; set carry if non-zero
+         !byte $24
+.badread
+         sec
+         lda   $C0E8
          rts
 }
