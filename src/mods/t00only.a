@@ -111,6 +111,7 @@ AnalyzeT00
          !source "../patchers/panglosdos.a"
          !source "../patchers/rdos13.a"
          !source "../patchers/swordthrust.a"
+         !source "../patchers/dakin5.a"
 
 ;add only above this line
          rts

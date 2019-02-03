@@ -126,6 +126,7 @@ StringTable
          !word .infocom18
          !word .toverify
          !word .sector13
+         !word .dakin5
 ;
 ; Text can contain substitution strings, which
 ; are replaced by current values at runtime. Each
@@ -151,7 +152,7 @@ StringTable
 ; can be set directly before calling PrintByID.
 ;
 .header
-         !text "Passport by 4am               2018-12-29",$00
+         !text "Passport by 4am               2019-02-03",$00
 .mainmenu
          !text "________________________________________",$8D,$8D,$8D,$8D,$8D,$8D,$8D
          !text "              "
@@ -437,6 +438,8 @@ StringTable
 .origin
          !text "T%t,S%0 RWTS alters the sector ID if the"
          !text "address epilogue contains a timing bit.",$8D,$00
+.dakin5
+         !text "T00,S03 RWTS XORs every sector ID",$8D,$00
 .volumename
          !text "T%t,S%0 Volume name is ",$00
 .dinkeydos

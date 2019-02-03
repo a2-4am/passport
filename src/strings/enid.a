@@ -112,4 +112,5 @@ s_aacount =    $6A
 s_infocom18 =  $6B
 s_toverify =   $6C
 s_13sector =   $6D
-STRINGCOUNT =  $6E
+s_dakin5 =     $6E
+STRINGCOUNT =  $6F
