@@ -1,0 +1,30 @@
+;-------------------------------
+; #MUSERWTS
+; RWTS changes based on track
+;
+; tested on
+; - The Caverns of Freitag (MUSE)
+; - The Function Game (MUSE)
+;-------------------------------
+!zone {
+         bit   gMode      ; nothing to do here in verify-only mode
+         bpl   .exit
+         lda   gIsMUSERWTS
+         bne   .exit
+         lda   #$06
+         ldx   #$F2
+         ldy   #$03
+         jsr   compare    ; if T00,S06,$F2 ==
+         !byte $20,$B6,$B6
+         bcs   .exit
+         pha
+         lda   #6
+         sta   gDisplayBytes
+         lda   #s_bytrack
+         jsr   PrintByID
+         pla
+         ldy   #$01
+         jsr   modify     ; then set T00,S06,$F2 =
+         !byte $2C
+.exit
+}

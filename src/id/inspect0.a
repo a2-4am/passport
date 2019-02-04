@@ -18,6 +18,13 @@ IDBootloader
          bne   -
          stx   gMECCFastloadType
          stx   gLastTrack
+         ldx   #$0F
+         ldy   #$F8
+-        tya
+         sta   precheck_sectors,x
+         iny
+         dex
+         bpl   -
 
          lda   gIsInfocom18
          bne   .check13

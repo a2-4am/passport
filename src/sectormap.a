@@ -60,7 +60,8 @@ InitSectorMap
 
 sectormap
 T00S00
-T00      !byte $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
+T00      !byte $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
+T00S08   !byte                                 $FF
 T00S09   !byte                                     $FF
 T00S0A   !byte                                         $FF
 T00S0B   !byte                                             $FF
