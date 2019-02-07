@@ -113,6 +113,7 @@ AnalyzeT00
          !source "../patchers/swordthrust.a"
          !source "../patchers/dakin5.a"
          !source "../patchers/muserwts.a"
+         !source "../patchers/artsci.a"
 
 ;add only above this line
          rts

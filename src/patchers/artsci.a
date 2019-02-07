@@ -1,0 +1,40 @@
+;-------------------------------
+; #ARTSCI
+; loader on T00,S0A changes epilogue
+;
+; tested on
+; - AceCalc (ArtSci)
+; - Magicalc (ArtSci)
+; - Photar
+;-------------------------------
+!zone {
+         bit   gMode      ; nothing to do here in verify-only mode
+         bpl   .exit
+         lda   gIsRWTS
+         bne   .exit
+
+         lda   #$0A
+         ldx   #$FE
+         ldy   #$02
+         jsr   compare
+         !byte $DE,$D5
+         bcs   .exit
+
+         ldy   #(@searchend-@searchstart)
+         jsr   SearchTrack
+@searchstart
+         LDY   #$35
+         TXA
+         STA   ($3C),Y
+@searchend
+         bcs   .exit
+         sta   gDisplayBytes
+         pha
+         lda   #s_bytrack
+         jsr   PrintByID
+         pla
+         ldy   #$01
+         jsr   modify
+         !byte $60
+.exit
+}
