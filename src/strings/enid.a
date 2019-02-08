@@ -113,4 +113,5 @@ s_infocom18 =  $6B
 s_toverify =   $6C
 s_13sector =   $6D
 s_dakin5 =     $6E
-STRINGCOUNT =  $6F
+s_springboard =$6F
+STRINGCOUNT =  $70

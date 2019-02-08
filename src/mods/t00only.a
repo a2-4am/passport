@@ -114,6 +114,7 @@ AnalyzeT00
          !source "../patchers/dakin5.a"
          !source "../patchers/muserwts.a"
          !source "../patchers/artsci.a"
+         !source "../patchers/springboard.a"
 
 ;add only above this line
          rts

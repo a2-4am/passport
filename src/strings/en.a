@@ -127,6 +127,7 @@ StringTable
          !word .toverify
          !word .sector13
          !word .dakin5
+         !word .springboard
 ;
 ; Text can contain substitution strings, which
 ; are replaced by current values at runtime. Each
@@ -152,7 +153,7 @@ StringTable
 ; can be set directly before calling PrintByID.
 ;
 .header
-         !text "Passport by 4am               2019-02-07",$00
+         !text "Passport by 4am               2019-02-08",$00
 .mainmenu
          !text "________________________________________",$8D,$8D,$8D,$8D,$8D,$8D,$8D
          !text "              "
@@ -468,4 +469,7 @@ StringTable
          !text "Switching to verify-only mode",$8D,$00
 .sector13
          !text "T00,S00 Found 13-sector format",$8D,$00
+.springboard
+         !text "T%t,S%0 RWTS requires a timing bit after"
+         !text "the address epilogue",$8D,$00
 }
