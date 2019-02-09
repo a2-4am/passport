@@ -128,6 +128,7 @@ StringTable
          !word .sector13
          !word .dakin5
          !word .springboard
+         !word .hallabs
 ;
 ; Text can contain substitution strings, which
 ; are replaced by current values at runtime. Each
@@ -472,4 +473,6 @@ StringTable
 .springboard
          !text "T%t,S%0 RWTS requires a timing bit after"
          !text "the address epilogue",$8D,$00
+.hallabs
+         !text "T%t,S%0 Found HAL Labs protection check",$8D,$00
 }

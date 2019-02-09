@@ -114,4 +114,5 @@ s_toverify =   $6C
 s_13sector =   $6D
 s_dakin5 =     $6E
 s_springboard =$6F
-STRINGCOUNT =  $70
+s_hallabs =    $70
+STRINGCOUNT =  $71

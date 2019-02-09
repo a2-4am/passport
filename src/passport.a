@@ -841,6 +841,7 @@ _applyToAll
          !source "patchers/ssi.a"               ; gIsRDOS13 only
          !source "patchers/rdosfmt.a"           ; gIsRDOS13 only
          !source "patchers/aacount.a"
+         !source "patchers/hallabs.a"           ; T01 only
 
          lda   gPatchCount
          beq   .nopatches

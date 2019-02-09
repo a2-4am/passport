@@ -1,0 +1,50 @@
+;-------------------------------
+; #HALLABS
+; checks nibbles on track $22
+;
+; tested on
+; Sheila (HAL Labs)
+; Super Taxman II (HAL Labs)
+;-------------------------------
+!zone {
+         bit   gMode      ; nothing to do here in verify-only mode
+         bpl   .exit
+         lda   gIsBoot0
+         bne   .exit
+         lda   gTrack
+         cmp   #$01
+         bne   .exit
+
+         ldy   #(@search1end-@search1start)
+         jsr   SearchTrack
+@search1start
+         LDX   $B7E9
+         LDA   $C089,X
+         LDA   $C08E,X
+         LDA   #$00
+@search1end
+         bcs   .exit
+
+         ldy   #(@search2end-@search2start)
+         jsr   SearchTrack
+@search2start
+         !byte $20,WILDCARD,WILDCARD
+         !byte $20,WILDCARD,WILDCARD
+         LDA   #$00
+         STA   $10
+         LDA   #$20
+         STA   $11
+         !byte $20
+@search2end
+         bcs   .exit
+
+         sta   gDisplayBytes
+         pha
+         lda   #s_hallabs
+         jsr   PrintByID
+         pla
+         ldy   #$01
+         jsr   modify
+         RTS
+.exit
+}
