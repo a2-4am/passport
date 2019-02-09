@@ -71,6 +71,8 @@ TraceDOS33b
 TraceDOS33c
          lda   $08FE      ; 2nd-level trace callback is here
          sta   .x6+1
+         sta   .x6b+1
+         sta   .x6c+2
          clc
          adc   #$02
 _Inspect1a
@@ -160,13 +162,37 @@ _Inspect1a
          ldy   #$03
          jsr   CompareMemory
          !byte $4C,$03,$9B
-         bcs   .x7
+         bcs   .x6b
          jsr   IDMilliken
-         bcs   .x7
+         bcs   .x6b
          lda   #s_milliken
          jsr   PrintByID
          lda   #kSectorOptional
          sta   T02S05
+;
+; Try to initialize the "current track" variable like the bootloader would --
+; required for some disks that use a strange location for this variable
+; e.g. Super Taxman II
+;
+.x6b     lda   #$B7       ; check for "LDA #$00 / STA $....,X / STA $....,X / JSR $..93" at $B730
+         ldx   #$30
+         ldy   #$0A
+         jsr   CompareMemory
+         !byte $A9,$00
+         !byte $9D,WILDCARD,WILDCARD
+         !byte $9D,WILDCARD,WILDCARD
+         !byte $20,$93
+         bcs   .x7
+         ldy   #$07
+.x6c     lda   $B730,y
+         sta   .trackpointer,y
+         dey
+         bpl   .x6c
+         ldx   #$06
+.trackpointer
+         LDA   #$00
+         STA   $04F8,X
+         STA   $0478,X
 ;
 ; Check for Adventure International RWTS (sets flag for patcher)
 ;
