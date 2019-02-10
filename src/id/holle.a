@@ -1,0 +1,29 @@
+;-------------------------------
+; IDHolle
+; identify Dav Holle's encrypted bootloader
+;
+; in:  $0800..$08FF contains T00,S00
+;      first page of track buffer also contains T00,S00
+; out: C clear if Holle bootloader found
+;      C set otherwise
+;      all registers clobbered
+;      all other flags clobbered
+;-------------------------------
+!zone {
+IDHolle
+         lda   #$00
+         tax
+         ldy   #(@searchend-@searchstart)
+         jsr   compare    ; if T00,S00,$00 ==
+@searchstart
+         !byte $01
+         CLD
+         BIT   $C081
+         LDA   #$60
+         EOR   $FF58
+@hang    BNE   @hang
+         STA   $03F3
+         SEI
+@searchend
+         rts
+}

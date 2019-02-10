@@ -1,0 +1,194 @@
+;-------------------------------
+; #HOLLE
+; encrypted bootloader hides an evil RWTS
+;
+; tested on
+; - Sherwood Forest (Phoenix Software)
+; - Mad Rat (Phoenix Software)
+; - Masquerade (Phoenix Software)
+; - Bats in the Belfry (Phoenix Software)
+; - Bouncing Kamungas (Penguin Software)
+; - Crime Wave (Penguin Software)
+; - Thunder Bombs (Penguin Software)
+; - The Spy Strikes Back (Penguin Software)
+;-------------------------------
+!zone {
+         bit   gMode      ; nothing to do here in verify-only mode
+         bmi   +
+-        jmp   .exit
++        bvc   -          ; nothing to do here in demuffin mode
+         lda   gIsHolle
+         beq   +
+         jmp   .exit
++        lda   gTrack
+         beq   @DecryptBootloader
+
+         ; TODO search for secondary RWTS here
+         ; TODO search for secondary volume checks here
+         jmp   .exit
+
+@DecryptBootloader        ; we've read the entire disk, now we're on track 0
+         jsr   ReorderBuffer
+         ldy   #(@decrypt1End-@decrypt1Start)
+         jsr   SearchTrack; find decryption loop #1
+@decrypt1Start
+         LDX   #WILDCARD
+-        EOR   $082D,X
+         STA   $0110,X
+         DEX
+         BPL   -
+@decrypt1End
+         bcs   @PatchBootloader
+         clc              ; set up a decryption loop to simulate this one
+         adc   #BASEPAGE
+         sta   @decrypt1+2
+         sta   @decrypt1_eor+2
+         inx
+         stx   @decrypt1+1
+         inx
+         stx   @decrypt1_eor+1
+
+         ldy   #(@decrypt2End-@decrypt2Start)
+         jsr   SearchTrack; find decryption loop #2
+@decrypt2Start
+         LDX   $082B
+-        EOR   $0900,X
+         STA   $0500,X
+         INX
+         BNE   -
+@decrypt2End
+         bcs   @PatchBootloader
+         clc              ; set up a decryption loop to simulate this one
+         adc   #BASEPAGE
+         sta   @decrypt2_load+2
+         sta   @decrypt2_store+2
+         sta   @decrypt2_eor+2
+         inx
+         inx
+         inx
+         stx   @decrypt2_eor+1
+
+         lda   #BASEPAGE
+         sta   @decrypt1_load+2
+         sta   @decrypt1_store+2
+         sta   @decrypt2+2
+
+         lda   #s_decryptrwts
+         jsr   PrintByID
+         inc   gPatchCount
+         lda   #$4C
+@decrypt1
+         ldx   $FDFD      ; simulate the decryption within the track buffer
+@decrypt1_load
+-        eor   $FD2D,x
+@decrypt1_store
+         sta   $FD2D,x
+         dex
+         bpl   -
+         ldy   #$03
+@decrypt2
+         ldx   $FD2B
+@decrypt2_load
+-        eor   $FD00,x
+@decrypt2_store
+         sta   $FD00,x
+         inx
+         bne   -
+         inc   @decrypt2_load+2
+         inc   @decrypt2_store+2
+         dey
+         bne   -
+         lda   #$BD       ; LDA abs,X opcode
+@decrypt1_eor
+         sta   $FDFD      ; EOR -> LDA so now decryption loop #1 is just a copy loop
+@decrypt2_eor
+         sta   $FDFD      ; EOR -> LDA so now decryption loop #2 is just a copy loop
+
+@PatchBootloader
+         jsr   ReorderBuffer
+
+         ldy   #(@addressEpilogueEnd-@addressEpilogueStart)
+         jsr   SearchTrack
+@addressEpilogueStart
+         !byte $C9,WILDCARD
+         BNE   +
+         CLC
+         RTS
++        SEC
+         RTS
+@addressEpilogueEnd
+         bcs   +
+         inx
+         ldy   #$01
+         jsr   modify     ; normalize address epilogue 1st nibble
+         !byte $DE
++
+         ldy   #(@dataPrologue3End-@dataPrologue3Start)
+         jsr   SearchTrack
+@dataPrologue3Start
+         EOR   #$AD
+         !byte $D0,$E7
+         PHP
+         !byte $20
+@dataPrologue3End
+         bcs   +
+         inx
+         inx
+         inx
+         inx
+         ldy   #$02
+         jsr   modify      ; disable CPU-burning JSR after data prologue
+         !byte  $F0,$03
++
+         ldy   #(@dataEpilogue1End-@dataEpilogue1Start)
+         jsr   SearchTrack
+@dataEpilogue1Start
+         !byte $C9,WILDCARD
+         !byte $D0,$9B
+         NOP
+@dataEpilogue1End
+         bcs   +
+         inx
+         ldy   #$01
+         jsr   modify     ; normalize data epilogue 1st nibble
+         !byte $DE
++
+         ldy   #(@dataEpilogue3End-@dataEpilogue3Start)
+         jsr   SearchTrack
+@dataEpilogue3Start
+         !byte $EB
+         !byte $D0,$86
+@dataEpilogue3End
+         bcs   +
+         inx
+         inx
+         ldy   #$01
+         jsr   modify     ; ignore data epilogue 3rd nibble
+         !byte $00
++
+         ldy   #(@diskVolumeEnd-@diskVolumeStart)
+         jsr   SearchTrack
+@diskVolumeStart
+         LDY   $2F
+@diskVolumeEnd
+         bcs   +
+         ldy   #$02
+         jsr   modify     ; don't use disk volume number to initialize data field checksum
+         LDY   #$00
++
+         ldy   #(@alternatingTrackEnd-@alternatingTrackStart)
+         jsr   SearchTrack
+@alternatingTrackStart
+         EOR   $01
+         AND   #$01
+@alternatingTrackEnd
+         bcs   +
+         ldy   #$01
+         jsr   modify
+         !byte $A9        ; EOR -> LDA so alternating track check always passes
++
+         jmp   .exit
+.reorderAndExit
+         jsr   ReorderBuffer
+.exit
+}

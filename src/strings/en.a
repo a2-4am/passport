@@ -76,7 +76,7 @@ StringTable
          !word .bcs08
          !word .jmpb660
          !word .protdos
-         !word .protdosw
+         !word .decryptrwts
          !word .protserial
          !word .fbff
          !word .encoded44
@@ -129,6 +129,7 @@ StringTable
          !word .dakin5
          !word .springboard
          !word .hallabs
+         !word .holle
 ;
 ; Text can contain substitution strings, which
 ; are replaced by current values at runtime. Each
@@ -354,7 +355,7 @@ StringTable
          !text "the data prologue by jumping to $B660.",$8D,$00
 .protdos
          !text "T00,S01 Found encrypted RWTS, key=$%0",$8D,$00
-.protdosw
+.decryptrwts
          !text "T00 Decrypting RWTS before writing",$8D,$00
 .protserial
          !text "T%t,S%3 Erasing serial number %0%1%2",$8D,$00
@@ -475,4 +476,6 @@ StringTable
          !text "the address epilogue",$8D,$00
 .hallabs
          !text "T%t,S%0 Found HAL Labs protection check",$8D,$00
+.holle
+         !text "T00,S00 Found Holle bootloader",$8D,$00
 }

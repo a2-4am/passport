@@ -126,7 +126,7 @@
 ;
          bit   gMode
          bpl   +
-         lda   #s_protdosw
+         lda   #s_decryptrwts
          jsr   PrintByID
 +        ldx   #BASEPAGE
          inx

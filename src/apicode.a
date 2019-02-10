@@ -64,6 +64,10 @@
                           ; set in IDBootloader() after reading T00,S00
 
 FIRSTFILTER
+;gIsHolle
+         !byte FALSE      ; 0=true, 1=false
+                          ; reset before each operation
+                          ; set in IDBootloader() after reading T00,S00
 ;gIsMUSERWTS
          !byte FALSE      ; 0=true, 1=false
                           ; reset before each operation

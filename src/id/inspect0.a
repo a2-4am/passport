@@ -286,6 +286,16 @@ IDBootloader
          lda   #s_rdos
          jsr   PrintByID
 
+;
+; Dav Holle encrypted bootloader
+;
++        jsr   IDHolle
+         bcs   +
+         lda   #s_holle
+         jsr   PrintByID
+         lda   #TRUE
+         sta   gIsHolle
+
 +
 .useuniv
          jmp   UseUniversal
