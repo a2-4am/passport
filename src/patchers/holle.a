@@ -21,116 +21,180 @@
          beq   +
          jmp   .exit
 +        lda   gTrack
-         beq   @DecryptBootloader
+         bne   +
+         jmp   .DecryptBootloader
++
+         lda   #$0F
+         sta   .sector+1
+.sector  lda   #$FD
+         ldx   #$8B
+         ldy   #$06
+         jsr   compare    ; first data epilogue nibble
+-        LDA   $C08C,X
+         BPL   -
+         !byte $C9
+         bcs   +
+         ldx   #$91
+         ldy   #$01
+         jsr   compare
+         !byte $DE
+         bcc   +
+         ldy   #$01
+         jsr   modify
+         !byte $DE
++
+         ldx   #$2F
+         ldy   #$06
+         jsr   compare    ; first address epilogue nibble
+-        LDA   $C08C,X
+         BPL   -
+         !byte $C9
+         bcs   +
+         ldx   #$35
+         ldy   #$01
+         jsr   compare
+         !byte $DE
+         bcc   +
+         ldy   #$01
+         jsr   modify
+         !byte $DE
++
+         ldx   #$9D
+         ldy   #$05
+         jsr   compare
+         !byte $A9,WILDCARD
+         JSR   $B8B8
+         bcs   +
+         ldx   #$9E
+         ldy   #$01
+         jsr   compare    ; first data epilogue nibble (write)
+         !byte $DE
+         bcc   +
+         ldx   #$9E
+         ldy   #$01
+         jsr   modify
+         !byte $DE
++
+         dec   .sector+1
+         bpl   .sector
 
-         ; TODO search for secondary RWTS here
-         ; TODO search for secondary volume checks here
-         jmp   .exit
+         ; look for secondary disk volume number check
+         ; e.g. Crime Wave
+         ldy   #$04
+         jsr   SearchTrack
+         LDA   $2F
+         ORA   $2E
+         bcs   +
+         ldy   #$04
+         jsr   modify
+         LDA   #$00
+         STA   $2F
++        jmp   .exit
 
-@DecryptBootloader        ; we've read the entire disk, now we're on track 0
+.DecryptBootloader        ; we've read the entire disk, now we're on track 0
          jsr   ReorderBuffer
-         ldy   #(@decrypt1End-@decrypt1Start)
+         ldy   #(.decrypt1End-.decrypt1Start)
          jsr   SearchTrack; find decryption loop #1
-@decrypt1Start
+.decrypt1Start
          LDX   #WILDCARD
 -        EOR   $082D,X
          STA   $0110,X
          DEX
          BPL   -
-@decrypt1End
-         bcs   @PatchBootloader
+.decrypt1End
+         bcs   .PatchBootloader
          clc              ; set up a decryption loop to simulate this one
          adc   #BASEPAGE
-         sta   @decrypt1+2
-         sta   @decrypt1_eor+2
+         sta   .decrypt1+2
+         sta   .decrypt1_eor+2
          inx
-         stx   @decrypt1+1
+         stx   .decrypt1+1
          inx
-         stx   @decrypt1_eor+1
+         stx   .decrypt1_eor+1
 
-         ldy   #(@decrypt2End-@decrypt2Start)
+         ldy   #(.decrypt2End-.decrypt2Start)
          jsr   SearchTrack; find decryption loop #2
-@decrypt2Start
+.decrypt2Start
          LDX   $082B
 -        EOR   $0900,X
          STA   $0500,X
          INX
          BNE   -
-@decrypt2End
-         bcs   @PatchBootloader
+.decrypt2End
+         bcs   .PatchBootloader
          clc              ; set up a decryption loop to simulate this one
          adc   #BASEPAGE
-         sta   @decrypt2_load+2
-         sta   @decrypt2_store+2
-         sta   @decrypt2_eor+2
+         sta   .decrypt2_load+2
+         sta   .decrypt2_store+2
+         sta   .decrypt2_eor+2
          inx
          inx
          inx
-         stx   @decrypt2_eor+1
+         stx   .decrypt2_eor+1
 
          lda   #BASEPAGE
-         sta   @decrypt1_load+2
-         sta   @decrypt1_store+2
-         sta   @decrypt2+2
+         sta   .decrypt1_load+2
+         sta   .decrypt1_store+2
+         sta   .decrypt2+2
 
          lda   #s_decryptrwts
          jsr   PrintByID
          inc   gPatchCount
          lda   #$4C
-@decrypt1
+.decrypt1
          ldx   $FDFD      ; simulate the decryption within the track buffer
-@decrypt1_load
+.decrypt1_load
 -        eor   $FD2D,x
-@decrypt1_store
+.decrypt1_store
          sta   $FD2D,x
          dex
          bpl   -
          ldy   #$03
-@decrypt2
+.decrypt2
          ldx   $FD2B
-@decrypt2_load
+.decrypt2_load
 -        eor   $FD00,x
-@decrypt2_store
+.decrypt2_store
          sta   $FD00,x
          inx
          bne   -
-         inc   @decrypt2_load+2
-         inc   @decrypt2_store+2
+         inc   .decrypt2_load+2
+         inc   .decrypt2_store+2
          dey
          bne   -
          lda   #$BD       ; LDA abs,X opcode
-@decrypt1_eor
+.decrypt1_eor
          sta   $FDFD      ; EOR -> LDA so now decryption loop #1 is just a copy loop
-@decrypt2_eor
+.decrypt2_eor
          sta   $FDFD      ; EOR -> LDA so now decryption loop #2 is just a copy loop
 
-@PatchBootloader
+.PatchBootloader
          jsr   ReorderBuffer
 
-         ldy   #(@addressEpilogueEnd-@addressEpilogueStart)
+         ldy   #(.addressEpilogueEnd-.addressEpilogueStart)
          jsr   SearchTrack
-@addressEpilogueStart
+.addressEpilogueStart
          !byte $C9,WILDCARD
          BNE   +
          CLC
          RTS
 +        SEC
          RTS
-@addressEpilogueEnd
+.addressEpilogueEnd
          bcs   +
          inx
          ldy   #$01
          jsr   modify     ; normalize address epilogue 1st nibble
          !byte $DE
 +
-         ldy   #(@dataPrologue3End-@dataPrologue3Start)
+         ldy   #(.dataPrologue3End-.dataPrologue3Start)
          jsr   SearchTrack
-@dataPrologue3Start
+.dataPrologue3Start
          EOR   #$AD
          !byte $D0,$E7
          PHP
          !byte $20
-@dataPrologue3End
+.dataPrologue3End
          bcs   +
          inx
          inx
@@ -140,25 +204,25 @@
          jsr   modify      ; disable CPU-burning JSR after data prologue
          !byte  $F0,$03
 +
-         ldy   #(@dataEpilogue1End-@dataEpilogue1Start)
+         ldy   #(.dataEpilogue1End-.dataEpilogue1Start)
          jsr   SearchTrack
-@dataEpilogue1Start
+.dataEpilogue1Start
          !byte $C9,WILDCARD
          !byte $D0,$9B
          NOP
-@dataEpilogue1End
+.dataEpilogue1End
          bcs   +
          inx
          ldy   #$01
          jsr   modify     ; normalize data epilogue 1st nibble
          !byte $DE
 +
-         ldy   #(@dataEpilogue3End-@dataEpilogue3Start)
+         ldy   #(.dataEpilogue3End-.dataEpilogue3Start)
          jsr   SearchTrack
-@dataEpilogue3Start
+.dataEpilogue3Start
          !byte $EB
          !byte $D0,$86
-@dataEpilogue3End
+.dataEpilogue3End
          bcs   +
          inx
          inx
@@ -166,22 +230,22 @@
          jsr   modify     ; ignore data epilogue 3rd nibble
          !byte $00
 +
-         ldy   #(@diskVolumeEnd-@diskVolumeStart)
+         ldy   #(.diskVolumeEnd-.diskVolumeStart)
          jsr   SearchTrack
-@diskVolumeStart
+.diskVolumeStart
          LDY   $2F
-@diskVolumeEnd
+.diskVolumeEnd
          bcs   +
          ldy   #$02
          jsr   modify     ; don't use disk volume number to initialize data field checksum
          LDY   #$00
 +
-         ldy   #(@alternatingTrackEnd-@alternatingTrackStart)
+         ldy   #(.alternatingTrackEnd-.alternatingTrackStart)
          jsr   SearchTrack
-@alternatingTrackStart
+.alternatingTrackStart
          EOR   $01
          AND   #$01
-@alternatingTrackEnd
+.alternatingTrackEnd
          bcs   +
          ldy   #$01
          jsr   modify
