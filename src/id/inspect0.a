@@ -383,7 +383,7 @@ VerifyInfocom18
          lda   #$12       ; all 18 sectors when in verify mode
          ldx   gIsInfocom18
          beq   .setcount
-         lda   #$01       ; only one sector when in ID mode
+         lda   #$02       ; only two sectors when in ID mode
 .setcount
          sta   tmp        ; sector counter
 
