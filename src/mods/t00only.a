@@ -97,7 +97,6 @@ AnalyzeT00
          !source "../patchers/jmpbbfe.a"
          !source "../patchers/datasoft.a"
          !source "../patchers/nibtable.a"
-         !source "../patchers/diskvol.a"
          !source "../patchers/milliken.a"
          !source "../patchers/methods.a"
          !source "../patchers/jsr8b3.a"
@@ -117,6 +116,8 @@ AnalyzeT00
          !source "../patchers/springboard.a"
 
 ;add only above this line
+
+         !source "../patchers/diskvol.a"
          rts
 
 !if * > $4000 {
