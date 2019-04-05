@@ -116,4 +116,5 @@ s_dakin5 =     $6E
 s_springboard =$6F
 s_hallabs =    $70
 s_holle =      $71
-STRINGCOUNT =  $72
+s_hoffman =    $72
+STRINGCOUNT =  $73
