@@ -11,6 +11,10 @@
 ; disk allows either $D4 or $D5 for the
 ; first address prologue nibble
 ;-------------------------------
+         bit   gMode      ; nothing to do here in verify mode
+         bmi   +
+         jmp   .exit
++
 ; DOS 3.3 variant
          lda   #$03
          sta   gDisplayBytes
@@ -115,4 +119,5 @@
          jsr   PrintByID
          inc   gPatchCount
 .endbne0
+.exit
 }
