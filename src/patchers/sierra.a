@@ -596,8 +596,11 @@
 
 .yes
          sta   gDisplayBytes
+         bit   gMode                 ; don't print anything in verify mode
+         bpl   +
          lda   #s_sierra
          jsr   PrintByID
++
 .page9
          lda   $D103,x
          sta   .load+1
