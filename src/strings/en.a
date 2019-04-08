@@ -157,7 +157,7 @@ StringTable
 ; can be set directly before calling PrintByID.
 ;
 .header
-         !text "Passport by 4am               2019-04-07",$00
+         !text "Passport by 4am               2019-04-08",$00
 .mainmenu
          !text "________________________________________",$8D,$8D,$8D,$8D,$8D,$8D,$8D
          !text "              "
@@ -483,6 +483,5 @@ StringTable
 .hoffman
          !text "T%t,S%0 Found Hoffman protection check",$8D,$00
 .diskvol0
-         !text "T%t,S%s Secondary protection requires",$8D
-         !text "disk volume number 000",$8D,$00
+         !text "T%t,S%0 Disk requires volume number 000",$8D,$00
 }

@@ -17,13 +17,14 @@
          !byte $32,$30,$35,$38
          bcs   .exit
          sta   gDisplayBytes
+         pha
          lda   #s_diskvol0
          jsr   PrintByID
          txa
          clc
          adc   #$0B
          tax
-         lda   gDisplayBytes
+         pla
          ldy   #$01
          jsr   modify
          !byte $35        ; 'LM = PEEK(KB - 2055)' instead
