@@ -208,6 +208,14 @@ _Inspect1a
          lda   #TRUE
          sta   gAdventureInternational
 ;
+; Check for Phoenix bootloader/RWTS
+; (implies possible secondary protection elsewhere)
+;
++        jsr   IDPhoenix
+         bcs   +
+         lda   #TRUE
+         sta   gIsPhoenix
+;
 ; Turn off drive recalibration
 ;
 +        lda   jCallRWTS+2; check for code at $BDD2

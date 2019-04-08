@@ -117,4 +117,5 @@ s_springboard =$6F
 s_hallabs =    $70
 s_holle =      $71
 s_hoffman =    $72
-STRINGCOUNT =  $73
+s_diskvol0 =   $73
+STRINGCOUNT =  $74

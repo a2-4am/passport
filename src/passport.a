@@ -151,6 +151,7 @@ FirstMover
          !source "id/panglosdos.a"
          !source "id/davidson.a"
          !source "id/holle.a"
+         !source "id/phoenix.a"
          !source "print.a"
          !source "compare.a"
          !source "modify.a"
@@ -844,6 +845,7 @@ _applyToAll
          !source "patchers/aacount.a"
          !source "patchers/hallabs.a"           ; T01 only
          !source "patchers/holle.a"             ; gIsHolle only
+         !source "patchers/zoomgrafix.a"        ; gIsPhoenix only
 
          lda   gPatchCount
          beq   .nopatches

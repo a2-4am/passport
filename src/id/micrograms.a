@@ -3,8 +3,7 @@
 ; identify Micrograms bootloader
 ;
 ; in:  track buffer contains T00,S00
-; out: C clear if MECC bootloader was found
-;        (and track buffer now contains all of track 0)
+; out: C clear if Micrograms bootloader was found
 ;      C set if not found
 ;      all other flags clobbered
 ;      all registers clobbered

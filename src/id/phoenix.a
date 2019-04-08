@@ -1,0 +1,19 @@
+;-------------------------------
+; IDPhoenix
+; identify Phoenix bootloader
+;
+; in:  track buffer contains T00,S00
+; out: C clear if Phoenix bootloader was found
+;      C set if not found
+;      all other flags clobbered
+;      all registers clobbered
+;-------------------------------
+!zone {
+IDPhoenix
+         lda   #$00
+         ldx   #$B8
+         ldy   #$03
+         jsr   compare
+         !byte $AC,$B7,$F6
+         rts
+}

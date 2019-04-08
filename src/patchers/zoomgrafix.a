@@ -1,0 +1,31 @@
+;-------------------------------
+; #ZOOMGRAFIX
+; secondary protection expects
+; disk volume number 0
+;
+; tested on
+; - Zoom Grafix (Phoenix Software) multiple versions
+;-------------------------------
+!zone {
+         bit   gMode      ; nothing to do here in verify-only mode
+         bpl   .exit
+         lda   gIsPhoenix ; only if we found Phoenix boot sector earlier
+         bne   .exit
+         ldy   #$0C
+         jsr   SearchTrack
+         !byte $4C,$4D,$D0,$E2,$28,$4B,$42,$C9 ; 'LM = PEEK(KB - 2058)' in BASIC
+         !byte $32,$30,$35,$38
+         bcs   .exit
+         sta   gDisplayBytes
+         lda   #s_diskvol0
+         jsr   PrintByID
+         txa
+         clc
+         adc   #$0B
+         tax
+         lda   gDisplayBytes
+         ldy   #$01
+         jsr   modify
+         !byte $35        ; 'LM = PEEK(KB - 2055)' instead
+.exit
+}

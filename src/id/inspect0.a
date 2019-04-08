@@ -217,16 +217,18 @@ IDBootloader
          lda   #TRUE
          sta   gIsProDOS
          jsr   IDVolumeName
-         bcs   .useuniv
-; [note: execution may fall through here]
+         bcc   +
+         jmp   .useuniv
++
 ;
 ; Dinkey-DOS (ProDOS file structure with DOS 3.3-ish RWTS in language card)
 ; detectable now because IDVolumeName just read the first sector of the
 ; volume directory into memory so we can look for a unique filename
 ;
          jsr   IDDinkeyDOS
-         bcs   .useuniv
-         lda   #s_dinkeydos
+         bcc   +
+         jmp   .useuniv
++        lda   #s_dinkeydos
          jsr   PrintByID
          lda   #TRUE
          sta   gIsDinkeyDOS
@@ -264,6 +266,7 @@ IDBootloader
          beq   .useuniv   ; always branches
 ;
 ; Micrograms bootloader
+; (just for display)
 ;
 +        jsr   IDMicrograms
          bcs   +
@@ -272,6 +275,7 @@ IDBootloader
          bcc   .useuniv   ; always branches
 ;
 ; Quick-DOS
+; (just for display)
 ;
 +        jsr   IDQuickDOS
          bcs   +
@@ -280,14 +284,17 @@ IDBootloader
          bcc   .useuniv   ; always branches
 ;
 ; RDOS
+; (just for display)
 ;
 +        jsr   IDRDOS
          bcs   +
          lda   #s_rdos
          jsr   PrintByID
+         bcc   .useuniv   ; always branches
 
 ;
 ; Dav Holle encrypted bootloader
+; (will be decrypted and patched)
 ;
 +        jsr   IDHolle
          bcs   +
