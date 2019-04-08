@@ -144,16 +144,21 @@ SDsuccess
 
          ldx   #ID_DOS33p
          jsr   ConstructStandardDelivery
+
+; maybe say we're writing a bootloader
+
+         bit   gMode                 ; don't say we're writing a bootloader in verify-only mode,
+         bpl   +                     ; that's scary
          lda   #s_bootwrite
          jsr   PrintByID
-
++
 ; now manually write out track 0 with Standard Delivery
 ; bootloader
 
          jsr   IncProgress
          lda   #$00
          sta   gTrack
-         jsr   WriteTrackNA
+         jsr   WriteTrackNA          ; doesn't really write anything in verify-only mode
 
 ; manually write out track 1
 
@@ -163,7 +168,7 @@ SDsuccess
          ldx   #$10
          ldy   #$10
          jsr   CopyMemory
-         jsr   WriteTrackNA
+         jsr   WriteTrackNA          ; doesn't really write anything in verify-only mode
 
 ; manually write out track 2 with a patched RWTS
 
@@ -182,7 +187,7 @@ SDsuccess
          ldx   #$38
          ldy   #$01
          jsr   CopyMemory
-         jsr   WriteTrackNA
+         jsr   WriteTrackNA          ; doesn't really write anything in verify-only mode
          lda   #$C9
          sta   $38B6
          lda   #$AD
