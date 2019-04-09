@@ -157,7 +157,7 @@ StringTable
 ; can be set directly before calling PrintByID.
 ;
 .header
-         !text "Passport by 4am               2019-04-08",$00
+         !text "Passport by 4am               2019-04-09",$00
 .mainmenu
          !text "________________________________________",$8D,$8D,$8D,$8D,$8D,$8D,$8D
          !text "              "
@@ -232,7 +232,6 @@ StringTable
          !text "Possible reasons:",$8D
          !text "- There is no disk in S6,D1.",$8D
          !text "- It is not an Apple ][ disk.",$8D
-         !text "- The disk is 13-sector only.",$8D
          !text "- The disk is unformatted.",$8D,$8D,$00
 .fatal220f
          !byte $8D
