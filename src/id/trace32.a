@@ -74,6 +74,11 @@ IDDOS32LO
          ldy   #$03
          jsr   compare
          !byte $4C,$01,$03; JMP $0301
+         bcc   .exit
+         ldx   #$37
+         ldy   #$03
+         jsr   compare
+         !byte $4C,$01,$03; JMP $0301
 .exit    rts
 }
 
@@ -99,10 +104,15 @@ TraceDOS32LO
          jmp   $0801
 
 .TraceDOS32LOb
-         lda   #<.TraceDOS32c
-         sta   $0842
+         ldy   #$00
+         lda   $0837
+         cmp   #$4C
+         beq   +
+         ldy   #$0A
++        lda   #<.TraceDOS32c
+         sta   $0838,y
          lda   #>.TraceDOS32c
-         sta   $0843
+         sta   $0839,y
          jmp   $0801
 
 .TraceDOS32c
@@ -138,7 +148,7 @@ TraceDOS32LO
          !byte $85,$3F
          !byte $E6,$3F
          !byte $6C,$3E,$00
-         bcs   .fail
+         bcs   .tryChoplifter
          lda   $03CC
          cmp   #$B6
          beq   +
@@ -173,6 +183,24 @@ TraceDOS32LO
          sta   $033C
          ldy   $0300
          jmp   $0301
+
+.tryChoplifter
+         lda   #$03
+         ldx   #$01
+         ldy   #$10
+         jsr   CompareMemory
+         !byte $A2,$2E     ;LDX #$2E
+         !byte $9A         ;TXS
+         !byte $84,$48     ;STY $48
+         !byte $A2,$00     ;LDX #$00
+         !byte $BC,$00,$03 ;LDY $0300,X
+         !byte $88         ;DEY
+         !byte $A9,$EA     ;LDA #$EA
+         !byte $20,$26,$03 ;JSR $0326
+         bcs   .fail
+         lda   #s_choplifter
+         jsr   PrintByID
+         jmp   Choplifter
 
 ; something did not match, not comfortable tracing,
 ; but we know enough to know that the universal RWTS won't work,

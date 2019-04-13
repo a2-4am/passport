@@ -411,17 +411,15 @@ ReadWithRWTS
 
 checksector
          lda   $FFFF                            ; status of current sector in sector map (modified above)
-         pha
          cmp   #kSectorCustomFirst              ; call a custom routine before deciding what to do with this sector?
          bcc   +
          cmp   #kSectorCustomLast
          bcs   +
-         pla
          jsr   PreReadSector
-         pha                                    ; replace status (on stack) with new status returned from PreReadSector
-+        cmp   #kSectorIgnore                   ; skip this sector?
++        pha                                    ; replace status (on stack) with new status returned from PreReadSector
+         cmp   #kSectorIgnore                   ; skip this sector?
          beq   nextsector
-+        cmp   #kSectorSwitchToBuiltinRWTS      ; switch to built-in RWTS before reading this sector?
+         cmp   #kSectorSwitchToBuiltinRWTS      ; switch to built-in RWTS before reading this sector?
          bne   +
          lda   gTriedUniv
          beq   +
@@ -499,12 +497,11 @@ checksector
 
 nextsector
          pla
-         dec   checksector+1
          lda   checksector+1
-         cmp   #$FF
          bne   .nodec
          dec   checksector+2
 .nodec
+         dec   checksector+1
          lda   gSector
          sec
          sbc   #$01
@@ -524,11 +521,11 @@ nextsector
          jsr   ChangeTrack
          jsr   IncProgress
          lda   gTrack
-         bmi   .pass
+         bmi   Pass
          cmp   gLastTrack
-         bcc   .pass
+         bcc   Pass
          jmp   .read
-.pass
+Pass
          bit   gMode
          bmi   .passwrite
          lda   #s_pass
@@ -847,6 +844,7 @@ _applyToAll
          !source "patchers/holle.a"             ; gIsHolle only
          !source "patchers/zoomgrafix.a"        ; gIsPhoenix only
          !source "patchers/e7everywhere.a"      ; gIsBoot0 || gIsProDOS only
+         !source "patchers/choplifter.a"        ; gIsChoplifter only
 
          lda   gPatchCount
          beq   .nopatches

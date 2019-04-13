@@ -218,7 +218,7 @@ IDBootloader
          sta   gIsProDOS
          jsr   IDVolumeName
          bcc   +
-         jmp   .useuniv
+         jmp   UseUniversal
 +
 ;
 ; Dinkey-DOS (ProDOS file structure with DOS 3.3-ish RWTS in language card)
@@ -227,7 +227,7 @@ IDBootloader
 ;
          jsr   IDDinkeyDOS
          bcc   +
-         jmp   .useuniv
+         jmp   UseUniversal
 +        lda   #s_dinkeydos
          jsr   PrintByID
          lda   #TRUE

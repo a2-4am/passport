@@ -133,6 +133,7 @@ StringTable
          !word .hoffman
          !word .diskvol0
          !word .e7everywhere
+         !word .choplifter
 ;
 ; Text can contain substitution strings, which
 ; are replaced by current values at runtime. Each
@@ -486,4 +487,6 @@ StringTable
          !text "T%t,S%0 Disk requires volume number 000",$8D,$00
 .e7everywhere
          !text "T%t,S%0 Found E7 Everywhere protection",$8D,$00
+.choplifter
+         !text "T00,S01 Found Choplifter protection",$8D,$00
 }

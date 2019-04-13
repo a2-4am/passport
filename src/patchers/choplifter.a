@@ -1,0 +1,257 @@
+;-------------------------------
+; #Choplifter
+; insane protection by Roland Gustafsson
+; licensed by Broderbund, Gebelli, and others
+;
+; module by qkumba
+;-------------------------------
+!zone {
+.exit    rts              ; reachable only via inspect
+
+Choplifter
+         bit   gMode      ; nothing to do here in verify-only mode
+         bpl   .exit
+         lda   #$00
+         sta   gCommand
+         sta   dct+1
+         jsr   ChangeTrackNW
+         jsr   IncProgress
+
+.read
+         lda   KEY
+         bmi   .cancel
+         asl   gTrack
+         jsr   ReadChoplifter
+         lsr   gTrack
+         jsr   WriteTrackNA
+         lda   gTrack
+         clc
+         adc   #$01
+         jsr   ChangeTrackNW
+         jsr   IncProgress
+         lda   gTrack
+         cmp   #$23
+         bne   .read
+         jsr   .cleanup
+         jmp   Pass
+
+.cleanup
+         lda   $C0E8
+         lda   #$01
+         sta   gCommand
+         sta   dct+1
+         rts
+
+.fatal
+         jsr   .cleanup
+                          ; if we get to here, we've
+         jmp   FatalError ; decided the read error is fatal
+
+.cancel
+         jsr   .cleanup
+         jmp   Cancel
+
+ReadChoplifter
+         lda   #BASEPAGE
+         sta   modsrc+1
+         lda   #$00
+         sta   modsrc
+-        jsr   ReadSector ; really just seek
+         lda   $C0E9      ; turn the drive back on
+                          ; no need for spin-up because we are fast enough
+         ldx   #$04
+         lda   gTrack
+         beq   .settrack00
+         cmp   #$12
+         bcc   .settrack01
+         cmp   #$16
+         bcc   .ignore
+         beq   .readtrack0B
+         cmp   #$3E
+         bcs   .checktrack1E
+         jsr   .readtrack
+         inc   gTrack
+         lda   gTrack
+         lsr
+         bcs   -
+         dec   gTrack
+.ignore
+         rts
+
+.readtrack0B
+
+.checkkey1
+         lda   KEY
+         bmi   .cancel
+         jsr   .readnib
+-        cmp   #$DD
+         bne   .checkkey1
+         jsr   .readnib
+--       cmp   #$F5
+         bne   -
+         jsr   .readnib
+         cmp   #$D5
+         bne   --        ; this is the same bug
+         ldx   #$03
+-        jsr   .read4x4
+         jsr   .read4x4
+         jsr   .read4x4
+         sta   cmp1+0,x
+         dex
+         bpl   -
+         rts
+
+.checktrack1E
+         cmp   #$40
+         bcs   .checktrack20
+         rts
+
+.settrack00
+         lda   #$D5
+         sta   cmp1+1
+         sta   cmp2+1
+         lda   #$DD
+         sta   cmp1+0
+         sta   cmp2+0
+         !byte $2C
+.settrack01
+         ldx   #$08
+
+.readtrack
+         stx   tmpx
+         ldx   #3
+
+.retry0
+         dex
+         beq   .jmpfatal
+
+.checkkey0
+         lda   KEY
+         bmi   .jmpcancel
+         jsr   .readnib
+-        cmp   cmp2+1
+         bne   .checkkey0
+         jsr   .readnib
+--       cmp   cmp2+0
+         bne   -
+         jsr   .readnib
+         cmp   cmp1+1
+         bne   --        ; this is a bug
+                         ; it allows PR0 PR1 [any] PR1 PR2 instead of requiring PR0 PR1 PR2
+         ldy   #0
+--       jsr   .read4x4
+         sta   (modsrc), y
+         iny
+         bne   --
+-        lda   $C0EC
+         bpl   -
+         cmp   cmp1+0
+         bne   .retry0
+         inc   modsrc+1
+         dec   tmpx
+         bne   --
+         jsr   .readnib
+         sta   cmp1+1    ; prologue 3
+         jsr   .readnib
+         sta   cmp2+0    ; prologue 2
+         jsr   .readnib
+         sta   cmp2+1    ; prologue 1
+         jsr   .readnib
+         sta   cmp1+0    ; epilog
+         rts
+
+.jmpfatal
+         jmp   .fatal
+
+.jmpcancel
+         jmp   .cancel
+
+.checktrack20
+         beq   .readtrack20
+         cmp   #$44
+         beq   .readtrack22
+         rts
+
+.readtrack20
+         ldx   #1
+         jsr   .readtrack
+         lda   (BASEPAGE<<8)+$C5
+         sta   .prolog1+1
+         lda   (BASEPAGE<<8)+$CC
+         sta   .prolog2+1
+         lda   (BASEPAGE<<8)+$D3
+         sta   .prolog3+1
+
+.checkkey2
+         lda   KEY
+         bmi   .jmpcancel
+         jsr   .readnib
+.prolog1
+-        cmp   #$D1      ; SMC
+         bne   .checkkey2
+         jsr   .readnib
+.prolog2
+--       cmp   #$D1      ; SMC
+         bne   -
+         jsr   .readnib
+.prolog3
+         cmp   #$D1      ; SMC
+         bne   --        ; this is the same bug
+         nop             ; timing bits
+         ldx   #$00
+-        jsr   .read4x4
+         sta   (BASEPAGE+1)<<8,x
+         inx
+         jsr   .read4x4
+         sta   (BASEPAGE+1)<<8,x
+         inx
+         jsr   .read4x4
+         sta   (BASEPAGE+1)<<8,x
+         inx
+         cmp   #$EA
+         bne   -
+         rts
+
+.readtrack22
+         ldx   #$40
+         ldy   #0
+
+.checkkey3
+         dey
+         bne   +
+         dex
+         beq   ++
++        lda   KEY
+         bmi   .jmpcancel
+         jsr   .readnib
+-        cmp   #$D5
+         bne   .checkkey3
+         jsr   .readnib
+--       cmp   #$FF
+         bne   -
+         jsr   .readnib
+         cmp   #$DD
+         bne   --        ; this is the same bug
+         ldx   #$00
+-        jsr   .read4x4
+         sta   BASEPAGE<<8,x
+         inx
+         bne   -
+++       rts
+
+.read4x4
+-        lda   $C0EC
+         bpl   -
+         sec
+         rol
+         sta   tmp
+-        lda   $C0EC
+         bpl   -
+         and   tmp
+         rts
+
+.readnib
+-        lda   $C0EC
+         bpl   -
+         rts
+}
