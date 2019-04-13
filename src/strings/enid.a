@@ -118,4 +118,5 @@ s_hallabs =    $70
 s_holle =      $71
 s_hoffman =    $72
 s_diskvol0 =   $73
-STRINGCOUNT =  $74
+s_e7everywhere=$74
+STRINGCOUNT =  $75

@@ -1,0 +1,50 @@
+;------------------------------------------------------------------------------
+; #E7EVERYWHERE
+; E7 bitstream in the track seam of every track
+;
+; We can't attack the bitstream itself (like #UNIVERSALE7) because it's not
+; within any sector data, so we search for the code instead. AFAIK the code
+; is never encrypted.
+; This does a full-track search on every track, which is unfortunate. I've
+; only seen this protection on DOS and ProDOS disks, so we filter on that
+; to optimize performance a little bit.
+;
+; tested on
+; - Curious George Goes Shopping (DLM)
+; - Curious George Visits The Library (DLM)
+; - Curious George Goes To Outer Space (DLM)
+; - Spelling Mastery (DLM)
+; - Garfield Trivia Game (DLM)
+; - The Quarter Mile (Barnum)
+; - Reading and Writing with The Boars (McGraw-Hill)
+;------------------------------------------------------------------------------
+!zone {
+         bit   gMode      ; nothing to do here in verify-only mode
+         bpl   .exit
+         lda   gIsBoot0
+         beq   +
+         lda   gIsProDOS
+         bne   .exit
++
+         ldy   #$11
+         jsr   SearchTrack
+;
+         LDA   #$05
+         !byte $8D,WILDCARD,WILDCARD
+         !byte $AE,WILDCARD,WILDCARD
+         LDA   $C08E,X
+         LDA   $C089,X
+         LDA   #$00
+         !byte $8D
+;
+         bcs   .exit
+         sta   gDisplayBytes
+         pha
+         lda   #s_e7everywhere
+         jsr   PrintByID
+         pla
+         ldy   #$02
+         jsr   modify
+         !byte $18,$60    ; CLC/RTS
+.exit
+}

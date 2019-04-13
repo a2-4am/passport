@@ -132,6 +132,7 @@ StringTable
          !word .holle
          !word .hoffman
          !word .diskvol0
+         !word .e7everywhere
 ;
 ; Text can contain substitution strings, which
 ; are replaced by current values at runtime. Each
@@ -157,7 +158,7 @@ StringTable
 ; can be set directly before calling PrintByID.
 ;
 .header
-         !text "Passport by 4am               2019-04-09",$00
+         !text "Passport by 4am               2019-04-13",$00
 .mainmenu
          !text "________________________________________",$8D,$8D,$8D,$8D,$8D,$8D,$8D
          !text "              "
@@ -483,4 +484,6 @@ StringTable
          !text "T%t,S%0 Found Hoffman protection check",$8D,$00
 .diskvol0
          !text "T%t,S%0 Disk requires volume number 000",$8D,$00
+.e7everywhere
+         !text "T%t,S%0 Found E7 Everywhere protection",$8D,$00
 }
