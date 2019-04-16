@@ -1,0 +1,205 @@
+;-------------------------------
+; ScanForDiskII
+; scan all slots for things that
+; look like Disk II cards
+;
+; out: all registers clobbered
+;      all flags clobbered
+;      DiskIIArray filled with 00 or FF
+;-------------------------------
+!zone {
+ScanForDiskII
+         lda   #$00
+         sta   cmp1
+         ldx   #$07
+.fingerprint
+         txa
+         ora   #$C0
+         sta   cmp1+1
+         ldy   #$01
+         lda   (cmp1),y
+         cmp   #$20
+         bne   .next
+         ldy   #$03
+         lda   (cmp1),y
+         bne   .next
+         ldy   #$05
+         lda   (cmp1),y
+         cmp   #$03
+         bne   .next
+         ldy   #$FF
+         lda   (cmp1),y
+         bne   .next
+         tya
+         sta   DiskIIArray-1,x
+.next
+         dex
+         bne   .fingerprint
+         rts
+}
+
+!zone {
+ScanForRAMDisk
+         lda   #$00
+         sta   iunit
+-        lda   iunit
+         clc
+         adc   #$10
+         sta   iunit
+         beq   .done
+         cmp   #$80
+         beq   -
+         pha
+         and   #$70
+         lsr
+         lsr
+         lsr
+         lsr
+         tay
+         pla
+         ldx   DiskIIArray-1,y
+         bne   -
+         jsr   GetVolumeName
+         bcs   -
+         lda   OnlineReturn
+         beq   -
+         jsr   GetVolumeInfo
+
+         ;watch for RAM disk type
+
+         lda   filetype
+         and   #$0F
+         cmp   #$0F
+         bne   -
+
+         ;check for RAM[x] by name
+
+         ldy   OnlineReturn
+         cpy   #4
+         beq   +
+         cpy   #5
+         bne   -
+         dey
++
+--       lda   SlashRAM-1,y
+         cmp   VolumeName-1,y
+         bne   -
+         dey
+         bne   --
+
+         ;check free space
+         ;need at least $118 blocks
+
+         sec
+         lda   auxtype
+         sbc   blocks
+         tax
+         lda   auxtype+1
+         sbc   blocks+1
+         cmp   #1
+         bcc   -
+         bne   +
+         cpx   #$18
+         bcc   -
++        lda   #TRUE
+         sta   gUsingRAMDisk
+.done
+         rts
+
+SlashRAM !byte $2F, $52, $41, $4D
+}
+
+;-------------------------------
+; LoadPrefs
+; load preferences from file
+;
+; in:  ProDOS must be in memory
+;-------------------------------
+LoadPrefs
+         lda   #$FF
+         sta   PREFSVER
+         jsr   LoadFile1Shot
+         !word PREFSFILE
+         !word PREFSVER
+         !word PREFSREADLEN
+         !word PREFSBUFFER
+         jsr   ValidatePrefs
+         bcc   .goodprefs
+         jmp   SavePrefs
+
+.goodprefs
+         rts
+
+;-------------------------------
+; LoadFile1Shot
+; load a file into memory all at once,
+;   using ProDOS MLI calls
+;
+; in:  stack contains 8 bytes of parameters:
+;      +1 address of pathname
+;      +3 address of data buffer (to receive file contents)
+;      +5 [word] maximum length of data to read
+;      +7 address of ProDOS file buffer
+; out: if C set, load failed and A contains error code
+;        from open or read
+;      if C clear, load succeeded and ($02) contains
+;        data loaded from file
+;      all other flags clobbered
+;      all registers clobbered
+;      stack set to next instruction after parameters
+;-------------------------------
+!zone {
+LoadFile1Shot
+         clc
+         pla
+         adc   #$08
+         sta   $00
+         tax
+         pla
+         adc   #$00
+         sta   $01
+         pha
+         txa
+         pha
+
+         ldy   #$01
+         lda   ($00),y    ; lo byte of pathname
+         sta   mliparam+1
+         iny
+         lda   ($00),y    ; hi byte of pathname
+         sta   mliparam+2
+         ldy   #$07
+         lda   ($00),y    ; lo byte of ProDOS file buffer
+         sta   mliparam+3
+         iny
+         lda   ($00),y    ; hi byte of ProDOS file buffer
+         sta   mliparam+4
+
+         jsr   OpenFile
+         bcs   .loadfile1s ; C set on error
+
+         pha              ; push file reference number
+         ldy   #$03
+         lda   ($00),y    ; lo address of data buffer
+         sta   mliparam+2
+         iny
+         lda   ($00),y    ; hi address of data buffer
+         sta   mliparam+3
+         iny
+         lda   ($00),y    ; lo data length
+         sta   mliparam+4
+         iny
+         lda   ($00),y    ; hi data length
+         sta   mliparam+5
+         pla              ; pull file reference number
+         jsr   ReadFile
+         php              ; save flags from readfile
+         pha
+         jsr   CloseFile  ; always close whether read worked or not
+         pla
+         plp              ; restore flags from readfile
+                          ; (so caller gets codes from read attempt,
+                          ; not close)
+.loadfile1s
+         rts
+}

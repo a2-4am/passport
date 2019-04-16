@@ -21,22 +21,6 @@ DRIVE    !byte $FF
 PREFSWRITELEN = *-PREFSVER
 
 ;-------------------------------
-; LoadPrefs
-; load preferences from file
-;
-; in:  ProDOS must be in memory
-;-------------------------------
-LoadPrefs
-         lda   #$FF
-         sta   PREFSVER
-         jsr   LoadFile1Shot
-         !word PREFSFILE
-         !word PREFSVER
-         !word PREFSREADLEN
-         !word PREFSBUFFER
-         jmp   ValidatePrefs
-
-;-------------------------------
 ; SavePrefs
 ; save preferences to file
 ;

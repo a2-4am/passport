@@ -96,7 +96,26 @@ FM       lda   LastMover - 256,x
          lda   FM+5
          cmp   #(>RELBASE)-((>(RELBASE+255))->RELBASE)-1
          bne   FM
-         jmp   OneTimeSetup
+
+OneTimeSetup
+         lda   $C0E8
+         jsr   SaveProDOS
+         ldx   MACHINEID
+         cpx   #$EA
+         bne   .slotscan
+         lda   #$DF
+         sta   kForceLower
+.slotscan
+         jsr   ScanForDiskII
+         lda   DiskIIArray+5
+         bne   .founds6
+         jmp   FatalNoSlot6
+.founds6
+         jsr   ScanForRAMDisk
+         jsr   LoadPrefs  ; load preferences (if available)
+         jmp   ResetVector
+
+         !source "initscan.a"
 
 FirstMover
          !pseudopc RELBASE {
@@ -165,24 +184,6 @@ FirstMover
          !source "rwts.a"
          !source "standarddelivery.a"
 
-OneTimeSetup
-         lda   $C0E8
-         jsr   SaveProDOS
-         ldx   MACHINEID
-         cpx   #$EA
-         bne   .slotscan
-         lda   #$DF
-         sta   kForceLower
-.slotscan
-         jsr   ScanForDiskII
-         lda   DiskIIArray+5
-         bne   .founds6
-         jmp   FatalNoSlot6
-.founds6
-         jsr   ScanForRAMDisk
-         jsr   LoadPrefs  ; load preferences (if available)
-         bcc   ResetVector
-         jsr   SavePrefs  ; save preferences (if possible)
 ResetVector
          lda   #<ResetVector
          sta   $03F2
@@ -871,6 +872,6 @@ LastMover
   }
 } else {
   !if (HIGHPOINT - (LastMover - FirstMover)) < LOWPOINT {
-    !serious "code is too large to fit in available space!"
+    !serious "code end (", HIGHPOINT - (LastMover - FirstMover), ") is below minimum (", LOWPOINT, ")!"
   }
 }

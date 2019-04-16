@@ -14,15 +14,14 @@ kForceLower !byte $FF     ; AND mask for lowercase letters
 ;-------------------------------
 !zone {
 PrintByID
-         stx   .x
+         stx   .x+1
          ldy   #0         ; substitution mode flag
          cmp   #STRINGCOUNT
          bcs   .error
-         asl
          tax
-         lda   StringTable,x
+         lda   StringTableLow,x
          sta   .print+1
-         lda   StringTable+1,x
+         lda   StringTableHigh,x
          sta   .print+2
 .print
          lda   $FFFF      ; modified at runtime
@@ -83,9 +82,8 @@ PrintByID
 .done
          clc
 .error
-         ldx   .x
+.x       ldx   #$d1
          rts
-.x       !byte 00
 
 ;-------------------------------
 ; PrintByte

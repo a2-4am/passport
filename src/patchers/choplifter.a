@@ -19,7 +19,10 @@ Choplifter
 
 .read
          lda   KEY
-         bmi   .cancel
+         bpl   .continue
+         jmp   .cancel
+
+.continue
          asl   gTrack
          jsr   ReadChoplifter
          lsr   gTrack
@@ -32,8 +35,68 @@ Choplifter
          lda   gTrack
          cmp   #$23
          bne   .read
+
+         ; start with RDOS as a minimal SD base
+         ; and copy SD code for free
+
+         ldx   #ID_RDOS13
+         jsr   ConstructStandardDelivery
+         ldx   #$B0
+         stx   $104E      ; exit address
+         stx   $1050      ; next-stage addressing
+         inx
+         stx   $104F      ; next-stage addressing
+         inx
+         stx   $105D      ; next-stage addressing
+
+         lda   #$10
+         sta   modsrc+1
+         lda   #$5E
+         sta   modsrc
+         ldx   #$27
+         lda   #$67
+         jsr   .inittable
+
+         lda   #$1F
+         sta   modsrc+1
+         lda   #$00
+         sta   modsrc
+         ldx   #$87
+         lda   #$C7
+         jsr   .inittable
+
+         dec   modsrc+1
+         ldx   #$0F
+         lda   #$27
+         jsr   .inittable
+         ldx   #$47
+         lda   #$87
+         jsr   .inittable2
+
+         dec   $1E00
+         lda   #$C0
+         sta   $10DD
+         sta   $1EAF
+         sta   $1F7F
+
+         ldy   #0
+-        lda   .stage2,y
+         sta   $1D00,y
+         iny
+         bne   -
+
+         lda   #s_bootwrite
+         jsr   PrintByID
+         lda   #$00
+         sta   gTrack
+         jsr   WriteTrackNA
+         inc   gPatchCount
          jsr   .cleanup
          jmp   Pass
+
+.cancel
+         jsr   .cleanup
+         jmp   Cancel
 
 .cleanup
          lda   $C0E8
@@ -41,15 +104,6 @@ Choplifter
          sta   gCommand
          sta   dct+1
          rts
-
-.fatal
-         jsr   .cleanup
-                          ; if we get to here, we've
-         jmp   FatalError ; decided the read error is fatal
-
-.cancel
-         jsr   .cleanup
-         jmp   Cancel
 
 ReadChoplifter
          lda   #BASEPAGE
@@ -82,6 +136,7 @@ ReadChoplifter
 
 .checkkey1
          lda   KEY
+.linkcancel1
          bmi   .cancel
          jsr   .readnib
 -        cmp   #$DD
@@ -92,6 +147,9 @@ ReadChoplifter
          jsr   .readnib
          cmp   #$D5
          bne   --        ; this is the same bug
+         nop             ; timing bits
+         nop             ; timing bits
+         nop             ; timing bits
          ldx   #$03
 -        jsr   .read4x4
          jsr   .read4x4
@@ -123,11 +181,12 @@ ReadChoplifter
 
 .retry0
          dex
-         beq   .jmpfatal
+         beq   .fatal
 
 .checkkey0
          lda   KEY
-         bmi   .jmpcancel
+.linkcancel2
+         bmi   .linkcancel1
          jsr   .readnib
 -        cmp   cmp2+1
          bne   .checkkey0
@@ -138,6 +197,9 @@ ReadChoplifter
          cmp   cmp1+1
          bne   --        ; this is a bug
                          ; it allows PR0 PR1 [any] PR1 PR2 instead of requiring PR0 PR1 PR2
+         nop             ; timing bits
+         nop             ; timing bits
+         nop             ; timing bits
          ldy   #0
 --       jsr   .read4x4
          sta   (modsrc), y
@@ -160,11 +222,10 @@ ReadChoplifter
          sta   cmp1+0    ; epilog
          rts
 
-.jmpfatal
-         jmp   .fatal
-
-.jmpcancel
-         jmp   .cancel
+.fatal
+         jsr   .cleanup
+                          ; if we get to here, we've
+         jmp   FatalError ; decided the read error is fatal
 
 .checktrack20
          beq   .readtrack20
@@ -184,7 +245,8 @@ ReadChoplifter
 
 .checkkey2
          lda   KEY
-         bmi   .jmpcancel
+.linkcancel3
+         bmi   .linkcancel2
          jsr   .readnib
 .prolog1
 -        cmp   #$D1      ; SMC
@@ -198,15 +260,17 @@ ReadChoplifter
          cmp   #$D1      ; SMC
          bne   --        ; this is the same bug
          nop             ; timing bits
+         nop             ; timing bits
+         nop             ; timing bits
          ldx   #$00
 -        jsr   .read4x4
-         sta   (BASEPAGE+1)<<8,x
+         sta   (BASEPAGE+8)<<8,x
          inx
          jsr   .read4x4
-         sta   (BASEPAGE+1)<<8,x
+         sta   (BASEPAGE+8)<<8,x
          inx
          jsr   .read4x4
-         sta   (BASEPAGE+1)<<8,x
+         sta   (BASEPAGE+8)<<8,x
          inx
          cmp   #$EA
          bne   -
@@ -222,7 +286,7 @@ ReadChoplifter
          dex
          beq   ++
 +        lda   KEY
-         bmi   .jmpcancel
+         bmi   .linkcancel3
          jsr   .readnib
 -        cmp   #$D5
          bne   .checkkey3
@@ -232,6 +296,9 @@ ReadChoplifter
          jsr   .readnib
          cmp   #$DD
          bne   --        ; this is the same bug
+         nop             ; timing bits
+         nop             ; timing bits
+         nop             ; timing bits
          ldx   #$00
 -        jsr   .read4x4
          sta   BASEPAGE<<8,x
@@ -254,4 +321,118 @@ ReadChoplifter
 -        lda   $C0EC
          bpl   -
          rts
+
+.inittable
+         ldy   #$08
+
+.inittable2
+         sta   tmp
+
+.buildtable
+         txa
+         sta   (modsrc),y
+         dex
+         iny
+         tya
+         and   #$0F
+         cmp   #$0F
+         bne   .buildtable
+         tya
+         sbc   #$0F
+         tay
+         txa
+         sta   (modsrc),y
+         tya
+         adc   #$17     ; carry set by sbc
+         tay
+         txa
+         adc   #$0F
+         tax
+         cmp   tmp
+         bne   .buildtable
+         rts
+
+.stage2 !pseudopc $B000 { ; high address that won't be hit on the first round of SD
+         lda   $c057
+         lda   $c052
+         lda   $c050
+         ldy   #0
+-        lda   .stager,y
+         sta   $500,y
+         lda   (*+$ff) and $ff00,y
+         sta   $200,y
+         lda   (*+$1ff) and $ff00,y
+         sta   $400,y
+         iny
+         bne   -
+         jsr   .dostep4
+         ldy   #2       ; pagehi, first table
+         sty   $807
+         ldy   #$60     ; rts
+         sty   $84c
+         jsr   .callSD  ; including original $8xx to $7xx
+         asl   $807     ; 4xx, second table
+         jmp   $500
+
+.stager !pseudopc $500 {
+         jsr   .callSD
+         jsr   .step
+         lda   #$60
+         sta   $801
+         lda   #4
+         sta   $27
+         jsr   $823     ; read patch table
+         ldy   #0       ; avoid CFFA bug
+-        lda   $400,y
+         sta   .patcher+1
+         lda   $401,y
+         sta   .patcher+2
+         lda   $402,y
+         iny
+         iny
+         iny
+
+.patcher
+         sta   $d1d1
+         cmp   #$ea
+         bne   -
+         jsr   .dostep2 ; reach track $22
+         sta   $3d
+         dec   $27
+         jsr   $823     ; read high scores
+         lsr   $27
+         lda   #7
+         sta   $26
+         jsr   $823     ; read half of write routine to $207
+         asl   $27
+         lda   #0
+         sta   $26
+         jsr   $823     ; read half of write routine to $600
+         ldy   #0       ; avoid CFFA bug
+-        lda   ($26),y
+         sta   $800,y
+         lda   $600,y
+         sta   $300,y
+         iny
+         bne   -
+         jmp   ($20)
+
+.callSD
+         sta   $806     ; pagelo
+         ldy   #$ff
+         jsr   $805
+         beq   .step
+
+.dostep4
+         jsr   .dostep2
+
+.dostep2
+         jsr   .step
+
+.step
+         jsr   $82F
+         lsr   $40
+         rts
+}
+}
 }
