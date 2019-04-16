@@ -11,8 +11,8 @@
          bpl   .exit
          lda   gIsBoot0
          bne   .exit
-         lda   gTrack
-         cmp   #$01
+         ldx   gTrack
+         dex
          bne   .exit
 
          ldy   #(@search1end-@search1start)

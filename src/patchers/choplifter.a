@@ -11,6 +11,9 @@
 Choplifter
          bit   gMode      ; nothing to do here in verify-only mode
          bpl   .exit
+
+;;prepare write routine at $2000-21ff first
+
          lda   #$00
          sta   gCommand
          sta   dct+1
@@ -27,12 +30,13 @@ Choplifter
          jsr   ReadChoplifter
          lsr   gTrack
          jsr   WriteTrackNA
-         lda   gTrack
-         clc
-         adc   #$01
+         ldx   gTrack
+         inx
+         txa
+         pha
          jsr   ChangeTrackNW
          jsr   IncProgress
-         lda   gTrack
+         pla
          cmp   #$23
          bne   .read
 
@@ -264,16 +268,22 @@ ReadChoplifter
          nop             ; timing bits
          ldx   #$00
 -        jsr   .read4x4
-         sta   (BASEPAGE+8)<<8,x
+         sta   (BASEPAGE+$0f)<<8,x
          inx
          jsr   .read4x4
-         sta   (BASEPAGE+8)<<8,x
+         sta   (BASEPAGE+$0f)<<8,x
          inx
          jsr   .read4x4
-         sta   (BASEPAGE+8)<<8,x
+         sta   (BASEPAGE+$0f)<<8,x
          inx
          cmp   #$EA
          bne   -
+         ldx   #0
+.copywrite1
+         lda   $2000,x
+         sta   (BASEPAGE+8)<<8,x
+         inx
+         bne   .copywrite1
          rts
 
 .readtrack22
@@ -284,7 +294,7 @@ ReadChoplifter
          dey
          bne   +
          dex
-         beq   ++
+         beq   .copywrite2
 +        lda   KEY
          bmi   .linkcancel3
          jsr   .readnib
@@ -304,7 +314,13 @@ ReadChoplifter
          sta   BASEPAGE<<8,x
          inx
          bne   -
-++       rts
+
+.copywrite2
+         lda   $2100,x
+         sta   (BASEPAGE+7)<<8,x
+         inx
+         bne   .copywrite2
+         rts
 
 .read4x4
 -        lda   $C0EC
@@ -354,8 +370,18 @@ ReadChoplifter
 
 .stage2 !pseudopc $B000 { ; high address that won't be hit on the first round of SD
          lda   $c057
+         lda   $c054
          lda   $c052
          lda   $c050
+         ldx   #$42
+         txs
+         lda   #>(.resume-1)
+         pha
+         lda   #<(.resume-1)
+         pha
+         jmp   $4000
+
+.resume
          ldy   #0
 -        lda   .stager,y
          sta   $500,y
@@ -370,6 +396,7 @@ ReadChoplifter
          sty   $807
          ldy   #$60     ; rts
          sty   $84c
+         ldx   $2b
          jsr   .callSD  ; including original $8xx to $7xx
          asl   $807     ; 4xx, second table
          jmp   $500
@@ -379,9 +406,11 @@ ReadChoplifter
          jsr   .step
          lda   #$60
          sta   $801
-         lda   #4
+         lda   #2
          sta   $27
-         jsr   $823     ; read patch table
+         jsr   $823     ; read half of write routine to $200 (but starts at $207)
+         inc   $27
+         jsr   $823     ; read patch table to $400
          ldy   #0       ; avoid CFFA bug
 -        lda   $400,y
          sta   .patcher+1
@@ -400,13 +429,7 @@ ReadChoplifter
          sta   $3d
          dec   $27
          jsr   $823     ; read high scores
-         lsr   $27
-         lda   #7
-         sta   $26
-         jsr   $823     ; read half of write routine to $207
-         asl   $27
-         lda   #0
-         sta   $26
+         inc   $27
          jsr   $823     ; read half of write routine to $600
          ldy   #0       ; avoid CFFA bug
 -        lda   ($26),y
@@ -415,6 +438,7 @@ ReadChoplifter
          sta   $300,y
          iny
          bne   -
+         lda   $C088,x
          jmp   ($20)
 
 .callSD

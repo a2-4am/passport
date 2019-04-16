@@ -10,8 +10,8 @@
          bpl   .exit
          lda   gIsDOS32
          bne   .exit
-         lda   gTrack
-         cmp   #$01
+         ldx   gTrack
+         dex
          bne   .exit
          lda   #$08
          ldx   #$D6
