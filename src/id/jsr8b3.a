@@ -13,7 +13,7 @@
 !zone {
 ID8b3
          lda   #$00
-         ldx   #$00
+         tax
          ldy   #$5A
          jsr   compare
          !byte $01,$20,$B3,$08,$D0,$19,$EA,$A5

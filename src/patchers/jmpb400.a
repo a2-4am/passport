@@ -52,7 +52,7 @@
          jsr   PrintByID
          lda   #$03
          ldx   #$00
-         ldy   #$03
+         tay
          jsr   modify     ; then set T02,S03,$00 =
          !byte $4C,$84,$9D
 .exit

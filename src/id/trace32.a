@@ -10,7 +10,7 @@
 !zone {
 IDDOS32
          lda   #$00
-         ldx   #$00
+         tax
          ldy   #$0F
          jsr   compare
          !byte $01
@@ -52,7 +52,7 @@ IDDOS32
 !zone {
 IDDOS32LO
          lda   #$00
-         ldx   #$00
+         tax
          ldy   #$0F
          jsr   compare
          !byte $01
@@ -90,10 +90,11 @@ IDDOS32LO
 TraceDOS32
          lda   #<.TraceDOS32b
          ldx   #>.TraceDOS32b
-         jmp   Trace
+         bne   .linktrace
 TraceDOS32LO
          lda   #<.TraceDOS32LOb
          ldx   #>.TraceDOS32LOb
+.linktrace
          jmp   Trace
 
 .TraceDOS32b
@@ -101,7 +102,7 @@ TraceDOS32LO
          sta   $0846
          lda   #>.TraceDOS32c
          sta   $0847
-         jmp   $0801
+         bne   .linkjmp
 
 .TraceDOS32LOb
          ldy   #$00
@@ -113,6 +114,7 @@ TraceDOS32LO
          sta   $0838,y
          lda   #>.TraceDOS32c
          sta   $0839,y
+.linkjmp
          jmp   $0801
 
 .TraceDOS32c
@@ -336,13 +338,13 @@ FFer
          bne   +
          iny
          bne   -
+         tya
          ldy   jCallRWTS+2
          dey
          sty   .G+2
          dey
          sty   .F+2
-         ldy   #$00
-         tya
+         tay
 .F       sta   $FF00,y
          iny
          bne   .F

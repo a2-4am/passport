@@ -18,8 +18,7 @@
 -        jmp   .exit
 +        bvc   -          ; nothing to do here in demuffin mode
          lda   gIsHolle
-         beq   +
-         jmp   .exit
+         bne   -
 +        lda   gTrack
          bne   +
          jmp   .DecryptBootloader
@@ -246,11 +245,11 @@
          EOR   $01
          AND   #$01
 .alternatingTrackEnd
-         bcs   +
+         bcs   .exit
          ldy   #$01
          jsr   modify
          !byte $A9        ; EOR -> LDA so alternating track check always passes
-+
+
          jmp   .exit
 .reorderAndExit
          jsr   ReorderBuffer

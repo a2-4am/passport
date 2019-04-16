@@ -18,6 +18,30 @@
 
 
 ;-------------------------------
+; SaveProDOS
+; saves memory pages used by ProDOS
+; pages $00, $03, $BF
+; in:  none
+; out: all flags and registers clobbered
+;-------------------------------
+!zone {
+SaveProDOS
+         lda   #$00
+         ldx   #$40
+         ldy   #$01
+         jsr   CopyMemory
+         lda   #$03
+         ldx   #$41
+         ldy   #$01
+         jsr   CopyMemory
+SaveGlobal
+         lda   #$BF
+         ldx   #$42
+         ldy   #$01
+         ;;jsr   CopyMemory ; fall through
+}
+
+;-------------------------------
 ; CopyMemory
 ; in:  A = source address (high)
 ;      X = destination address (high)
@@ -41,27 +65,6 @@ CopyMemory
 }
 
 ;-------------------------------
-; ClearMemory
-; in:  A = source address (high)
-;      X = value to set
-;      Y = number of pages
-; out: all flags and registers clobbered
-;-------------------------------
-!zone {
-ClearMemory
-         sta   .dest+2
-         txa
-         ldx   #$00
-.dest    sta   $FF00,x
-         inx
-         bne   .dest
-         inc   .dest+2
-         dey
-         bne   .dest
-         rts
-}
-
-;-------------------------------
 ; ClearTSBuffer
 ; clear the $1000 byte memory buffer
 ; used to store the current track's data
@@ -72,7 +75,69 @@ ClearTSBuffer
          lda   #BASEPAGE
          ldx   #$00
          ldy   #$10
-         jmp   ClearMemory
+         ;; jmp   ClearMemory ; fall through
+
+;-------------------------------
+; ClearMemory
+; in:  A = source address (high)
+;      X = value to set
+;      Y = number of pages
+; out: all flags and registers clobbered
+;-------------------------------
+!zone {
+ClearMemory
+         sta   .dest+2
+.dest    stx   $FF00
+         inc   .dest+1
+         bne   .dest
+         inc   .dest+2
+         dey
+         bne   .dest
+         rts
+}
+
+;-------------------------------
+; ReorderBuffer - convert data
+;   buffer between ProDOS and
+;   DOS 3.3 ordering (use after
+;   read or before write under
+;   ProDOS)
+; in:  none
+; out: all flags clobbered
+;      all registers clobbered
+;-------------------------------
+!zone {
+ReorderBuffer
+         lda   #BASEPAGE+1
+         ldx   #BASEPAGE+$0E
+         ldy   #$07
+         clc
+         bcc   SwapMemory ; branch always
+}
+
+;-------------------------------
+; SwapProDOS
+; saves/restores memory pages used by ProDOS
+; pages $00, $03, $BF
+; in:  none
+; out: all flags and registers clobbered
+;-------------------------------
+SwapProDOS
+         lda   #$00
+         ldx   #$40
+         ldy   #$01
+         sec
+         jsr   SwapMemory
+         lda   #$03
+         ldx   #$41
+         ldy   #$01
+         sec
+         jsr   SwapMemory
+         lda   #$BF
+         ldx   #$42
+         ldy   #$01
+         sec
+         ;;jsr   SwapMemory ; fall through
 
 ;-------------------------------
 ; SwapMemory
@@ -113,76 +178,6 @@ SwapMemory
          bne   .source1
          rts
 }
-
-;-------------------------------
-; ReorderBuffer - convert data
-;   buffer between ProDOS and
-;   DOS 3.3 ordering (use after
-;   read or before write under
-;   ProDOS)
-; in:  none
-; out: all flags clobbered
-;      all registers clobbered
-;-------------------------------
-!zone {
-ReorderBuffer
-         lda   #BASEPAGE+1
-         ldx   #BASEPAGE+$0E
-         ldy   #$07
-         clc
-         jmp   SwapMemory
-}
-
-;-------------------------------
-; SaveProDOS
-; saves memory pages used by ProDOS
-; pages $00, $03, $BF
-; in:  none
-; out: all flags and registers clobbered
-;-------------------------------
-!zone {
-SaveProDOS
-         lda   #$00
-         ldx   #$40
-         ldy   #$01
-         jsr   CopyMemory
-         lda   #$03
-         ldx   #$41
-         ldy   #$01
-         jsr   CopyMemory
-SaveGlobal
-         lda   #$BF
-         ldx   #$42
-         ldy   #$01
-         jsr   CopyMemory
-.exit
-         rts
-}
-
-;-------------------------------
-; SwapProDOS
-; saves/restores memory pages used by ProDOS
-; pages $00, $03, $BF
-; in:  none
-; out: all flags and registers clobbered
-;-------------------------------
-SwapProDOS
-         lda   #$00
-         ldx   #$40
-         ldy   #$01
-         sec
-         jsr   SwapMemory
-         lda   #$03
-         ldx   #$41
-         ldy   #$01
-         sec
-         jsr   SwapMemory
-         lda   #$BF
-         ldx   #$42
-         ldy   #$01
-         sec
-         jsr   SwapMemory
-         rts
 
 ;-------------------------------
 ; ReorderLogicalToPhysical - reorder pages in

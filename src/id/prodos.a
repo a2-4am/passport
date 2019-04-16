@@ -17,7 +17,7 @@ IDProDOS
 ; Dazzle Draw, SuperPrint II). All of these variants
 ; will match.
          lda   #$00
-         ldx   #$00
+         tax
          ldy   #$05
          jsr   compare    ; if T00,S00,$00 ==
          !byte $01

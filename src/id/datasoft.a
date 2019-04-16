@@ -10,7 +10,7 @@
 ;-------------------------------
 IDDatasoft
          lda   #$00
-         ldx   #$00
+         tax
          ldy   #$7E
          jsr   compare
          !byte $01,$4C,$7E,$08,$04,$8A,$0C,$B8

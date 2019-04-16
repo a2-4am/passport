@@ -19,14 +19,11 @@
          !byte $C9,$BE
          !byte $D0,$E5
          bcs   .exit
-         inx
-         inx
-         inx
-         inx
-         inx
-         inx
-         inx
-         inx
+         tay
+         txa
+         adc   #8
+         tax
+         tya
          ldy   #$01
          jsr   modify     ; change BNE to continue instead
          !byte $00

@@ -23,21 +23,11 @@ _prodosrwts
          !byte $38
          bcs   .exit
          sta   gDisplayBytes
-         inx
-         inx
-         inx
-         inx
-         inx
-         inx
-         inx
-         inx
-         inx
-         inx
-         inx
-         inx
-         inx
-         inx
-         inx
+         tay
+         txa
+         adc   #$0F
+         tax
+         tya
          ldy   #$01
          jsr   compare
          !byte $DE

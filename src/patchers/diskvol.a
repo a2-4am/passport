@@ -12,7 +12,7 @@
 
          lda   #$01
          ldx   #$EE
-         ldy   #$01
+         tay
          jsr   compare    ; and T00,S01,$EE ==
          !byte $FB
          bcs   .exit
@@ -27,8 +27,7 @@
          beq   .yes
 
          lda   gIsPanglosDOS
-         bne   +
-         lda   gCapturedDiskVolumeNumber
+         ora   gCapturedDiskVolumeNumber
          bne   +
          lda   gDiskVolumeNumber
          cmp   #$FE

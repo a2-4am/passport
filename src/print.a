@@ -96,15 +96,9 @@ PrintByID
 ;      @tmpy clobbered
 ;-------------------------------
 PrintByte
-         sta   tmpa
-         stx   tmpx
-         sty   tmpy
+         jsr   .saveAXY
          jsr   PRBYTE
-         lda   tmpa
-         ldx   tmpx
-         ldy   tmpy
-         clv
-         rts
+         jmp   .loadAXY
 
 ;-------------------------------
 ; PrintA
@@ -117,14 +111,20 @@ PrintByte
 ;      @tmpy clobbered
 ;-------------------------------
 PrintA
-         sta   tmpa
-         stx   tmpx
-         sty   tmpy
+         jsr   .saveAXY
          jsr   COUT
+
+.loadAXY
          lda   tmpa
          ldx   tmpx
          ldy   tmpy
          clv
+         rts
+
+.saveAXY
+         sta   tmpa
+         stx   tmpx
+         sty   tmpy
          rts
 
 ;-------------------------------
@@ -144,17 +144,16 @@ ClearScreen
          ldy   #$00
          sty   flag
 .loop
-         lda   $FF00,y    ; modified at runtime
-         cmp   #$A0
+         ldx   $FF00,y    ; modified at runtime
+         cpx   #$A0
          beq   .nochange
          bcs   .down
-         clc
-         adc   #$01
+         inx
          bne   .change
 .down
-         sec
-         sbc   #$01
+         dex
 .change
+         txa
          sta   $FF00,y    ; modified at runtime
          sta   flag
 .nochange

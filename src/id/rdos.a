@@ -12,7 +12,7 @@
 !zone {
 IDRDOS
          lda   #$00
-         ldx   #$00
+         tax
          ldy   #$0E
          jsr   compare    ; if T00,S00,$00 ==
          !byte $01

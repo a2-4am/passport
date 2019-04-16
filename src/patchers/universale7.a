@@ -54,9 +54,8 @@ universale7
          !byte $00,$00,$00,$00,$00,$00,$00,$00
          !byte $00,$00,$00,$00,$00,$00,$00,$00
          !byte $00,$00,$00,$00,$00,$00,$00,$00
-         bcc   +
-         jmp   .nextsector
-+
+         bcs   .nextsector
+
          lda   .sector+1
          sta   gDisplayBytes
          lda   #s_e7
