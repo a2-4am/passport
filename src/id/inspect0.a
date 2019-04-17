@@ -215,18 +215,16 @@ IDBootloader
          lda   #TRUE
          sta   gIsProDOS
          jsr   IDVolumeName
-         bcc   +
-         jmp   UseUniversal
-+
+         bcs   .useuniv
+
 ;
 ; Dinkey-DOS (ProDOS file structure with DOS 3.3-ish RWTS in language card)
 ; detectable now because IDVolumeName just read the first sector of the
 ; volume directory into memory so we can look for a unique filename
 ;
          jsr   IDDinkeyDOS
-         bcc   +
-         jmp   UseUniversal
-+        lda   #s_dinkeydos
+         bcs   .useuniv
+         lda   #s_dinkeydos
          jsr   PrintByID
          lda   #TRUE
          sta   gIsDinkeyDOS
