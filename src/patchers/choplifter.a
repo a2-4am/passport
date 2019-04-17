@@ -356,10 +356,10 @@ ReadChoplifter
          lda   $c054
          lda   $c052
          lda   $c050
+         txa
          ldx   #$43
          txs
-         lda   $2B
-         pha
+         pha              ; save boot slot
          lda   #>(.resume-1)
          pha
          lda   #<(.resume-1)
@@ -368,7 +368,7 @@ ReadChoplifter
 
 .resume
          pla
-         sta   $2b
+         sta   $2b        ; restore boot slot
          ldx   #0
 -        lda   .stager,x
          sta   $500,x
@@ -384,6 +384,7 @@ ReadChoplifter
          sty   $807
          ldy   #$60     ; rts
          sty   $84c
+         ldx   $2b      ; SD requires X=boot slot x16
          jsr   .callSD  ; including original $8xx to $7xx
          asl   $807     ; 4xx, second table
          jmp   $500
