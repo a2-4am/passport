@@ -202,6 +202,8 @@ TraceDOS32LO
          bcs   .fail
          lda   #s_choplifter
          jsr   PrintByID
+         lda   #s_diskrwts
+         jsr   PrintByID
          jmp   Choplifter
 
 ; something did not match, not comfortable tracing,

@@ -4,6 +4,10 @@
 ; licensed by Broderbund, Gebelli, and others
 ;
 ; module by qkumba
+;
+; tested on
+; - Choplifter (Broderbund)
+; - Eggs-It (Gebelli)
 ;-------------------------------
 !zone {
          rts              ; reachable only via inspect
