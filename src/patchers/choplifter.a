@@ -12,7 +12,8 @@ Choplifter
          bit   gMode      ; nothing to do here in verify-only mode
          bpl   .exit
 
-;;prepare write routine at $2000-21ff first
+;; prepare write routine at $2000 for relocated address at $207
+;; the difficulty here is to find three spare pages across all games
 
          lda   #$00
          sta   gCommand
@@ -21,11 +22,6 @@ Choplifter
          jsr   IncProgress
 
 .read
-         lda   KEY
-         bpl   .continue
-         jmp   .cancel
-
-.continue
          asl   gTrack
          jsr   ReadChoplifter
          lsr   gTrack
@@ -98,10 +94,6 @@ Choplifter
          jsr   .cleanup
          jmp   Pass
 
-.cancel
-         jsr   .cleanup
-         jmp   Cancel
-
 .cleanup
          lda   $C0E8
          lda   #$01
@@ -140,20 +132,16 @@ ReadChoplifter
 
 .checkkey1
          lda   KEY
-.linkcancel1
          bmi   .cancel
          jsr   .readnib
 -        cmp   #$DD
          bne   .checkkey1
          jsr   .readnib
---       cmp   #$F5
+         cmp   #$F5
          bne   -
          jsr   .readnib
          cmp   #$D5
-         bne   --        ; this is the same bug
-         nop             ; timing bits
-         nop             ; timing bits
-         nop             ; timing bits
+         bne   -         ; this had the same bug (see below)
          ldx   #$03
 -        jsr   .read4x4
          jsr   .read4x4
@@ -167,6 +155,10 @@ ReadChoplifter
          cmp   #$40
          bcs   .checktrack20
          rts
+
+.cancel
+         jsr   .cleanup
+         jmp   Cancel
 
 .settrack00
          lda   #$D5
@@ -190,21 +182,19 @@ ReadChoplifter
 .checkkey0
          lda   KEY
 .linkcancel2
-         bmi   .linkcancel1
+         bmi   .cancel
          jsr   .readnib
 -        cmp   cmp2+1
          bne   .checkkey0
          jsr   .readnib
---       cmp   cmp2+0
+         cmp   cmp2+0
          bne   -
          jsr   .readnib
-         cmp   cmp1+1
-         bne   --        ; this is a bug
-                         ; it allows PR0 PR1 [any] PR1 PR2 instead of requiring PR0 PR1 PR2
-         nop             ; timing bits
-         nop             ; timing bits
-         nop             ; timing bits
-         ldy   #0
+         eor   cmp1+1
+         bne   -         ; this had a bug
+                         ; it branched to the middle nibble instead of the first one
+                         ; it allowed PR0 PR1 [any] PR1 PR2 instead of requiring PR0 PR1 PR2
+         tay
 --       jsr   .read4x4
          sta   (modsrc), y
          iny
@@ -246,81 +236,75 @@ ReadChoplifter
          sta   .prolog2+1
          lda   (BASEPAGE<<8)+$D3
          sta   .prolog3+1
-
-.checkkey2
-         lda   KEY
-.linkcancel3
-         bmi   .linkcancel2
-         jsr   .readnib
+--       jsr   .readnib
 .prolog1
 -        cmp   #$D1      ; SMC
-         bne   .checkkey2
+         bne   --
          jsr   .readnib
 .prolog2
---       cmp   #$D1      ; SMC
+         cmp   #$D1      ; SMC
          bne   -
          jsr   .readnib
 .prolog3
-         cmp   #$D1      ; SMC
-         bne   --        ; this is the same bug
-         nop             ; timing bits
-         nop             ; timing bits
-         nop             ; timing bits
-         ldx   #$00
--        jsr   .read4x4
+         eor   #$D1      ; SMC
+         bne   -         ; this had the same bug
+         tax
+--       lda   $C0EC     ; timing issue requires unrolling part of this
+         bpl   --
+         sec
+         rol
+         sta   tmp
+         jsr   .readnib
+         and   tmp
          sta   (BASEPAGE+$0f)<<8,x
          inx
          jsr   .read4x4
          sta   (BASEPAGE+$0f)<<8,x
          inx
-         jsr   .read4x4
+         jsr   .readnib
+         sec
+         rol
+         sta   tmp
+-        lda   $C0EC
+         bpl   -
+         and   tmp
          sta   (BASEPAGE+$0f)<<8,x
          inx
          cmp   #$EA
-         bne   -
-         ldx   #0
-.copywrite1
-         lda   $2000,x
-         sta   (BASEPAGE+8)<<8,x
-         inx
-         bne   .copywrite1
+         bne   --
+;; future work, just disable for now
+;;         ldx   #0
+;;.copywrite
+;;         lda   .writeroutine,x
+;;         sta   (BASEPAGE+8)<<8,x
+;;         inx
+;;         bne   .copywrite
+         lda   #$60     ; rts
+         sta   ((BASEPAGE+8)<<8)+7
          rts
 
 .readtrack22
          ldx   #$40
          ldy   #0
-
-.checkkey3
-         dey
+--       dey
          bne   +
          dex
-         beq   .copywrite2
-+        lda   KEY
-         bmi   .linkcancel3
-         jsr   .readnib
+         beq   ++
++        jsr   .readnib
 -        cmp   #$D5
-         bne   .checkkey3
+         bne   --
          jsr   .readnib
---       cmp   #$FF
+         cmp   #$FF
          bne   -
          jsr   .readnib
          cmp   #$DD
-         bne   --        ; this is the same bug
-         nop             ; timing bits
-         nop             ; timing bits
-         nop             ; timing bits
+         bne   -         ; this had the same bug
          ldx   #$00
 -        jsr   .read4x4
          sta   BASEPAGE<<8,x
          inx
          bne   -
-
-.copywrite2
-         lda   $2100,x
-         sta   (BASEPAGE+7)<<8,x
-         inx
-         bne   .copywrite2
-         rts
+++       rts
 
 .read4x4
 -        lda   $C0EC
@@ -359,7 +343,7 @@ ReadChoplifter
          txa
          sta   (modsrc),y
          tya
-         adc   #$17     ; carry set by sbc
+         adc   #$18-1   ; carry set by sbc
          tay
          txa
          adc   #$0F
@@ -382,14 +366,15 @@ ReadChoplifter
          jmp   $4000
 
 .resume
-         ldy   #0
--        lda   .stager,y
-         sta   $500,y
-         lda   (*+$ff) and $ff00,y
-         sta   $200,y
-         lda   (*+$1ff) and $ff00,y
-         sta   $400,y
-         iny
+         ldx   #0
+-        lda   .stager,x
+         sta   $500,x
+         lda   (*+$ff) and $ff00,x
+         sta   $200,x
+         lda   (*+$1ff) and $ff00,x
+         sta   $400,x
+         txs
+         inx
          bne   -
          jsr   .dostep4
          ldy   #2       ; pagehi, first table
@@ -408,10 +393,10 @@ ReadChoplifter
          sta   $801
          lda   #2
          sta   $27
-         jsr   $823     ; read half of write routine to $200 (but starts at $207)
+         jsr   $823     ; read write routine to $200 (but starts at $207)
          inc   $27
          jsr   $823     ; read patch table to $400
-         ldy   #0       ; avoid CFFA bug
+         ldy   #0       ; avoid CFFA bug (Y is not zero on return)
 -        lda   $400,y
          sta   .patcher+1
          lda   $401,y
@@ -428,14 +413,10 @@ ReadChoplifter
          jsr   .dostep2 ; reach track $22
          sta   $3d
          dec   $27
-         jsr   $823     ; read high scores
-         inc   $27
-         jsr   $823     ; read half of write routine to $600
-         ldy   #0       ; avoid CFFA bug
--        lda   ($26),y
+         jsr   $823     ; read high scores to $400
+         ldy   #0       ; avoid CFFA bug (Y is not zero on return)
+-        lda   $700,y
          sta   $800,y
-         lda   $600,y
-         sta   $300,y
          iny
          bne   -
          lda   $C088,x
@@ -457,6 +438,6 @@ ReadChoplifter
          jsr   $82F
          lsr   $40
          rts
-}
-}
+    } ;$5xx
+  } ;$Bxxx
 }

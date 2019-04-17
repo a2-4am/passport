@@ -48,7 +48,7 @@ flag     =     $FF        ; byte
 RELBASE  =     $2000      ; dummy assignment for first build
                           ; to allow calculation of proper value
 }
-LOWPOINT =     $4300      ; lowest available address for code
+LOWPOINT =     $4000      ; lowest available address for code
 HIGHPOINT =    $B200      ; highest available address+1 for code
 BASEPAGE =     $10        ; Special Delivery tracer assumes
                           ; this is $10, so don't change it!

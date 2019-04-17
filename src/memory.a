@@ -7,12 +7,12 @@
 ; 0A00..0AFF - backup of zero page during Special Delivery tracer, used by RAM disk
 ; 0B00..0BFF - used by RAM disk
 ; 0C00..0CFF - clobbered by Special Delivery tracer
-; 0D00..0FFF - unused
+; 0D00..0EFF - unused
+; 0F00..0FFF - backup of page $BF (SaveProDOS, SwapProDOS)
 ; 1000..1FFF - data buffer for current track
 ; 2000..35FF - clobbered by Special Delivery tracer
 ; 3600..3FFF - clobbered by lomem DOS 3.3 / Special Delivery tracers
-; 4000..42FF - backup of zero page, page 3, page $BF (SaveProDOS, SwapProDOS)
-; 4300..B1FF - program code
+; 4000..B1FF - program code
 ; B200..BFFF - clobbered by DOS boot tracer (RDOS is B200+, DOS 3.x is B600+)
 ;-------------------------------
 
@@ -20,23 +20,15 @@
 ;-------------------------------
 ; SaveProDOS
 ; saves memory pages used by ProDOS
-; pages $00, $03, $BF
+; pages $BF
 ; in:  none
 ; out: all flags and registers clobbered
 ;-------------------------------
 !zone {
 SaveProDOS
-         lda   #$00
-         ldx   #$40
-         ldy   #$01
-         jsr   CopyMemory
-         lda   #$03
-         ldx   #$41
-         ldy   #$01
-         jsr   CopyMemory
 SaveGlobal
          lda   #$BF
-         ldx   #$42
+         ldx   #$0F
          ldy   #$01
          ;;jsr   CopyMemory ; fall through
 }
@@ -118,23 +110,13 @@ ReorderBuffer
 ;-------------------------------
 ; SwapProDOS
 ; saves/restores memory pages used by ProDOS
-; pages $00, $03, $BF
+; pages $BF
 ; in:  none
 ; out: all flags and registers clobbered
 ;-------------------------------
 SwapProDOS
-         lda   #$00
-         ldx   #$40
-         ldy   #$01
-         sec
-         jsr   SwapMemory
-         lda   #$03
-         ldx   #$41
-         ldy   #$01
-         sec
-         jsr   SwapMemory
          lda   #$BF
-         ldx   #$42
+         ldx   #$0F
          ldy   #$01
          sec
          ;;jsr   SwapMemory ; fall through
