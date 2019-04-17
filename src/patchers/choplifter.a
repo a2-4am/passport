@@ -356,6 +356,11 @@ ReadChoplifter
          lda   $c054
          lda   $c052
          lda   $c050
+         ldx   #0
+-        lda   $800,x
+         sta   $400,x
+         inx
+         bne   -
          ldx   #$42
          txs
          lda   #>(.resume-1)
@@ -370,6 +375,8 @@ ReadChoplifter
          sta   $500,x
          lda   (*+$ff) and $ff00,x
          sta   $200,x
+         lda   $400,x
+         sta   $800,x
          lda   (*+$1ff) and $ff00,x
          sta   $400,x
          txs
