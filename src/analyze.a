@@ -7,7 +7,8 @@
 SkipTrack
 ; don't look for whole-track protections on track 0, that's silly
          lda   gTrack
-         beq   .donotskip
+         sec
+         beq   .linknoskip
 ;
 ; Electronic Arts protection track?
 ;
@@ -24,6 +25,7 @@ SkipTrack
 ; Unformatted track?
 ;
          jsr   IsUnformatted
+.linknoskip
          bcs   .donotskip
 ;
 ; $F7F6EFEAAB protection track?
@@ -52,15 +54,12 @@ SkipTrack
 ;
          lda   gTrack
          cmp   #$22
-         bne   +
+         clc
+         bne   .donotskip
          lda   gIsProDOS
-         bne   +
-         lda   #TRUE
+         bne   .donotskip
          sta   gPossibleGamco
-+        clc
-         !byte $24        ; hides next SEC
 .donotskip
-         sec
          rts
 }
 
@@ -79,39 +78,39 @@ IsF7F6
          lda   $C0E9
          lda   #$00
          jsr   WAIT
+         tay
          lda   #$19
          sta   nibcount
-         ldy   #$00
--        lda   $C0EC
-         bpl   -
+         jsr   .readnib
          cmp   #$F7
          beq   +
 .restart iny
          bne   -
          dec   nibcount
          bne   -
-         beq   .fail
+         sec
+         beq   .driveoff
 +
--        lda   $C0EC
-         bpl   -
+         jsr   .readnib
          cmp   #$F6
          bne   .restart
--        lda   $C0EC
-         bpl   -
+         jsr   .readnib
          cmp   #$EF
          bne   .restart
--        lda   $C0EC
-         bpl   -
+         jsr   .readnib
          cmp   #$EE
          bne   .restart
--        lda   $C0EC
-         bpl   -
+         jsr   .readnib
          cmp   #$AB
          bne   .restart
          clc
-         !byte $24        ; hides SEC
-.fail    sec
+.driveoff
          lda   $C0E8
+         rts
+
+.readnib
+-        lda   $C0EC
+         bpl   -
          rts
 }
 
@@ -250,7 +249,6 @@ xHeredityDog
          lda   $08FE
          clc
          adc   #$04
-         pha
          ldx   #$16
          ldy   #$4A
          jsr   CompareMemory
@@ -259,7 +257,6 @@ xHeredityDog
          !byte $C0,$10,$FB,$C9,$D5,$D0,$EE,$BD,$8C,$C0,$10,$FB,$C9,$AA,$D0,$E5
          !byte $A9,$4C,$A0,$00,$99,$00,$95,$88,$D0,$FA,$CE,$46,$BB,$AD,$46,$BB
          !byte $C9,$07,$D0,$EC,$A9,$18,$8D,$42,$B9,$A9,$0A,$8D,$ED,$B7,$D0,$05
-         pla
          bcs   .exit
          lda   #kSectorOptional
          sta   T00S0A
@@ -351,9 +348,8 @@ b4bbcompare
          !byte $08,$85,$3D,$85,$43,$A9,$BF,$85
          !byte $3F,$A9,$00,$85,$3C,$85,$42,$E6
          !byte $42,$A9,$FE,$85,$3E,$A0,$00,$AD
-         bcc   +
-         jmp   _b4bbexit
-+        lda   gIsDOS32
+         bcs   _b4bbexit
+         ldy   gIsDOS32
          beq   .dos32
          lda   #$55       ; low byte of address that checks address prologue 1
          sta   b4bbmodify+1
@@ -368,14 +364,13 @@ b4bbcompare
          lda   #$B2       ; low byte of address that checks address epilogue 1
          sta   b4bbmodify2+1
          ldx   #$01       ; track
-         ldy   #$00       ; sector
+         ;;ldy   #$00       ; sector
 .all
          stx   gTrack
          sty   gSector
          lda   #$00
          sta   gAddress
          lda   #$0C
-         clc
          adc   #BASEPAGE
          sta   gAddress+1
          jsr   ReadSector ; read sector so we can look for 'JMP $B4BB' marker
@@ -386,13 +381,11 @@ b4bbcompare
          jsr   compare
          !byte $4C,$BB,$B4
          bcs   _b4bbexit
-         lda   gIsDOS32
-         beq   .dos32b
          ldx   #$02       ; track
          ldy   #$02       ; sector
-         bne   .allb      ; always branches
+         lda   gIsDOS32
+         bne   .allb
 .dos32b
-         ldx   #$02       ; track
          ldy   #$09       ; sector
 .allb
          stx   gTrack
@@ -400,7 +393,6 @@ b4bbcompare
          jsr   ReadSector ; read sector to get address prologue 3 for rest of disk
          bcs   _b4bbexit
          lda   #$0C
-         clc
          adc   #BASEPAGE
          sta   x0+2
 x0       lda   $FFC2      ; high byte modified at runtime (above)

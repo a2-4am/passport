@@ -15,24 +15,21 @@ Trace
          ldy   #$01
          jsr   CopyMemory
          pla
-         tax
-         pla
+         ldx   #0
          ldy   $B6F8
          cpy   #$4C
-         bne   +
-         sty   $B6F8      ; JMP for Disk II controller
-         sta   $B6F9      ; lo byte of callback
-         stx   $B6FA      ; hi byte of callback
-         jmp   $B600
-+        ldy   $B6FB
+         beq   +
+         ldx   #3
+         ldy   $B6FB
          cpy   #$4C
-         bne   +
-         sty   $B6FB      ; JMP for IIgs smart controller
-         sta   $B6FC      ; lo byte of callback
-         stx   $B6FD      ; hi byte of callback
+         bne   ++
++        sta   $B6FA,x    ; hi byte of callback
+         pla
+         sta   $B6F9,x    ; lo byte of callback
          jmp   $B600
 
-+        lda   #s_canttrace ; unknown disk controller
+++       pla
+         lda   #s_canttrace ; unknown disk controller
          jsr   PrintByID
          jmp   UseUniversal
 }

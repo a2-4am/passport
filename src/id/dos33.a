@@ -32,7 +32,7 @@ IDDOS33
 ; Code at $0801 must be standard (with one exception)
 ;
 ++       lda   #$00
-         ldx   #$00
+         tax
          ldy   #$3F
          jsr   compare    ; if T00,S00,$00 ==
          !byte $01

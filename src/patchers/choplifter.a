@@ -1,0 +1,443 @@
+;-------------------------------
+; #Choplifter
+; insane protection by Roland Gustafsson
+; licensed by Broderbund, Gebelli, and others
+;
+; module by qkumba
+;-------------------------------
+!zone {
+         rts              ; reachable only via inspect
+
+Choplifter
+         lda   #$00
+         sta   gCommand
+         sta   dct+1
+         jsr   ChangeTrackNW
+         jsr   IncProgress
+
+.read
+         asl   gTrack
+         jsr   ReadChoplifter
+         lsr   gTrack
+         jsr   WriteTrackNA
+         ldx   gTrack
+         inx
+         txa
+         pha
+         jsr   ChangeTrackNW
+         jsr   IncProgress
+         pla
+         cmp   #$23
+         bne   .read
+
+         bit   gMode      ; done if in verify-only mode
+         bpl   .exit
+
+         ; start with RDOS as a minimal SD base
+         ; and copy SD code for free
+
+         ldx   #ID_RDOS13
+         jsr   ConstructStandardDelivery
+         ldx   #$B0
+         stx   $104E      ; exit address
+         stx   $1050      ; next-stage addressing
+         inx
+         stx   $104F      ; next-stage addressing
+         inx
+         stx   $105D      ; next-stage addressing
+
+         lda   #$10
+         sta   modsrc+1
+         lda   #$5E
+         sta   modsrc
+         ldx   #$27
+         lda   #$67
+         jsr   .inittable
+
+         lda   #$1F
+         sta   modsrc+1
+         lda   #$00
+         sta   modsrc
+         ldx   #$87
+         lda   #$C7
+         jsr   .inittable
+
+         dec   modsrc+1
+         ldx   #$0F
+         lda   #$27
+         jsr   .inittable
+         ldx   #$47
+         lda   #$87
+         jsr   .inittable2
+
+         dec   $1E00
+         lda   #$C0
+         sta   $10DD
+         sta   $1EAF
+         sta   $1F7F
+
+         ldy   #0
+-        lda   .stage2,y
+         sta   $1D00,y
+         iny
+         bne   -
+
+         lda   #s_bootwrite
+         jsr   PrintByID
+         lda   #$00
+         sta   gTrack
+         jsr   WriteTrackNA
+         inc   gPatchCount
+
+.exit
+         jsr   .cleanup
+         jmp   Pass
+
+.cleanup
+         lda   $C0E8
+         lda   #$01
+         sta   gCommand
+         sta   dct+1
+         rts
+
+ReadChoplifter
+         lda   #BASEPAGE
+         sta   modsrc+1
+         lda   #$00
+         sta   modsrc
+-        jsr   ReadSector ; really just seek
+         lda   $C0E9      ; turn the drive back on
+                          ; no need for spin-up because we are fast enough
+         ldx   #$04
+         lda   gTrack
+         beq   .settrack00
+         cmp   #$12
+         bcc   .settrack01
+         cmp   #$16
+         bcc   .ignore
+         beq   .readtrack0B
+         cmp   #$3E
+         bcs   .checktrack1E
+         jsr   .readtrack
+         inc   gTrack
+         lda   gTrack
+         lsr
+         bcs   -
+         dec   gTrack
+.ignore
+         rts
+
+.readtrack0B
+
+.checkkey1
+         lda   KEY
+         bmi   .cancel
+         jsr   .readnib
+-        cmp   #$DD
+         bne   .checkkey1
+         jsr   .readnib
+         cmp   #$F5
+         bne   -
+         jsr   .readnib
+         cmp   #$D5
+         bne   -         ; this had the same bug (see below)
+         ldx   #$03
+-        jsr   .read4x4
+         jsr   .read4x4
+         jsr   .read4x4
+         sta   cmp1+0,x
+         dex
+         bpl   -
+         rts
+
+.checktrack1E
+         cmp   #$40
+         bcs   .checktrack20
+         rts
+
+.cancel
+         jsr   .cleanup
+         jmp   Cancel
+
+.settrack00
+         lda   #$D5
+         sta   cmp1+1
+         sta   cmp2+1
+         lda   #$DD
+         sta   cmp1+0
+         sta   cmp2+0
+         !byte $2C
+.settrack01
+         ldx   #$08
+
+.readtrack
+         stx   tmpx
+         ldx   #3
+
+.retry0
+         dex
+         beq   .fatal
+
+.checkkey0
+         lda   KEY
+.linkcancel2
+         bmi   .cancel
+         jsr   .readnib
+-        cmp   cmp2+1
+         bne   .checkkey0
+         jsr   .readnib
+         cmp   cmp2+0
+         bne   -
+         jsr   .readnib
+         eor   cmp1+1
+         bne   -         ; this had a bug
+                         ; it branched to the middle nibble instead of the first one
+                         ; it allowed PR0 PR1 [any] PR1 PR2 instead of requiring PR0 PR1 PR2
+         tay
+--       jsr   .read4x4
+         sta   (modsrc), y
+         iny
+         bne   --
+-        lda   $C0EC
+         bpl   -
+         cmp   cmp1+0
+         bne   .retry0
+         inc   modsrc+1
+         dec   tmpx
+         bne   --
+         jsr   .readnib
+         sta   cmp1+1    ; prologue 3
+         jsr   .readnib
+         sta   cmp2+0    ; prologue 2
+         jsr   .readnib
+         sta   cmp2+1    ; prologue 1
+         jsr   .readnib
+         sta   cmp1+0    ; epilog
+         rts
+
+.fatal
+         jsr   .cleanup
+                          ; if we get to here, we've
+         jmp   FatalError ; decided the read error is fatal
+
+.checktrack20
+         beq   .readtrack20
+         cmp   #$44
+         beq   .readtrack22
+         rts
+
+.readtrack20
+         ldx   #1
+         jsr   .readtrack
+         lda   (BASEPAGE<<8)+$C5
+         sta   .prolog1+1
+         lda   (BASEPAGE<<8)+$CC
+         sta   .prolog2+1
+         lda   (BASEPAGE<<8)+$D3
+         sta   .prolog3+1
+
+.checkkey2
+         lda   KEY
+         bmi   .linkcancel2
+         jsr   .readnib
+
+.prolog1
+-        cmp   #$D1      ; SMC
+         bne   .checkkey2
+         jsr   .readnib
+.prolog2
+         cmp   #$D1      ; SMC
+         bne   -
+         jsr   .readnib
+.prolog3
+         eor   #$D1      ; SMC
+         bne   -         ; this had the same bug
+         tax
+--       lda   $C0EC     ; timing issue requires unrolling part of this
+         bpl   --
+         sec
+         rol
+         sta   tmp
+         jsr   .readnib
+         and   tmp
+         sta   (BASEPAGE+8)<<8,x
+         inx
+         jsr   .read4x4
+         sta   (BASEPAGE+8)<<8,x
+         inx
+         jsr   .readnib
+         sec
+         rol
+         sta   tmp
+-        lda   $C0EC
+         bpl   -
+         and   tmp
+         sta   (BASEPAGE+8)<<8,x
+         inx
+         cmp   #$EA
+         bne   --
+         rts
+
+.readtrack22
+         ldx   #$40
+         ldy   #0
+--       dey
+         bne   +
+         dex
+         beq   ++
++        jsr   .readnib
+-        cmp   #$D5
+         bne   --
+         jsr   .readnib
+         cmp   #$FF
+         bne   -
+         jsr   .readnib
+         cmp   #$DD
+         bne   -         ; this had the same bug
+         ldx   #$00
+-        jsr   .read4x4
+         sta   BASEPAGE<<8,x
+         inx
+         bne   -
+++       rts
+
+.read4x4
+-        lda   $C0EC
+         bpl   -
+         sec
+         rol
+         sta   tmp
+-        lda   $C0EC
+         bpl   -
+         and   tmp
+         rts
+
+.readnib
+-        lda   $C0EC
+         bpl   -
+         rts
+
+.inittable
+         ldy   #$08
+
+.inittable2
+         sta   tmp
+
+.buildtable
+         txa
+         sta   (modsrc),y
+         dex
+         iny
+         tya
+         and   #$0F
+         cmp   #$0F
+         bne   .buildtable
+         tya
+         sbc   #$0F
+         tay
+         txa
+         sta   (modsrc),y
+         tya
+         adc   #$18-1   ; carry set by sbc
+         tay
+         txa
+         adc   #$0F
+         tax
+         cmp   tmp
+         bne   .buildtable
+         rts
+
+.stage2 !pseudopc $B000 { ; high address that won't be hit on the first round of SD
+         lda   $c057
+         lda   $c054
+         lda   $c052
+         lda   $c050
+         ldx   #$42
+         txs
+         lda   #>(.resume-1)
+         pha
+         lda   #<(.resume-1)
+         pha
+         jmp   $4000
+
+.resume
+         ldx   #0
+-        lda   .stager,x
+         sta   $500,x
+         lda   (*+$ff) and $ff00,x
+         sta   $200,x
+         lda   (*+$1ff) and $ff00,x
+         sta   $400,x
+         txs
+         inx
+         bne   -
+         jsr   .dostep4
+         ldy   #2       ; pagehi, first table
+         sty   $807
+         ldy   #$60     ; rts
+         sty   $84c
+         ldx   $2b
+         jsr   .callSD  ; including original $8xx to $7xx
+         asl   $807     ; 4xx, second table
+         jmp   $500
+
+.stager !pseudopc $500 {
+         jsr   .callSD
+         jsr   .step
+         lda   #$60     ; rts
+         sta   $801
+
+         ; to enable writing requires finding three spare pages
+         ; that is common to all games.  I did not succeed.
+         ; for that reason, auto-crack is read-only.
+
+         sta   $207
+
+         lda   #4
+         sta   $27
+         jsr   $823     ; read patch table to $400
+         ldy   #0       ; avoid CFFA bug (Y is not zero on return)
+-        lda   $400,y
+         sta   .patcher+1
+         lda   $401,y
+         sta   .patcher+2
+         lda   $402,y
+         iny
+         iny
+         iny
+
+.patcher
+         sta   $d1d1
+         cmp   #$ea
+         bne   -
+         jsr   .dostep2 ; reach track $22
+         sta   $3d
+         dec   $27
+         jsr   $823     ; read high scores to $400
+         ldy   #0       ; avoid CFFA bug (Y is not zero on return)
+-        lda   $700,y
+         sta   $800,y
+         iny
+         bne   -
+         lda   $C088,x
+         jmp   ($20)
+
+.callSD
+         sta   $806     ; pagelo
+         ldy   #$ff
+         jsr   $805
+         beq   .step
+
+.dostep4
+         jsr   .dostep2
+
+.dostep2
+         jsr   .step
+
+.step
+         jsr   $82F
+         lsr   $40
+         rts
+    } ;$5xx
+  } ;$Bxxx
+}

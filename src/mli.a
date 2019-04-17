@@ -139,21 +139,16 @@ WriteTrackMLI
 ;-------------------------------
 !zone {
 SaveFile1Shot
-         pla
-         sta   $00
-         pla
-         sta   $01
-         tax
-         lda   #$0B
          clc
-         adc   $00
-         bcc   .noinc
-         inx
-.noinc
-         tay
-         txa
+         pla
+         adc   #$0B
+         sta   $00
+         tax
+         pla
+         adc   #$00
+         sta   $01
          pha
-         tya
+         txa
          pha
 
          ldy   #$01
@@ -208,85 +203,6 @@ SaveFile1Shot
                           ; not close)
 
 .savefile1s
-         rts
-}
-
-;-------------------------------
-; LoadFile1Shot
-; load a file into memory all at once,
-;   using ProDOS MLI calls
-;
-; in:  stack contains 8 bytes of parameters:
-;      +1 address of pathname
-;      +3 address of data buffer (to receive file contents)
-;      +5 [word] maximum length of data to read
-;      +7 address of ProDOS file buffer
-; out: if C set, load failed and A contains error code
-;        from open or read
-;      if C clear, load succeeded and ($02) contains
-;        data loaded from file
-;      all other flags clobbered
-;      all registers clobbered
-;      stack set to next instruction after parameters
-;-------------------------------
-!zone {
-LoadFile1Shot
-         pla
-         sta   $00
-         pla
-         sta   $01
-         tax
-         lda   #$08
-         clc
-         adc   $00
-         bcc   .noinc
-         inx
-.noinc
-         tay
-         txa
-         pha
-         tya
-         pha
-
-         ldy   #$01
-         lda   ($00),y    ; lo byte of pathname
-         sta   mliparam+1
-         iny
-         lda   ($00),y    ; hi byte of pathname
-         sta   mliparam+2
-         ldy   #$07
-         lda   ($00),y    ; lo byte of ProDOS file buffer
-         sta   mliparam+3
-         iny
-         lda   ($00),y    ; hi byte of ProDOS file buffer
-         sta   mliparam+4
-
-         jsr   OpenFile
-         bcs   .loadfile1s ; C set on error
-
-         pha              ; push file reference number
-         ldy   #$03
-         lda   ($00),y    ; lo address of data buffer
-         sta   mliparam+2
-         iny
-         lda   ($00),y    ; hi address of data buffer
-         sta   mliparam+3
-         iny
-         lda   ($00),y    ; lo data length
-         sta   mliparam+4
-         iny
-         lda   ($00),y    ; hi data length
-         sta   mliparam+5
-         pla              ; pull file reference number
-         jsr   ReadFile
-         php              ; save flags from readfile
-         pha
-         jsr   CloseFile  ; always close whether read worked or not
-         pla
-         plp              ; restore flags from readfile
-                          ; (so caller gets codes from read attempt,
-                          ; not close)
-.loadfile1s
          rts
 }
 

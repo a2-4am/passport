@@ -17,7 +17,7 @@ IDDavidson
          bne   .no        ; no, give up
          lda   gSector    ; sector $00?
          bne   .no        ; no, give up
-         lda   #$00       ; try re-reading the sector but
+         ;;lda   #$00       ; try re-reading the sector but
          sta   $B92E      ; ignore data field checksum failure
          jsr   ReadSector
          lda   #$13

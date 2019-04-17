@@ -152,7 +152,7 @@
 ;
          lda   #$01
          ldx   #$07
-         ldy   #$01
+         tay
          jsr   modify     ; set T00,S01,$07 =
          !byte $2C
 

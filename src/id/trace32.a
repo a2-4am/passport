@@ -10,7 +10,7 @@
 !zone {
 IDDOS32
          lda   #$00
-         ldx   #$00
+         tax
          ldy   #$0F
          jsr   compare
          !byte $01
@@ -52,7 +52,7 @@ IDDOS32
 !zone {
 IDDOS32LO
          lda   #$00
-         ldx   #$00
+         tax
          ldy   #$0F
          jsr   compare
          !byte $01
@@ -74,6 +74,11 @@ IDDOS32LO
          ldy   #$03
          jsr   compare
          !byte $4C,$01,$03; JMP $0301
+         bcc   .exit
+         ldx   #$37
+         ldy   #$03
+         jsr   compare
+         !byte $4C,$01,$03; JMP $0301
 .exit    rts
 }
 
@@ -85,10 +90,11 @@ IDDOS32LO
 TraceDOS32
          lda   #<.TraceDOS32b
          ldx   #>.TraceDOS32b
-         jmp   Trace
+         bne   .linktrace
 TraceDOS32LO
          lda   #<.TraceDOS32LOb
          ldx   #>.TraceDOS32LOb
+.linktrace
          jmp   Trace
 
 .TraceDOS32b
@@ -96,13 +102,19 @@ TraceDOS32LO
          sta   $0846
          lda   #>.TraceDOS32c
          sta   $0847
-         jmp   $0801
+         bne   .linkjmp
 
 .TraceDOS32LOb
-         lda   #<.TraceDOS32c
-         sta   $0842
+         ldy   #$00
+         lda   $0837
+         cmp   #$4C
+         beq   +
+         ldy   #$0A
++        lda   #<.TraceDOS32c
+         sta   $0838,y
          lda   #>.TraceDOS32c
-         sta   $0843
+         sta   $0839,y
+.linkjmp
          jmp   $0801
 
 .TraceDOS32c
@@ -138,7 +150,7 @@ TraceDOS32LO
          !byte $85,$3F
          !byte $E6,$3F
          !byte $6C,$3E,$00
-         bcs   .fail
+         bcs   .tryChoplifter
          lda   $03CC
          cmp   #$B6
          beq   +
@@ -173,6 +185,24 @@ TraceDOS32LO
          sta   $033C
          ldy   $0300
          jmp   $0301
+
+.tryChoplifter
+         lda   #$03
+         ldx   #$01
+         ldy   #$10
+         jsr   CompareMemory
+         !byte $A2,$2E     ;LDX #$2E
+         !byte $9A         ;TXS
+         !byte $84,$48     ;STY $48
+         !byte $A2,$00     ;LDX #$00
+         !byte $BC,$00,$03 ;LDY $0300,X
+         !byte $88         ;DEY
+         !byte $A9,$EA     ;LDA #$EA
+         !byte $20,$26,$03 ;JSR $0326
+         bcs   .fail
+         lda   #s_choplifter
+         jsr   PrintByID
+         jmp   Choplifter
 
 ; something did not match, not comfortable tracing,
 ; but we know enough to know that the universal RWTS won't work,
@@ -308,13 +338,13 @@ FFer
          bne   +
          iny
          bne   -
+         tya
          ldy   jCallRWTS+2
          dey
          sty   .G+2
          dey
          sty   .F+2
-         ldy   #$00
-         tya
+         tay
 .F       sta   $FF00,y
          iny
          bne   .F

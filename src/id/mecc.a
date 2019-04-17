@@ -16,7 +16,7 @@
 !zone {
 IDMECC
          lda   #$00
-         ldx   #$00
+         tax
          ldy   #$17
          jsr   compare
          !byte $01,$4C,$1A,$08,$17,$0F,$00,$00

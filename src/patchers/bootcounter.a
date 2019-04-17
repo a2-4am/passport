@@ -7,11 +7,10 @@
 !zone {
          bit   gMode      ; nothing to do here in verify-only mode
          bpl   .exit
-         lda   gTrack
-         cmp   #$01
+         ldx   gTrack
+         dex
          bne   .exit
-         lda   #$00
-         ldx   #$00
+         txa
          ldy   #$23
          jsr   compare    ; if T01,S00,$00 !=
          !byte $AD,$F3,$03,$8D,$F4,$03,$20,$2F

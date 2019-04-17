@@ -10,7 +10,6 @@ _jmpbbfe
          bpl   .exit
          lda   gIsBoot0   ; if DOS 3.3 boot0 loader
          bne   .exit
-         lda   #$00
          ldx   #$4A
          ldy   #$03
          jsr   compare    ; and T00,S00,$4A ==

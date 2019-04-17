@@ -17,7 +17,7 @@ IDPascal
 ; addresses (e.g. Wizardry I, Sundog Frozen Legacy)
 ;
          lda   #$00
-         ldx   #$00
+         tax
          ldy   #$08
          jsr   compare    ; if T00,S00,$00 ==
          !byte $01

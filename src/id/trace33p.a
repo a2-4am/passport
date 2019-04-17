@@ -9,7 +9,7 @@
 ;-------------------------------
 IDSpecDel
          lda   #$00
-         ldx   #$00
+         tax
          ldy   #$58
          jsr   compare
          !byte $02,$90,$4A,$C6,$27,$BD,$31,$09
@@ -35,7 +35,7 @@ TraceSpecDel
          jsr   ClearTSBuffer
          lda   #$00       ; set a marker to see if entire
          sta   $3FFF      ; RWTS loads successfully later
-         lda   #$00       ; save zero page before trace
+;;         lda   #$00       ; save zero page before trace
          ldx   #$0A
          ldy   #$01
          jsr   CopyMemory
@@ -164,9 +164,10 @@ SDsuccess
 
          jsr   IncProgress
          inc   gTrack
-         lda   #$20
-         ldx   #$10
-         ldy   #$10
+         lda   #$10
+         tax
+         tay
+         asl
          jsr   CopyMemory
          jsr   WriteTrackNA          ; doesn't really write anything in verify-only mode
 

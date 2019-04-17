@@ -199,5 +199,6 @@ _track   !byte $00
 _sector  !byte $00
          !word dct
 gAddress !word $1F00
-         !byte $00,$00,$01,$00,$FE,$60,$01,$00,$00
+         !byte $00,$00
+gCommand !byte $01,$00,$FE,$60,$01,$00,$00
 dct      !byte $00,$01,$EF,$D8,$00

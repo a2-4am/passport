@@ -29,8 +29,7 @@
 ; additional samples.)
 ;
          lda   gIsBoot0
-         bne   .exit
-         lda   gPossibleD5D5F7
+         ora   gPossibleD5D5F7
          bne   .exit
 
 +        ldy   #$20

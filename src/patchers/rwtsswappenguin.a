@@ -12,8 +12,8 @@
 !zone {
          bit   gMode      ; nothing to do here in verify-only mode
          bpl   .exit
-         lda   gTrack     ; and track 1
-         cmp   #$01
+         ldx   gTrack     ; and track 1
+         dex
          bne   .exit
          lda   #$04
          ldx   #$52

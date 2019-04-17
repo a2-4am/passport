@@ -10,12 +10,11 @@
          lda   gTrack
          cmp   #$02
          bne   .exit
-         lda   gIsDOS32
+         lda   #$03
+         ldx   gIsDOS32
          bne   +
          lda   #$0A
-         !byte $2C        ; hide next LDA
-+        lda   #$03
-         sta   gDisplayBytes
++        sta   gDisplayBytes
          ldx   #$D7
          ldy   #$04
          jsr   compare    ; and T02,S0x,$D7 ==

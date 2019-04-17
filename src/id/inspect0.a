@@ -26,16 +26,16 @@ IDBootloader
          dex
          bpl   -
 
-         lda   gIsInfocom18
-         bne   .check13
          lda   #s_infocom18
-         jsr   PrintByID
-         jmp   UseUniversal
+         ldx   gIsInfocom18
+         beq   .printinfo
 
 .check13
          lda   gIs13Sector
          bne   .sanity
          lda   #s_13sector
+
+.printinfo
          jsr   PrintByID
          jmp   UseUniversal
 
@@ -74,16 +74,14 @@ IDBootloader
          lda   #TRUE
          sta   gPossibleD5D5F7
 +        jsr   IDDiversi
-         bcc   .diversi
-         jsr   IDPronto
-         bcc   .pronto
-         lda   #s_dosb0
-         !byte $2c
-.diversi
          lda   #s_diversidos
-         !byte $2c
-.pronto
+         bcc   .printdos
+         jsr   IDPronto
          lda   #s_prontodos
+         bcc   .printdos
+         lda   #s_dosb0
+
+.printdos
          jsr   PrintByID
          jmp   TraceDOS33
 ;
@@ -217,18 +215,16 @@ IDBootloader
          lda   #TRUE
          sta   gIsProDOS
          jsr   IDVolumeName
-         bcc   +
-         jmp   .useuniv
-+
+         bcs   .useuniv
+
 ;
 ; Dinkey-DOS (ProDOS file structure with DOS 3.3-ish RWTS in language card)
 ; detectable now because IDVolumeName just read the first sector of the
 ; volume directory into memory so we can look for a unique filename
 ;
          jsr   IDDinkeyDOS
-         bcc   +
-         jmp   .useuniv
-+        lda   #s_dinkeydos
+         bcs   .useuniv
+         lda   #s_dinkeydos
          jsr   PrintByID
          lda   #TRUE
          sta   gIsDinkeyDOS

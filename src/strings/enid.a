@@ -119,4 +119,5 @@ s_holle =      $71
 s_hoffman =    $72
 s_diskvol0 =   $73
 s_e7everywhere=$74
-STRINGCOUNT =  $75
+s_choplifter = $75
+STRINGCOUNT =  $76
