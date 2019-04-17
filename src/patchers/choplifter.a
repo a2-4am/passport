@@ -356,10 +356,8 @@ ReadChoplifter
          lda   $c054
          lda   $c052
          lda   $c050
-         txa
-         ldx   #$43
+         ldx   #$42
          txs
-         pha              ; save boot slot
          lda   #>(.resume-1)
          pha
          lda   #<(.resume-1)
@@ -367,8 +365,6 @@ ReadChoplifter
          jmp   $4000
 
 .resume
-         pla
-         sta   $2b        ; restore boot slot
          ldx   #0
 -        lda   .stager,x
          sta   $500,x
@@ -401,15 +397,25 @@ ReadChoplifter
 
          sta   $207
 
+         lda   #6
+         sta   $27
+         jsr   $823     ; read patch table to $600
+         jsr   .dostep2 ; reach track $22
+         sta   $3d
          lda   #4
          sta   $27
-         jsr   $823     ; read patch table to $400
+         jsr   $823     ; read high scores to $400
+         lda   $C088,x
          ldy   #0       ; avoid CFFA bug (Y is not zero on return)
--        lda   $400,y
+-        lda   $700,y
+         sta   $800,y
+         iny
+         bne   -
+-        lda   $600,y
          sta   .patcher+1
-         lda   $401,y
+         lda   $601,y
          sta   .patcher+2
-         lda   $402,y
+         lda   $602,y
          iny
          iny
          iny
@@ -418,16 +424,6 @@ ReadChoplifter
          sta   $d1d1
          cmp   #$ea
          bne   -
-         jsr   .dostep2 ; reach track $22
-         sta   $3d
-         dec   $27
-         jsr   $823     ; read high scores to $400
-         ldy   #0       ; avoid CFFA bug (Y is not zero on return)
--        lda   $700,y
-         sta   $800,y
-         iny
-         bne   -
-         lda   $C088,x
          jmp   ($20)
 
 .callSD
