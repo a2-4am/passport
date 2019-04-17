@@ -356,8 +356,10 @@ ReadChoplifter
          lda   $c054
          lda   $c052
          lda   $c050
-         ldx   #$42
+         ldx   #$43
          txs
+         lda   $2B
+         pha
          lda   #>(.resume-1)
          pha
          lda   #<(.resume-1)
@@ -365,6 +367,8 @@ ReadChoplifter
          jmp   $4000
 
 .resume
+         pla
+         sta   $2b
          ldx   #0
 -        lda   .stager,x
          sta   $500,x
@@ -380,7 +384,6 @@ ReadChoplifter
          sty   $807
          ldy   #$60     ; rts
          sty   $84c
-         ldx   $2b
          jsr   .callSD  ; including original $8xx to $7xx
          asl   $807     ; 4xx, second table
          jmp   $500
