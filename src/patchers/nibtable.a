@@ -6,19 +6,6 @@
 ;-------------------------------
 !zone {
 _nibtable
-         jmp   .checkread
-
-.writedata
-         !byte $96,$97,$9A,$9B,$9D,$9E,$9F,$A6
-         !byte $A7,$AB,$AC,$AD,$AE,$AF,$B2,$B3
-         !byte $B4,$B5,$B6,$B7,$B9,$BA,$BB,$BC
-         !byte $BD,$BE,$BF,$CB,$CD,$CE,$CF,$D3
-         !byte $D6,$D7,$D9,$DA,$DB,$DC,$DD,$DE
-         !byte $DF,$E5,$E6,$E7,$E9,$EA,$EB,$EC
-         !byte $ED,$EE,$EF,$F2,$F3,$F4,$F5,$F6
-         !byte $F7,$F9,$FA,$FB,$FC,$FD,$FE,$FF
-
-.checkread
          bit   gMode      ; nothing to do here in verify-only mode
          bpl   .exit
          lda   gIsRWTS    ; if DOS 3.3 RWTS
@@ -74,11 +61,18 @@ _nibtable
          bne   .common
 
 .fixwrite
+         lda   #$16
+         sta   modsrc
+         lda   #$20
+         ldx   #$00
+         tay
+         jsr   build6and2       ; to $2000
+
          lda   #$40
          sta   .loopcheck+1
          lda   #$29
-         ldx   #<.writedata
-         ldy   #>.writedata
+         ldx   #$00
+         ldy   #$20
 
 .common
          sta   nibdestindex

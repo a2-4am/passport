@@ -65,33 +65,12 @@
 
          lda   #s_rwtswrite
          jsr   PrintByID
-
-;build 6-and-2 denibbilisation table for reading
-
-         ldx   #$16
-         ldy   #0
---       stx   $48
-         txa
-         asl
-         bit   $48
-         beq   +
-         ora   $48
-         eor   #$ff
-         and   #$7e
--        bcs   +
-         lsr
-         bne   -
-         tya
-         sta   (BASEPAGE * $100) + $6B9 - $16, x
-
-;and 6-and-2 nibbilisation table for writing
-
-         txa
-         ora   #$80
-         sta   (BASEPAGE * $100) + $B70, y
-         iny
-+        inx
-         bpl   --
+         lda   #<((BASEPAGE * $100) + $6B9 - $16)
+         sta   modsrc
+         lda   #>((BASEPAGE * $100) + $6B9 - $16)
+         ldx   #<((BASEPAGE * $100) + $B70)
+         ldy   #>((BASEPAGE * $100) + $B70)
+         jsr   build6and2
 
 ;replace 6-and-2 encoder routine
 ;and introduce DOS-order lookup
@@ -117,6 +96,43 @@
          jsr   PrintByID
 
          jmp   .exit
+
+;build 6-and-2 denibbilisation table for reading
+
+build6and2
+         sta   modsrc+1
+         stx   moddest
+         sty   moddest+1
+         ldx   #$16
+         ldy   #0
+--       stx   $48
+         txa
+         asl
+         bit   $48
+         beq   +
+         ora   $48
+         eor   #$ff
+         and   #$7e
+-        bcs   +
+         lsr
+         bne   -
+         tya
+         pha
+         txa
+         tay
+         pla
+         sta   (modsrc), y
+         tay
+
+;and 6-and-2 nibbilisation table for writing
+
+         txa
+         ora   #$80
+         sta   (moddest), y
+         iny
++        inx
+         bpl   --
+         rts
 
 .writemod
          !byte $A2,$00     ;LDX #$00
