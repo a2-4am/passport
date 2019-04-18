@@ -358,7 +358,7 @@ ReadChoplifter
          lda   $c050
          ldx   #0
 -        lda   $800,x
-         sta   $400,x
+         sta   $B300,x
          inx
          bne   -
          ldx   #$42
@@ -375,10 +375,10 @@ ReadChoplifter
          sta   $500,x
          lda   (*+$ff) and $ff00,x
          sta   $200,x
-         lda   $400,x
-         sta   $800,x
          lda   (*+$1ff) and $ff00,x
          sta   $400,x
+         lda   $B300,x
+         sta   $800,x
          txs
          inx
          bne   -

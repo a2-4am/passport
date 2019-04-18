@@ -9,65 +9,34 @@
 !zone {
 universale7
          bit   gMode      ; nothing to do here in verify-only mode
-         bpl   .jmpexit
-         lda   #$0F
-         sta   .sector+1
-.sector  lda   #$FF       ; modified at runtime
+         bpl   .exit
+         lda   #BASEPAGE+$0F
+         sta   .sector+2
          ldx   #$A0
-         ldy   #$60
-         jsr   compare
-         !byte $AC,$00,$AC,$00,$AC,$00,$AC,$00
-         !byte $AC,$00,$AC,$00,$AC,$00,$AC,$00
-         !byte $AC,$00,$AC,$00,$AC,$00,$AC,$00
-         !byte $AC,$00,$AC,$00,$AC,$00,$AC,$00
-         !byte $AC,$00,$AC,$00,$AC,$00,$AC,$00
-         !byte $AC,$00,$AC,$00,$AC,$00,$AC,$00
-         !byte $AC,$00,$AC,$00,$AC,$00,$AC,$00
-         !byte $AC,$00,$AC,$00,$AC,$00,$AC,$00
-         !byte $AC,$00,$AC,$00,$AC,$00,$AC,$00
-         !byte $AC,$00,$AC,$00,$AC,$00,$AC,$00
-         !byte $AC,$00,$AC,$00,$AC,$00,$AC,$00
-         !byte $AC,$00,$AC,$00,$AC,$00,$AC,$00
-         bcc   +
-         jmp   .nextsector
-.jmpexit
-         jmp   .exit
+         lda   #$00
+.eor     eor   #$AC
+.sector  cmp   $D100,x    ; modified at runtime
+         bne   .nextsector
+         inx
+         cpx   #$80
+         bcc   .sector
+         bne   .eor
 
-+
-         lda   .sector+1
-         ldx   #$00
-         ldy   #$80
-         jsr   compare
-         !byte $00,$00,$00,$00,$00,$00,$00,$00
-         !byte $00,$00,$00,$00,$00,$00,$00,$00
-         !byte $00,$00,$00,$00,$00,$00,$00,$00
-         !byte $00,$00,$00,$00,$00,$00,$00,$00
-         !byte $00,$00,$00,$00,$00,$00,$00,$00
-         !byte $00,$00,$00,$00,$00,$00,$00,$00
-         !byte $00,$00,$00,$00,$00,$00,$00,$00
-         !byte $00,$00,$00,$00,$00,$00,$00,$00
-         !byte $00,$00,$00,$00,$00,$00,$00,$00
-         !byte $00,$00,$00,$00,$00,$00,$00,$00
-         !byte $00,$00,$00,$00,$00,$00,$00,$00
-         !byte $00,$00,$00,$00,$00,$00,$00,$00
-         !byte $00,$00,$00,$00,$00,$00,$00,$00
-         !byte $00,$00,$00,$00,$00,$00,$00,$00
-         !byte $00,$00,$00,$00,$00,$00,$00,$00
-         !byte $00,$00,$00,$00,$00,$00,$00,$00
-         bcs   .nextsector
-
-         lda   .sector+1
+         lda   .sector+2
+         and   #$0F
+         pha
          sta   gDisplayBytes
          lda   #s_e7
          jsr   PrintByID
-         lda   .sector+1
+         pla
          ldx   #$A3
          ldy   #$0C
          jsr   modify
          !byte $64,$B4,$44,$80,$2C,$DC,$18,$B4,$44,$80,$44,$B4
 .nextsector
-         dec   .sector+1
-         bmi   .exit
-         jmp   .sector
+         dec   .sector+2
+         lda   .sector+2
+         cmp   #BASEPAGE-1
+         bne   .sector
 .exit
 }

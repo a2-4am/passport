@@ -15,7 +15,7 @@ IDEncoded44
          ldy   #$07
          jsr   SearchTrack
          !byte $BD,$8C,$C0,$10,$FB,$38,$2A
-         bcs   .exit
+;;         bcs   .exit
 .exit
          rts
 }
