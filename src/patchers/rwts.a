@@ -36,16 +36,16 @@
          lda   .findmatch1+1
          asl
          adc   .findmatch1+1
+         adc   #4
          tay
-         lda   .table2+1,y
-         pha
-         tax
--        lda   .table2+2,x
-         sta   .cmpbytes2,x
+         ldx   #$04
+-        lda   .table2+2-1,y
+         sta   .cmpbytes2-1,x
+         dey
          dex
-         bpl   -
+         bne   -
          ldx   .table2,y
-         pla
+         lda   .table2+1,y
          tay
          pla
          jsr   compare
@@ -81,21 +81,13 @@
          ldx   .table5+1,y
          stx   .cmpbyte5+1
          ldx   .table5,y
-         tay
-         txa
-         pha
-         tya
          ldy   #2
          jsr   compare
 .cmpbyte5
          !byte $20,$D1   ; SMC
 
-         tay
-         pla
          bcs   +
-         tax
          dex
-         tya
          pha
          lda   .findmatch1+1
          lsr
@@ -103,7 +95,7 @@
          lda   .table6,y
          sta   .cmpbyte6
          sta   .modify6
-         tya
+         pla
          ldy   #1
          jsr   compare
 .cmpbyte6
@@ -118,7 +110,7 @@
 +        ldy   .findmatch1+1
          iny
          iny
-         cpy   #(.table1_e-.table1)*2/3
+         cpy   #.table1_e-.table1
          beq   .jmpexit2
          jmp   .initmatch
 
