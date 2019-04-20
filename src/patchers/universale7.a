@@ -12,7 +12,7 @@ universale7
          bpl   .exit
          lda   #BASEPAGE+$0F
          sta   .sector+2
-         ldx   #$A0
+.search  ldx   #$A0
          lda   #$00
 .eor     eor   #$AC
 .sector  cmp   $D100,x    ; modified at runtime
@@ -37,6 +37,6 @@ universale7
          dec   .sector+2
          lda   .sector+2
          cmp   #BASEPAGE-1
-         bne   .sector
+         bne   .search
 .exit
 }

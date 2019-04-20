@@ -341,6 +341,9 @@ IDBootFailure
 
 VerifyInfocom18
          lda   $C0E9
+         lda   #2
+         sta   modsrc
+
 .retry13
          ldx   #$1A       ; the length of a track
          ldy   #0
@@ -355,6 +358,8 @@ VerifyInfocom18
          rts
 
 .badsect
+         dec   modsrc
+         beq   .no
          lda   gIsInfocom18
          beq   .no        ; if in Infocom mode already then we have a true failure
          bne   .retry13   ; otherwise, try to identify 13-sector instead
