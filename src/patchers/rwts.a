@@ -4,14 +4,60 @@
 
 !zone {
          bit   gMode      ; nothing to do here in verify-only mode
-         bpl   .jmpexit1
+         bpl   .jmpexit
          ldy   gIsRWTS    ; DOS 3.3-shaped RWTSen only
-         beq   .initmatch
+         beq   .initmatch1
 
-.jmpexit1
+.jmpexit
          jmp   .exit
 
-.initmatch
+         ; address prologue (read)
+         ; A,X
+
+.table1
+         !byte $03,$4F
+         !byte $03,$59
+         !byte $03,$64
+         !byte $03,$8B
+         !byte $03,$95
+         !byte $02,$E1
+         !byte $02,$EB
+         !byte $02,$F6
+         !byte $03,$2F
+         !byte $03,$39
+.table1_e
+
+         ; Y, compare bytes (nop-pad to four bytes)
+
+.table2
+         !byte $03,$D0,$F0,$EA,$EA
+         !byte $04,$D0,$F2,$A0,$03
+         !byte $02,$D0,$E7,$EA,$EA
+         !byte $02,$D0,$AE,$EA,$EA
+         !byte $03,$D0,$A4,$18,$EA
+         !byte $03,$D0,$F4,$EA,$EA
+         !byte $04,$D0,$F2,$A0,$56
+         !byte $02,$D0,$E7,$EA,$EA
+         !byte $03,$D0,$0A,$EA,$EA
+         !byte $03,$F0,$5C,$38,$EA
+.table2_e
+
+         ; compare/modify byte
+
+.table3
+         !byte $D5
+         !byte $AA
+         !byte $96
+         !byte $DE
+         !byte $AA
+         !byte $D5
+         !byte $AA
+         !byte $AD
+         !byte $DE
+         !byte $AA
+.table3_e
+
+.initmatch1
          sty   .findmatch1+1
 
 .findmatch1
@@ -33,19 +79,24 @@
          bcs   +
 
          pha
+         txa
+         adc   #7
+         pha
          lda   .findmatch1+1
-         asl
+         lsr
+         adc   .findmatch1+1
          adc   .findmatch1+1
          adc   #4
          tay
          ldx   #$04
--        lda   .table2+2-1,y
+-        lda   .table2+1-1,y
          sta   .cmpbytes2-1,x
          dey
          dex
          bne   -
-         ldx   .table2,y
-         lda   .table2+1,y
+         pla
+         tax
+         lda   .table2,y
          tay
          pla
          jsr   compare
@@ -53,11 +104,15 @@
          !byte $EA,$EA,$EA,$EA
          bcs   +
 
-         ldy   .findmatch1+1
-         ldx   .table3+1,y
-         stx   .cmpbyte3
-         stx   .modify3
-         ldx   .table3,y
+         pha
+         lda   .findmatch1+1
+         lsr
+         tay
+         lda   .table3,y
+         sta   .cmpbyte3
+         sta   .modify3
+         pla
+         dex
          ldy   #1
          jsr   compare
 .cmpbyte3               ; SMC
@@ -70,6 +125,18 @@
          !byte $D1
 
 +        ldy   .findmatch1+1
+         iny
+         iny
+         cpy   #.table1_e-.table1
+         bne   .initmatch1
+
+         ldy   #$00
+
+.initmatch2
+         sty   .findmatch4+1
+
+.findmatch4
+         ldy   #$D1     ; SMC
          lda   .table4,y
          ldx   .table4+1,y
          ldy   #1
@@ -77,25 +144,30 @@
          !byte $A9
          bcs   +
 
-+        ldy   .findmatch1+1
-         ldx   .table5+1,y
-         stx   .cmpbyte5+1
-         ldx   .table5,y
+         pha
+         lda   .findmatch4+1
+         lsr
+         tay
+         lda   .table5,y
+         sta   .cmpbyte5+1
+         pla
+         inx
+         inx
          ldy   #2
          jsr   compare
 .cmpbyte5
          !byte $20,$D1   ; SMC
 
          bcs   +
-         dex
          pha
-         lda   .findmatch1+1
+         lda   .findmatch4+1
          lsr
          tay
          lda   .table6,y
          sta   .cmpbyte6
          sta   .modify6
          pla
+         dex
          ldy   #1
          jsr   compare
 .cmpbyte6
@@ -107,61 +179,12 @@
 .modify6
          !byte $D1      ; SMC
 
-+        ldy   .findmatch1+1
++        ldy   .findmatch4+1
          iny
          iny
-         cpy   #.table1_e-.table1
-         beq   .jmpexit2
-         jmp   .initmatch
-
-.jmpexit2
-         jmp   .exit
-
-         ; address prologue (read)
-         ; A,X
-
-.table1
-         !byte $03,$4F
-         !byte $03,$59
-         !byte $03,$64
-         !byte $03,$8B
-         !byte $03,$95
-         !byte $02,$E1
-         !byte $02,$EB
-         !byte $02,$F6
-         !byte $03,$2F
-         !byte $03,$39
-.table1_e
-
-         ; X,Y, compare bytes (nop-pad to four bytes)
-
-.table2
-         !byte $56,$03,$D0,$F0,$EA,$EA
-         !byte $60,$04,$D0,$F2,$A0,$03
-         !byte $6B,$02,$D0,$E7,$EA,$EA
-         !byte $92,$02,$D0,$AE,$EA,$EA
-         !byte $9C,$03,$D0,$A4,$18,$EA
-         !byte $E8,$03,$D0,$F4,$EA,$EA
-         !byte $F2,$04,$D0,$F2,$A0,$56
-         !byte $FD,$02,$D0,$E7,$EA,$EA
-         !byte $36,$03,$D0,$0A,$EA,$EA
-         !byte $40,$03,$F0,$5C,$38,$EA
-.table2_e
-
-         ; X, compare byte
-
-.table3
-         !byte $55,$D5
-         !byte $5F,$AA
-         !byte $6A,$96
-         !byte $91,$DE
-         !byte $9B,$AA
-         !byte $E7,$D5
-         !byte $F1,$AA
-         !byte $FC,$AD
-         !byte $35,$DE
-         !byte $3F,$AA
-.table3_e
+         cpy   #.table4_e-.table4
+         bne   .initmatch2
+         beq   .exit
 
          ; address prologue (write)
          ; A,X
@@ -182,22 +205,22 @@
          !byte $02,$AC
 .table4_e
 
-         ; X, compare byte
+         ; compare byte
 
 .table5
-         !byte $7B,$D5
-         !byte $80,$D5
-         !byte $85,$D5
-         !byte $AF,$D5
-         !byte $B4,$D5
-         !byte $B9,$D5
-         !byte $54,$B8
-         !byte $59,$B8
-         !byte $5E,$B8
-         !byte $9F,$B8
-         !byte $A4,$B8
-         !byte $A9,$B8
-         !byte $AE,$B8
+         !byte $D5
+         !byte $D5
+         !byte $D5
+         !byte $D5
+         !byte $D5
+         !byte $D5
+         !byte $B8
+         !byte $B8
+         !byte $B8
+         !byte $B8
+         !byte $B8
+         !byte $B8
+         !byte $B8
 .table5_e
 
          ; modify byte

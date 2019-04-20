@@ -16,17 +16,21 @@
          cmp   #ID_MECC4+1
          bcs   .jmpexit
          asl
+         asl
+         asl
+         asl
+         adc   gMECCFastloadType
          adc   gMECCFastloadType
          ldx   #6
 -        pha
          tay
          txa
          pha
-         lda   .table+2,y
+         lda   .table+2-18,y
          sta   .cmpbyte
          sta   .modbyte
-         lda   .table,y
-         ldx   .table+1,y
+         lda   .table-18,y
+         ldx   .table+1-18,y
          ldy   #$01
          jsr   compare
 .cmpbyte
@@ -45,6 +49,7 @@
          iny
          iny
          iny
+         tya
          dex
          bne   -
 
