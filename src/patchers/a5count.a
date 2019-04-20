@@ -20,12 +20,11 @@
          bcs   .exit
          sta   gDisplayBytes
          pha
-         lda   #s_a5count
-         jsr   PrintByID
          txa
-         clc
          adc   #$08
          tax
+         lda   #s_a5count
+         jsr   PrintByID
          pla
          ldy   #$02
          jsr   modify

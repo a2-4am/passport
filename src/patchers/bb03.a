@@ -23,9 +23,8 @@
          lda   #$07       ; sector to check for David-DOS variant
          ldx   gIsDavidDOS
          beq   .maybe
-         ldx   gIsBoot0   ; if DOS 3.3 boot0 loader
-         bne   .noButInYellow
-         ldx   gIsBoot1   ; and DOS 3.3 boot1 loader
+         lda   gIsBoot0   ; if DOS 3.3 boot0 loader
+         ora   gIsBoot1   ; and DOS 3.3 boot1 loader
          bne   .noButInYellow
          lda   #$05       ; sector to check for DOS 3.3 variant
 .maybe

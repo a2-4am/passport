@@ -1,0 +1,97 @@
+;-------------------------------
+; #MECC
+; MECC fastloader with custom
+; address and data prologues
+; e.g. 1: Word Munchers
+; e.g. 2: Phonics Prime Time series
+; e.g. 3: Word Munchers v1.1
+; e.g. 4: A-201 Conquering Whole Numbers
+;-------------------------------
+!zone {
+         bit   gMode      ; nothing to do here in verify-only mode
+         bpl   .jmpexit
+         lda   gMECCFastloadType
+         cmp   #ID_MECC1
+         bcc   .jmpexit
+         cmp   #ID_MECC4+1
+         bcs   .jmpexit
+         asl
+         asl
+         asl
+         asl
+         adc   gMECCFastloadType
+         adc   gMECCFastloadType
+         ldx   #6
+-        pha
+         tay
+         txa
+         pha
+         lda   .table+2-18,y
+         sta   .cmpbyte
+         sta   .modbyte
+         lda   .table-18,y
+         ldx   .table+1-18,y
+         ldy   #$01
+         jsr   compare
+.cmpbyte
+         !byte $D1        ; SMC
+         bcc   +
+
+         ldy   #$01
+         jsr   modify
+.modbyte
+         !byte $D1        ; SMC
+
++        pla
+         tax
+         pla
+         tay
+         iny
+         iny
+         iny
+         tya
+         dex
+         bne   -
+
+.jmpexit
+         jmp   .exit
+
+.table
+         ; MECC1
+
+         !byte $0B,$08,$D5
+         !byte $0B,$12,$AA
+         !byte $0B,$1D,$96
+         !byte $0B,$8F,$D5
+         !byte $0B,$99,$AA
+         !byte $0B,$A3,$AD
+
+         ; MECC2
+
+         !byte $07,$83,$D5
+         !byte $07,$8D,$AA
+         !byte $07,$98,$96
+         !byte $07,$15,$D5
+         !byte $07,$1F,$AA
+         !byte $07,$2A,$AD
+
+         ; MECC3
+
+         !byte $0A,$E8,$D5
+         !byte $0A,$F2,$AA
+         !byte $0A,$FD,$96
+         !byte $0B,$6F,$D5
+         !byte $0B,$79,$AA
+         !byte $0B,$83,$AD
+
+         ; MECC4
+
+         !byte $08,$83,$D5
+         !byte $08,$8D,$AA
+         !byte $08,$98,$96
+         !byte $08,$15,$D5
+         !byte $08,$1F,$AA
+         !byte $08,$2A,$AD
+
+.exit
+}

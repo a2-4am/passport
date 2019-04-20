@@ -5,542 +5,241 @@
 !zone {
          bit   gMode      ; nothing to do here in verify-only mode
          bpl   .jmpexit
-         lda   gIsRWTS    ; DOS 3.3-shaped RWTSen only
-         beq   +
+         ldy   gIsRWTS    ; DOS 3.3-shaped RWTSen only
+         beq   .initmatch1
+
 .jmpexit
          jmp   .exit
-;
-; address prologue byte 1 (read)
-;
-+        lda   #$03
-         ldx   #$4F
-         ldy   #$06
-         jsr   compare    ; if T00,S03,$4F ==
-         !byte $BD,$8C,$C0
-         !byte $10,$FB
-         !byte $C9
-         bcs   +
-         ldx   #$56
-         ldy   #$03
-         jsr   compare    ; and T00,S03,$56 ==
-         !byte $D0,$F0
-         !byte $EA
-         bcs   +
-         ldx   #$55
-         ldy   #$01
-         jsr   compare    ; and T00,S03,$55 !=
+
+         ; address prologue (read)
+         ; A,X
+
+.table1
+         !byte $03,$4F
+         !byte $03,$59
+         !byte $03,$64
+         !byte $03,$8B
+         !byte $03,$95
+         !byte $02,$E1
+         !byte $02,$EB
+         !byte $02,$F6
+         !byte $03,$2F
+         !byte $03,$39
+.table1_e
+
+         ; Y, compare bytes (nop-pad to four bytes)
+
+.table2
+         !byte $03,$D0,$F0,$EA,$EA
+         !byte $04,$D0,$F2,$A0,$03
+         !byte $02,$D0,$E7,$EA,$EA
+         !byte $02,$D0,$AE,$EA,$EA
+         !byte $03,$D0,$A4,$18,$EA
+         !byte $03,$D0,$F4,$EA,$EA
+         !byte $04,$D0,$F2,$A0,$56
+         !byte $02,$D0,$E7,$EA,$EA
+         !byte $03,$D0,$0A,$EA,$EA
+         !byte $03,$F0,$5C,$38,$EA
+.table2_e
+
+         ; compare/modify byte
+
+.table3
          !byte $D5
-         bcc   +
-         ldy   #$01
-         jsr   modify     ; then set T00,S03,$55 =
-         !byte $D5
-;
-; address prologue byte 2 (read)
-;
-+        lda   #$03
-         ldx   #$59
-         ldy   #$06
-         jsr   compare    ; if T00,S03,$59 ==
-         !byte $BD,$8C,$C0
-         !byte $10,$FB
-         !byte $C9
-         bcs   +
-         ldx   #$60
-         ldy   #$04
-         jsr   compare    ; and T00,S03,$60 ==
-         !byte $D0,$F2
-         !byte $A0,$03
-         bcs   +
-         ldx   #$5F
-         ldy   #$01
-         jsr   compare    ; and T00,S03,$5F !=
          !byte $AA
-         bcc   +
-         ldy   #$01
-         jsr   modify     ; then set T00,S03,$5F =
-         !byte $AA
-;
-; address prologue byte 3 (read)
-;
-+        lda   #$03
-         ldx   #$64
-         ldy   #$06
-         jsr   compare    ; if T00,S03,$64 ==
-         !byte $BD,$8C,$C0
-         !byte $10,$FB
-         !byte $C9
-         bcs   +
-         ldx   #$6B
-         ldy   #$02
-         jsr   compare    ; and T00,S03,$6B ==
-         !byte $D0,$E7
-         bcs   +
-         ldx   #$6A
-         ldy   #$01
-         jsr   compare    ; and T00,S03,$6A !=
          !byte $96
+         !byte $DE
+         !byte $AA
+         !byte $D5
+         !byte $AA
+         !byte $AD
+         !byte $DE
+         !byte $AA
+.table3_e
+
+.initmatch1
+         sty   .findmatch1+1
+
+.findmatch1
+         ldy   #$D1     ; SMC
+         lda   #$C9
+         ldx   .table1+1,y
+         cpx   #$E1
+         bne   .compare1
+         lda   #$49
+.compare1
+         sta   .cmpbyte1
+         lda   .table1,y
+         ldy   #6
+         jsr   compare
+         !byte $BD,$8C,$C0
+         !byte $10,$FB
+.cmpbyte1
+         !byte $D1      ; SMC
+         bcs   +
+
+         pha
+         txa
+         adc   #7
+         pha
+         lda   .findmatch1+1
+         lsr
+         adc   .findmatch1+1
+         adc   .findmatch1+1
+         adc   #4
+         tay
+         ldx   #$04
+-        lda   .table2+1-1,y
+         sta   .cmpbytes2-1,x
+         dey
+         dex
+         bne   -
+         pla
+         tax
+         lda   .table2,y
+         tay
+         pla
+         jsr   compare
+.cmpbytes2              ; SMC
+         !byte $EA,$EA,$EA,$EA
+         bcs   +
+
+         pha
+         lda   .findmatch1+1
+         lsr
+         tay
+         lda   .table3,y
+         sta   .cmpbyte3
+         sta   .modify3
+         pla
+         dex
+         ldy   #1
+         jsr   compare
+.cmpbyte3               ; SMC
+         !byte $D1
          bcc   +
-         ldy   #$01
-         jsr   modify     ; then set T00,S03,$6A =
+
+         ldy   #1
+         jsr   modify
+.modify3                ; SMC
+         !byte $D1
+
++        ldy   .findmatch1+1
+         iny
+         iny
+         cpy   #.table1_e-.table1
+         bne   .initmatch1
+
+         ldy   #$00
+
+.initmatch2
+         sty   .findmatch4+1
+
+.findmatch4
+         ldy   #$D1     ; SMC
+         lda   .table4,y
+         ldx   .table4+1,y
+         ldy   #1
+         jsr   compare
+         !byte $A9
+         bcs   +
+
+         pha
+         lda   .findmatch4+1
+         lsr
+         tay
+         lda   .table5,y
+         sta   .cmpbyte5+1
+         pla
+         inx
+         inx
+         ldy   #2
+         jsr   compare
+.cmpbyte5
+         !byte $20,$D1   ; SMC
+
+         bcs   +
+         pha
+         lda   .findmatch4+1
+         lsr
+         tay
+         lda   .table6,y
+         sta   .cmpbyte6
+         sta   .modify6
+         pla
+         dex
+         ldy   #1
+         jsr   compare
+.cmpbyte6
+         !byte $D1      ; SMC
+         bcc   +
+
+         ldy   #1
+         jsr   modify
+.modify6
+         !byte $D1      ; SMC
+
++        ldy   .findmatch4+1
+         iny
+         iny
+         cpy   #.table4_e-.table4
+         bne   .initmatch2
+         beq   .exit
+
+         ; address prologue (write)
+         ; A,X
+
+.table4
+         !byte $06,$79
+         !byte $06,$7E
+         !byte $06,$83
+         !byte $06,$AD
+         !byte $06,$B2
+         !byte $06,$B7
+         !byte $02,$52
+         !byte $02,$57
+         !byte $02,$5C
+         !byte $02,$9D
+         !byte $02,$A2
+         !byte $02,$A7
+         !byte $02,$AC
+.table4_e
+
+         ; compare byte
+
+.table5
+         !byte $D5
+         !byte $D5
+         !byte $D5
+         !byte $D5
+         !byte $D5
+         !byte $D5
+         !byte $B8
+         !byte $B8
+         !byte $B8
+         !byte $B8
+         !byte $B8
+         !byte $B8
+         !byte $B8
+.table5_e
+
+         ; modify byte
+
+.table6
+         !byte $D5
+         !byte $AA
          !byte $96
-;
-; address epilogue byte 1 (read)
-;
-+        lda   #$03
-         ldx   #$8B
-         ldy   #$06
-         jsr   compare    ; if T00,S03,$8B ==
-         !byte $BD,$8C,$C0
-         !byte $10,$FB
-         !byte $C9
-         bcs   +
-         ldx   #$92
-         ldy   #$02
-         jsr   compare    ; and T00,S03,$92 ==
-         !byte $D0,$AE
-         bcs   +
-         ldx   #$91
-         ldy   #$01
-         jsr   compare    ; and T00,S03,$91 !=
          !byte $DE
-         bcc   +
-         ldy   #$01
-         jsr   modify     ; then set T00,S03,$91 =
-         !byte $DE
-;
-; address epilogue byte 2 (read)
-;
-+        lda   #$03
-         ldx   #$95
-         ldy   #$06
-         jsr   compare    ; if T00,S03,$95 ==
-         !byte $BD,$8C,$C0
-         !byte $10,$FB
-         !byte $C9
-         bcs   +
-         ldx   #$9C
-         ldy   #$03
-         jsr   compare    ; and T00,S03,$9C ==
-         !byte $D0,$A4
-         !byte $18
-         bcs   +
-         ldx   #$9B
-         ldy   #$01
-         jsr   compare    ; and T00,S03,$9B !=
          !byte $AA
-         bcc   +
-         ldy   #$01
-         jsr   modify     ; then set T00,S03,$9B =
-         !byte $AA
-;
-; data prologue byte 1 (read)
-;
-+        lda   #$02
-         ldx   #$E1
-         ldy   #$06
-         jsr   compare    ; if T00,S02,$E1 ==
-         !byte $BD,$8C,$C0
-         !byte $10,$FB
-         !byte $49
-         bcs   +
-         ldx   #$E8
-         ldy   #$03
-         jsr   compare    ; and T00,S02,$E8 ==
-         !byte $D0,$F4
-         !byte $EA
-         bcs   +
-         ldx   #$E7
-         ldy   #$01
-         jsr   compare    ; and T00,S02,$E7 !=
-         !byte $D5
-         bcc   +
-         ldy   #$01
-         jsr   modify     ; then set T00,S02,$E7 =
-         !byte $D5
-;
-; data prologue byte 2 (read)
-;
-+        lda   #$02
-         ldx   #$EB
-         ldy   #$06
-         jsr   compare    ; if T00,S02,$EB ==
-         !byte $BD,$8C,$C0
-         !byte $10,$FB
-         !byte $C9
-         bcs   +
-         ldx   #$F2
-         ldy   #$04
-         jsr   compare    ; and T00,S02,$F2 ==
-         !byte $D0,$F2
-         !byte $A0,$56
-         bcs   +
-         ldx   #$F1
-         ldy   #$01
-         jsr   compare    ; and T00,S02,$F1 !=
-         !byte $AA
-         bcc   +
-         ldy   #$01
-         jsr   modify     ; then set T00,S02,$F1 =
-         !byte $AA
-;
-; data prologue byte 3 (read)
-;
-+        lda   #$02
-         ldx   #$F6
-         ldy   #$06
-         jsr   compare    ; if T00,S02,$F6 ==
-         !byte $BD,$8C,$C0
-         !byte $10,$FB
-         !byte $C9
-         bcs   +
-         ldx   #$FD
-         ldy   #$02
-         jsr   compare    ; and T00,S02,$FD ==
-         !byte $D0,$E7
-         bcs   +
-         ldx   #$FC
-         ldy   #$01
-         jsr   compare    ; and T00,S02,$FC !=
-         !byte $AD
-         bcc   +
-         ldy   #$01
-         jsr   modify     ; then set T00,S02,$FC =
-         !byte $AD
-;
-; data epilogue byte 1 (read)
-;
-+        lda   #$03
-         ldx   #$2F
-         ldy   #$06
-         jsr   compare    ; if T00,S03,$2F ==
-         !byte $BD,$8C,$C0
-         !byte $10,$FB
-         !byte $C9
-         bcs   +
-         ldx   #$36
-         ldy   #$03
-         jsr   compare    ; and T00,S03,$36 ==
-         !byte $D0,$0A,$EA
-         bcs   +
-         ldx   #$35
-         ldy   #$01
-         jsr   compare    ; and T00,S03,$35 !=
-         !byte $DE
-         bcc   +
-         ldy   #$01
-         jsr   modify     ; then set T00,S03,$35 =
-         !byte $DE
-;
-; data epilogue byte 2 (read)
-;
-+        lda   #$03
-         ldx   #$39
-         ldy   #$06
-         jsr   compare    ; if T00,S03,$39 ==
-         !byte $BD,$8C,$C0
-         !byte $10,$FB
-         !byte $C9
-         bcs   +
-         ldx   #$40
-         ldy   #$03
-         jsr   compare    ; and T00,S03,$40 ==
-         !byte $F0,$5C,$38
-         bcs   +
-         ldx   #$3F
-         ldy   #$01
-         jsr   compare    ; and T00,S03,$3F !=
-         !byte $AA
-         bcc   +
-         ldy   #$01
-         jsr   modify     ; then set T00,S03,$3F =
-         !byte $AA
-;
-; address prologue byte 1 (write)
-;
-+        lda   #$06
-         ldx   #$79
-         ldy   #$01
-         jsr   compare    ; if T00,S06,$79 ==
-         !byte $A9
-         bcs   +
-         ldx   #$7B
-         ldy   #$02
-         jsr   compare    ; and T00,S06,$7B ==
-         !byte $20,$D5
-         bcs   +
-         ldx   #$7A
-         ldy   #$01
-         jsr   compare    ; and T00,S06,$7A !=
-         !byte $D5
-         bcc   +
-         ldy   #$01
-         jsr   modify     ; then set T00,S06,$7A =
-         !byte $D5
-;
-; address prologue byte 2 (write)
-;
-+        lda   #$06
-         ldx   #$7E
-         ldy   #$01
-         jsr   compare    ; if T00,S06,$7E ==
-         !byte $A9
-         bcs   +
-         ldx   #$80
-         ldy   #$02
-         jsr   compare    ; and T00,S06,$80 ==
-         !byte $20,$D5
-         bcs   +
-         ldx   #$7F
-         ldy   #$01
-         jsr   compare    ; and T00,S06,$7F !=
-         !byte $AA
-         bcc   +
-         ldy   #$01
-         jsr   modify     ; then set T00,S06,$7F =
-         !byte $AA
-;
-; address prologue byte 3 (write)
-;
-+        lda   #$06
-         ldx   #$83
-         ldy   #$01
-         jsr   compare    ; if T00,S06,$83 ==
-         !byte $A9
-         bcs   +
-         ldx   #$85
-         ldy   #$02
-         jsr   compare    ; and T00,S06,$85 ==
-         !byte $20,$D5
-         bcs   +
-         ldx   #$84
-         ldy   #$01
-         jsr   compare    ; and T00,S06,$84 !=
-         !byte $96
-         bcc   +
-         ldy   #$01
-         jsr   modify     ; then set T00,S06,$84 =
-         !byte $96
-;
-; address epilogue byte 1 (write)
-;
-+        lda   #$06
-         ldx   #$AD
-         ldy   #$01
-         jsr   compare    ; if T00,S06,$AD ==
-         !byte $A9
-         bcs   +
-         ldx   #$AF
-         ldy   #$02
-         jsr   compare    ; and T00,S06,$AF ==
-         !byte $20,$D5
-         bcs   +
-         ldx   #$AE
-         ldy   #$01
-         jsr   compare    ; and T00,S06,$AE !=
-         !byte $DE
-         bcc   +
-         ldy   #$01
-         jsr   modify     ; then set T00,S06,$AE =
-         !byte $DE
-;
-; address epilogue byte 2 (write)
-;
-+        lda   #$06
-         ldx   #$B2
-         ldy   #$01
-         jsr   compare    ; if T00,S06,$B2 ==
-         !byte $A9
-         bcs   +
-         ldx   #$B4
-         ldy   #$02
-         jsr   compare    ; and T00,S06,$B4 ==
-         !byte $20,$D5
-         bcs   +
-         ldx   #$B3
-         ldy   #$01
-         jsr   compare    ; and T00,S06,$B3 !=
-         !byte $AA
-         bcc   +
-         ldy   #$01
-         jsr   modify     ; then set T00,S06,$B3 =
-         !byte $AA
-;
-; address epilogue byte 3 (write)
-;
-+        lda   #$06
-         ldx   #$B7
-         ldy   #$01
-         jsr   compare    ; if T00,S06,$B7 ==
-         !byte $A9
-         bcs   +
-         ldx   #$B9
-         ldy   #$02
-         jsr   compare    ; and T00,S06,$B9 ==
-         !byte $20,$D5
-         bcs   +
-         ldx   #$B8
-         ldy   #$01
-         jsr   compare    ; and T00,S06,$B8 !=
          !byte $EB
-         bcc   +
-         ldy   #$01
-         jsr   modify     ; then set T00,S06,$B8 =
-         !byte $EB
-;
-; data prologue byte 1 (write)
-;
-+        lda   #$02
-         ldx   #$52
-         ldy   #$01
-         jsr   compare    ; if T00,S02,$52 ==
-         !byte $A9
-         bcs   +
-         ldx   #$54
-         ldy   #$02
-         jsr   compare    ; and T00,S02,$54 ==
-         !byte $20,$B8
-         bcs   +
-         ldx   #$53
-         ldy   #$01
-         jsr   compare    ; and T00,S02,$53 !=
          !byte $D5
-         bcc   +
-         ldy   #$01
-         jsr   modify     ; then set T00,S02,$53 =
-         !byte $D5
-;
-; data prologue byte 2 (write)
-;
-+        lda   #$02
-         ldx   #$57
-         ldy   #$01
-         jsr   compare    ; if T00,S02,$57 ==
-         !byte $A9
-         bcs   +
-         ldx   #$59
-         ldy   #$02
-         jsr   compare    ; and T00,S02,$59 ==
-         !byte $20,$B8
-         bcs   +
-         ldx   #$58
-         ldy   #$01
-         jsr   compare    ; and T00,S02,$58 ==
          !byte $AA
-         bcc   +
-         ldy   #$01
-         jsr   modify     ; then set T00,S02,$58 =
-         !byte $AA
-;
-; data prologue byte 3 (write)
-;
-+        lda   #$02
-         ldx   #$5C
-         ldy   #$01
-         jsr   compare    ; if T00,S02,$5C ==
-         !byte $A9
-         bcs   +
-         ldx   #$5E
-         ldy   #$02
-         jsr   compare    ; and T00,S02,$5E ==
-         !byte $20,$B8
-         bcs   +
-         ldx   #$5D
-         ldy   #$01
-         jsr   compare    ; and T00,S02,$5D !=
          !byte $AD
-         bcc   +
-         ldy   #$01
-         jsr   modify     ; then set T00,S02,$5D =
-         !byte $AD
-;
-; data epilogue byte 1 (write)
-;
-+        lda   #$02
-         ldx   #$9D
-         ldy   #$01
-         jsr   compare    ; if T00,S02,$9D ==
-         !byte $A9
-         bcs   +
-         ldx   #$9F
-         ldy   #$02
-         jsr   compare    ; and T00,S02,$9F ==
-         !byte $20,$B8
-         bcs   +
-         ldx   #$9E
-         ldy   #$01
-         jsr   compare    ; and T00,S02,$9E !=
          !byte $DE
-         bcc   +
-         ldy   #$01
-         jsr   modify     ; then set T00,S02,$9E =
-         !byte $DE
-;
-; data epilogue byte 2 (write)
-;
-+        lda   #$02
-         ldx   #$A2
-         ldy   #$01
-         jsr   compare    ; if T00,S02,$A2 ==
-         !byte $A9
-         bcs   +
-         ldx   #$A4
-         ldy   #$02
-         jsr   compare    ; and T00,S02,$A4 ==
-         !byte $20,$B8
-         bcs   +
-         ldx   #$A3
-         ldy   #$01
-         jsr   compare    ; and T00,S02,$A3 !=
          !byte $AA
-         bcc   +
-         ldy   #$01
-         jsr   modify     ; then set T00,S02,$A3 =
-         !byte $AA
-;
-; data epilogue byte 3 (write)
-;
-+        lda   #$02
-         ldx   #$A7
-         ldy   #$01
-         jsr   compare    ; if T00,S02,$A7 ==
-         !byte $A9
-         bcs   +
-         ldx   #$A9
-         ldy   #$02
-         jsr   compare    ; and T00,S02,$A9 ==
-         !byte $20,$B8
-         bcs   +
-         ldx   #$A8
-         ldy   #$01
-         jsr   compare    ; and T00,S02,$A8 !=
          !byte $EB
-         bcc   +
-         ldy   #$01
-         jsr   modify     ; then set T00,S02,$A8 =
-         !byte $EB
-;
-; data epilogue byte 4 (write)
-; needed by some Sunburst disks
-;
-+        lda   #$02
-         ldx   #$AC
-         ldy   #$01
-         jsr   compare    ; if T00,S02,$AC ==
-         !byte $A9
-         bcs   +
-         ldx   #$AE
-         ldy   #$02
-         jsr   compare    ; and T00,S02,$AE ==
-         !byte $20,$B8
-         bcs   +
-         ldx   #$AD
-         ldy   #$01
-         jsr   compare    ; and T00,S02,$AD !=
          !byte $FF
-         bcc   +
-         ldy   #$01
-         jsr   modify     ; then set T00,S02,$AD =
-         !byte $FF
-+
+.table6_e
+
 .exit
 }

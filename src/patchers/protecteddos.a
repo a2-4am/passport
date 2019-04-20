@@ -63,7 +63,7 @@
          adc   #$0B
          tax
          lda   #$0B
-         jmp   ++
+         bne   ++
 +
          ldx   #BASEPAGE
          inx

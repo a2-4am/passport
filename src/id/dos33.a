@@ -145,9 +145,6 @@ IDDOS33
          ldy   #$09
          jsr   compare    ; if T00,S00,$F0 ==
          !byte $8D,$FE,$08
-
-
-
          !byte $EE,$F3,$03
          !byte $4C,$1F,$08
 ;        bcs   .exit      ; unknown code at $08F0 -> failure

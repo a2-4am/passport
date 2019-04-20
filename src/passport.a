@@ -4,7 +4,7 @@
 ;-------------------------------
 ; Passport
 ; a 4am hack
-; (c) 2016-8 by 4am
+; (c) 2016-9 by 4am
 ;
 ; Permission is hereby granted, free of charge, to any
 ; person obtaining a copy of this software and associated
@@ -234,11 +234,6 @@ MainMenu
          bne   +
          lda   #%00000000
          beq   Action     ; unconditional branch
-+
-         cmp   #k_demuffin
-         bne   +
-         lda   #%10000000
-         bne   Action     ; unconditional branch
 +
          cmp   #k_crack
          bne   .getkey

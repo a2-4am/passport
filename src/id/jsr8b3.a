@@ -28,10 +28,8 @@ ID8b3
          !byte $A2,$FF,$BD,$00,$08,$9D,$00,$B6
          !byte $CA,$E0,$FF,$D0,$F5,$20,$CC,$08
          !byte $A6,$2B
-         bcc   .maybe
-         rts
+         bcs   .exit
 
-.maybe
          lda   #$00
          ldx   #$B3
          ldy   #$36
@@ -44,5 +42,6 @@ ID8b3
          !byte $00,$F0,$91,$00,$C0,$FF,$D0,$F6
          !byte $C6,$01,$A9,$08,$C5,$01,$D0,$EC
          !byte $60
+.exit
          rts
 }
