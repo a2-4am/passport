@@ -9,62 +9,20 @@ _rol1e
          bpl   .exit
          lda   #$03
          ldx   #$00
-         ldy   #$2F
+         ldy   #$06
          jsr   compare    ; if T00,S03,$00 ==
          !byte $86,$1B
          !byte $BA
          !byte $BD,$02,$01
-         !byte $85,$03
-         !byte $18
-         !byte $69,$04
-         !byte $85,$05
-         !byte $A0,$00
-         !byte $84,$02
-         !byte $A0,$40
-         !byte $84,$04
-         !byte $A0,$39
-         !byte $A9,$93
-         !byte $91,$02
-         !byte $C8
-         !byte $A5,$03
-         !byte $91,$02
-         !byte $A0,$7F
-         !byte $B1,$04
-         !byte $99,$00
-         !byte $08
-         !byte $88
-         !byte $10,$F8
-         !byte $A6,$1B
-         !byte $4C,$00,$08
          bcs   .exit
-         ldx   #$40
-         ldy   #$28
-         jsr   compare    ; and T00,S03,$40 ==
-         !byte $A9,$00
-         !byte $A0,$EC
-         !byte $91,$02
-         !byte $C8
-         !byte $91,$02
-         !byte $A9,$09
-         !byte $A0,$F1
-         !byte $91,$02
-         !byte $A9,$08
-         !byte $A0,$E1
-         !byte $91,$02
-         !byte $A9,$4C
-         !byte $85,$01
-         !byte $A9,$93
-         !byte $85,$02
-         !byte $20,$01,$00
-         !byte $A0,$00
-         !byte $84,$02
+         ldx   #$64
+         ldy   #$02
+         jsr   compare    ; and T00,S03,$64 ==
          !byte $A5,$1E
-         !byte $85,$08
          bcs   .exit
          lda   #s_rol1e
          jsr   PrintByID
          lda   #$03
-         ldx   #$64
          ldy   #$02
          jsr   modify     ; then set T00,S03,$64 =
          !byte $A9,$F7
