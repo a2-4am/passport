@@ -283,13 +283,13 @@ StringTableHigh
          !text "Passport by 4am               2019-04-20",$00
 .mainmenu
          !text "________________________________________",$8D,$8D,$8D,$8D,$8D,$8D,$8D,$8D
-         !text "              "
+         !text "               "
          !scrxor $40, "V"
          !text "erify disk",$8D,$8D
-         !text "              "
+         !text "               "
          !scrxor $40, "C"
          !text "rack disk",$8D,$8D
-         !text "              "
+         !text "               "
          !scrxor $40, "Q"
          !text "uit",$8D,$8D,$8D,$8D,$8D,$8D,$8D,$8D
          !text "source: S6,D1              target: "
