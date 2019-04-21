@@ -81,7 +81,7 @@ IsF7F6
          tay
          lda   #$19
          sta   nibcount
-         jsr   .readnib
+-        jsr   .readnib
          cmp   #$F7
          beq   +
 .restart iny
