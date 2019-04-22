@@ -176,7 +176,7 @@ ReadChoplifter
 
 .readtrack
          stx   tmpx
-         ldx   #3
+         ldx   #6
 
 .retry0
          dex
