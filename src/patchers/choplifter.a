@@ -176,7 +176,7 @@ ReadChoplifter
 
 .readtrack
          stx   tmpx
-         ldx   #6
+         ldx   #3
 
 .retry0
          dex
@@ -186,6 +186,7 @@ ReadChoplifter
          lda   KEY
 .linkcancel2
          bmi   .cancel
+         ldy   #0
          jsr   .readnib
 -        cmp   cmp2+1
          bne   .checkkey0
@@ -193,15 +194,21 @@ ReadChoplifter
          cmp   cmp2+0
          bne   -
          jsr   .readnib
-         eor   cmp1+1
+         cmp   cmp1+1
          bne   -         ; this had a bug
                          ; it branched to the middle nibble instead of the first one
                          ; it allowed PR0 PR1 [any] PR1 PR2 instead of requiring PR0 PR1 PR2
-         tay
---       jsr   .read4x4
+--       lda   $C0EC
+         bpl   --
+         rol
+         sta   tmp
+-        lda   $C0EC
+         bpl   -
+         and   tmp
          sta   (modsrc), y
          iny
          bne   --
+         asl   $C000     ; mirror timing exactly
 -        lda   $C0EC
          bpl   -
          cmp   cmp1+0
