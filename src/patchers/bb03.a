@@ -13,8 +13,9 @@
 ; Mystery of the Witch's Shoes
 ;
 ; variant 3 (JMP $BB03)
-; Sum Ducks
 ; Alice in Wonderland
+; Sum Ducks
+; Trivia Fever
 ;-------------------------------
 !zone {
          sec
@@ -29,13 +30,9 @@
          lda   #$05       ; sector to check for DOS 3.3 variant
 .maybe
          ldx   #$03
-         ldy   #$25
+         ldy   #$03
          jsr   compare    ; if T00,S0(5|7),$03 ==
-         !byte $4E,$06,$BB,$71,$6E
-         !byte $0A,$BB,$40,$27,$6E,$0F,$BB,$DD
-         !byte $1B,$BB,$6E,$15,$BB,$DC,$1E,$BB
-         !byte $6E,$25,$BB,$72,$00,$BB,$B3,$00
-         !byte $B8,$99,$00,$BB,$C8,$A0,$F4,$B0
+         !byte $4E,$06,$BB
          bcs   .no
          sta   gDisplayBytes
          lda   #s_bb03
