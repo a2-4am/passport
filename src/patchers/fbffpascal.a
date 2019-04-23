@@ -16,7 +16,7 @@
          bpl   .exit
          lda   gIsPascal  ; only seen this protection on Pascal disks
          bne   .exit
-         ldy   #$26
+         ldy   #$14
          jsr   SearchTrack
          !byte $AD,$E9,$C0; LDA $C0E9
          !byte $A9,WILDCARD; LDA ...
@@ -27,16 +27,6 @@
          !byte $C6,$03    ; DEC $03
          !byte $F0,WILDCARD; BEQ ... (this branch offset will be used later to build the patch)
          !byte $AC,$EC,$C0; LDY $C0EC
-         !byte $10,$FB    ; BPL -
-         !byte $C0,$FB    ; CPY #$FB
-         !byte $D0,$ED    ; BNE -
-         !byte $F0,$00    ; BEQ +
-         !byte $EA        ; NOP
-         !byte $EA        ; NOP
-         !byte $AC,$EC,$C0; LDY $C0EC
-         !byte $C0,$08    ; CMP #$08
-         !byte $2A        ; ROL
-         !byte $B0,$0B    ; BCS +
          bcs   .exit
          stx   .a+1
          sta   gDisplayBytes
