@@ -2,9 +2,50 @@
 ; #SUNBURST
 ; RWTS with track-based address
 ; and data prologue modifications
-; e.g. The Incredible Laboratory
+;
 ; NOTE: must be run before RWTS
 ; patchers due to overlapping bytes
+;
+; tested on
+; - Blockers and Finders (1987)
+; - Challenge Math (1983)
+; - Exploring Science: Temperature (1988)
+; - FOR Your NEXT Adventure (1985)
+; - Gears (1985)
+; - Get to the Point (1985)
+; - Getting Ready to Read and Add (1984)
+; - Gnee or Not Gnee (1986)
+; - High Wire Logic (1985)
+; - How The West Was One + Three x Four (1987)
+; - Interpreting Graphs (1986)
+; - M-ss-ng L-nks (series) (1984-7)
+; - Memory Castle (1983)
+; - Muppet Discovery Disk (1984)
+; - Muppets on Stage (1984)
+; - Number Quest (1984)
+; - Odd One Out (1986) [1989 re-release is covered elsewhere]
+; - Power Drill (1984)
+; - Puzzle Tanks (1984)
+; - Safari Search: Problem Solving and Inference (1985)
+; - Sir Isaac Newton's Games (1985)
+; - Spectrum (1984)
+; - Survival Math (1982)
+; - Targets: A Numbers Games (1985)
+; - Teasers by Tobbs (1982)
+; - Ten Clues (1986)
+; - The Factory (1983, 1985)
+; - The Geometric Supposer: Quadrilaterals (1985)
+; - The Geometric Supposer: Triangles (1985)
+; - The Incredible Laboratory (1984)
+; - The King's Rule (1984)
+; - The Pond (1984)
+; - The Puzzler (1984)
+; - The Semantic Calculator (1983)
+; - The Trading Post (1985)
+; - Tip 'N Flip (1985)
+; - Tobbs Learns Algebra (1983)
+; - Word Detective (1986)
+; - Word Quest (1985)
 ;-------------------------------
 !zone {
          bit   gMode      ; nothing to do here in verify-only mode
@@ -18,7 +59,6 @@
          jsr   compare    ; and T00,S03,$40 ==
          !byte $D0
          bcs   .exit
-         lda   #$03
          ldx   #$9C
          ldy   #$01
          jsr   compare    ; and T00,S03,$9C ==
@@ -26,29 +66,11 @@
          bcs   .exit
          lda   #$04
          ldx   #$69
-         ldy   #$2C
+         ldy   #$04
          jsr   compare    ; and T00,S04,$69 ==
          !byte $48
          !byte $A5,$2A
          !byte $4A
-         !byte $A8
-         !byte $B9,$29,$BA
-         !byte $8D,$6A,$B9
-         !byte $8D,$84,$BC
-         !byte $B9,$34,$BA
-         !byte $8D,$FC,$B8
-         !byte $8D,$5D,$B8
-         !byte $C0,$11
-         !byte $D0,$03
-         !byte $A9,$02
-         !byte $AC
-         !byte $A9,$0E
-         !byte $8D,$C0,$BF
-         !byte $68
-         !byte $69,00
-         !byte $48
-         !byte $AD,$78,04
-         !byte $90,$2B
          bcs   .exit
          lda   #$06
          ldx   #$69
