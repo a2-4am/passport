@@ -331,7 +331,7 @@ ReadChoplifter
          bpl   -
          cmp   cmp1+0
          bne   .retry
-         inc   modsrc+1
+         inc   moddest+1
          dec   nibcount
          bne   --
          jsr   .readnibx
