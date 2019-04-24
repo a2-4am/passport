@@ -166,6 +166,8 @@ ReadChoplifter
          sta   cmp1+0
          lda   prbuf+1  ; prologue 3
          sta   cmp1+1
+         lda   moddest+1
+         sta   modsrc+1
          rts
 
 .readtrack0B
