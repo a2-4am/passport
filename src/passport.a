@@ -185,12 +185,6 @@ FirstMover
          !source "standarddelivery.a"
 
 ResetVector
-         lda   #<ResetVector
-         sta   $03F2
-         lda   #>ResetVector
-         sta   $03F3
-         eor   #$A5
-         sta   $03F4
          lda   $C0E8
          jsr   PR0
          jsr   IN0
@@ -200,6 +194,12 @@ ResetVector
          sta   $C00C
          sta   $C00E
 MainMenu
+         lda   #<ResetVector
+         sta   $03F2
+         lda   #>ResetVector
+         sta   $03F3
+         eor   #$A5
+         sta   $03F4
          ldx   #$FF
          txs
          jsr   ClearScreen
