@@ -18,34 +18,12 @@
          bne   .exit
 
          lda   #$00
-         ldx   #$C3
-         ldy   #$35
-         jsr   compare    ; if T02,S00,$C3 ==
-         !byte $A9,WILDCARD;LDA #$**
-         !byte $8D,$EC,$B7; STA $B7EC
-         !byte $A9,WILDCARD;LDA #$**
-         !byte $8D,$ED,$B7; STA $B7ED
-         !byte $A9,$B4    ; LDA #$B4
-         !byte $8D,$F1,$B7; STA $B7F1
-         !byte $A9,$00    ; LDA #$00
-         !byte $8D,$F3,$B7; STA $B7F3
-         !byte $8D,$EB,$B7; STA $B7EB
-         !byte $A9,$B7    ; LDA #$B7
-         !byte $A0,$E8    ; LDY #$E8
-         !byte $20,$B5,$B7; JSR $B7B5
-         !byte $A0,$00    ; LDY #$00
-         !byte $B9,$12,$B4; LDA $B412,Y
-         !byte $49,WILDCARD;EOR #$**
+         ldx   #$E8
+         ldy   #$06
+         jsr   compare    ; if T02,S00,$E8 ==
          !byte $99,$12,$B4; STA $B412,Y
          !byte $C8        ; INY
          !byte $C0,$FF    ; CPY #$FF
-         !byte $D0,$F3    ; BNE
-         !byte WILDCARD
-         !byte WILDCARD
-         !byte WILDCARD
-         !byte WILDCARD
-         !byte WILDCARD
-         !byte $4C,$12,$B4; JMP $B412
          bcs   .exit
          sta   gDisplayBytes
          lda   #s_jmpb412
