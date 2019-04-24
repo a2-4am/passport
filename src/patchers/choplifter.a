@@ -8,6 +8,7 @@
 ; tested on
 ; - Choplifter (Broderbund)
 ; - Eggs-It (Gebelli)
+; - Neptune (Gebelli)
 ;-------------------------------
 !zone {
          rts              ; reachable only via inspect
@@ -131,34 +132,6 @@ ReadChoplifter
 .ignore
          rts
 
-.readtrack0B
-
-.checkkey1
-         lda   KEY
-         bmi   .cancel
-         jsr   .readnib
--        cmp   #$DD
-         bne   .checkkey1
-         jsr   .readnib
-         cmp   #$F5
-         bne   -
-         jsr   .readnib
-         cmp   #$D5
-         bne   -         ; this had the same bug (see below)
-         ldx   #$03
--        jsr   .read4x4
-         jsr   .read4x4
-         jsr   .read4x4
-         sta   cmp1+0,x
-         dex
-         bpl   -
-         rts
-
-.checktrack1E
-         cmp   #$40
-         bcs   .checktrack20
-         rts
-
 .cancel
          jsr   .cleanup
          jmp   Cancel
@@ -176,53 +149,54 @@ ReadChoplifter
 
 .readtrack
          stx   tmpx
-         ldx   #3
-
-.retry0
-         dex
-         beq   .fatal
-
-.checkkey0
-         lda   KEY
-.linkcancel2
-         bmi   .cancel
-         jsr   .readnib
--        cmp   cmp2+1
-         bne   .checkkey0
-         jsr   .readnib
-         cmp   cmp2+0
+         ldx   #$00
+-        lda   .readtracki,x
+         sta   $2000,x
+         inx
          bne   -
-         jsr   .readnib
-         eor   cmp1+1
-         bne   -         ; this had a bug
-                         ; it branched to the middle nibble instead of the first one
-                         ; it allowed PR0 PR1 [any] PR1 PR2 instead of requiring PR0 PR1 PR2
-         tay
---       jsr   .read4x4
-         sta   (modsrc), y
-         iny
-         bne   --
--        lda   $C0EC
-         bpl   -
-         cmp   cmp1+0
-         bne   .retry0
-         inc   modsrc+1
-         dec   tmpx
-         bne   --
-         jsr   .readnib
-         sta   cmp1+1    ; prologue 3
-         jsr   .readnib
-         sta   cmp2+0    ; prologue 2
-         jsr   .readnib
-         sta   cmp2+1    ; prologue 1
-         jsr   .readnib
-         sta   cmp1+0    ; epilog
+         jsr   $2000    ; must run from page-aligned address for precise timing
+
+         ;back-up in case of read failure
+
+         lda   unform+0 ; prologue 2
+         sta   cmp2+0
+         lda   unform+1 ; prologue 1
+         sta   cmp2+1
+         lda   prbuf+0  ; epilog
+         sta   cmp1+0
+         lda   prbuf+1  ; prologue 3
+         sta   cmp1+1
+         lda   moddest+1
+         sta   modsrc+1
          rts
 
-.fatal
-         jsr   .cleanup
-                          ; if we get to here, we've
-         jmp   FatalError ; decided the read error is fatal
+.readtrack0B
+
+.checkkey1
+         lda   KEY
+         bmi   .cancel
+         jsr   ReadNib
+-        cmp   #$DD
+         bne   .checkkey1
+         jsr   ReadNib
+         cmp   #$F5
+         bne   -
+         jsr   ReadNib
+         cmp   #$D5
+         bne   -         ; this had the same bug (see below)
+         ldx   #$03
+-        jsr   Read4x4
+         jsr   Read4x4
+         jsr   Read4x4
+         sta   cmp1+0,x
+         dex
+         bpl   -
+         rts
+
+.checktrack1E
+         cmp   #$40
+         bcs   .checktrack20
+         rts
 
 .checktrack20
          beq   .readtrack20
@@ -234,92 +208,152 @@ ReadChoplifter
          ldx   #1
          jsr   .readtrack
          lda   (BASEPAGE<<8)+$C5
-         sta   .prolog1+1
+         sta   .readtrack20i+.prolog1+1-.reloc
          lda   (BASEPAGE<<8)+$CC
-         sta   .prolog2+1
+         sta   .readtrack20i+.prolog2+1-.reloc
          lda   (BASEPAGE<<8)+$D3
-         sta   .prolog3+1
+         sta   .readtrack20i+.prolog3+1-.reloc
+         ldy   #$00
+-        lda   .readtrack20i,y
+         sta   $2100,y
+         iny
+         bne   -
+         ldx   #$60
+         jmp   $2100    ; must run from page-aligned address for precise timing
 
-.checkkey2
-         lda   KEY
-         bmi   .linkcancel2
-         jsr   .readnib
+.readtrack20i !pseudopc $2100 {
+.reloc
+--       jsr   .readnibx
 
 .prolog1
 -        cmp   #$D1      ; SMC
-         bne   .checkkey2
-         jsr   .readnib
+         bne   --
+         jsr   .readnibx
 .prolog2
          cmp   #$D1      ; SMC
          bne   -
-         jsr   .readnib
+         jsr   .readnibx
 .prolog3
-         eor   #$D1      ; SMC
+         cmp   #$D1      ; SMC
          bne   -         ; this had the same bug
-         tax
 --       lda   $C0EC     ; timing issue requires unrolling part of this
          bpl   --
          sec
          rol
          sta   tmp
-         jsr   .readnib
+         jsr   .readnibx
          and   tmp
-         sta   (BASEPAGE+8)<<8,x
-         inx
-         jsr   .read4x4
-         sta   (BASEPAGE+8)<<8,x
-         inx
-         jsr   .readnib
+         sta   (BASEPAGE+8)<<8,y
+         iny
+         jsr   .read4x4x
+         sta   (BASEPAGE+8)<<8,y
+         iny
+         jsr   .readnibx
          sec
          rol
          sta   tmp
 -        lda   $C0EC
          bpl   -
          and   tmp
-         sta   (BASEPAGE+8)<<8,x
-         inx
+         sta   (BASEPAGE+8)<<8,y
+         iny
          cmp   #$EA
          bne   --
          rts
 
-.readtrack22
-         ldx   #$40
-         ldy   #0
---       dey
-         bne   +
-         dex
-         beq   ++
-+        jsr   .readnib
--        cmp   #$D5
-         bne   --
-         jsr   .readnib
-         cmp   #$FF
-         bne   -
-         jsr   .readnib
-         cmp   #$DD
-         bne   -         ; this had the same bug
-         ldx   #$00
--        jsr   .read4x4
-         sta   BASEPAGE<<8,x
-         inx
-         bne   -
-++       rts
-
-.read4x4
--        lda   $C0EC
+.read4x4x
+-        lda   $C08C,x
          bpl   -
          sec
          rol
          sta   tmp
--        lda   $C0EC
+-        lda   $C08C,x
          bpl   -
          and   tmp
          rts
+}
 
-.readnib
--        lda   $C0EC
+.readtrack22
+         ldx   #$40
+         ldy   #$00
+--       dey
+         bne   +
+         dex
+         beq   ++
++        ldx   #$60
+         jsr   .readnibx
+-        cmp   #$D5
+         bne   --
+         jsr   .readnibx
+         cmp   #$FF
+         bne   -
+         jsr   .readnibx
+         cmp   #$DD
+         bne   -         ; this had the same bug
+         ldy   #$00
+-        jsr   .read4x4x
+         sta   BASEPAGE<<8,y
+         iny
+         bne   -
+++       rts
+
+.readtracki !pseudopc $2000 {
+         ldx   #$60
+.retry
+         lda   tmpx
+         sta   nibcount
+         lda   modsrc
+         sta   moddest
+         lda   modsrc+1
+         sta   moddest+1
+         ldy   #$00
+---      jsr   .readnibx
+--       cmp   cmp2+1
+         bne   ---
+         jsr   .readnibx
+-        cmp   cmp2+0
+         bne   --
+         jsr   .readnibx
+         cmp   cmp1+1
+         bne   -         ; this has a bug which is also present in the original code
+                         ; it branches to the middle nibble instead of the first one
+                         ; it allows PR0 PR1 [any] PR1 PR2 instead of requiring PR0 PR1 PR2
+--       lda   $C08C,x
+         bpl   --
+         rol
+         sta   tmp
+-        lda   $C08C,x
+         bpl   -
+         and   tmp
+         sta   (moddest), y
+         iny
+         bne   --
+         asl   $C000
+-        lda   $C08C,x
+         bpl   -
+         cmp   cmp1+0
+         bne   .retry
+         inc   moddest+1
+         dec   nibcount
+         bne   --
+         jsr   .readnibx
+         sta   prbuf+1  ; prologue 3
+         jsr   .readnibx
+         sta   unform+0 ; prologue 2
+         jsr   .readnibx
+         sta   unform+1 ; prologue 1
+         jsr   .readnibx
+         sta   prbuf+0  ; epilog
+         jsr   .readnibx
+         cmp   unform+1 ; trailer epilog
+         bne   .retry
+         rts
+
+.readnibx
+-        lda   $C08C,x
          bpl   -
          rts
+}
 
 .inittable
          ldy   #$08
