@@ -366,28 +366,19 @@ VerifyInfocom18
                           ; the issue being that both have a D5 AA AD sequence
 
 +
--        lda   $C0EC
-         bpl   -
+         jsr   ReadNib
 --       cmp   #$D5
          bne   ---
--        lda   $C0EC
-         bpl   -
+         jsr   ReadNib
          cmp   #$AA
          bne   --
--        lda   $C0EC
-         bpl   -
+         jsr   ReadNib
          cmp   #$B5      ; 13-sector only
          beq   .build13
          cmp   #$AD
          bne   --
 
--        lda   $C0EC
-         bpl   -
-         nop
-         nop              ; ignore half of 4x4 track number
--        lda   $C0EC
-         bpl   -          ; ignore half of 4x4 track number
-
+         jsr   Read4x4
          lda   #$12       ; all 18 sectors when in verify mode
          ldx   gIsInfocom18
          beq   .setcount
@@ -469,16 +460,13 @@ read13
          dex
          beq   .badread1
 +
--        lda   $C0EC
-         bpl   -
+         jsr   ReadNib
 --       cmp   #$D5
          bne   ---
--        lda   $C0EC
-         bpl   -
+         jsr   ReadNib
          cmp   #$AA
          bne   --
--        lda   $C0EC
-         bpl   -
+         jsr   ReadNib
          cmp   #$B5
          bne   +
          ldy   #$03

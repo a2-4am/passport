@@ -81,7 +81,7 @@ IsF7F6
          tay
          lda   #$19
          sta   nibcount
--        jsr   .readnib
+-        jsr   ReadNib
          cmp   #$F7
          beq   +
 .restart iny
@@ -91,28 +91,39 @@ IsF7F6
          sec
          beq   .driveoff
 +
-         jsr   .readnib
+         jsr   ReadNib
          cmp   #$F6
          bne   .restart
-         jsr   .readnib
+         jsr   ReadNib
          cmp   #$EF
          bne   .restart
-         jsr   .readnib
+         jsr   ReadNib
          cmp   #$EE
          bne   .restart
-         jsr   .readnib
+         jsr   ReadNib
          cmp   #$AB
          bne   .restart
          clc
 .driveoff
          lda   $C0E8
          rts
+}
 
-.readnib
+ReadNib
 -        lda   $C0EC
          bpl   -
          rts
-}
+
+Read4x4
+-        lda   $C0EC
+         bpl   -
+         sec
+         rol
+         sta   tmp
+-        lda   $C0EC
+         bpl   -
+         and   tmp
+         rts
 
 ;-------------------------------
 ; SetupF7F6SecondRound
