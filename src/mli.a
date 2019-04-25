@@ -141,12 +141,12 @@ WriteTrackMLI
 SaveFile1Shot
          clc
          pla
-         adc   #$0B
          sta   $00
+         adc   #$0B
          tax
          pla
-         adc   #$00
          sta   $01
+         adc   #$00
          pha
          txa
          pha
