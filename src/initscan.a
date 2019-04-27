@@ -152,12 +152,12 @@ LoadPrefs
 LoadFile1Shot
          clc
          pla
-         adc   #$08
          sta   $00
+         adc   #$08
          tax
          pla
-         adc   #$00
          sta   $01
+         adc   #$00
          pha
          txa
          pha
