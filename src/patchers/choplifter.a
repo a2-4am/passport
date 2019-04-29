@@ -19,6 +19,11 @@ Choplifter
          sta   dct+1
          jsr   ChangeTrackNW
          jsr   IncProgress
+         ldx   #$00
+-        lda   .readtracki,x
+         sta   $2000,x
+         inx
+         bne   -
 
 .read
          asl   gTrack
@@ -149,11 +154,6 @@ ReadChoplifter
 
 .readtrack
          stx   tmpx
-         ldx   #$00
--        lda   .readtracki,x
-         sta   $2000,x
-         inx
-         bne   -
          jsr   $2000    ; must run from page-aligned address for precise timing
 
          ;back-up in case of read failure
