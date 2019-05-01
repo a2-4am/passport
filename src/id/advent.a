@@ -9,6 +9,11 @@
 ;      all registers clobbered
 ;
 ; module by qkumba
+;
+; tested on
+; - Borrowed Time
+; - Mindshadow
+; - The Tracer Sanction
 ;-------------------------------
 IDAdvent
          lda   #BASEPAGE

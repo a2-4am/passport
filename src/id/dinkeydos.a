@@ -15,5 +15,6 @@ IDDinkeyDOS
          ldy   #$0B
          jsr   compare    ; if T00,S0B,$2B ==
          !byte $29,$44,$49,$4E,$4B,$45,$59,$44,$4F,$53,$00
+                          ; passport-test-suite/Ultima V.woz [C=0] matches
          rts
 }
