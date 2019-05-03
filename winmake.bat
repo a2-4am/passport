@@ -4,6 +4,9 @@ if "%1" equ "clean" (
 echo y|1>nul rd build /s
 goto :EOF
 )
+
+set BUILDDISK=build\passport
+
 set ACME=acme
 set EXOMIZER=exomize
 set CADIUS=cadius
@@ -28,6 +31,8 @@ cd ..
 1>nul copy res\work.po build\passport.po
 1>nul copy res\_FileInformation.txt build\
 %CADIUS% ADDFILE "build\passport.po" "/PASSPORT/" "build\PASSPORT.SYSTEM"
+cscript /nologo bin/po2do.js build\ build\
+2>nul del "%BUILDDISK%.po"
 goto :EOF
 */
 new ActiveXObject("scripting.filesystemobject").createtextfile("tmp").write(String.fromCharCode(parseInt(WScript.arguments(0),16),String.fromCharCode(parseInt(WScript.arguments(1),16))))
