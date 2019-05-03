@@ -12,13 +12,14 @@
 # third-party tools required to build
 # https://sourceforge.net/projects/acme-crossass/
 ACME=acme
-# https://sourceforge.net/projects/applecommander/
-AC=bin/AppleCommander.jar
+# https://www.brutaldeluxe.fr/products/crossdevtools/cadius/
+# https://github.com/mach-kernel/cadius
+CADIUS=cadius
 # https://bitbucket.org/magli143/exomizer/wiki/Home
 # requires Exomizer 3.0 or later
 EXOMIZER=exomizer raw -P0 -q
 
-BUILDDISK=build/passport.po
+BUILDDISK=build/passport
 
 asm:
 	mkdir -p build
@@ -30,13 +31,16 @@ asm:
 	printf "\x20\x00" | cat - build/t00only.tmp > build/t00only.pak
 	cd src && $(ACME) -r ../build/passport.lst passport.a 2> ../build/relbase.log
 	cd src && $(ACME) -DRELBASE=`cat ../build/relbase.log | cut -d"=" -f2 | cut -d"(" -f2 | cut -d")" -f1` passport.a
-	cp res/work.po $(BUILDDISK)
-	java -jar $(AC) -p $(BUILDDISK) "PASSPORT.SYSTEM" sys 0x2000 < build/PASSPORT.SYSTEM
+	cp res/work.po "$(BUILDDISK)".po
+	cp res/_FileInformation.txt build/
+	$(CADIUS) ADDFILE "${BUILDDISK}".po "/PASSPORT/" "build/PASSPORT.SYSTEM"
+	bin/po2do.py build/ build/
+	rm "$(BUILDDISK)".po
 
 clean:
 	rm -rf build/
 
 mount:
-	osascript bin/V2Make.scpt "`pwd`" $(BUILDDISK)
+	open "$(BUILDDISK)".dsk
 
 all: clean asm mount
