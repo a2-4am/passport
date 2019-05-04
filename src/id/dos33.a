@@ -21,16 +21,13 @@ IDDOS33
 ;
          lda   $08FE
          cmp   #$B6
-                          ; passport-test-suite/Binomial Multiplication.woz [Z=1] here, loads at $B600
-         beq   ++
+         beq   ++         ; passport-test-suite/Binomial Multiplication.woz [Z=1] here, loads at $B600
          cmp   #$37
-                          ; passport-test-suite/Beach-Head.woz [C=0] here, loads at $3F00
-         bcc   +
+         bcc   +          ; passport-test-suite/Beach-Head.woz [C=0] here, loads at $3F00
 -        sec
          rts
 +        cmp   #$20
-                          ; passport-test-suite/Alf.woz [C=0] here, loads at $1300
-         bcc   -
+         bcc   -          ; passport-test-suite/Alf.woz [C=0] here, loads at $1300
 ;
 ; Code at $0801 must be standard (with one exception)
 ;
@@ -69,8 +66,7 @@ IDDOS33
          !byte $6C,$3E,$00
          !byte $EE,$FE,$08
          !byte $EE,$FE,$08
-                          ; passport-test-suite/Binomial Multiplication.woz [C=0] matches
-         bcc   +
+         bcc   +          ; passport-test-suite/Binomial Multiplication.woz [C=0] matches
          jmp   .exit
 +
 ;
@@ -84,8 +80,7 @@ IDDOS33
          !byte $20,$93,$FE
          !byte $20,$2F,$FB
          !byte $A6,$2B
-                          ; passport-test-suite/Binomial Multiplication.woz [C=0] matches
-         bcc   +
+         bcc   +          ; passport-test-suite/Binomial Multiplication.woz [C=0] matches
 ;
 ; some Sierra have STA $C050 / STA $C057 / STA $C055 instead
 ;
@@ -98,20 +93,18 @@ IDDOS33
          !byte $8D,$55,$C0
          !byte $A6,$2B
          bcs   .exit
-                          ; passport-test-suite/Leisure Suit Larry.woz [C=0] matches
 +
 
 ;
 ; Check sector order map
 ;
-         lda   #$00
+         lda   #$00       ; passport-test-suite/Leisure Suit Larry.woz [C=0] matches previous compare
          ldx   #$4D
          ldy   #$10
          jsr   compare    ; if T00,S00,$4D ==
          !byte $00,$0D,$0B,$09,$07,$05,$03,$01
          !byte WILDCARD,$0C,$0A,$08,$06,$04,$02,$0F
-                          ; passport-test-suite/Pitfall II.woz [C=1] because of non-standard sector map
-         bcs   .exit
+         bcs   .exit      ; passport-test-suite/Pitfall II.woz [C=1] because of non-standard sector map
 
 ;
 ; Check for MUSE sector order map
@@ -122,8 +115,7 @@ IDDOS33
          jsr   compare    ; if T00,S00,$55 ==
          !byte $02
          bcs   +
-                          ; passport-test-suite/The Function Game.woz [C=0] matches
-         lda   #TRUE
+         lda   #TRUE      ; passport-test-suite/The Function Game.woz [C=0] matches previous compare
          sta   gIsMUSERWTS
          lda   #$0E
          sta   precheck_sectors+1
@@ -140,8 +132,8 @@ IDDOS33
          ldy   #$03
          jsr   compare    ; if T00,S00,$1C ==
          !byte $8D,$FE,$08
-                          ; passport-test-suite/Binomial Multiplication.woz [C=0] matches
-         bcc   .exit      ; standard code at $081C -> success
+                          ; standard code at $081C -> success
+         bcc   .exit      ; passport-test-suite/Binomial Multiplication.woz [C=0] matches
 
          lda   #$00
          ldx   #$1C
@@ -157,9 +149,7 @@ IDDOS33
          !byte $8D,$FE,$08
          !byte $EE,$F3,$03
          !byte $4C,$1F,$08
-                          ; passport-test-suite/Library Magic.woz [C=0] matches acceptable code at $08F0
-;        bcs   .exit      ; unknown code at $08F0 -> failure
-
+                          ; unknown code at $08F0 -> failure
 .exit
-         rts
+         rts              ; passport-test-suite/Library Magic.woz [C=0] matches acceptable code at $08F0
 }

@@ -51,17 +51,15 @@
          ldy   #$03
          jsr   compare
          !byte $70,$79,$77
-         lda   .sector+1
-         ldx   #$20
-         ldy   #$03
          bcc   .variant2
          bcs   .nextsector
 
 .variant1
+         ldx   #$20
+         ldy   #$03
          jsr   modify
          !byte $EA                   ; NOP
          !byte $A9,$35               ; LDA #$35
-         lda   .sector+1
          ldx   #$76
          ldy   #$02
          jsr   modify
@@ -69,10 +67,11 @@
          bvc   .nextsector           ; always branches
 
 .variant2
+         ldx   #$20
+         ldy   #$03
          jsr   modify
          !byte $EA                   ; NOP
          !byte $A9,$27               ; LDA #$27
-         lda   .sector+1
          ldx   #$76
          ldy   #$02
          jsr   modify                ; new JMP entry point ($0903 when decrypted)
