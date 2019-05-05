@@ -59,20 +59,18 @@ TraceSpecDel3
          lda   $1212
          cmp   #$D8
          bne   SDfail
-         ldy   #$00
-         lda   $10D1
-         cmp   #$A2
-         beq   +
-         ldy   #$04
-+        lda   #$4C
-         sta   $10D1,Y
-         sta   $10EC,Y
+         lda   #$4C
+         sta   $10D5
          lda   #<TraceSpecDel4
-         sta   $10D2,Y
-         sta   $10ED,Y
+         sta   $10D6
          lda   #>TraceSpecDel4
-         sta   $10D3,Y
-         sta   $10EE,Y
+         sta   $10D7
+         lda   #$4C
+         sta   $10F0
+         lda   #<TraceSpecDel4
+         sta   $10F1
+         lda   #>TraceSpecDel4
+         sta   $10F2
          jmp   $1212
 
 TraceSpecDel4
