@@ -59,18 +59,20 @@ TraceSpecDel3
          lda   $1212
          cmp   #$D8
          bne   SDfail
-         lda   #$4C
-         sta   $10D5
+         ldy   #$00
+         lda   $10D1
+         cmp   #$A2
+         beq   +
+         ldy   #$04
++        lda   #$4C
+         sta   $10D1,Y
+         sta   $10EC,Y
          lda   #<TraceSpecDel4
-         sta   $10D6
+         sta   $10D2,Y
+         sta   $10ED,Y
          lda   #>TraceSpecDel4
-         sta   $10D7
-         lda   #$4C
-         sta   $10F0
-         lda   #<TraceSpecDel4
-         sta   $10F1
-         lda   #>TraceSpecDel4
-         sta   $10F2
+         sta   $10D3,Y
+         sta   $10EE,Y
          jmp   $1212
 
 TraceSpecDel4
@@ -97,18 +99,23 @@ SDsuccess
 ;
 ; Restore the original code in memory before writing.
 ;
-         lda   #$A2
-         sta   $10D5
+         ldy   #$00
+         lda   $10D1
+         cmp   #$4C
+         beq   +
+         ldy   #$04
++        lda   #$A2
+         sta   $10D1,Y
          lda   #$FF
-         sta   $10D6
+         sta   $10D2,Y
          lda   #$9A
-         sta   $10D7
+         sta   $10D3,Y
          lda   #$A5
-         sta   $10F0
+         sta   $10EC,Y
          lda   #$2B
-         sta   $10F1
+         sta   $10ED,Y
          lda   #$4A
-         sta   $10F2
+         sta   $10EE,Y
 ;
 ; move $1000-$13FF to $1100-$14FF to align it as we need it
 ; for writing to disk with the Standard Delivery bootloader
