@@ -22,5 +22,5 @@ IDRDOS
          !byte $A0,$1F    ; LDY #$1F
          !byte $B9,$00,$08; LDA $0800,Y
          !byte $49        ; EOR
-         rts
+         rts              ; passport-test-suite/Roadwar 2000.woz [C=0] matches
 }

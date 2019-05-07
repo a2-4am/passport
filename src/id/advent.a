@@ -33,7 +33,7 @@ IDAdvent
          !byte $D0,$F5          ;BNE $-8
          !byte $A6,$2B          ;LDX $2B
          !byte $4C,$00          ;JMP $xx00
-         rts
+         rts              ; passport-test-suite/Borrowed Time.woz [C=0] matches
 
 foundadvent
 ;

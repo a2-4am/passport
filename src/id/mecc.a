@@ -22,8 +22,7 @@ IDMECC
          !byte $01,$4C,$1A,$08,$17,$0F,$00,$00
          !byte $0D,$0B,$09,$07,$05,$03,$01,$0E
          !byte $0C,$0A,$08,$06,$04,$02,$0F
-.exit
-         rts
+         rts              ; passport-test-suite/Clock Works v1.0.woz [C=0] matches
 }
 
 ;-------------------------------
@@ -74,7 +73,7 @@ IDMECC1
          !byte $D0,$F2,$EA,$BD,$8C,$C0,$10,$FB
          !byte $C9
 .exit
-         rts
+         rts              ; passport-test-suite/Coordinate Math v1.0.woz [C=0] matches
 
 foundmecc1
 ;
@@ -170,7 +169,7 @@ foundmecc2
          lda   #$07
 foundmecc4a
          clc
-         adc   #BASEPAGE
+         adc   #BASEPAGE  ; passport-test-suite/Clock Works v1.0.woz [C=0] reaches here
          sta   modsrc+1
          lda   #$00
          sta   modsrc
@@ -241,7 +240,7 @@ IDMECC3
          jsr   compare    ; and T00,S0B,$7A ==
          !byte $D0,$F2,$EA,$BD,$8C,$C0,$10,$FB,$C9
 .exit
-         rts
+         rts              ; passport-test-suite/Number Munchers v1.0.woz [C=0] matches
 
 foundmecc3
 ;
@@ -307,5 +306,5 @@ foundmecc4
 ; original disk.
 ;
          lda   #$08
-         jmp   foundmecc4a
+         jmp   foundmecc4a           ; passport-test-suite/Conquering Whole Numbers v1.1.woz [Z=0] reaches here
 }

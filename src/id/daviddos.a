@@ -28,5 +28,5 @@ IDDavid
          !byte $9D,WILDCARD,$04; STA $04**,X
          !byte $CA        ; DEX
          !byte $10,$F7    ; BPL -
-.exit    rts
+.exit    rts              ; passport-test-suite/Horses.woz [C=0] matches
 }

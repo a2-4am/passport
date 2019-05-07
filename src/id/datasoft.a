@@ -7,6 +7,10 @@
 ;      C set otherwise
 ;      all registers clobbered
 ;      all other flags clobbered
+;
+; tested with
+; - Tomahawk
+; - Video Title Shop
 ;-------------------------------
 IDDatasoft
          lda   #$00
@@ -29,4 +33,4 @@ IDDatasoft
          !byte $04,$45,$0C,$63,$04,$90,$94,$D0
          !byte $D4,$23,$04,$91,$A1,$EB,$CD,$06
          !byte $95,$A1,$E1,$98,$97,$86
-         rts
+         rts              ; passport-test-suite/Tomahawk.woz [C=0] matches

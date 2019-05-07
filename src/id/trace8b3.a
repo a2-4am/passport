@@ -106,5 +106,5 @@ _restore3
 ;
          lda   #$01
          sta   gLastTrack
-         jmp   ADStyle
+         jmp   ADStyle    ; passport-test-suite/Ardy the Aardvark.woz [Z=0] reaches here
 }

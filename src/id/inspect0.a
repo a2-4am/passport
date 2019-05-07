@@ -381,8 +381,9 @@ VerifyInfocom18
          jsr   Read4x4
          lda   #$12       ; all 18 sectors when in verify mode
          ldx   gIsInfocom18
-         beq   .setcount
-         lda   #$02       ; only two sectors when in ID mode
+         beq   .setcount  ; passport-test-suite/Trinity - Side B.woz [Z=1] here
+         lda   #$02       ; passport-test-suite/Time Lord.woz [Z=0] here
+                          ; only two sectors when in ID mode
 .setcount
          sta   tmp        ; sector counter
 

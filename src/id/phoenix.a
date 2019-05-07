@@ -15,5 +15,5 @@ IDPhoenix
          ldy   #$03
          jsr   compare
          !byte $AC,$B7,$F6
-         rts
+         rts              ; passport-test-suite/Zoom Grafix 26-JAN-82.woz [C=0] matches
 }

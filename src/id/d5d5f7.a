@@ -30,5 +30,5 @@ IDD5D5F7
          clc
          !byte $24
 .no      sec
-         rts
+         rts              ; passport-test-suite/RoboMath.woz [C=0] matches
 }

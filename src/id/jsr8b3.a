@@ -43,5 +43,5 @@ ID8b3
          !byte $C6,$01,$A9,$08,$C5,$01,$D0,$EC
          !byte $60
 .exit
-         rts
+         rts              ; passport-test-suite/Ardy The Aardvark.woz [C=0] matches
 }

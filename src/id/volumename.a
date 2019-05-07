@@ -39,7 +39,7 @@ IDVolumeName
          and   #$0F
          tax
          lda   #$05
-         sta   .offset+1
+         sta   .offset+1  ; passport-test-suite/Investigating Plant Growth.woz [Z=0] reaches here
          bne   .print     ; always branches
 
 .pascal
@@ -51,7 +51,7 @@ IDVolumeName
          lda   (cmp1), y
          beq   .error
          cmp   #$08
-         bcs   .error
+         bcs   .error     ; passport-test-suite/Notecard Maker.woz [C=0] reaches here
          tax
          lda   #$07
          sta   .offset+1

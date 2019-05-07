@@ -39,7 +39,7 @@ PanglosDOS
          ldy   #$02
          jsr   CompareMemory
          !byte $20,$F9
-         bcc   +
+         bcc   +          ; passport-test-suite/Stepwise Multiple Regression.woz [C=0] matches
 .jmpexit1
          jmp   .exit
 

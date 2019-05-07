@@ -16,7 +16,7 @@ ProtectedDOS
          !byte $00,$B7,$C8,$D0,$F5,$EE,$04,$B7
          !byte $EE,$09,$B7,$AD,$09,$B7,$C9,$C0
          !byte $D0,$E8
-         bcs   .exit
+         bcs   .exit      ; passport-test-suite/Ultima IV.woz [C=0] matches
 
          lda   $B706      ; decryption key
          sta   .key+1

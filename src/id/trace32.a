@@ -157,7 +157,7 @@ TraceDOS32LO
          cmp   #$36
          beq   +
          cmp   #$B2 ;RDOS
-         bne   .fail
+         bne   .fail      ; passport-test-suite/Epidemic.woz [Z=1] matches
          clc
 +        php
 ;
@@ -199,7 +199,7 @@ TraceDOS32LO
          !byte $88         ;DEY
          !byte $A9,$EA     ;LDA #$EA
          !byte $20,$26,$03 ;JSR $0326
-         bcs   .fail
+         bcs   .fail      ; passport-test-suite/Eggs-It.woz [C=0] matches
          lda   #s_choplifter
          jsr   PrintByID
          lda   #s_diskrwts
@@ -320,7 +320,7 @@ TraceDOS32d
          ldy   #$02
          jsr   CompareMemory
          !byte $20,$DD
-         bcs   +
+         bcs   +          ; passport-test-suite/Robotwar.woz [C=0] matches
          lda   #s_muse
          jsr   PrintByID
 

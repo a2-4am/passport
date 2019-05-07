@@ -139,7 +139,7 @@ _Inspect1a
          ldy   #$02
          jsr   CompareMemory
          !byte $20,00
-         bcc   .x5
+         bcc   .x5        ; passport-test-suite/Analogies Tutorial.woz [C=0] matches
          jmp   UseUniversal ; give up tracing; this RWTS is unsupported
 ;
 ; Check for RWTS variant that uses non-standard address for slot
@@ -151,7 +151,7 @@ _Inspect1a
          ldy   #$03
          jsr   CompareMemory
          !byte $AE,$E8,$1F
-         bcs   .x6
+         bcs   .x6        ; passport-test-suite/Pinball Construction Set (Budgeco).woz [C=0] matches
          jmp   UseUniversal ; give up tracing; this RWTS is unsupported
 ;
 ; Check for Milliken protection routine in late-stage boot
@@ -162,7 +162,7 @@ _Inspect1a
          ldy   #$03
          jsr   CompareMemory
          !byte $4C,$03,$9B
-         bcs   .x6b
+         bcs   .x6b       ; passport-test-suite/Tangram Puzzler.woz [C=0] matches
          jsr   IDMilliken
          bcs   .x6b
          lda   #s_milliken
@@ -182,7 +182,7 @@ _Inspect1a
          !byte $9D,WILDCARD,WILDCARD
          !byte $9D,WILDCARD,WILDCARD
          !byte $20,$93
-         bcs   .x7
+         bcs   .x7        ; passport-test-suite/Super Taxman II.woz [C=0] matches
          ldy   #$07
 .x6c     lda   $B730,y
          sta   .trackpointer,y
@@ -204,7 +204,7 @@ _Inspect1a
          !byte $BD,$8C,$C0; LDA $C08C,X
          !byte $10,$FB    ; BPL -$FB
          !byte $C9,$00    ; CMP #$00
-         bcs   +
+         bcs   +          ; passport-test-suite/S.A.G.A. 6.woz [C=0] matches
          lda   #TRUE
          sta   gAdventureInternational
 ;
@@ -235,7 +235,7 @@ _Inspect1a
 ;
 +        lda   $08FE
          cmp   #$23
-         bne   +
+         bne   +          ; passport-test-suite/Planetfall r26.woz [Z=1] matches
          lda   #$AD       ; allow $AD..$FF for third data prologue nibble
          sta   $24FC
          lda   #$90
@@ -259,7 +259,7 @@ _Inspect1a
          !byte $A9,$B5
          !byte $8D,$FC,$B8
          !byte $60
-         bcs   +
+         bcs   +          ; passport-test-suite/Crown of Arthain.woz [C=0] matches
          jsr   $BC61
 ;
 ; Check for alternate RWTS entry point (e.g. Swordthrust)
@@ -282,7 +282,7 @@ _Inspect1a
          PLA
          JSR   $BD00
 @end_swordthrust
-         bcs   +
+         bcs   +          ; passport-test-suite/Swordthrust 1.woz [C=0] matches
          stx   jCallRWTS+1; set new RWTS entry point to $B775
          lda   #$B7
          sta   jCallRWTS+2

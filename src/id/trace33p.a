@@ -62,8 +62,8 @@ TraceSpecDel3
          ldy   #$00
          lda   $10D1
          cmp   #$A2
-         beq   +
-         ldy   #$04
+         beq   +          ; passport-test-suite/Ernie's Quiz.woz [Z=1] matches
+         ldy   #$04       ; passport-test-suite/Kaves of Karkhan.woz [Z=0] matches
 +        lda   #$4C
          sta   $10D1,Y
          sta   $10EC,Y

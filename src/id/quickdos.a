@@ -20,5 +20,5 @@ IDQuickDOS
          !byte $D0,$27    ; BNE +$27
          !byte $78        ; SEI
          !byte $AD,$83,$C0; LDA $C083
-         rts
+         rts              ; passport-test-suite/Kid Niki.woz [C=0] matches
 }

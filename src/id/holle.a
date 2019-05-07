@@ -25,5 +25,5 @@ IDHolle
          STA   $03F3
          SEI
 @searchend
-         rts
+         rts              ; passport-test-suite/Crime Wave.woz [C=0] matches
 }

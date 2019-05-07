@@ -19,5 +19,5 @@ IDPronto
          !byte $B0,$50    ; BCS +$50
          !byte $AD,$CB,$B5; LDA $B5CB
          !byte $85,$42    ; STA $42
-         rts
+         rts              ; passport-test-suite/America Coast to Coast.woz [C=0] matches
 }

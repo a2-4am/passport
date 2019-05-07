@@ -24,7 +24,6 @@ IDLaureate
          !byte $A9,$BF    ; LDA #$BF
          !byte $8D,$FE,$08; STA $08FE
          bcs   .exit
-         lda   #$00
          ldx   #$F8
          ldy   #$08
          jsr   compare    ; and T00,S00,$F8 ==
@@ -32,7 +31,7 @@ IDLaureate
          !byte $00,$00,$00
          !byte $FF,$0B
 .exit
-         rts
+         rts              ; passport-test-suite/Sound Ideas- Word Attack - Disk 1 - Ending Consonants.woz [C=0] matches
 }
 
 ;-------------------------------
