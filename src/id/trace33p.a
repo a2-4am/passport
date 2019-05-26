@@ -58,6 +58,7 @@ TraceSpecDel2
 TraceSpecDel3
          lda   $1212
          cmp   #$D8
+         sec
          bne   SDfail
          ldy   #$00
          lda   $10D1
@@ -77,13 +78,10 @@ TraceSpecDel3
 
 TraceSpecDel4
          lda   $C0E8      ; turn off source drive
-         lda   #$0A       ; restore zero page from before trace
-         ldx   #$00
-         ldy   #$01
-         jsr   CopyMemory
 
          lda   $3FFF
          cmp   #$EA
+         sec
          bne   SDfail
 
          lda   #$0B
@@ -91,8 +89,15 @@ TraceSpecDel4
          ldy   #$03
          jsr   compare    ; if $1B00 ==
          !byte $4C,$4D,$2A
-         bcc   SDsuccess
 SDfail
+         php
+         lda   #$0A       ; restore zero page from before trace
+         ldx   #$00
+         ldy   #$01
+         jsr   CopyMemory
+         plp
+         bcc   SDsuccess
+
          jmp   UseUniversal
 
 SDsuccess
