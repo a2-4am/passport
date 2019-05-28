@@ -18,19 +18,19 @@
          asl
          asl
          asl
+         sta   tmp
          asl
-         adc   gMECCFastloadType
-         adc   gMECCFastloadType
+         adc   tmp
          ldx   #8
 -        pha
          tay
          txa
          pha
-         lda   .table+2-18,y
+         lda   .table+2-24,y
          sta   .cmpbyte
          sta   .modbyte
-         lda   .table-18,y
-         ldx   .table+1-18,y
+         lda   .table-24,y
+         ldx   .table+1-24,y
          ldy   #$01
          jsr   compare
 .cmpbyte
@@ -65,8 +65,8 @@
          !byte $0B,$8F,$D5
          !byte $0B,$99,$AA
          !byte $0B,$A3,$AD
-         !byte $0C,$62,$AA
-         !byte $0C,$67,$AD
+         !byte $0C,$82,$AA
+         !byte $0C,$87,$AD
 
          ; MECC2
 
