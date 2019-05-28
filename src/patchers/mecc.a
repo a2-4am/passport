@@ -2,7 +2,7 @@
 ; #MECC
 ; MECC fastloader with custom
 ; address and data prologues
-; e.g. 1: Word Munchers
+; e.g. 1: Word Munchers v1.3, v1.4
 ; e.g. 2: Phonics Prime Time series
 ; e.g. 3: Word Munchers v1.1
 ; e.g. 4: A-201 Conquering Whole Numbers
@@ -21,7 +21,7 @@
          asl
          adc   gMECCFastloadType
          adc   gMECCFastloadType
-         ldx   #6
+         ldx   #8
 -        pha
          tay
          txa
@@ -65,9 +65,13 @@
          !byte $0B,$8F,$D5
          !byte $0B,$99,$AA
          !byte $0B,$A3,$AD
+         !byte $0C,$62,$AA
+         !byte $0C,$67,$AD
 
          ; MECC2
 
+         !byte $06,$86,$AA
+         !byte $06,$8B,$AD
          !byte $07,$83,$D5
          !byte $07,$8D,$AA
          !byte $07,$98,$96
@@ -83,9 +87,13 @@
          !byte $0B,$6F,$D5
          !byte $0B,$79,$AA
          !byte $0B,$83,$AD
+         !byte $0C,$62,$AA
+         !byte $0C,$67,$AD
 
          ; MECC4
 
+         !byte $07,$86,$AA
+         !byte $07,$8B,$AD
          !byte $08,$83,$D5
          !byte $08,$8D,$AA
          !byte $08,$98,$96
