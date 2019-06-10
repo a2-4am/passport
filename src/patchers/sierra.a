@@ -86,6 +86,7 @@
          !byte $C9,$1D ;CMP #$1D
          !byte $B0     ;BCS *+xx
          bcs   +
+         sta   gDisplayBytes
          pha
          lda   #s_tamper
          jsr   PrintByID
@@ -325,6 +326,7 @@
          !byte $AA     ;TAX
          !byte $95,$00 ;STA $00,X
          bcs   +
+         sta   gDisplayBytes
          pha
          lda   #s_tamper
          jsr   PrintByID
@@ -345,6 +347,7 @@
          !byte $AA     ;TAX
          !byte $95,$00 ;STA $00,X
 +        bcs   +
+         sta   gDisplayBytes
          pha
          lda   #s_tamper
          jsr   PrintByID
@@ -370,6 +373,7 @@
          !byte $AA         ;TAX
          !byte $9D,$00,$01 ;STA $0100,X
          bcs   .jmpexit
+         sta   gDisplayBytes
          pha
          lda   #s_tamper
          jsr   PrintByID
