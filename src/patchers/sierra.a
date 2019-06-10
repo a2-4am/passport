@@ -86,10 +86,16 @@
          !byte $C9,$1D ;CMP #$1D
          !byte $B0     ;BCS *+xx
          bcs   +
+         ldy   gSector
+         sta   gSector
+         tya
          pha
          lda   #s_tamper
          jsr   PrintByID
          pla
+         ldy   gSector
+         sta   gSector
+         tya
          inx
          inx
          inx
@@ -325,6 +331,9 @@
          !byte $AA     ;TAX
          !byte $95,$00 ;STA $00,X
          bcs   +
+         ldy   gSector
+         sta   gSector
+         tya
          pha
          lda   #s_tamper
          jsr   PrintByID
@@ -332,6 +341,9 @@
          adc   #9
          tax
          pla
+         ldy   gSector
+         sta   gSector
+         tya
          ldy   #$01
          jsr   modify
          !byte $DD ;checksum
@@ -345,10 +357,16 @@
          !byte $AA     ;TAX
          !byte $95,$00 ;STA $00,X
 +        bcs   +
+         ldy   gSector
+         sta   gSector
+         tya
          pha
          lda   #s_tamper
          jsr   PrintByID
          pla
+         ldy   gSector
+         sta   gSector
+         tya
          inx
          inx
          inx
@@ -370,10 +388,16 @@
          !byte $AA         ;TAX
          !byte $9D,$00,$01 ;STA $0100,X
          bcs   .jmpexit
+         ldy   gSector
+         sta   gSector
+         tya
          pha
          lda   #s_tamper
          jsr   PrintByID
          pla
+         ldy   gSector
+         sta   gSector
+         tya
          inx
          inx
          inx
