@@ -107,9 +107,7 @@
          !byte $07,$01     ;SUB  #$4d
          !byte $0F,$F5,$70 ;BNE  $a9f6
          bcs   +
-         ldy   gSector
-         sta   gSector
-         tya
+         sta   gDisplayBytes
          pha
          lda   #s_tamper
          jsr   PrintByID
@@ -119,9 +117,6 @@
          adc   #4
          sta   .patch3 + 1
          pla
-         ldy   gSector
-         sta   gSector
-         tya
          pha
          ldy   #1
          jsr   modify
@@ -143,9 +138,7 @@
          !byte $D0,$7C     ;BNE +$7C
          !byte $60         ;RTS
          bcs   +
-         ldy   gSector
-         sta   gSector
-         tya
+         sta   gDisplayBytes
          pha
          lda   #s_tamper
          jsr   PrintByID
@@ -153,9 +146,6 @@
          adc   #11
          tax
          pla
-         ldy   gSector
-         sta   gSector
-         tya
          ldy   #1
          jsr   modify
          !byte $00         ;disable branch
@@ -169,9 +159,7 @@
          !byte $07,$1C     ;SUB #$50
          !byte $0F,$78,$60 ;BNE $B97B
          bcs   +
-         ldy   gSector
-         sta   gSector
-         tya
+         sta   gDisplayBytes
          pha
          lda   #s_tamper
          jsr   PrintByID
@@ -179,9 +167,6 @@
          adc   #11
          tax
          pla
-         ldy   gSector
-         sta   gSector
-         tya
          ldy   #1
          jsr   modify
          !byte $4C         ;new checksum value for sub
@@ -195,16 +180,11 @@
          !byte $20,$67,$67 ;JSR $6767
          !byte $20,$AA,$BF ;JSR $BFAA
          bcs   +
-         ldy   gSector
-         sta   gSector
-         tya
+         sta   gDisplayBytes
          pha
          lda   #s_tamper
          jsr   PrintByID
          pla
-         ldy   gSector
-         sta   gSector
-         tya
          inx
          inx
          inx
@@ -221,16 +201,11 @@
          !byte $C9,$52     ;CMP #$52
          !byte $F0,$03     ;BEQ +$03
          bcs   +
-         ldy   gSector
-         sta   gSector
-         tya
+         sta   gDisplayBytes
          pha
          lda   #s_tamper
          jsr   PrintByID
          pla
-         ldy   gSector
-         sta   gSector
-         tya
          inx
          inx
          inx
@@ -247,16 +222,11 @@
          !byte $C9,$52     ;CMP #$52
          !byte $D0,$DB     ;BNE -$DB
          bcs   +
-         ldy   gSector
-         sta   gSector
-         tya
+         sta   gDisplayBytes
          pha
          lda   #s_tamper
          jsr   PrintByID
          pla
-         ldy   gSector
-         sta   gSector
-         tya
          inx
          inx
          inx
@@ -400,16 +370,11 @@
          !byte $E9,$00     ;SBC #$00
          !byte $48         ;PHA
          bcs   +
-         ldy   gSector
-         sta   gSector
-         tya
+         sta   gDisplayBytes
          pha
          lda   #s_tamper
          jsr   PrintByID
          pla
-         ldy   gSector
-         sta   gSector
-         tya
          inx
          ldy   #1
          jsr   modify
@@ -425,9 +390,7 @@
          !byte $C9,$A0     ;CMP #$A0
          !byte $F0         ;BEQ *+xx
          bcs   +
-         ldy   gSector
-         sta   gSector
-         tya
+         sta   gDisplayBytes
          pha
          lda   #s_tamper
          jsr   PrintByID
@@ -435,9 +398,6 @@
          adc   #12
          tax
          pla
-         ldy   gSector
-         sta   gSector
-         tya
          ldy   #1
          jsr   modify
          !byte $A1         ;new checksum value for eor
@@ -454,9 +414,7 @@
          !byte $04,$F1,$70 ;LDA $a9f2
          !byte $07         ;CMP #$xx
          bcs   +
-         ldy   gSector
-         sta   gSector
-         tya
+         sta   gDisplayBytes
          pha
          lda   #s_tamper
          jsr   PrintByID
@@ -464,9 +422,6 @@
          adc   #24
          tax
          pla
-         ldy   gSector
-         sta   gSector
-         tya
          ldy   #1
          jsr   compare
          !byte $AB
@@ -534,16 +489,11 @@
          !byte $5E,$00
          !byte $5E,$0D
          bcs   .exit
-         ldy   gSector
-         sta   gSector
-         tya
+         sta   gDisplayBytes
          pha
          lda   #s_tamper
          jsr   PrintByID
          pla
-         ldy   gSector
-         sta   gSector
-         tya
          inx
          inx
          ldy   #1
