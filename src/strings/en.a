@@ -575,7 +575,7 @@ StringTableHigh
 .microfun
          !text "T%t,S%0 Found Micro Fun protection check",$00
 .advent
-         !text "T%t,S%0 Found Interplay bootloader",$8D,$00
+         !text "T00,S00 Found Interplay bootloader",$8D,$00
 .gathering
          !text "Gathering per-file encryption keys",$8D,$00
 .davidson
