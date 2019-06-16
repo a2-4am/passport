@@ -9,7 +9,7 @@ setlocal enabledelayedexpansion
 set BUILDDISK=build\passport
 
 set ACME=acme
-set EXOMIZER=exomizer raw -q
+set EXOMIZER=exomizer raw -q -P23
 set CADIUS=cadius
 2>nul md build
 cd src\mods

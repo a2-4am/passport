@@ -17,7 +17,7 @@ ACME=acme
 CADIUS=cadius
 # https://bitbucket.org/magli143/exomizer/wiki/Home
 # requires Exomizer 3.0 or later
-EXOMIZER=exomizer raw -q
+EXOMIZER=exomizer raw -q -P23
 
 BUILDDISK=build/passport
 

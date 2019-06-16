@@ -57,6 +57,11 @@
 ; shorter and slightly faster code.
 ;MAX_SEQUENCE_LENGTH_256 = 1
 ; -------------------------------------------------------------------
+; if the sequence length 3 has its own offset table then the following
+; line can be uncommented for in some situations slightly better
+; compression at the cost of a larger decrunch table.
+EXTRA_TABLE_ENTRY_FOR_LENGTH_THREE = 1
+; -------------------------------------------------------------------
 ; zero page addresses used
 ; -------------------------------------------------------------------
 zp_len_lo = $a7
@@ -71,9 +76,15 @@ zp_bitbuf  = $fd
 zp_dest_lo = zp_bitbuf + 1      ; dest addr lo
 zp_dest_hi = zp_bitbuf + 2      ; dest addr hi
 
+!IFDEF EXTRA_TABLE_ENTRY_FOR_LENGTH_THREE {
+encoded_entries = 68
+} ELSE {
+encoded_entries = 52
+}
+
 tabl_bi = decrunch_table
-tabl_lo = decrunch_table + 52
-tabl_hi = decrunch_table + 104
+tabl_lo = decrunch_table + encoded_entries
+tabl_hi = decrunch_table + encoded_entries * 2
 
         ;; refill bits is always inlined
 !MACRO mac_refill_bits {
@@ -197,7 +208,7 @@ no_fixup_lohi:
         txa
 ; -------------------------------------------------------------------
         iny
-        cpy #52
+        cpy #encoded_entries
         bne table_gen
 ; -------------------------------------------------------------------
 ; prepare for main decruncher
@@ -272,13 +283,17 @@ skip_jmp:
 ; z-flag reflects zp_len_hi here
 ;
         ldx zp_len_lo
-} ELSE {
+}  ELSE {
         tax
 }
         lda #$e1
+!IFDEF EXTRA_TABLE_ENTRY_FOR_LENGTH_THREE {
+        cpx #$04
+} ELSE {
         cpx #$03
+}
         bcs gbnc2_next
-        lda tabl_bit,x
+        lda tabl_bit - 1,x
 gbnc2_next:
         asl zp_bitbuf
         bne gbnc2_ok
@@ -392,30 +407,44 @@ exit_or_lit_seq:
 decr_exit:
 }
         rts
+!IFDEF EXTRA_TABLE_ENTRY_FOR_LENGTH_THREE {
 ; -------------------------------------------------------------------
-; the static stable used for bits+offset for lengths 3, 1 and 2 (3 bytes)
-; bits 4, 2, 4 and offsets 16, 48, 32
+; the static stable used for bits+offset for lengths 1, 2 and 3 (3 bytes)
+; bits 2, 4, 4 and offsets 64, 48, 32 corresponding to
+; %10010000, %11100011, %11100010
 tabl_bit:
-        !BYTE %11100001, %10001100, %11100010
+        !BYTE $90, $e3, $e2
+} ELSE {
+; -------------------------------------------------------------------
+; the static stable used for bits+offset for lengths 1 and 2 (2 bytes)
+; bits 2, 4 and offsets 48, 32 corresponding to %10001100, %11100010
+tabl_bit:
+        !BYTE $8c, $e2
+}
 ; -------------------------------------------------------------------
 ; end of decruncher
 ; -------------------------------------------------------------------
 
 ; -------------------------------------------------------------------
-; this 156 byte table area may be relocated. It may also be clobbered
-; by other data between decrunches.
+; this 156 (204) byte table area may be relocated. It may also be
+; clobbered by other data between decrunches.
 ; -------------------------------------------------------------------
 decrunch_table=$200;;:
-;;      .byte 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-;;      .byte 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-;;      .byte 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-;;      .byte 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-;;      .byte 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-;;      .byte 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-;;      .byte 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-;;      .byte 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-;;      .byte 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-;;      .byte 0,0,0,0,0,0,0,0,0,0,0,0
+;;        .byte 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+;;        .byte 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+;;        .byte 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+;;.IFDEF EXTRA_TABLE_ENTRY_FOR_LENGTH_THREE
+;;        .byte 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+;;        .byte 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+;;        .byte 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+;;.ENDIF
+;;        .byte 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+;;        .byte 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+;;        .byte 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+;;        .byte 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+;;        .byte 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+;;        .byte 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+;;        .byte 0,0,0,0,0,0,0,0,0,0,0,0
 ; -------------------------------------------------------------------
 ; end of decruncher
 ; -------------------------------------------------------------------
