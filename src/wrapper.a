@@ -1,0 +1,54 @@
+!cpu 6502
+*=$2000
+!to "../build/PASSPORT.SYSTEM",plain
+
+         !source "../build/vars.a"
+
+         jsr   decrunch
+         sty   $fe ;;zp_dest_lo
+
+MACHINEID =    $FBB3
+
+OneTimeSetup
+         lda   $C0E8
+         jsr   SaveProDOS
+         ldx   MACHINEID
+         cpx   #$EA
+         bne   .slotscan
+         lda   #$DF
+         sta   kForceLower
+.slotscan
+         jsr   ScanForDiskII
+         lda   DiskIIArray+5
+         bne   .founds6
+         lda   #s_noslot6
+         jsr   PrintByID
+         jsr   WaitForKey
+         jmp   CleanExit
+
+.founds6
+         jsr   ScanForRAMDisk
+         jsr   LoadPrefs  ; load preferences (if available)
+         jmp   ($fe) ;;zp_dest_lo
+
+         !source "apidefs.a"
+         !source "strings/enid.a"
+         !source "initscan.a"
+         !source "exodecrunch.s"
+
+get_crunched_byte:
+	lda _byte_lo
+	bne _byte_skip_hi
+	dec _byte_hi
+_byte_skip_hi:
+	dec _byte_lo
+_byte_lo = * + 1
+_byte_hi = * + 2
+	lda packend		; needs to be set correctly before
+				; decrunch_file is called.
+	rts
+
+
+!bin "../build/passport.pak"
+!word HIGHPOINT
+packend

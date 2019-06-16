@@ -5,32 +5,60 @@ echo y|1>nul rd build /s
 goto :EOF
 )
 
+setlocal enabledelayedexpansion
 set BUILDDISK=build\passport
 
 set ACME=acme
-set EXOMIZER=exomize
+set EXOMIZER=exomizer raw -q -P23
 set CADIUS=cadius
 2>nul md build
 cd src\mods
 %ACME% universalrwts.a
 cd ..\..\build
-%EXOMIZER% raw -q universalrwts.bin -o universalrwts.tmp
+%EXOMIZER% universalrwts.bin -o universalrwts.tmp
 cscript /nologo //e:jscript %~f0 "b8" "00"
 1>nul copy /b tmp+universalrwts.tmp universalrwts.pak
 cd ..\src\mods
 %ACME% -r ..\..\build\t00only.lst t00only.a
 cd ..\..\build
-%EXOMIZER% raw -q t00only.bin -o t00only.tmp
+%EXOMIZER% t00only.bin -o t00only.tmp
 cscript /nologo //e:jscript %~f0 "20" "00"
 1>nul copy /b tmp+t00only.tmp t00only.pak
 cd ..\src
-for /f "tokens=*" %%q in ('2^>^&1 %ACME% passport.a') do set _make=%%q
-%ACME% -r ..\build\passport.lst -DRELBASE=$%_make:~-5,4% passport.a
-set _make=
+2>..\build\out.txt %ACME% -DFORWARD_DECRUNCHING=1 passport.a
+for /f "tokens=2,3 delims=)" %%q in ('find "RELBASE =" ..\build\out.txt') do set _make=%%q
+2>..\build\out.txt %ACME% -r ..\build\passport.lst -DRELBASE=$%_make:~-4% -DFORWARD_DECRUNCHING=1 passport.a
+for /f "tokens=4,* delims=:(" %%q in ('find "SaveProDOS=" ..\build\out.txt') do echo %%q > ..\build\vars.a
+for /f "tokens=4,* delims=:(" %%q in ('find "kForceLower=" ..\build\out.txt') do echo %%q >> ..\build\vars.a
+for /f "tokens=4,* delims=:(" %%q in ('find "DiskIIArray=" ..\build\out.txt') do echo %%q >> ..\build\vars.a
+for /f "tokens=4,* delims=:(" %%q in ('find "PrintByID=" ..\build\out.txt') do echo %%q >> ..\build\vars.a
+for /f "tokens=4,* delims=:(" %%q in ('find "WaitForKey=" ..\build\out.txt') do echo %%q >> ..\build\vars.a
+for /f "tokens=4,* delims=:(" %%q in ('find "CleanExit=" ..\build\out.txt') do echo %%q >> ..\build\vars.a
+for /f "tokens=4,* delims=:(" %%q in ('find "GetVolumeName=" ..\build\out.txt') do echo %%q >> ..\build\vars.a
+for /f "tokens=4,* delims=:(" %%q in ('find "OnlineReturn=" ..\build\out.txt') do echo %%q >> ..\build\vars.a
+for /f "tokens=4,* delims=:(" %%q in ('find "GetVolumeInfo=" ..\build\out.txt') do echo %%q >> ..\build\vars.a
+for /f "tokens=4,* delims=:(" %%q in ('find "filetype=" ..\build\out.txt') do echo %%q >> ..\build\vars.a
+for /f "tokens=4,* delims=:(" %%q in ('find "VolumeName=" ..\build\out.txt') do echo %%q >> ..\build\vars.a
+for /f "tokens=4,* delims=:(" %%q in ('find "auxtype=" ..\build\out.txt') do echo %%q >> ..\build\vars.a
+for /f "tokens=4,* delims=:(" %%q in ('find "blocks=" ..\build\out.txt') do echo %%q >> ..\build\vars.a
+for /f "tokens=4,* delims=:(" %%q in ('find "PREFSVER=" ..\build\out.txt') do echo %%q >> ..\build\vars.a
+for /f "tokens=4,* delims=:(" %%q in ('find "PREFSFILE=" ..\build\out.txt') do echo %%q >> ..\build\vars.a
+for /f "tokens=4,* delims=:(" %%q in ('find "PREFSREADLEN=" ..\build\out.txt') do echo %%q >> ..\build\vars.a
+for /f "tokens=4,* delims=:(" %%q in ('find "PREFSBUFFER=" ..\build\out.txt') do echo %%q >> ..\build\vars.a
+for /f "tokens=4,* delims=:(" %%q in ('find "ValidatePrefs=" ..\build\out.txt') do echo %%q >> ..\build\vars.a
+for /f "tokens=4,* delims=:(" %%q in ('find "SavePrefs=" ..\build\out.txt') do echo %%q >> ..\build\vars.a
+for /f "tokens=4,* delims=:(" %%q in ('find "mliparam=" ..\build\out.txt') do echo %%q >> ..\build\vars.a
+for /f "tokens=4,* delims=:(" %%q in ('find "OpenFile=" ..\build\out.txt') do echo %%q >> ..\build\vars.a
+for /f "tokens=4,* delims=:(" %%q in ('find "ReadFile=" ..\build\out.txt') do echo %%q >> ..\build\vars.a
+for /f "tokens=4,* delims=:(" %%q in ('find "CloseFile=" ..\build\out.txt') do echo %%q >> ..\build\vars.a
+cd ..\build
+%EXOMIZER% -b passport.tmp -o passport.pak
+cd ..\src
+%ACME% -DFORWARD_DECRUNCHING=0 wrapper.a
 cd ..
-1>nul copy res\work.po build\passport.po
+1>nul copy res\work.po %BUILDDISK%.po
 1>nul copy res\_FileInformation.txt build\
-%CADIUS% ADDFILE "build\passport.po" "/PASSPORT/" "build\PASSPORT.SYSTEM"
+%CADIUS% ADDFILE "%BUILDDISK%.po" "/PASSPORT/" "build\PASSPORT.SYSTEM"
 cscript /nologo bin/po2do.js build\ build\
 2>nul del "%BUILDDISK%.po"
 goto :EOF

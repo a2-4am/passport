@@ -1,5 +1,9 @@
 !cpu 6502
+!ifdef RELBASE {
+*=RELBASE
+} else {
 *=$2000
+}
 
 ;-------------------------------
 ; Passport
@@ -46,7 +50,7 @@ FINNISH  =     5          ; src/strings/fi, PASSPORT.FI
 LANG     =     ENGLISH
 
          !if LANG=ENGLISH {
-                !to "../build/PASSPORT.SYSTEM",plain
+                !to "../build/PASSPORT.TMP",plain
          }
          !if LANG=FRENCH {
                 !to "../build/PASSPORT.FR",plain
@@ -86,39 +90,9 @@ UNIV_D3 = $B8FC
 
 !source "apidefs.a"
 
-         ldx   #$00
-FM       lda   LastMover - 256,x
-         sta   HIGHPOINT-$100,x
-         inx
-         bne   FM
-         dec   FM+2
-         dec   FM+5
-         lda   FM+5
-         cmp   #(>RELBASE)-((>(RELBASE+255))->RELBASE)-1
-         bne   FM
-
-OneTimeSetup
-         lda   $C0E8
-         jsr   SaveProDOS
-         ldx   MACHINEID
-         cpx   #$EA
-         bne   .slotscan
-         lda   #$DF
-         sta   kForceLower
-.slotscan
-         jsr   ScanForDiskII
-         lda   DiskIIArray+5
-         bne   .founds6
-         jmp   FatalNoSlot6
-.founds6
-         jsr   ScanForRAMDisk
-         jsr   LoadPrefs  ; load preferences (if available)
-         jmp   ResetVector
-
-         !source "initscan.a"
-
 FirstMover
-         !pseudopc RELBASE {
+         jmp    ResetVector
+
 !zone
 ; use localized strings based on current language
 
@@ -573,7 +547,7 @@ CopyUniversalAnywhere
          lda   #<universalrwts
          sta   _byte_lo
          jsr   decrunch
-         sta   jCallRWTS+1
+         sty   jCallRWTS+1
          lda   #$BD
          sta   jCallRWTS+2
          ldy   #$96
@@ -653,12 +627,6 @@ CleanExit
          !word .quitparm
 .quitparm
          !byte $04,$00,$00,$00,$00,$00,$00
-
-FatalNoSlot6
-         lda   #s_noslot6
-         jsr   PrintByID
-         jsr   WaitForKey
-         jmp   CleanExit
 
          !source "progress.a"
 
@@ -844,11 +812,22 @@ _applyToAll
 
 universalrwts
          !bin "../build/universalrwts.pak"
-         !source "unpack.a"
+         !source "exodecrunch.s"
+
+get_crunched_byte:
+_byte_lo = * + 1
+_byte_hi = * + 2
+	lda $1234		; needs to be set correctly before
+				; decrunch_file is called.
+	inc _byte_lo
+	bne _byte_skip_hi
+	inc _byte_hi
+_byte_skip_hi:
+	rts
+
 AnalyzeT00                ; placeholder to identify stack of packed data
          !bin "../build/t00only.pak"
          !source "apicode.a"
-         }
 LastMover
 
 !if RELBASE = $2000 {
@@ -861,4 +840,28 @@ LastMover
   !if (HIGHPOINT - (LastMover - FirstMover)) < LOWPOINT {
     !serious "code end (", HIGHPOINT - (LastMover - FirstMover), ") is below minimum (", LOWPOINT, ")!"
   }
+
+  !warn "CleanExit=",CleanExit
+  !warn "WaitForKey=",WaitForKey
+  !warn "SaveProDOS=",SaveProDOS
+  !warn "OpenFile=",OpenFile
+  !warn "ReadFile=",ReadFile
+  !warn "CloseFile=",CloseFile
+  !warn "GetVolumeName=",GetVolumeName
+  !warn "OnlineReturn=",OnlineReturn
+  !warn "VolumeName=",VolumeName
+  !warn "GetVolumeInfo=",GetVolumeInfo
+  !warn "mliparam=",mliparam
+  !warn "filetype=",filetype
+  !warn "auxtype=",auxtype
+  !warn "blocks=",blocks
+  !warn "PREFSFILE=",PREFSFILE
+  !warn "PREFSBUFFER=",PREFSBUFFER
+  !warn "PREFSREADLEN=",PREFSREADLEN
+  !warn "PREFSVER=",PREFSVER
+  !warn "SavePrefs=",SavePrefs
+  !warn "ValidatePrefs=",ValidatePrefs
+  !warn "kForceLower=",kForceLower
+  !warn "PrintByID=",PrintByID
+  !warn "DiskIIArray=",DiskIIArray
 }

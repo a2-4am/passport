@@ -17,7 +17,7 @@ ACME=acme
 CADIUS=cadius
 # https://bitbucket.org/magli143/exomizer/wiki/Home
 # requires Exomizer 3.0 or later
-EXOMIZER=exomizer raw -P0 -q
+EXOMIZER=exomizer raw -q -P23
 
 BUILDDISK=build/passport
 
@@ -29,8 +29,33 @@ asm:
 	cd src/mods && $(ACME) -r ../../build/t00only.lst t00only.a
 	$(EXOMIZER) build/t00only.bin -o build/t00only.tmp
 	printf "\x20\x00" | cat - build/t00only.tmp > build/t00only.pak
-	cd src && $(ACME) -r ../build/passport.lst passport.a 2> ../build/relbase.log
-	cd src && $(ACME) -DRELBASE=`cat ../build/relbase.log | cut -d"=" -f2 | cut -d"(" -f2 | cut -d")" -f1` passport.a
+	cd src && $(ACME) -r ../build/passport.lst -DFORWARD_DECRUNCHING=1 passport.a 2> ../build/relbase.log
+	cd src && $(ACME) -DRELBASE=`cat ../build/relbase.log | grep "RELBASE =" | cut -d"=" -f2 | cut -d"(" -f2 | cut -d")" -f1` -DFORWARD_DECRUNCHING=1 passport.a 2> ../build/vars.log
+	grep "SaveProDOS=" build/vars.log | cut -d":" -f3 | cut -d"(" -f1 > build/vars.a
+	grep "kForceLower=" build/vars.log | cut -d":" -f3 | cut -d"(" -f1 >> build/vars.a
+	grep "DiskIIArray=" build/vars.log | cut -d":" -f3 | cut -d"(" -f1 >> build/vars.a
+	grep "PrintByID=" build/vars.log | cut -d":" -f3 | cut -d"(" -f1 >> build/vars.a
+	grep "WaitForKey=" build/vars.log | cut -d":" -f3 | cut -d"(" -f1 >> build/vars.a
+	grep "CleanExit=" build/vars.log | cut -d":" -f3 | cut -d"(" -f1 >> build/vars.a
+	grep "GetVolumeName=" build/vars.log | cut -d":" -f3 | cut -d"(" -f1 >> build/vars.a
+	grep "OnlineReturn=" build/vars.log | cut -d":" -f3 | cut -d"(" -f1 >> build/vars.a
+	grep "GetVolumeInfo=" build/vars.log | cut -d":" -f3 | cut -d"(" -f1 >> build/vars.a
+	grep "filetype=" build/vars.log | cut -d":" -f3 | cut -d"(" -f1 >> build/vars.a
+	grep "VolumeName=" build/vars.log | cut -d":" -f3 | cut -d"(" -f1 >> build/vars.a
+	grep "auxtype=" build/vars.log | cut -d":" -f3 | cut -d"(" -f1 >> build/vars.a
+	grep "blocks=" build/vars.log | cut -d":" -f3 | cut -d"(" -f1 >> build/vars.a
+	grep "PREFSVER=" build/vars.log | cut -d":" -f3 | cut -d"(" -f1 >> build/vars.a
+	grep "PREFSFILE=" build/vars.log | cut -d":" -f3 | cut -d"(" -f1 >> build/vars.a
+	grep "PREFSREADLEN=" build/vars.log | cut -d":" -f3 | cut -d"(" -f1 >> build/vars.a
+	grep "PREFSBUFFER=" build/vars.log | cut -d":" -f3 | cut -d"(" -f1 >> build/vars.a
+	grep "ValidatePrefs=" build/vars.log | cut -d":" -f3 | cut -d"(" -f1 >> build/vars.a
+	grep "SavePrefs=" build/vars.log | cut -d":" -f3 | cut -d"(" -f1 >> build/vars.a
+	grep "mliparam=" build/vars.log | cut -d":" -f3 | cut -d"(" -f1 >> build/vars.a
+	grep "OpenFile=" build/vars.log | cut -d":" -f3 | cut -d"(" -f1 >> build/vars.a
+	grep "ReadFile=" build/vars.log | cut -d":" -f3 | cut -d"(" -f1 >> build/vars.a
+	grep "CloseFile=" build/vars.log | cut -d":" -f3 | cut -d"(" -f1 >> build/vars.a
+	$(EXOMIZER) -b build/passport.tmp -o build/passport.pak
+	cd src && $(ACME) -DFORWARD_DECRUNCHING=0 wrapper.a
 	cp res/work.po "$(BUILDDISK)".po
 	cp res/_FileInformation.txt build/
 	$(CADIUS) ADDFILE "${BUILDDISK}".po "/PASSPORT/" "build/PASSPORT.SYSTEM"

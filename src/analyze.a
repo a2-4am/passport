@@ -144,10 +144,11 @@ SetupF7F6SecondRound
          ldy   gSector
          lda   #kSectorIgnore
 .a       sta   $D1D1      ; modifed at runtime
-         dec   .a+1
+         ldx   .a+1
          bne   +
          dec   .a+2
-+        dey
++        dec   .a+1
+         dey
          bpl   .a
 ; print that we found the protection track
          lda   #s_f7
