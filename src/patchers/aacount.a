@@ -22,7 +22,7 @@
          !byte $D0,$02    ; BNE *+4
          !byte $00        ; BRK
          !byte $6C,$B9,$00; JMP ($00B9)
-         bcs   +
+         bcs   +          ; passport-test-suite/Moebius.woz [C=0] matches
          lda   #s_aacount
          jsr   PrintByID
          lda   gDisplayBytes

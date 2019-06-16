@@ -17,7 +17,7 @@
          !byte $D0,$03    ; BNE +3
          !byte $4C,$A5,$00; JMP $00A5
          !byte $C9,$A5    ; CMP #$A5
-         bcs   .exit
+         bcs   .exit      ; passport-test-suite/Game Frame One.woz [C=0] matches
          sta   gDisplayBytes
          pha
          txa

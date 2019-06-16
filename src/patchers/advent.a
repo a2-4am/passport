@@ -40,9 +40,9 @@
          !byte $A9,$96               ;LDA #$96
          !byte $8D,WILDCARD,WILDCARD ;STA $xxxx
          !byte $60                   ;RTS
-         bcs   .pop
-         ldy   #1
-         jsr   modify
+         bcs   .pop       ; passport-test-suite/Borrowed Time.woz [C=0] matches
+         ldy   #1         ; passport-test-suite/Mindshadow.woz [C=0] matches
+         jsr   modify     ; passport-test-suite/The Tracer Sanction.woz [C=0] matches
          !byte $10                   ;BEQ -> BPL
          ldy   #23
          jsr   SearchTrack
@@ -79,14 +79,14 @@
          pla
 .patch
          ldx   #0
-         ldy   #3
+         ldy   #3         ; passport-test-suite/Borrowed Time.woz [Z=1] reaches here
          jsr   modify
          !byte $C9,$AA               ;CMP #$AA
          !byte $EA                   ;NOP
          plp
          bcs   .exit
-         sec
-         bcs   .again
+         sec              ; passport-test-suite/Mindshadow.woz [C=0] reaches here
+         bcs   .again     ; passport-test-suite/The Tracer Sanction.woz [C=1] reaches here
 
 .pop
          plp

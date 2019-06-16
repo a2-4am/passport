@@ -4,10 +4,16 @@
 ; Adventure International disks
 ;
 ; tested on
-; SAGA1 - Adventureland v2.1-416
-; SAGA2 - Pirate Adventure v2.1-408
-; SAGA5 - The Count v2.1-115
-; SAGA6 - Strange Odyssey v2.1-119
+; - Curse of Crowley Manor
+; - Earthquake San Francisco 1906
+; - QuestProbe featuring The Hulk
+; - SAGA1 - Adventureland v2.0-416
+; - SAGA1 - Adventureland v2.1-416
+; - SAGA2 - Pirate Adventure v2.1-408
+; - SAGA3 - Mission Impossible v2.1/306
+; - SAGA4 - Voodoo Castle v2.1/119
+; - SAGA5 - The Count v2.1-115
+; - SAGA6 - Strange Odyssey v2.1-119
 ;-------------------------------
 !zone {
          bit   gMode      ; nothing to do here in verify-only mode
@@ -20,7 +26,7 @@
          !byte $85,WILDCARD,WILDCARD ;JMP $****
          !byte $74,$45,$09           ;LDA $C08C,X
          !byte $D9,$32               ;BPL -$FB
-         bcs   .exit
+         bcs   .exit      ; passport-test-suite/S.A.G.A. 6.woz [C=0] matches
          sta   gDisplayBytes
          pha
          lda   #s_advint

@@ -3,19 +3,19 @@
 ; boot1 calls $BB03 for a self-decrypting nibble check
 ;
 ; variant 1 (JSR $BB03)
-; Classifying Animals with Backbones
-; EduCalc
+; - Classifying Animals with Backbones
+; - EduCalc
 ;
 ; variant 2 (JSR $BB03 but David-DOS)
-; Case of the Great Train Robbery
-; Case of the Missing Chick
-; Mrs. Wigglesworth's Secret
-; Mystery of the Witch's Shoes
+; - Case of the Great Train Robbery
+; - Case of the Missing Chick
+; - Mrs. Wigglesworth's Secret
+; - Mystery of the Witch's Shoes
 ;
 ; variant 3 (JMP $BB03)
-; Alice in Wonderland
-; Sum Ducks
-; Trivia Fever
+; - Alice in Wonderland (some versions)
+; - Sum Ducks
+; - Trivia Fever
 ;-------------------------------
 !zone {
          sec
@@ -65,7 +65,8 @@
          ldy   #$01
          jsr   modify     ; and set T00,S06,$0F =
          !byte $89        ; encrypted, decrypts to $10 which is the expected nibble count value
-         bvc   .no        ; unconditional branch
+                          ; unconditional branch (V is always 0 coming out of modify)
+         bvc   .no        ; passport-test-suite/Trivia Fever.woz [V=0] reaches here
 .variant1
          lda   #$05
          ldx   #$03
@@ -76,10 +77,11 @@
          !byte $A9,$18
          !byte $48
          !byte $4C,$93,$B7
-         bvc   .no        ; uncondtional branch
+                          ; unconditional branch (V is always 0 coming out of modify)
+         bvc   .no        ; passport-test-suite/Classifying Animals with Backbones.woz [V=0] reaches here
 .variant2
          lda   #$07
-         ldx   #$03
+         ldx   #$03       ; passport-test-suite/Case of the Great Train Robbery.woz [Z=0] reaches here
          ldy   #$0B
          jsr   modify     ; then set T00,S07,$03 =
          !byte $A9,$B5

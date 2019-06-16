@@ -5,6 +5,7 @@
 ; tested on
 ; - AceCalc (ArtSci)
 ; - Magicalc (ArtSci)
+; - Magic Words
 ; - Photar
 ;-------------------------------
 !zone {
@@ -27,7 +28,7 @@
          TXA
          STA   ($3C),Y
 @searchend
-         bcs   .exit
+         bcs   .exit      ; passport-test-suite/Photar.woz [C=0] matches
          sta   gDisplayBytes
          pha
          lda   #s_bytrack

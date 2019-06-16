@@ -6,7 +6,9 @@
 ; but this confuses legacy emulators
 ; (AppleWin, older versions of MAME)
 ; so we patch it for compatibility
-; e.g. Dinosaur Days
+;
+; tested on
+; - Dinosaur Days
 ;-------------------------------
 !zone {
          bit   gMode      ; nothing to do here in verify-only mode
@@ -25,7 +27,7 @@
          !byte $BD,$8C,$C0; LDA $C08C,X
          !byte $C9,$D5    ; CMP #$D5
          !byte $F0,$12    ; BEQ +$12
-         bcs   .exit
+         bcs   .exit      ; passport-test-suite/Dinosaur Days.woz [C=0] matches
          lda   #$03
          ldx   #$59
          ldy   #$02
