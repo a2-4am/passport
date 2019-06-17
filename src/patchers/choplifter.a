@@ -7,15 +7,26 @@
 ;
 ; tested on
 ; - Choplifter (Broderbund)
+; - Dueling Digits (Broderbund)
 ; - Eggs-It (Gebelli)
+; - High Orbit (Gebelli)
+; - Horizon V (Gebelli)
+; - Labyrinth (Broderbund)
+; - Lazer Silk (Broderbund)
 ; - Neptune (Gebelli)
+; - Phaser Fire (Gebelli)
+; - Russki Duck (Gebelli)
+; - Seafox (Broderbund)
+; - Serpentine (Broderbund)
+; - Sky Blazer (Broderbund)
+; - Star Blazer (Broderbund)
 ;-------------------------------
 !zone {
          rts              ; reachable only via inspect
 
 Choplifter
          lda   #$00
-         sta   gCommand
+         sta   gCommand   ; passport-test-suite/Eggs-It.woz [Z=1] reaches here
          sta   dct+1
          jsr   ChangeTrackNW
          jsr   IncProgress

@@ -32,7 +32,7 @@
          !byte $60        ; RTS
          !byte $38        ; SEC
          !byte $60        ; RTS
-         bcs   .exit
+         bcs   .exit      ; passport-test-suite/Mr. Pixel's Programming Paint Set.woz [C=0] matches
          sta   gDisplayBytes
          pha
          txa
