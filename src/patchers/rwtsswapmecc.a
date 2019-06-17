@@ -19,7 +19,7 @@
          !byte $8D,$8B,$C0
          !byte $B9,WILDCARD,WILDCARD
          !byte $8D,$AC,$D5
-         bcs   .exit
+         bcs   .exit      ; passport-test-suite/MECC Dataquest - Europe and Soviet Union.woz [C=0] matches
          sta   gDisplayBytes
          ldy   #$03
          jsr   modify

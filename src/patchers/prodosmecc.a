@@ -16,7 +16,7 @@
          jsr   SearchTrack
          !byte $50,$54,$58,$5C,$60,$64,$68,$00
          !byte $20,$10,$30,WILDCARD,$AA,$EB
-         bcs   +
+         bcs   +          ; passport-test-suite/Mystery Objects v1.1.woz [C=0] matches
          sta   gDisplayBytes
          tay
          txa
@@ -36,7 +36,7 @@
          !byte $AD,$C4,$D1,$CD,$C8,$D4,$08,$2C
          !byte $81,$C0,$28,$D0,$06,$C9,$DE,$F0
          !byte $02,$18,$24,$38,$60
-         bcs   +
+         bcs   +          ; passport-test-suite/Mystery Objects v1.1.woz [C=0] matches
          sta   gDisplayBytes
          tay
          txa
@@ -46,7 +46,7 @@
          ldy   #$01
          jsr   compare
          !byte $38
-         bcs   +
+         bcs   +          ; passport-test-suite/Mystery Objects v1.1.woz [C=0] matches
          ldy   #$01
          jsr   modify
          !byte $18
@@ -59,7 +59,7 @@
          !byte $AD,$C4,$D1,$CD,$C8,$D4,$08,$2C
          !byte $81,$C0,$28,$D0,$09,$8D,WILDCARD,WILDCARD
          !byte $C9,$DE,$F0,$02,$18,$24,$38,$60
-         bcs   +
+         bcs   +          ; passport-test-suite/Spelling Press v1.1.woz [C=0] matches
          sta   gDisplayBytes
          tay
          txa
@@ -69,7 +69,7 @@
          ldy   #$01
          jsr   compare
          !byte $38
-         bcs   +
+         bcs   +          ; passport-test-suite/Spelling Press v1.1.woz [C=0] matches
          ldy   #$01
          jsr   modify
          !byte $18
@@ -83,7 +83,7 @@
          !byte $B0,$98
          !byte $38
          !byte $60
-         bcs   +
+         bcs   +          ; passport-test-suite/Spelling Press v1.1.woz [C=0] matches
          tay
          txa
          adc   #$0A
@@ -92,7 +92,7 @@
          ldy   #$01
          jsr   compare
          !byte $38
-         bcs   +
+         bcs   +          ; passport-test-suite/Spelling Press v1.1.woz [C=0] matches
          ldy   #$01
          jsr   modify
          !byte $18
@@ -100,13 +100,13 @@
          ldy   #$0B
          jsr   SearchTrack
          !byte $30,$91,$38,$60,00,$20,00,03,00,03,00
-         bcs   .exit
+         bcs   .exit      ; passport-test-suite/Spelling Press v1.1.woz [C=0] matches
          inx
          inx
          ldy   #$01
          jsr   compare
          !byte $38
-         bcs   .exit
+         bcs   .exit      ; passport-test-suite/Spelling Press v1.1.woz [C=0] matches
          ldy   #$01
          jsr   modify
          !byte $18

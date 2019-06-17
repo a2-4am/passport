@@ -1,8 +1,42 @@
 ;-------------------------------
 ; #JMPB4BB
-; boot2 jumps to $B4BB for a
-; nibble check
-; e.g. Troll's Tale
+; boot2 jumps to $B4BB for a nibble check
+;
+; tested on
+; - Alibi
+; - Bellhop
+; - Championship Golf
+; - College Board 81-82 demo
+; - Compu-Math v1.3.1
+; - Conglomerates Collide
+; - Crime Stopper
+; - Crystal Caverns
+; - Early Games - Music
+; - Energy Conversions
+; - Kamikaze
+; - King Cribbage
+; - Krell's Logo (first release)
+; - Laser Bounce
+; - Latin Tutor
+; - Max Command
+; - Microscopic Journey
+; - MultiPloy (first release)
+; - Mummy's Curse
+; - Prisoner 2 v1.0
+; - Property Management System demo
+; - RAF - The Battle of Britain
+; - Rhymes and Riddles
+; - Rubik's Cube Unlocked
+; - Shuttle Intercept
+; - Snooper Troops 1
+; - The Brain Surgeon
+; - The Counting Bee v1.2
+; - The Final Conflict
+; - The Great Maine to California Race
+; - Time Traveler (first release)
+; - Troll's Tale (first release)
+; - Wargle
+; - Winged Samurai
 ;-------------------------------
 !zone {
          bit   gMode      ; nothing to do here in verify-only mode
@@ -20,13 +54,13 @@
          jsr   compare    ; and T02,S0x,$D7 ==
          !byte $D8        ; CLD
          !byte $AD,$FF,$CF; LDA $CFFF
-         bcc   .found
+         bcc   .found     ; passport-test-suite/Kamikaze.woz [C=0] matches
          ldx   #$DD
          ldy   #$04
          jsr   compare    ; or T02,S0x,$DD ==
          !byte $D8        ; CLD
          !byte $AD,$FF,$CF; LDA $CFFF
-         bcs   .exit
+         bcs   .exit      ; passport-test-suite/Snooper Troops Case 2.woz [C=0] matches
 .found
          pha
          lda   #s_jmpb4bb

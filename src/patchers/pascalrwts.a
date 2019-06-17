@@ -26,7 +26,7 @@
          !byte $BD,$8C,$C0
          !byte $10,$FB
          !byte $C9,WILDCARD
-         bcs   +
+         bcs   +          ; passport-test-suite/Solar Reading- Flight 1 - Paraphrase - Jupiter.woz [C=0] matches
          ldx   #$51
          ldy   #$01
          jsr   compare    ; and T00,S0D,$51 !=

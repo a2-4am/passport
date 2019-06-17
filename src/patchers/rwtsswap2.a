@@ -37,7 +37,7 @@ _rwtsswap2
          !byte $A9,$96
          !byte $8D,$29,$BA
          !byte $60
-         bcs   .exit
+         bcs   .exit      ; passport-test-suite/Mask Parade.woz [C=0] matches
          ldx   #$69
          ldy   #$01
          jsr   modify     ; then set T00,S04,$69 =

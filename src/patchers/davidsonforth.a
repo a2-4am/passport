@@ -18,7 +18,7 @@
          ldy   #$08
          jsr   SearchTrack
          !byte $08,$80,$00,$FD,$1C,$D1,$0D,$EC
-         bcs   .exit
+         bcs   .exit      ; passport-test-suite/Read 'N Roll.woz [C=0] matches
          sta   gDisplayBytes
          inx
          ldy   #$01

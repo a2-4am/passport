@@ -16,7 +16,7 @@
          ldy   #$03
          jsr   compare    ; if T00,S06,$F2 ==
          !byte $20,$B6,$B6
-         bcs   .exit
+         bcs   .exit      ; passport-test-suite/The Function Game.woz [C=0] matches
          pha
          lda   #6
          sta   gDisplayBytes

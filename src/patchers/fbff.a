@@ -3,10 +3,91 @@
 ; Activision's Timing Bit Detection:
 ;  FB+FF FF+FF FF+FD FF+FF+FF+FF+FF+FF+FF+FF+FF+ and
 ;  DE AA EB+FF+FF+FF+FF+FF+FF D5 AA
-; Magic key is #$FF, usually EOR'ed with #$AA but not always
-; As found on Aliens, Maniac Mansion + 22 other titles
 ;
-; Module by Brian Troha
+; module by Brian Troha
+;
+; tested on
+; - Aliens
+; - Alpine Tram Ride
+; - Alter Ego (male and female releases)
+; - Bad Dudes
+; - Basic Fraction Concepts
+; - Championship Baseball
+; - Computer Assisted Problem Solving for Pre-Algebra
+; - Computer Laboratory for Calculus
+; - Countdown to Shutdown
+; - Fractions II
+; - GBA Championship Basketball
+; - GFL Championship Football
+; - Gamma Force
+; - Garry Kitchen's GameMaker
+; - Geometry - Simple Closed Curves
+; - Greeting Card Maker
+; - Hacker
+; - Hacker II
+; - Heavy Barrel
+; - How To Weigh An Elephant
+; - Lane Mastodon
+; - Let's Go Fishing
+; - Little Computer People
+; - Magic Spells 2.1
+; - Maniac Mansion
+; - Master of the Lamps
+; - Math Man
+; - Math Rabbit 1.0
+; - Math Rabbit 1.1
+; - Math Shop
+; - Math Tutor - Addition
+; - Math Tutor - Division
+; - Math Tutor - Fractions Part I
+; - Math Tutor - Multiplication
+; - Math Tutor - Subtraction
+; - MicroType - The Wonderful World of Paws
+; - Microzine 15
+; - Microzine 19
+; - Microzine 20
+; - Microzine 21
+; - Microzine 22
+; - Microzine 23
+; - Microzine 24
+; - Microzine 25
+; - Microzine 8
+; - Monkey Business
+; - Multiplication Advanced Level
+; - Multiplication and Division
+; - Number Farm
+; - Number Please
+; - Paper Models - The Christmas Kit
+; - Platoon
+; - Portal
+; - Rampage
+; - Reader Rabbit 1.3
+; - Scrambled Eggs
+; - Shanghai
+; - Sliding Block
+; - Speedy Delivery
+; - Spindizzy
+; - Star Trek - The Kobayashi Alternative
+; - Success with Reading
+; - Tales From History
+; - Tales of Fantasy
+; - Talking Text Writer
+; - The Crimson Crown 1985
+; - The Electric Crayon - ABCs
+; - The Electric Crayon - Fun on the Farm
+; - The Flying Carpet
+; - The Rocky Horror Show
+; - The Shot Heard Round The World
+; - Think Quick 1.2
+; - Top Fuel Eliminator
+; - Transylvania 1985
+; - Victory Road
+; - Wagons West
+; - Writer Rabbit 1.0
+; - Writer Rabbit 1.2
+; - Writer Rabbit 1.3
+; - Zork Quest
+; - Zork Quest II
 ;-------------------------------
 !zone {
          bit   gMode      ; nothing to do here in verify-only mode
@@ -22,7 +103,7 @@
          !byte $C6,WILDCARD
          !byte $F0,WILDCARD
          !byte $BC,$8C,$C0
-         bcs   .exit
+         bcs   .exit      ; passport-test-suite/Maniac Mansion.woz [C=0] matches
          sta   gDisplayBytes
          pha
          lda   #s_fbff

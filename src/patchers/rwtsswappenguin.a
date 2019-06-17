@@ -23,7 +23,7 @@
          !byte $8D,$91,$B9
          !byte $8D,$35,$B9
          !byte $8D,$9E,$B8
-         bcs   .exit
+         bcs   .exit      ; passport-test-suite/Arcade Boot Camp.woz [C=0] matches
          inx
          ldy   #$01
          jsr   modify     ; then set T01,S04,$53 =

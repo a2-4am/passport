@@ -27,7 +27,7 @@
          !byte WILDCARD,WILDCARD; BLOAD length
          !byte $4E,$38,$86; LSR $8638
          !byte $DD,$3B,$86
-         bcs   +
+         bcs   +          ; passport-test-suite/Moon Bingo.woz [C=0] matches
          lda   #s_d5d5f7
          jsr   PrintByID
          lda   gDisplayBytes

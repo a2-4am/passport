@@ -26,7 +26,7 @@
          !byte $4A
          !byte WILDCARD,$6A
          !byte $D0,$EF
-         bcc   .yeslsr
+         bcc   .yeslsr    ; passport-test-suite/The Seasons.woz [C=0] matches
 ; RDOS variant
          ldx   #$4D
          ldy   #$0A
@@ -36,7 +36,7 @@
          !byte $4A
          !byte WILDCARD,$6A
          !byte $D0,$EF
-         bcs   .endlsr
+         bcs   .endlsr    ; passport-test-suite/Roadwar 2000.woz [C=0] matches
 .yeslsr
          lda   #s_lsr6a
          jsr   PrintByID
@@ -66,7 +66,7 @@
          !byte $EA
          !byte $18
          !byte $60
-         bcc   .yesbcs
+         bcc   .yesbcs    ; passport-test-suite/The Seasons.woz [C=0] matches
 ; RDOS variant
          ldx   #$89
          ldy   #$11
@@ -80,7 +80,7 @@
          !byte $BD,$8C,$C0
          !byte $C9,$80
          !byte $B0
-         bcs   .endbcs
+         bcs   .endbcs    ; passport-test-suite/Roadwar 2000.woz [C=0] matches
 .yesbcs
          lda   #s_bcs08
          jsr   PrintByID
@@ -102,7 +102,7 @@
          !byte $10,$FB
          !byte $C9,WILDCARD
          !byte $D0,$00
-         bcc   .yesbne0
+         bcc   .yesbne0   ; passport-test-suite/The Home Accountant.woz [C=0] matches
 ; David-DOS variant
          lda   #$05
          sta   gDisplayBytes
@@ -113,7 +113,7 @@
          !byte $10,$FB
          !byte $C9,WILDCARD
          !byte $D0,$00
-         bcs   .endbne0
+         bcs   .endbne0   ; passport-test-suite/Horses.woz [C=0] matches
 .yesbne0
          lda   #s_cmpbne0
          jsr   PrintByID

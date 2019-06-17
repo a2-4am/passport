@@ -27,7 +27,7 @@
          !byte $8D,$5D,$BD
          !byte $A9,$D5
          !byte $8D,$2C,$BF
-         bcs   .specific
+         bcs   .specific  ; passport-test-suite/Moebius.woz [C=0] matches
          sta   .swapper2+1
          inx
          stx   .swapper1+1
@@ -164,7 +164,7 @@
          ldy   #$03
          jsr   compare    ; if T00,S01,$93 ==
          !byte $4C,$00,$B8
-         bcs   .skipcheck
+         bcs   .skipcheck ; passport-test-suite/Ultima IV.woz [C=0] matches
          ldy   #$03
          jsr   modify     ; then set T00,S01,$93 =
          !byte $AC,$E5,$B7
@@ -180,7 +180,7 @@
          ldy   #$02
          jsr   compare    ; if T00,S05,$15 ==
          !byte $A5,$2F
-         bcs   .exit
+         bcs   .exit      ; passport-test-suite/Math Blaster v080584.woz [C=0] matches
          ldy   #$02
          jsr   modify     ; then set T00,S05,$15 =
          !byte $A9,$00

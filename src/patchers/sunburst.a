@@ -86,7 +86,7 @@
          ldy   #$02
          jsr   compare    ; and T00,S08,$8C ==
          !byte $69,$BA
-         bcc   .yes
+         bcc   .yes       ; passport-test-suite/The Incredible Laboratory.woz [C=0] matches
 .exit
          bcs   .exit2
 .yes

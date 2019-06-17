@@ -11,7 +11,7 @@
 ; Fraction-oids
 ; Math Magic
 ; RoboMath
-; NoteCard Maker
+; NoteCard Maker (Pascal variant)
 ;-------------------------------
 !zone {
          bit   gMode      ; nothing to do here in verify-only mode
@@ -51,8 +51,8 @@
          !byte $C8        ; INY
          !byte $18        ; CLC
          !byte $6D        ; ADC
-         bcs   .exit
-         sta   gDisplayBytes
+         bcs   .exit      ; passport-test-suite/RoboMath.woz [C=0] matches
+         sta   gDisplayBytes ; passport-test-suite/Notecard Maker.woz [C=0] matches
          pha
          lda   #s_d5d5f7
          jsr   PrintByID

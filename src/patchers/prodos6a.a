@@ -20,7 +20,7 @@
          !byte $10,$FB
          !byte $4A
          !byte $C9,$6A
-         bcs   +
+         bcs   +          ; passport-test-suite/Investigating Plant Growth.woz [C=0] matches
          lda   #s_lsr6a
          jsr   PrintByID
          inc   gPatchCount
@@ -33,7 +33,7 @@
          !byte $68
          !byte $BD,$8C,$C0
          !byte $C9,$08
-         bcs   .nextsector
+         bcs   .nextsector ; passport-test-suite/Investigating Plant Growth.woz [C=0] matches
          lda   #s_bcs08
          jsr   PrintByID
          inc   gPatchCount

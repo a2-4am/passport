@@ -17,7 +17,7 @@
          !byte $20,WILDCARD,$08; JSR $08xx
          !byte $BD,WILDCARD,$08; LDA $08xx,X
          !byte $9D,$00,$02; STA $0200,X
-         bcs   .exit
+         bcs   .exit      ; passport-test-suite/Epidemic.woz [Z=1] matches
 
          ldy   #4
          jsr   modify

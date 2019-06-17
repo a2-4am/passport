@@ -35,7 +35,7 @@
          ldy   #$03
          jsr   compare    ; and T00,S03,$9A ==
          JMP   $B6B3
-         bcs   .exit
+         bcs   .exit      ; passport-test-suite/MIRV.woz [C=0] matches
          pha
          lda   #s_dakin5
          jsr   PrintByID

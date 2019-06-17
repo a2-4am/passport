@@ -27,7 +27,7 @@
          !byte $20,$30,$E0; JSR $E030
          !byte $AD,$83,$C0; LDA $C083
          !byte $AD,$83,$C0; LDA $C083
-         bcs   .exit
+         bcs   .exit      ; passport-test-suite/Rendezvous with Rama rev. 2.woz [C=0] matches
          sta   gDisplayBytes
          pha
          lda   #s_trillium

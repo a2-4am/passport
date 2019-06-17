@@ -16,7 +16,7 @@
          ldy   #$02
          jsr   compare    ; and T00,S01,$48 ==
          !byte $03,$9B
-         bcs   .exit
+         bcs   .exit      ; passport-test-suite/Tangrams Puzzler.woz [C=0] matches
          ldy   #$02
          jsr   modify     ; then set T00,S01,$48 =
          !byte $84,$9D

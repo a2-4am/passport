@@ -24,7 +24,7 @@
          bcs   .exit
 
          lda   gForceDiskVol
-         beq   .yes
+         beq   .yes       ; passport-test-suite/Might and Magic.woz [Z=1] matches
 
          lda   gIsPanglosDOS
          ora   gCapturedDiskVolumeNumber
@@ -51,7 +51,7 @@
          !byte $A0,$03    ; LDY #$03
          !byte $B1,$48    ; LDA ($48),Y
          !byte $48        ; PHA
-         bcc   .veryyes
+         bcc   .veryyes   ; passport-test-suite/The Incredible Laboratory.woz [C=0] matches
 
          ldx   #$16       ; or T00,S08,$16 == the same thing
          ldy   #$05       ; (variation used by PanglosDOS)

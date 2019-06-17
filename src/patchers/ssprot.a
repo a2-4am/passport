@@ -46,12 +46,12 @@
          ldy   #$03
          jsr   compare
          !byte $23,$2A,$28
-         bcc   .variant1
+         bcc   .variant1  ; passport-test-suite/Creative Contraptions.woz [C=0] matches
 
          ldy   #$03
          jsr   compare
          !byte $70,$79,$77
-         bcc   .variant2
+         bcc   .variant2  ; passport-test-suite/Wortgefecht.woz [C=0] matches
          bcs   .nextsector
 
 .variant1

@@ -23,7 +23,7 @@
          !byte $D0,$AE    ; BNE $B942
          CMP   $C08C,X
          !byte $D0,$A9    ; BNE $B942
-         bcs   .exit
+         bcs   .exit      ; passport-test-suite/Easy as ABC.woz [C=0] matches
          lda   #s_springboard
          jsr   PrintByID
          lda   #$03

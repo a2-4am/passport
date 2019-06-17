@@ -3,6 +3,31 @@
 ; patched RWTS and p-code madness
 ;
 ; module by qkumba
+;
+; tested on
+; - Adventure Construction Set
+; - Archon
+; - Archon II
+; - Arcticfox
+; - Ali Baba and the Forty Thieves
+; - Axis Assassin (later releases only)
+; - The Bard's Tale
+; - The Bard's Tale II
+; - Boulder Dash
+; - Cut & Paste
+; - Earth Orbit Stations
+; - The Last Gladiator (all known release)
+; - Lords of Conquest
+; - Marble Madness
+; - Mind Mirror
+; - Movie Maker
+; - Music Construction Set (all known releases)
+; - PHM Pegasus
+; - Realm of Impossibility
+; - Return of Heracles
+; - Robot Rascals
+; - The Seven Cities of Gold
+; - Skyfox
 ;-------------------------------
 !zone {
          bit   gMode      ; nothing to do here in verify-only mode

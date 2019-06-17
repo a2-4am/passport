@@ -46,7 +46,7 @@
                           ; BNE   $00B3
                           ; LDA   $C088,X
                           ; JMP   $9D84
-         bcs   .exit
+         bcs   .exit      ; passport-test-suite/Binomial Multiplication.woz [C=0] matches
          sta   gDisplayBytes
          lda   #s_jmpb400
          jsr   PrintByID

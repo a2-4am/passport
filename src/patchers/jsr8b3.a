@@ -13,7 +13,7 @@
          bpl   .exit
          lda   gIs8b3
          bne   .exit
-         beq   +
+         beq   +          ; passport-test-suite/Ardy the Aardvark.woz [Z=1] reaches here
 
 .sectors
          !byte $00,$00,$02,$02,$02,$02,$02,$02,$02,$02

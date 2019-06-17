@@ -46,7 +46,7 @@
          ldy   #$03
          jsr   compare
          !byte $20,$93,$37
-         bcs   +
+         bcs   +          ; passport-test-suite/Bellhop.woz [C=0] matches
          ldy   #$01
          jsr   modify
          !byte $2C

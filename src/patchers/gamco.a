@@ -18,7 +18,7 @@
          !byte $33,$32,$01,$30,$03,$31,$39,$31
          !byte $03,$31,$32,$38,$02,$31,$31,$02
          !byte $39,$36
-         bcs   .exit
+         bcs   .exit      ; passport-test-suite/Essential Grammar.woz [C=0] matches
          sta   gDisplayBytes
          pha
          lda   #s_poke

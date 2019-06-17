@@ -26,7 +26,7 @@
          !byte $85,$FA               ; STA $FA
          !byte $A2,$60               ; LDX #$60
          !byte $BD,$8E               ; LDA $..8E,X
-         bcs   .exit
+         bcs   .exit      ; passport-test-suite/Might and Magic.woz [C=0] matches
 
          inx
          inx

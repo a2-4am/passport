@@ -27,7 +27,7 @@
          !byte $C6,$03    ; DEC $03
          !byte $F0,WILDCARD; BEQ ... (this branch offset will be used later to build the patch)
          !byte $AC,$EC,$C0; LDY $C0EC
-         bcs   .exit
+         bcs   .exit      ; passport-test-suite/The Typewriter.woz [C=0] matches
          stx   .a+1
          sta   gDisplayBytes
          adc   #BASEPAGE  ; carry is guaranteed to be clear here

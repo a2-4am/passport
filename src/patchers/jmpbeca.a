@@ -2,9 +2,10 @@
 ; #JMPBECA
 ; RWTS calls $3ECA or $BECA after reading
 ; data prologue to burn cycles
-; e.g. Terrapin Logo 1.2, Starting with Phonics
-; NOTE: must be run before RWTS
-; patchers due to overlapping bytes
+;
+; NOTE: must be run before RWTS patchers due to overlapping bytes
+;
+; see jmpbeb1.a for compatibility list
 ;-------------------------------
 !zone {
          bit   gMode      ; nothing to do here in verify-only mode
@@ -21,7 +22,7 @@
          !byte $C9,$AD
          !byte $D0,$E8
          !byte $4C,$CA,WILDCARD
-         bcc   .yes
+         bcc   .yes       ; passport-test-suite/Easy as ABC.woz [C=0] matches
 ;
 ; variant seen in Library Magic
 ;
@@ -33,10 +34,10 @@
          !byte $10,$FB
          !byte $49
          !byte $AD,$D0,$DD
-         bcs   .exit
+         bcs   .exit      ; passport-test-suite/Library Magic.woz [C=0] matches
 
 .yes
-         lda   #s_jmpbeca
+         lda   #s_jmpbeca ; passport-test-suite/Spelling Rules.woz [C=0] also reaches here
          jsr   PrintByID
          lda   #$02
          ldy   #$0D

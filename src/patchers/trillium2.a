@@ -19,7 +19,7 @@
          !byte $A0,$19
          !byte $20,$2D,$F1
          !byte $C9,$00
-         bcs   .exit
+         bcs   .exit      ; passport-test-suite/Nine Princes in Amber.woz [C=0] matches
          sta   gDisplayBytes
          pha
          lda   #s_trillium

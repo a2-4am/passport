@@ -8,14 +8,14 @@
 !zone {
          bit   gMode      ; nothing to do here in verify-only mode
          bpl   .exit
-         lda   gIsRWTS   ; if DOS 3.3-shaped RWTS
+         lda   gIsRWTS    ; if DOS 3.3-shaped RWTS
          bne   .exit
          lda   #$02
          ldx   #$5E
          ldy   #$03
          jsr   compare
          !byte $4C,$B8,$B6
-         bcs   .exit
+         bcs   .exit      ; passort-test-suite/Crown Of Arthain.woz [C=0] matches
          sta   gDisplayBytes
          ldy   #$03
          jsr   modify

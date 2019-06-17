@@ -25,7 +25,7 @@ _jmpb720
          !byte $CA
          !byte $10,$F1
          !byte $60
-         bcs   .exit
+         bcs   .exit      ; passport-test-suite/Analogies Tutorial.woz [C=0] matches
          lda   #$0B
          ldx   #$08
          ldy   #$06

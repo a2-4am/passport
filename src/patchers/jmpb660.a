@@ -28,7 +28,7 @@ _jmpb660
          !byte $D0,$F2
          !byte $A0,$56
          !byte $4C,$60,$B6
-         bcs   .exit
+         bcs   .exit      ; passport-test-suite/Analogies Tutorial.woz [C=0] matches
          lda   #s_jmpb660
          jsr   PrintByID
          lda   #$02

@@ -83,7 +83,7 @@
          jsr   SearchTrack
          LDA   $2F
          ORA   $2E
-         bcs   +
+         bcs   +          ; passport-test-suite/Crime Wave.woz [C=0] matches
          ldy   #$04
          jsr   modify
          LDA   #$00

@@ -15,10 +15,10 @@
          bcc   .jmpexit
          cmp   #ID_MECC4+1
          bcs   .jmpexit
-         asl
-         asl
-         asl
-         sta   tmp
+         asl              ; passport-test-suite/Coordinate Math v1.0 (MECC variant 1).woz [C=0] reaches here
+         asl              ; passport-test-suite/Clock Works v1.0 (MECC variant 2).woz [C=0] reaches here
+         asl              ; passport-test-suite/Number Munchers v1.0 (MECC variant 3).woz [C=0] reaches here
+         sta   tmp        ; passport-test-suite/Conquering Whole Numbers v1.1 (MECC variant 4).woz [C=0] reaches here
          asl
          adc   tmp
          ldx   #8

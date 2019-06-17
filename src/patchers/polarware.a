@@ -25,7 +25,7 @@
          !byte $3F,$EB               ; BNE +4
          !byte $29,$60               ; DEC $8F
          bcs   .tamper
-         inx
+         inx                         ; passport-test-suite/The Crimson Crown.woz [C=0] reaches here
          inx
          inx
          sta   gDisplayBytes
@@ -46,7 +46,7 @@
          !byte $EC,WILDCARD,WILDCARD ; CPX absolute
          !byte $F0,$09               ; BEQ +9
          !byte $AE                   ; LDX
-         bcs   .exit
+         bcs   .exit      ; passport-test-suite/The Crimson Crown.woz [C=0] matches
          sta   gDisplayBytes
          pha
          txa

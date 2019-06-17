@@ -33,7 +33,7 @@
          LDX   $B7E9
          LDA   $C089,X
 ;
-         bcs   .exit
+         bcs   .exit      ; passport-test-suite/Good Thinking - Cause and Effect Level Two.woz [C=0] matches
          lda   #s_hoffman
          jsr   PrintByID
          lda   #$0C

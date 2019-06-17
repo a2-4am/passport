@@ -10,10 +10,10 @@
          bne   .exit
          lda   #$00                  ; look for volume name on T02,S00 (Pronto-DOS)
          jsr   .findVolumeName
-         bcc   +
+         bcc   +                     ; passport-test-suite/America Coast to Coast.woz [C=0] matches
          lda   #$02                  ; also look on T02,S02 (DOS 3.3, Diversi-DOS)
          jsr   .findVolumeName
-         bcs   .exit
+         bcs   .exit                 ; passport-test-suite/Tangrams Puzzler.log [C=0] matches
 
 ;
 ; We've found what looks like a DOS 3.3-ish disk volume name, so print it

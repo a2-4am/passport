@@ -30,7 +30,7 @@
          !byte $99,$94,$B9
          !byte $88
          !byte $10,$F7
-         bcs   .exit
+         bcs   .exit      ; passport-test-suite/Easy as ABC.woz [C=0] matches
          ldx   #$69
          ldy   #$01
          jsr   modify     ; then set T00,S04,$69 =

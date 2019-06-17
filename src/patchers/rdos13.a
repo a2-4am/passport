@@ -8,7 +8,7 @@
          bit   gMode      ; nothing to do here in verify-only mode
          bpl   .jmpexit
          lda   gIsRDOS13
-         beq   .okay
+         beq   .okay      ; passport-test-suite/Epidemic.woz [Z=1] branches
 .jmpexit
          jmp   .exit
 

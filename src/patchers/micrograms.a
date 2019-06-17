@@ -18,7 +18,7 @@
          !byte $10,$FB
          !byte $C9,$BE
          !byte $D0,$E5
-         bcs   .exit
+         bcs   .exit      ; passport-test-suite/Shapes and Patterns.woz [C=0] matches
          tay
          txa
          adc   #8

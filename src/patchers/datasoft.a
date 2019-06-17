@@ -12,7 +12,7 @@
          ldy   #$06
          jsr   SearchTrack
          !byte $5D,$D4,$80,$49,00,$19
-         bcs   .exit
+         bcs   .exit      ; passport-test-suite/Tomahawk.woz [C=0] matches
          sta   gDisplayBytes
          pha
          lda   #s_datasoft

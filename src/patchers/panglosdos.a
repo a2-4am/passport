@@ -14,7 +14,7 @@
          !byte $C9,$AD ;CMP #$AD
          !byte $D0,$E7 ;BNE *-$17
          !byte $A5,$46 ;LDA $46
-         bcs   .exit
+         bcs   .exit      ; passport-test-suite/Stepwise Multiple Regression.woz [C=0] matches
          inx
          inx
          inx
