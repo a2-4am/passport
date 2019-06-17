@@ -75,6 +75,9 @@ were common in educational software.
 - Apple "Special Delivery"
   e.g. Ernie's Quiz, Instant Zoo
 
+- ArtSci
+  e.g. AceCalc, Magicalc
+
 - Blue Chip
   e.g. Squire, Baron, Tycoon
 
@@ -118,6 +121,9 @@ were common in educational software.
 - Heartsoft
   e.g. Electric Chalkboard, Tommy the
   Time-Telling Turtle
+
+- Hoffman
+  e.g. Good Thinking! series
 
 - Houghton-Mifflin
   e.g. Game Frame One, Math Masters
@@ -175,7 +181,7 @@ were common in educational software.
   e.g. The Halley Project, Paperboy
 
 - MUSE
-  e.g. Know Your Apple, RobotWar
+  e.g. RobotWar, Caverns of Freitag
 
 - National Geographic Society
   e.g. The Botanist's Apprentice
@@ -185,6 +191,9 @@ were common in educational software.
 
 - Pelican Software
   e.g. Dino Days, Graphics Converter
+
+- Phoenix Software
+  e.g. Zoom Grafix
 
 - Polarware
   e.g. The Electric Crayon (series),
@@ -252,7 +261,14 @@ software, so your mileage may vary.
   e.g. Arena, Early Bird
 
 - Broderbund
-  e.g. Where in Time Is Carmen Sandiego
+  e.g. Where in Time Is Carmen Sandiego,
+  Choplifter
+
+- Coastal
+  e.g. The Chalice of Mostania
+
+- Dakin-5
+  e.g. MIRV, Rings of Saturn
 
 - Data East
   e.g. Ikari Warriors, Batman
@@ -262,6 +278,12 @@ software, so your mileage may vary.
 
 - Epyx
   e.g. Summer Games, Deathsword
+
+- Gebelli
+  e.g. Horizon V, Russki Duck
+
+- HAL Labs
+  e.g. Sheila, Super Taxman II
 
 - Infocom
   e.g. Planetfall, Zork I/II/III
@@ -276,10 +298,16 @@ software, so your mileage may vary.
   e.g. Ultima V, Times of Lore
 
 - Penguin Software
-  e.g. Xyphus, Arcade Boot Camp
+  e.g. Xyphus, Thunder Bombs
+
+- Phoenix Software
+  e.g. Sherwood Forest, Masquerade
 
 - Polarware
   e.g. Oo-topos, The Crimson Crown
+
+- Softape
+  e.g. Photar
 
 - Sierra On-Line (patcher by qkumba)
   e.g. BC's Quest for Tires, Sammy
@@ -334,6 +362,37 @@ SOFTWARE OR THE USE OR OTHER DEALINGS
 IN THE SOFTWARE.
 
 ## History
+
+2019-06-16
+- NEW: verify pure 13-sector disks
+  (by qkumba)
+- NEW: verify Infocom 18-sector disks
+  (by qkumba)
+- NEW: patchers/artsci.a (AceCalc,
+  Magicalc, Photar)
+- NEW: patchers/choplifter.a (Russki
+  Duck, Choplifter) (by qkumba)
+- NEW: patchers/dakin5.a (Neutrons,
+  MIRV, Rings of Saturn)
+- NEW: patchers/e7everywhere.a (Curious
+  George series, Garfield Trivia Game)
+- NEW: patchers/hallabs.a (Sheila,
+  Super Taxman II)
+- NEW: patchers/hoffman.a (Good
+  Thinking! series)
+- NEW: patchers/holle.a (Crime Wave,
+  Sherwood Forest)
+- NEW: patchers/muserwts.a (Caverns of
+  Freitag, The Function Game)
+- NEW: patchers/springboard.a (The
+  Newsroom, The Chalice of Mostania)
+- NEW: patchers/zoomgrafix.a (Zoom
+  Grafix - all versions)
+- IMPROVED: id/trace33p.a (fixes Kaves
+  of Karkhan)
+- IMPROVED: patchers/diskvol.a (fixes
+  Diet Analysis Program)
+- [test suite](https://github.com/a2-4am/passport-test-suite)
 
 2018-10-14
 - NEW: 13-sector MUSE support
