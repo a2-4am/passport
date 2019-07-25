@@ -779,6 +779,7 @@ _applyToAll
          !source "patchers/optimum.a"           ; gIsOptimum only
          !source "patchers/bootcounter.a"       ; T01 only
          !source "patchers/jmpb412.a"           ; T02 only
+         !source "patchers/jmp2012.a"           ; T02 only
          !source "patchers/jmpb400.a"           ; T02 && gIsBoot0 only
          !source "patchers/advint.a"            ; gAdventureInternational only
          !source "patchers/jsr8635.a"           ; gIsRWTS only

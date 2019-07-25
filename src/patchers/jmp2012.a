@@ -1,14 +1,14 @@
 ;-------------------------------
-; #JMPB412
+; #JMP2012
 ; Boot1 jumps to $B3C3 to read
 ; and decrypt a nibble check at
-; $B412, which exits via $9D84
+; $2012, which exits via $9D84
 ; if successful
+; seems to be a variant of JMPB412
+; with tighter code
 ;
-; Zoo Goer
-; Zoo Collector
-; Zoo Builder
-; America Coast to Coast (Mindscape release)
+; tested on
+; - BrainBank's Be Better Series - The Start Disk
 ;-------------------------------
 !zone {
          bit   gMode      ; nothing to do here in verify-only mode
@@ -18,21 +18,21 @@
          bne   .exit
 
          lda   #$00
-         ldx   #$E8
+         ldx   #$E5
          ldy   #$06
          jsr   compare    ; if T02,S00,$E8 ==
-         !byte $99,$12,$B4; STA $B412,Y
+         !byte $99,$12,$20; STA $2012,Y
          !byte $C8        ; INY
-         !byte $C0,$FF    ; CPY #$FF
-         bcs   .exit      ; passport-test-suite/America Coast to Coast.woz [C=0] matches
-         lda   #$B4
+         !byte $D0,$F5    ; BNE -
+         bcs   .exit      ; passport-test-suite/Better Be.woz [C=0] matches
+         lda   #$20
          sta   gDisplayBytes
          lda   #s_jmpb412
          jsr   PrintByID
          lda   #$00
-         ldx   #$F6
+         ldx   #$EC
          ldy   #$02
-         jsr   modify     ; then set T02,S00,$F6 =
+         jsr   modify     ; then set T02,S00,$EC =
          !byte $84,$9D
 .exit
 }
