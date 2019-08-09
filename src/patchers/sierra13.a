@@ -7,6 +7,7 @@
 ; Cranston Manor
 ; Jawbreaker
 ; Missile Defense
+; Mission Asteroid
 ; Pegasus ][
 ; Threshold
 ;
@@ -33,6 +34,8 @@
          ldy   #$01
          jsr   modify
          !byte $AD ;LDA
+         lda   #$24
+         sta   $B91E
 .jmpexit
          jmp   .exit
 
@@ -79,6 +82,10 @@
          !byte $8D,$8C,$BE ;STA $BE8C
          !byte $A9,$B9     ;LDA #$B9
          !byte $8D,$8D,$BE ;STA $BE8D
+         lda   #<.swaptrk
+         sta   $BE7D
+         lda   #>.swaptrk
+         sta   $BE7E
 ++       pla
          clc
          adc   #$48
@@ -88,6 +95,21 @@
          jsr   modify
          !byte $A0,$B9
          bvc   .jmpexit
+
+.swaptrk
+         ldy   $478
+         cpy   #$c0
+         beq   .swapped
+         cmp   #2
+         bne   .try4
+         asl
+         bne   .swapped
+.try4
+         cmp   #4
+         bne   .swapped
+         lsr
+.swapped
+         jmp   $BA1E
 
          ;Threshold secondary protection
 
