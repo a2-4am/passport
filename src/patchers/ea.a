@@ -513,7 +513,7 @@
          !byte $5C,$0D
          !byte $5E,$00
          !byte $5E,$0D
-         bcs   .exit
+         bcs   +
          sta   gDisplayBytes
          pha
          lda   #s_tamper
@@ -524,6 +524,53 @@
          ldy   #1
          jsr   modify
          !byte $F0         ;new checksum value for eor
+
++        ldy   #23
+         jsr   SearchTrack
+         !byte $03,$4C     ;LDI  #$00
+         !byte $07,$E1,$66 ;STA  $bfe2
+         !byte $04,$CC,$64 ;JSRA $bdcf
+         !byte $04,$CC,$64 ;JSRA $bdcf
+         !byte $04,$CC,$64 ;JSRA $bdcf
+         !byte $04,$CC,$64 ;JSRA $bdcf
+         !byte $05,$EB,$19 ;LDA  $c0e8
+         !byte $05,$E1,$66 ;LDA  $bfe2
+         bcs   +
+         pha
+         txa
+         adc   #21
+         tax
+         pla
+         ldy   #1
+         jsr   modify
+         !byte $E0         ;lda from known-zero instead
+
++        ldy   #14
+         jsr   SearchTrack
+         !byte $A9,$BD     ;LDA #$BD
+         !byte $A0,$00     ;LDY #$00
+         !byte $51,$97     ;EOR ($97),Y
+         !byte $18         ;CLC
+         !byte $71,$97     ;ADC ($97),Y
+         !byte $C8         ;INY
+         !byte $D0,$F8     ;BNE $8111
+         !byte $E6,$98     ;INC $98
+         bcs   +
+         sta   gDisplayBytes
+         pha
+         lda   #s_tamper
+         jsr   PrintByID
+         txa
+         adc   #25
+         tax
+         pla
+         ldy   #1
+         jsr   compare
+         !byte $4C
+         bcs   +
+         ldy   #1
+         jsr   modify
+         !byte $2C         ;jmp to bit
 
 +
 

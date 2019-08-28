@@ -4,6 +4,15 @@
 
          !source "../build/vars.a"
 
+         lda   $BF98 ;MachineID
+         and   #$20  ;64kb+
+         bne   good_mem
+         jsr   $BF00
+         !byte $65
+         !word quit
+quit     !byte 4
+
+good_mem
          jsr   decrunch
          sty   $fe ;;zp_dest_lo
 
