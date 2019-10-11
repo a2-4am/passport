@@ -134,6 +134,7 @@ StringTableLow
          !byte <.diskvol0
          !byte <.e7everywhere
          !byte <.choplifter
+         !byte <.basham
 
 StringTableHigh
          !byte >.header
@@ -254,6 +255,7 @@ StringTableHigh
          !byte >.diskvol0
          !byte >.e7everywhere
          !byte >.choplifter
+         !byte >.basham
 
 ;
 ; Text can contain substitution strings, which
@@ -280,7 +282,7 @@ StringTableHigh
 ; can be set directly before calling PrintByID.
 ;
 .header
-         !text "Passport by 4am               2019-08-28",$00
+         !text "Passport by 4am               2019-10-10",$00
 .mainmenu
          !text "________________________________________",$8D,$8D,$8D,$8D,$8D,$8D,$8D,$8D
          !text "               "
@@ -607,4 +609,6 @@ StringTableHigh
          !text "T%t,S%0 Found E7 Everywhere protection",$8D,$00
 .choplifter
          !text "Roland was here, but he left...",$8D,$00
+.basham
+         !text "T%t,S%0 Found Basham protection",$8D,$00
 }

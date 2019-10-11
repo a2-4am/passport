@@ -17,5 +17,10 @@ IDDiversi
          ldy   #$0B
          jsr   compare    ; if T00,S00,$F1 ==
          !byte $B3,$A3,$A0,$D2,$CF,$D2,$D2,$C5,$8D,$87,$8D
+         bcs   .no
+         lda   #TRUE
+         sta   gIsDiversi
+
+.no
          rts              ; passport-test-suite/Moon Bingo.woz [C=0] matches
 }
