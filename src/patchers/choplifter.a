@@ -22,7 +22,7 @@
 ; - Star Blazer (Broderbund)
 ;-------------------------------
 !zone {
-         rts              ; reachable only via inspect
+         jmp   .exit2     ; reachable only via inspect
 
 Choplifter
          lda   #$00
@@ -496,4 +496,6 @@ ReadChoplifter
          rts
     } ;$5xx
   } ;$Bxxx
+
+.exit2
 }

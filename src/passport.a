@@ -802,6 +802,7 @@ _applyToAll
          !source "patchers/zoomgrafix.a"        ; gIsPhoenix only
          !source "patchers/e7everywhere.a"      ; gIsBoot0 || gIsProDOS only
          !source "patchers/choplifter.a"        ; gIsChoplifter only
+         !source "patchers/basham.a"            ; gIsDiversi only
 
          lda   gPatchCount
          beq   .nopatches

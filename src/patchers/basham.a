@@ -1,0 +1,38 @@
+;-------------------------------
+; #BASHAM
+; obfuscated nibble check
+; used by Passport Systems
+;
+; tested on
+; - Korg-800 4 Track Midi Sequencer
+; - MIDI-8 Plus
+; - Polywriter
+;-------------------------------
+!zone {
+         bit   gMode       ; nothing to do here in verify-only mode
+         bpl   .exit
+         lda   gIsDiversi  ; only if we found Diversi-DOS boot sector earlier
+         bne   .exit
+         ldy   #14
+         jsr   SearchTrack
+         !byte $A0,$0F     ; LDY #$0F
+         !byte $B9,$00,$00 ; LDA $0000,Y
+         !byte $99,$E4,$95 ; STA $95E4,Y
+         !byte $88         ; DEY
+         !byte $10,$F7     ; BPL *-9
+         !byte $4C,$E3,$93 ; JMP $93E3
+         bcs   .exit
+         sta   gDisplayBytes
+         pha
+         lda   #s_basham
+         jsr   PrintByID
+         txa
+         clc
+         adc   #12
+         tax
+         pla
+         ldy   #$02
+         jsr   modify
+         !byte $99,$8E     ; jmp directly to decoder
+.exit
+}
