@@ -120,5 +120,5 @@ s_hoffman =    $72
 s_diskvol0 =   $73
 s_e7everywhere=$74
 s_choplifter = $75
-s_basham     = $76
+s_pdi        = $76
 STRINGCOUNT =  $77

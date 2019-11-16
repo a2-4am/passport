@@ -1,12 +1,14 @@
 ;-------------------------------
-; #BASHAM
+; #PDI
 ; obfuscated nibble check
-; used by Passport Systems
+; used by Passport Designs, Inc.
 ;
 ; tested on
 ; - Korg-800 4 Track Midi Sequencer
 ; - MIDI-8 Plus
 ; - Polywriter
+; - Leadsheeter
+; - Leadsheeter Utilities
 ;-------------------------------
 !zone {
          bit   gMode       ; nothing to do here in verify-only mode
@@ -24,7 +26,7 @@
          bcs   .exit
          sta   gDisplayBytes
          pha
-         lda   #s_basham
+         lda   #s_pdi
          jsr   PrintByID
          txa
          clc
