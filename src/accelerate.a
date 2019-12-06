@@ -1,17 +1,10 @@
 ;license:MIT
 ;(c) 2019 by 4am & qkumba
 ;
-; Functions to enable and disable acceleration on various
-; Apple II models, cards, and environments
+; Functions to enable acceleration as a one-time event
+; on various Apple II models, cards, and environments
 ;
 ; Forked from NORMFAST Release 6 (see changelog below)
-;
-; No functional changes to the acceleration routines, but for
-; Total Replay, we split the machine identification code from
-; the (de)acceleration code, because we can do the ID part once
-; at program startup (when ROM is easily available), then
-; (de)accelerate repeatedly from the language card (when ROM
-; is switched out).
 ;
 ; --------------------------------------------------------------
 ;
@@ -52,7 +45,6 @@
 ; Theoretically: Laser 128EX, Mac IIe Card, TransWarp I,
 ;   trademarked German product
 ;
-; BRUN NORMFAST or CALL 768 to disable the accelerator.
 ; CALL 771 to enable the accelerator.
 ; Enabling an older accelerator may set maximum speed.
 ; Accelerators such as the FASTChip or Zip Chip can run
@@ -208,8 +200,7 @@ run_setspeed
 ;
 ; Only 1 of these will be required on any particular machine.
 ;
-; Each has 2 entry points, +0 to disable acceleration and
-; +3 to enable acceleration.
+; Each has a single entry point to enable acceleration.
 ;
 ; setspeed must be self-modified before use (setspeed_x and
 ; setspeed_y).
