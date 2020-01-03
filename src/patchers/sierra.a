@@ -314,76 +314,85 @@
 
          ;two of these are on the same track
 
-++       ldy   #17
+++       ldy   #10
          jsr   SearchTrack
-         !byte $A5,$12 ;LDA $12
-         !byte $C9,$FC ;CMP #$FC
-         !byte $D0,$06 ;BNE *+8
-         !byte $A5,$13 ;LDA $13
-         !byte $C9,$D5 ;CMP #$D5
-         !byte $F0,$08 ;BEQ *+10
-         !byte $A9,$00 ;LDA #$00
-         !byte $AA     ;TAX
-         !byte $95,$00 ;STA $00,X
+         !byte $F0,$08  ;BEQ *+10
+         !byte $A9,$00  ;LDA #$00
+         !byte $AA      ;TAX
+         !byte $95,$00  ;STA $00,X
+         !byte WILDCARD ;INX or DEX
+         !byte $D0,$FB  ;BNE *-5
          bcs   +
          sta   gDisplayBytes
          pha
          lda   #s_tamper
          jsr   PrintByID
          txa
-         adc   #9
+         adc   #5
          tax
          pla
          ldy   #$01
          jsr   modify
-         !byte $DD ;checksum
-         sta   .patchstyle
-         ldy   #11
-         jsr   SearchTrack
-         !byte $A5,$12 ;LDA $12
-         !byte $C9,$F9 ;CMP #$F9
-         !byte $F0,$08 ;BEQ *+10
-         !byte $A9,$00 ;LDA #$00
-         !byte $AA     ;TAX
-         !byte $95,$00 ;STA $00,X
-+        bcs   +
-         sta   gDisplayBytes
-         pha
-         lda   #s_tamper
-         jsr   PrintByID
-         pla
-         inx
-         inx
-         inx
-         ldy   #$01
-         jsr   modify
-         !byte $F8 ;checksum
-         bvc   .jmpexit
+         !byte $B5 ;load instead of store
 
-+        ldy   #19
+         ldy   #24
          jsr   SearchTrack
-         !byte $A5,$12     ;LDA $12
-         !byte $C9,$1B     ;CMP #$1B
-         !byte $D0,$07     ;BNE *+9
-         !byte $A5,$13     ;LDA $13
-         !byte $C9,$37     ;CMP #$37
-         !byte $D0,$01     ;BNE *+3
-         !byte $60         ;RTS
-         !byte $A9,$00     ;LDA #$00
-         !byte $AA         ;TAX
-         !byte $9D,$00,$01 ;STA $0100,X
-         bcs   .jmpexit
+         !byte $AD,WILDCARD,WILDCARD ;LDA $xxxx
+         !byte $CD,WILDCARD,WILDCARD ;CMP $xxxx
+         !byte $D0,$40  ;BNE *+$42
+         !byte $AD,WILDCARD,WILDCARD ;LDA $xxxx
+         !byte $CD,WILDCARD,WILDCARD ;CMP $xxxx
+         !byte $D0,$38  ;BNE *+$3A
+         !byte $AD,WILDCARD,WILDCARD ;LDA $xxxx
+         !byte $CD,WILDCARD,WILDCARD ;CMP $xxxx
+         !byte $D0,$30  ;BNE *+$32
+         bcs   +
          sta   gDisplayBytes
          pha
          lda   #s_tamper
          jsr   PrintByID
          pla
-         inx
-         inx
-         inx
          ldy   #$01
          jsr   modify
-         !byte $19 ;checksum
+         !byte $60 ;just return
+
++        ldy   #15
+         jsr   SearchTrack
+         !byte $A9,$00     ;LDA #$00
+         !byte $85,$57     ;STA $57
+         !byte $A9,$FF     ;LDA #$FF
+         !byte $85,$58     ;STA $58
+         !byte $A9,$02     ;LDA #$02
+         !byte $85,$59     ;STA $59
+         !byte $20,$99,$4C ;JSR $4C99
+         bcs   +
+         pha
+         txa
+         adc   #12
+         tax
+         pla
+         ldy   #$01
+         jsr   modify
+         !byte $2C ;don't load sector #$10
+
++        ldy   #13
+         jsr   SearchTrack
+         !byte $A9,$00               ;LDA #$00
+         !byte $85,$59               ;STA $59
+         !byte $20,WILDCARD,WILDCARD ;JSR $xxxx
+         !byte $68                   ;PLA
+         !byte $D0,$20               ;BNE *+$22
+         !byte $20,$00,$FF           ;JSR $FF00
+         bcs   +
+         pha
+         txa
+         adc   #10
+         tax
+         pla
+         ldy   #$01
+         jsr   modify
+         !byte $2C ;don't call protection check
+
 .jmpexit
          jmp   .exit
 
