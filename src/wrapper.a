@@ -13,7 +13,6 @@
 quit     !byte 4
 
 good_mem
-         jsr   GoFaster
          jsr   decrunch
          sty   $fe ;;zp_dest_lo
 
@@ -45,7 +44,6 @@ OneTimeSetup
          !source "strings/enid.a"
          !source "initscan.a"
          !source "exodecrunch.s"
-         !source "accelerate.a"
 
 get_crunched_byte:
 	lda _byte_lo
