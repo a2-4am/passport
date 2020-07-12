@@ -294,6 +294,15 @@ ADStyle
          lda   #s_optimum
          jsr   PrintByID
 .noOptimum
+         jsr   xSVE
+         bcs   .noSVE
+         lda   #s_sve
+         jsr   PrintByID
+         lda   #$CA
+         sta   $BE5B
+         lda   #$B6
+         sta   $BE5C
+.noSVE
          jsr   xB660
          jsr   xB4BB
          jmp   ReadWithRWTS

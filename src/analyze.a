@@ -476,3 +476,23 @@ IsEATrack6
          sbc   #5
          cmp   #1
 +        rts
+
+;-------------------------------
+; xSVE
+; check if disk has SVE bootloader
+; which has a hook in the RWTS
+;
+; in:  $0800..$08FF contains boot0
+;      $B600..$BFFF contains boot1
+; out: C clear if SVE bootloader was found
+;      C set otherwise
+;-------------------------------
+!zone {
+xSVE
+         lda   #$BE
+         ldx   #$5A
+         ldy   #$03
+         jsr   CompareMemory
+         !byte $4C,$71,$A9
+         rts
+}
