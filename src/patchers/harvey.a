@@ -20,7 +20,7 @@
          ldy   #$03
          jsr   compare    ; if T01,S01,$95 ==
          !byte $4C,$32,$A3
-         bcs   .exit
+         bcs   .exit      ; passport-test-suite/Harvey by Primes.woz [C=0] here
 
          lda   #$A2
          sta   gDisplayBytes
