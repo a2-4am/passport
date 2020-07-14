@@ -61,8 +61,6 @@ StringTableLow
          !byte <.rol1e
          !byte <.runhello
          !byte <.e7
-         !byte <.jmpb4bb
-         !byte <.jmpb400
          !byte <.jmpbeca
          !byte <.bb03
          !byte <.thunder
@@ -97,7 +95,7 @@ StringTableLow
          !byte <.quickdos
          !byte <.diversidos
          !byte <.prontodos
-         !byte <.jmpb412
+         !byte <.beforedos
          !byte <.laureate
          !byte <.bbf9
          !byte <.micrograms
@@ -183,8 +181,6 @@ StringTableHigh
          !byte >.rol1e
          !byte >.runhello
          !byte >.e7
-         !byte >.jmpb4bb
-         !byte >.jmpb400
          !byte >.jmpbeca
          !byte >.bb03
          !byte >.thunder
@@ -219,7 +215,7 @@ StringTableHigh
          !byte >.quickdos
          !byte >.diversidos
          !byte >.prontodos
-         !byte >.jmpb412
+         !byte >.beforedos
          !byte >.laureate
          !byte >.bbf9
          !byte >.micrograms
@@ -284,7 +280,7 @@ StringTableHigh
 ; can be set directly before calling PrintByID.
 ;
 .header
-         !text "Passport by 4am               2020-07-13",$00
+         !text "Passport by 4am               2020-07-14",$00
 .mainmenu
          !text "________________________________________",$8D,$8D,$8D,$8D,$8D,$8D,$8D,$8D
          !text "               "
@@ -439,12 +435,6 @@ StringTableHigh
          !text "startup program.",$8D,$00
 .e7
          !text "T%t,S%0 Found E7 bitstream",$8D,$00
-.jmpb4bb
-         !text "T%t,S%0 Disk calls a protection check at"
-         !text "$B4BB before initializing DOS.",$8D,$00
-.jmpb400
-         !text "T%t,S%0 Disk calls a protection check at"
-         !text "$B400 before initializing DOS.",$8D,$00
 .jmpbeca
          !text "T00,S02 RWTS requires extra nibbles and",$8D
          !text "timing bits after the data prologue by",$8D
@@ -532,9 +522,9 @@ StringTableHigh
          !text "T00,S00 Found Diversi-DOS bootloader",$8D,$00
 .prontodos
          !text "T00,S00 Found Pronto-DOS bootloader",$8D,$00
-.jmpb412
-         !text "T02,S00 Disk calls a protection check",$8D
-         !text "at $%012 before initializing DOS.",$8D,$00
+.beforedos
+         !text "T%t,S%2 Disk calls a protection check",$8D
+         !text "at $%0%1 before initializing DOS.",$8D,$00
 .laureate
          !text "T00,S00 Found Laureate bootloader",$8D,$00
 .bbf9

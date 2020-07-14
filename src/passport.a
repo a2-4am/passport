@@ -305,6 +305,7 @@ ADStyle
 .noSVE
          jsr   xB660
          jsr   xB4BB
+         jsr   xHarvey
          jmp   ReadWithRWTS
 
 UseUniversal
@@ -812,6 +813,7 @@ _applyToAll
          !source "patchers/e7everywhere.a"      ; gIsBoot0 || gIsProDOS only
          !source "patchers/choplifter.a"        ; gIsChoplifter only
          !source "patchers/pdi.a"               ; gIsDiversi only
+         !source "patchers/harvey.a"            ; T01 only
 
          lda   gPatchCount
          beq   .nopatches

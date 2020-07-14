@@ -47,8 +47,12 @@
                           ; LDA   $C088,X
                           ; JMP   $9D84
          bcs   .exit      ; passport-test-suite/Binomial Multiplication.woz [C=0] matches
-         sta   gDisplayBytes
-         lda   #s_jmpb400
+         sta   gDisplayBytes+2       ; sector
+         lda   #$B4
+         sta   gDisplayBytes         ; address (hi)
+         lda   #$00
+         sta   gDisplayBytes+1       ; address (lo)
+         lda   #s_beforedos
          jsr   PrintByID
          lda   #$03
          ldx   #$00

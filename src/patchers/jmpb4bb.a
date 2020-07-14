@@ -48,7 +48,7 @@
          ldx   gIsDOS32
          bne   +
          lda   #$0A
-+        sta   gDisplayBytes
++        sta   gDisplayBytes+2       ; sector
          ldx   #$D7
          ldy   #$04
          jsr   compare    ; and T02,S0x,$D7 ==
@@ -63,7 +63,11 @@
          bcs   .exit      ; passport-test-suite/Snooper Troops Case 2.woz [C=0] matches
 .found
          pha
-         lda   #s_jmpb4bb
+         lda   #$B4
+         sta   gDisplayBytes         ; address (hi)
+         lda   #$BB
+         sta   gDisplayBytes+1       ; address (lo)
+         lda   #s_beforedos
          jsr   PrintByID
          pla
          inx

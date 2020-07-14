@@ -496,3 +496,53 @@ xSVE
          !byte $4C,$71,$A9
          rts
 }
+
+;-------------------------------
+; xHarvey
+; check if disk has Harvey protection
+; which has a one-time RWTS swap
+; after loading DOS
+;
+; in:  $B600..$BFFF contains boot1
+; out: RWTS may have been patched in memory
+;      all flags and registers clobbered
+;-------------------------------
+!zone {
+xHarvey
+         lda   #$B7
+         ldx   #$47
+         ldy   #$03
+         jsr   CompareMemory
+         !byte $4C,$82,$A2
+         bcs   .exit
+         ldx   #$00
+         stx   gAddress
+         inx
+         stx   gTrack
+         inx
+         stx   gSector
+         ldx   #$09
+         stx   gAddress+1
+         jsr   ReadSector            ; read T01S01 into $900
+         bcs   .exit
+         lda   #$09
+         ldx   #$32
+         ldy   #$18
+         jsr   CompareMemory
+         !byte $A9,WILDCARD
+         !byte $8D,$55,$B9
+         !byte $8D,$7A,$BC
+         !byte $A9,WILDCARD
+         !byte $8D,$5D,$B8
+         !byte $8D,$FC,$B8
+         !byte $A9,WILDCARD
+         !byte $8D,$60,$BC
+         !byte $4C,$84,$9D
+         bcs   .exit
+         lda   #$60
+         sta   $0947                 ; RTS instead of JMP
+         jsr   $0932                 ; call to apply RWTS patches
+         lda   #kSectorSwitchToBuiltinRWTS
+         sta   T02S0F
+.exit    rts
+}

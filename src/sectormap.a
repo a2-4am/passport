@@ -75,7 +75,8 @@ T02      !byte $FF,$FF,$FF,$FF,$FF
 T02S05   !byte                     $FF
          !byte                         $FF,$FF,$FF,$FF,$FF,$FF
 T02S0C   !byte                                                 $FF
-         !byte                                                     $FF,$FF,$FF
+         !byte                                                     $FF,$FF
+T02S0F   !byte                                                             $FF
 T03      !byte $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
 T04      !byte $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
 T05      !byte $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF

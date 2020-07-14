@@ -1,0 +1,40 @@
+;-------------------------------
+; #HARVEY
+; late-stage RWTS swapper
+;
+; tested on
+; Buzz Bang Harvey (Queue)
+; Harvey by Primes (Queue)
+;-------------------------------
+!zone {
+         bit   gMode      ; nothing to do here in verify-only mode
+         bpl   .exit
+         lda   gIsBoot0
+         bne   .exit
+         ldx   gTrack
+         dex
+         bne   .exit
+
+         lda   #$01
+         ldx   #$95
+         ldy   #$03
+         jsr   compare    ; if T01,S01,$95 ==
+         !byte $4C,$32,$A3
+         bcs   .exit
+
+         lda   #$A2
+         sta   gDisplayBytes
+         lda   #$82
+         sta   gDisplayBytes+1
+         lda   #$01
+         sta   gDisplayBytes+2
+         lda   #s_beforedos
+         jsr   PrintByID
+
+         lda   #$01
+         inx              ; #$96 because both compare and PrintByID preserve X
+         tay
+         jsr   modify     ; then set T01,S01,$96 =
+         !byte $47
+.exit
+}
