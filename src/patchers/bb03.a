@@ -2,9 +2,12 @@
 ; #BB03
 ; boot1 calls $BB03 for a self-decrypting nibble check
 ;
-; variant 1 (JSR $BB03)
+; variant 1a (JSR $BB03, push $B518)
 ; - Classifying Animals with Backbones
 ; - EduCalc
+;
+; variant 1b (JSR $BB03, push $B519)
+; - Spanish for Mastery
 ;
 ; variant 2 (JSR $BB03 but David-DOS)
 ; - Case of the Great Train Robbery
@@ -68,13 +71,17 @@
                           ; unconditional branch (V is always 0 coming out of modify)
          bvc   .no        ; passport-test-suite/Trivia Fever.woz [V=0] reaches here
 .variant1
+         lda   $1243
+         eor   $1543
+         sta   +          ; calculate entry point of success path (usually #$18 but sometimes #$19)
          lda   #$05
          ldx   #$03
          ldy   #$09
          jsr   modify     ; then set T00,S05,$03 =
          !byte $A9,$B5
          !byte $48
-         !byte $A9,$18
+         !byte $A9
++        !byte $FD        ; SMC
          !byte $48
          !byte $4C,$93,$B7
                           ; unconditional branch (V is always 0 coming out of modify)
