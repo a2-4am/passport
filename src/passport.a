@@ -278,31 +278,36 @@ ADStyle
 ; before we start.
 ;
          jsr   xHeredityDog
-         bcs   .noDog
+         bcs   +
          lda   #s_bb00
          jsr   PrintByID
-.noDog
++
          jsr   xSunburst
-         bcs   .noSun
+         bcs   +
          lda   #s_sunburst
          jsr   PrintByID
-.noSun
++
          jsr   xOptimumRes
-         bcs   .noOptimum
+         bcs   +
          lda   #TRUE
          sta   gIsOptimum
          lda   #s_optimum
          jsr   PrintByID
-.noOptimum
++
          jsr   xSVE
-         bcs   .noSVE
+         bcs   +
          lda   #s_sve
          jsr   PrintByID
          lda   #$CA
          sta   $BE5B
          lda   #$B6
          sta   $BE5C
-.noSVE
++
+         jsr   xRPS
+         bcs   +
+         lda   #s_rps
+         jsr   PrintByID
++
          jsr   xB660
          jsr   xB4BB
          jsr   xHarvey

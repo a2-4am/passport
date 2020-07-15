@@ -63,7 +63,7 @@ StringTableLow
          !byte <.e7
          !byte <.jmpbeca
          !byte <.bb03
-         !byte <.thunder
+         !byte <.rps
          !byte <.jmpae8e
          !byte <.diskvol
          !byte <.d5d5f7
@@ -183,7 +183,7 @@ StringTableHigh
          !byte >.e7
          !byte >.jmpbeca
          !byte >.bb03
-         !byte >.thunder
+         !byte >.rps
          !byte >.jmpae8e
          !byte >.diskvol
          !byte >.d5d5f7
@@ -280,7 +280,7 @@ StringTableHigh
 ; can be set directly before calling PrintByID.
 ;
 .header
-         !text "Passport by 4am               2020-07-14",$00
+         !text "Passport by 4am               2020-07-15",$00
 .mainmenu
          !text "________________________________________",$8D,$8D,$8D,$8D,$8D,$8D,$8D,$8D
          !text "               "
@@ -442,9 +442,9 @@ StringTableHigh
 .bb03
          !text "T%t,S%0 Found a self-decrypting",$8D
          !text "protection check at $BB03.",$8D,$00
-.thunder
-         !text "T00,S03 RWTS counts timing bits and",$8D
-         !text "checks them later.",$8D,$00
+.rps
+         !text "T00,S01 Found RPS protection check",$8D
+         !text "Some sectors on T02 might be unreadable",$8D,$00
 .jmpae8e
          !text "T00,S0D Disk calls a protection check at"
          !text "$AE8E after initializing DOS.",$8D,$00

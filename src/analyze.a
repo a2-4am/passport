@@ -546,3 +546,40 @@ xHarvey
          sta   T02S0F
 .exit    rts
 }
+
+;-------------------------------
+; xRPS
+; check if disk has RPS protection
+; (boot1 jumps to $B3C1 to change RWTS,
+; epilogue checker jumps to $B6B3 to
+; check timing bits, late DOS routes
+; through nibble check at $B74B)
+;
+; in:  $B600..$BFFF contains boot1
+; out: C clear if protection found
+;      C set if protection was not found
+;-------------------------------
+!zone {
+xRPS
+         lda   #$B7
+         ldx   #$47
+         ldy   #$07
+         jsr   CompareMemory
+         !byte $4C,$C1,$B3
+         !byte $60
+         !byte $48
+         !byte $A9,$02
+         bcs   .exit
+         lda   #kSectorOptional
+         sta   T02S05
+         sta   T02S0A
+         lda   #kSectorSwitchToBuiltinRWTS
+         sta   T02S04                ; some variants might auto-switch earlier, some need to be told
+         ldy   #$FF
+         sty   $BA29
+         iny
+         sty   $BAFF
+         ldy   #$3F
+         sty   $BA96
+.exit    rts
+}

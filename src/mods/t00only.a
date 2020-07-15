@@ -84,7 +84,7 @@ AnalyzeT00
          !source "../patchers/rwtslog.a"
          !source "../patchers/mecc.a"
          !source "../patchers/rol1e.a"
-;         !source "../patchers/thunder.a"
+         !source "../patchers/rps.a"
          !source "../patchers/bb03.a"
          !source "../patchers/rwtsswap.a"
          !source "../patchers/rwtsswap2.a"

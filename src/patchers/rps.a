@@ -1,0 +1,84 @@
+;-------------------------------
+; #RPS
+; boot1 jumps to $B3C1 to change RWTS,
+; epilogue checker jumps to $B6B3 to
+; check timing bits, late DOS routes
+; through nibble check at $B74B
+;
+; so named because the disk volume string is
+; C1984 RPS A#
+;
+; variant 1
+; - Dig Dug (Thunder Mountain)
+; - Pac-Man (Thunder Mountain)
+; - Galaxian (Thunder Mountain)
+;
+; variant 2
+; - Problem Solving in Algebra (Encyclopaedia Britannica)
+; - Math Skills: Elementary Level (Encyclopaedia Britannica)
+; - Math Skills: Junior High Level (Encyclopaedia Britannica)
+;-------------------------------
+!zone {
+         bit   gMode      ; nothing to do here in verify-only mode
+         bpl   .exit
+         lda   gIsBoot0   ; if DOS 3.3 boot0 loader
+         bne   .exit
+         lda   gIsBoot1   ; and DOS 3.3 boot1 loader
+         bne   .exit
+
+         lda   #$01
+         ldx   #$48
+         ldy   #$02
+         jsr   compare    ; if T00,S01,$48 ==
+         !byte $C1,$B3
+         bcs   .exit      ; primary pattern not found, bail
+         ldy   #$02
+         jsr   modify     ; then set T00,S01,$48 =
+         !byte $1F,$B4
+
+         lda   #$03
+         ldx   #$3E
+         ldy   #$04
+         jsr   compare    ; if T00,S03,$3E ==
+         !byte $4C,$B3,$B6
+         !byte $EA
+         bcs   .variant1
+         lda   #$03
+         ldx   #$3E
+         ldy   #$04
+         jsr   modify     ; then set T00,S03,$3E =
+         !byte $C9,$AA
+         !byte $F0,$5C
+
+.variant1
+         lda   #$01
+         ldx   #$87
+         ldy   #$03
+         jsr   compare    ; if T00,S01,$87 ==
+         !byte $6C,$58,$9D
+         bcs   .variant2  ; passport-test-suite/Pac-Man (Thunder Mountain).woz [C=0] here
+         ldx   #$8E
+         ldy   #$01
+         jsr   modify     ; then set T00,S01,$8E =
+         !byte $F8        ; change branch to unconditionally jump to success path
+         ldx   #$92
+         ldy   #$01
+         jsr   modify     ; and set T00,S01,$92 =
+         !byte $F1        ; change branch to unconditionally jump to success path
+         bvc   .exit      ; always branches
+.variant2
+         inx
+         ldy   #$03
+         jsr   compare    ; if T00,S01,$88 ==
+         !byte $6C,$58,$9D
+         bcs   .exit      ; passport/test-suite/Problem Solving in Algebra.woz [C=0] here
+         ldx   #$8E
+         ldy   #$01
+         jsr   modify     ; then set T00,S01,$8E =
+         !byte $F9        ; change branch to unconditionally jump to success path
+         ldx   #$92
+         ldy   #$01
+         jsr   modify     ; and set T00,S01,$92 =
+         !byte $F2        ; change branch to unconditionally jump to success path
+.exit
+}
