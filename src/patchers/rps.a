@@ -8,6 +8,10 @@
 ; so named because the disk volume string is
 ; C1984 RPS A#
 ;
+; variant 0
+; - Math Skills: Elementary Level (Encyclopaedia Britannica)
+; - Math Skills: Junior High Level (Encyclopaedia Britannica)
+
 ; variant 1
 ; - Dig Dug (Thunder Mountain)
 ; - Pac-Man (Thunder Mountain)
@@ -15,14 +19,10 @@
 ;
 ; variant 2
 ; - Problem Solving in Algebra (Encyclopaedia Britannica)
-; - Math Skills: Elementary Level (Encyclopaedia Britannica)
-; - Math Skills: Junior High Level (Encyclopaedia Britannica)
 ;-------------------------------
 !zone {
          bit   gMode      ; nothing to do here in verify-only mode
          bpl   .exit
-         lda   gIsBoot0   ; if DOS 3.3 boot0 loader
-         bne   .exit
          lda   gIsBoot1   ; and DOS 3.3 boot1 loader
          bne   .exit
 
@@ -32,9 +32,6 @@
          jsr   compare    ; if T00,S01,$48 ==
          !byte $C1,$B3
          bcs   .exit      ; primary pattern not found, bail
-         ldy   #$02
-         jsr   modify     ; then set T00,S01,$48 =
-         !byte $1F,$B4
 
          lda   #$03
          ldx   #$3E
@@ -42,13 +39,27 @@
          jsr   compare    ; if T00,S03,$3E ==
          !byte $4C,$B3,$B6
          !byte $EA
-         bcs   .variant1
-         lda   #$03
-         ldx   #$3E
+         bcs   .variant0  ; passport-test-suite/Math Skills Elementary Level.woz [C=1] here
+
          ldy   #$04
          jsr   modify     ; then set T00,S03,$3E =
          !byte $C9,$AA
          !byte $F0,$5C
+
+         lda   #$01       ; presence of JMP $B6B3 also indicates code at
+         ldx   #$48       ; $B41F that copies the real DOS code back to $B6B3
+         ldy   #$02       ; so we modify $B747 to jump to that (it exits via $9D84)
+         jsr   modify     ; and set T00,S01,$48 =
+         !byte $1F,$B4
+         bvc   .variant1  ; always branches
+
+.variant0
+         lda   #$01       ; lack of JMP $B6B3 indicates an earlier variant
+         ldx   #$48       ; which has no useful code at $B3C1, so we
+         ldy   #$02       ; modify $B747 to jump directly to $9D84
+         jsr   modify
+         !byte $84,$9D
+         ; /!\ execution falls through here
 
 .variant1
          lda   #$01
@@ -66,13 +77,15 @@
          jsr   modify     ; and set T00,S01,$92 =
          !byte $F1        ; change branch to unconditionally jump to success path
          bvc   .exit      ; always branches
+
 .variant2
          inx
          ldy   #$03
          jsr   compare    ; if T00,S01,$88 ==
          !byte $6C,$58,$9D
          bcs   .exit      ; passport/test-suite/Problem Solving in Algebra.woz [C=0] here
-         ldx   #$8E
+                          ; if we didn't find indirect jump in either location, bail
+         ldx   #$8E       ; variant #2 is similar to variant #1 but branch offsets differ by 1 byte
          ldy   #$01
          jsr   modify     ; then set T00,S01,$8E =
          !byte $F9        ; change branch to unconditionally jump to success path
