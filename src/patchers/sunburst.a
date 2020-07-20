@@ -15,6 +15,7 @@
 ; - Get to the Point (1985)
 ; - Getting Ready to Read and Add (1984)
 ; - Gnee or Not Gnee (1986)
+; - Green Globs and Graphing Equations.woz (1986)
 ; - High Wire Logic (1985)
 ; - How The West Was One + Three x Four (1987)
 ; - Interpreting Graphs (1986)
@@ -22,12 +23,19 @@
 ; - Memory Castle (1983)
 ; - Muppet Discovery Disk (1984)
 ; - Muppets on Stage (1984)
+; - Newbery Winners: A Wrinkle in Time (1982)
+; - Newbery Winners: Bridge to Terabithia (1982)
+; - Newbery Winners: Sounder (1982)
+; - Newbery Winners: The Westing Game (1982)
 ; - Number Quest (1984)
 ; - Odd One Out (1986) [1989 re-release is covered elsewhere]
+; - Pick The Part (1983)
 ; - Power Drill (1984)
+; - Punctuation Put-on (1985)
 ; - Puzzle Tanks (1984)
 ; - Safari Search: Problem Solving and Inference (1985)
 ; - Sir Isaac Newton's Games (1985)
+; - Solving Equations & Inequalities v2 (1983)
 ; - Spectrum (1984)
 ; - Survival Math (1982)
 ; - Targets: A Numbers Games (1985)
@@ -44,6 +52,7 @@
 ; - The Trading Post (1985)
 ; - Tip 'N Flip (1985)
 ; - Tobbs Learns Algebra (1983)
+; - Wally's Word Works (1985)
 ; - Word Detective (1986)
 ; - Word Quest (1985)
 ;-------------------------------
@@ -86,7 +95,7 @@
          ldy   #$02
          jsr   compare    ; and T00,S08,$8C ==
          !byte $69,$BA
-         bcc   .yes       ; passport-test-suite/The Incredible Laboratory.woz [C=0] matches
+         bcc   .yes       ; passport-test-suite/Green Globs and Graphing Equations.woz [C=0] matches
 .exit
          bcs   .exit2
 .yes
