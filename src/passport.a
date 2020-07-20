@@ -8,7 +8,7 @@
 ;-------------------------------
 ; Passport
 ; a 4am hack
-; (c) 2016-9 by 4am
+; (c) 2016-2020 by 4am
 ;
 ; Permission is hereby granted, free of charge, to any
 ; person obtaining a copy of this software and associated
@@ -244,6 +244,10 @@ Reaction
          sta   TEXTTOP
          lda   #s_reading
          jsr   PrintByID
+         lda   #$B2
+         ldx   #$00
+         ldy   #$0D
+         jsr   ClearMemory
          jsr   CopyUniversal
          jsr   IgnoreAddressChecksum
          jsr   ReadSector
