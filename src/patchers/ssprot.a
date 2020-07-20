@@ -84,6 +84,7 @@
          ldy   #$02
          jsr   modify                ; new JMP entry point ($0903 when decrypted)
          !byte $FA,$F2
+         bvc   .nextsector           ; always branches
 
 .variant3
          ldx   #$20
