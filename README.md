@@ -81,11 +81,15 @@ were common in educational software.
 - Blue Chip
   e.g. Squire, Baron, Tycoon
 
+- BrainBank
+  e.g. BackAid
+
 - Davidson & Associates
   e.g. Math Blaster Plus, Read N Roll
 
 - DC Heath
-  e.g. What Makes A Dinosaur Sore
+  e.g. What Makes A Dinosaur Sore,
+  Buzz Bang Harvey
 
 - DesignWare
   e.g. Spellicopter, Crypto Cube
@@ -99,6 +103,14 @@ were common in educational software.
 
 - Ellen Nelson Learning Library
   e.g. Science (series), House-a-fire!
+
+- EME
+  e.g. Metric System Tutor,
+  Water in the Air
+
+- Encyclopaedia Britannica
+  e.g. Problem Solving in Algebra,
+  Math Skills: Elementary Level
 
 - Focus Media
   e.g. The Time Tunnel (series),
@@ -188,6 +200,9 @@ were common in educational software.
 
 - Optimum Resource
   e.g. Stickybear Math, Car Builder
+
+- PDI
+  e.g. Leadsheeter, Polywriter
 
 - Pelican Software
   e.g. Dino Days, Graphics Converter
@@ -327,7 +342,7 @@ Passport is open source and is
 distributed under the MIT license.
 
 Passport
-Copyright (c) 2016-8 by 4am
+Copyright (c) 2016-2020 by 4am
 
 Permission is hereby granted, free of
 charge, to any person obtaining a copy
@@ -362,6 +377,29 @@ SOFTWARE OR THE USE OR OTHER DEALINGS
 IN THE SOFTWARE.
 
 ## History
+
+2020-07-20
+- NEW: patchers/harvey.a (Buzz Bang
+  Harvey, Harvey by Primes)
+- NEW: patchers/jmp2012.a (BackAid)
+- NEW: patchers/pdi.a (Leadsheeter,
+  Polywriter)
+- NEW: patchers/rps.a (Pac-Man Thunder
+  Mountain release, Problem Solving
+  in Algebra)
+- IMPROVED: patchers/ssprot.a (fixes
+  Metric System Tutor)
+- IMPROVED: patchers/bb03.a (fixes
+  Spanish for Mastery)
+- IMPROVED: patchers/sierra.a (fixes
+  Mission Asteroid)
+- IMPROVED: patchers/ea.a (fixes
+  One on One)
+- Passport will now quit gracefully if
+  you manage to launch it with less
+  than 64K
+- Matching updates to the
+  [Passport test suite](https://github.com/a2-4am/passport-test-suite)
 
 2019-06-16
 - NEW: verify pure 13-sector disks
