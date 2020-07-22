@@ -119,5 +119,25 @@
          jsr   PrintByID
          inc   gPatchCount
 .endbne0
+
+;-------------------------------
+; RWTS "CMP / NOP NOP" identification
+; disk allows any value for
+; for the second address epilogue nibble
+;-------------------------------
+         lda   #$03
+         sta   gDisplayBytes
+         ldx   #$95
+         ldy   #$09
+         jsr   compare    ; if T00,S03,$95 ==
+         !byte $BD,$8C,$C0
+         !byte $10,$FB
+         !byte $C9,$AA
+         !byte $EA,$EA
+         bcs   .endnopnop ; passport-test-suite/La Guillotine.woz [C=0] matches
+         lda   #s_cmpnopnop
+         jsr   PrintByID
+         inc   gPatchCount
+.endnopnop
 .exit
 }

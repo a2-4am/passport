@@ -120,4 +120,5 @@ s_e7everywhere=$72
 s_choplifter = $73
 s_pdi        = $74
 s_sve        = $75
-STRINGCOUNT =  $76
+s_cmpnopnop  = $76
+STRINGCOUNT =  $77
