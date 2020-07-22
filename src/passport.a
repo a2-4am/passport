@@ -126,6 +126,7 @@ FirstMover
          !source "id/jsr8b3.a"
          !source "id/mecc.a"
          !source "id/datasoft.a"
+         !source "id/tsr.a"
          !source "id/protecteddos.a"
          !source "id/encode44.a"
          !source "id/encode53.a"
@@ -320,8 +321,6 @@ ADStyle
 UseUniversal
          jsr   IncProgress
          jsr   StartWithUniv
-         lda   gIsDinkeyDOS
-         bne   +
 ;
 ; On Dinkey-DOS disks (e.g. Ultima V, Times of Lore), we start with the
 ; universal RWTS then apply a patch in memory.
@@ -331,8 +330,18 @@ UseUniversal
 ; read unprotected disks. A separate patcher finds the actual code that
 ; alters the sector number to print it to the log.
 ;
+         lda   gIsDinkeyDOS
+         bne   +
          jsr   PatchUniversalRWTSForOrigin
          bmi   ReadWithRWTS          ; always branches
+;
+; On TSR disks (e.g. Dawn Patrol, Dungeon), we start with the universal
+; RWTS then apply a patch in memory.
+;
++        lda   gIsTSR
+         bne   +
+         jsr   PatchUniversalRWTSForTSR
+         TODO
 ;
 ; On pure 13-sector disks, we just hijack the read routine to perform a
 ; verification instead.
@@ -793,7 +802,7 @@ _applyToAll
          !source "patchers/polarware.a"         ; gIsProDOS only
          !source "patchers/sierra.a"            ; gIsBoot0 only
          !source "patchers/corrupter.a"         ; T13 only
-         !source "patchers/ea.a"                ; (gIsEA || gIsBoot0) only
+         !source "patchers/ea.a"                ; gIsEA || gIsBoot0 only
          !source "patchers/gamco.a"             ; gPossibleGamco only
          !source "patchers/optimum.a"           ; gIsOptimum only
          !source "patchers/bootcounter.a"       ; T01 only
@@ -804,7 +813,7 @@ _applyToAll
          !source "patchers/jsr8635.a"           ; gIsRWTS only
          !source "patchers/jmpb4bb.a"           ; T02 only
          !source "patchers/dos32muse.a"         ; T01 && gIsDOS32 only
-         !source "patchers/sra.a"               ; gIsDOS32 or gIsRWTS only
+         !source "patchers/sra.a"               ; gIsDOS32 || gIsRWTS only
          !source "patchers/sierra13.a"          ; gIsDOS32 only
          !source "patchers/ssprot.a"            ; gIsF7F6 only
          !source "patchers/f7f6.a"              ; gIsF7F6 only
@@ -823,6 +832,7 @@ _applyToAll
          !source "patchers/choplifter.a"        ; gIsChoplifter only
          !source "patchers/pdi.a"               ; gIsDiversi only
          !source "patchers/harvey.a"            ; T01 only
+         !source "patchers/tsr.a"               ; T04 && gIsTSR only
 
          lda   gPatchCount
          beq   .nopatches

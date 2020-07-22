@@ -1,0 +1,32 @@
+;-------------------------------
+; IDTSR
+; identify TSR bootloader
+;
+; in:  track buffer contains T00,S00
+; out: C clear if TSR bootloader found
+;      C set otherwise
+;      all registers clobbered
+;      all other flags clobbered
+;
+; tested with
+; - Dawn Patrol
+; - Dungeon
+; - Theseus and the Minotaur
+;-------------------------------
+IDTSR
+         lda   #$00
+         ldx   #$FE
+         ldy   #$02
+         jsr   compare
+         !byte $B0,$0F
+         bcs   +
+         ldx   #$1C
+         ldy   #$03
+         jsr   compare
+         !byte $20,$B3,$08
+         bcs   +
+         ldx   #$01
+         ldy   #$04
+         jsr   compare
+         !byte $A5,$27,$C9,$09
++        rts              ; passport-test-suite/Dawn Patrol.woz [C=0] matches

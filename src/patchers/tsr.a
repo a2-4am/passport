@@ -1,0 +1,44 @@
+;-------------------------------
+; #TSR
+; RWTS changes per track based on
+; contents of F8 ROM (no, really)
+;
+; tested on
+; - Dawn Patrol
+; - Dungeon
+; - Theseus and the Minotaur
+;-------------------------------
+!zone {
+         bit   gMode      ; nothing to do here in verify-only mode
+         bpl   .exit
+         lda   gIsTSR
+         bne   .exit
+         ldx   gTrack
+         cpx   #$04
+         bne   .exit
+
+         lda   #$0B
+         ldx   #$A0
+         ldy   #$0A
+         jsr   compare    ; if T04,S0B,$A0 ==
+         !byte $A9,$C8
+         !byte $8D,$8C,$BE
+         !byte $A9,$BF
+         !byte $8D,$8D,$BE
+         bcs   .exit      ; passport-test-suite/Dawn Patrol.woz [C=0] here
+
+         sta   gDisplayBytes
+         lda   #s_bytrack
+         jsr   PrintByID
+
+         lda   #$0B
+         ldx   #$A2
+         ldy   #$01
+         jsr   modify     ; then set T04,S0B,$A2 =
+         !byte $2C
+         ldx   #$A7
+         ldy   #$01
+         jsr   modify     ; and set T04,S0B,$A7 =
+         !byte $2C
+.exit
+}

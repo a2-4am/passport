@@ -102,9 +102,10 @@ gIsMUSERWTS                   = gIsRDOS13-$01                     ; byte
 gIsHolle                      = gIsMUSERWTS-$01                   ; byte
 gIsPhoenix                    = gIsHolle-$01                      ; byte
 gIsDiversi                    = gIsPhoenix-$01                    ; byte
+gIsTSR                        = gIsDiversi-$01                    ; byte
 ;LASTFILTER ; add new gIs* above this line
 ;gIsInfocom18 is a special case whose ID is not in the regular inspection path
-gIsInfocom18                  = gIsDiversi-$01                    ; byte
+gIsInfocom18                  = gIsTSR-$01                        ; byte
 ;gIs13Sector is a special case whose ID is not in the regular inspection path
 gIs13Sector                   = gIsInfocom18-$01                  ; byte
 ;gMECCFastloadType is a special case integer whose default value cannot be #FALSE
@@ -179,6 +180,7 @@ ConstructStandardDelivery = jConstructStandardDelivery
 !warn "gIsHolle=",gIsHolle
 !warn "gIsPhoenix=",gIsPhoenix
 !warn "gIsDiversi=",gIsDiversi
+!warn "gIsTSR=",gIsTSR
 !warn "gIsRDOS13=",gIsRDOS13
 !warn "gIsInfocom18=",gIsInfocom18
 !warn "gIs13Sector=",gIs13Sector

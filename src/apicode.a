@@ -64,6 +64,10 @@
                           ; set in IDBootloader() after reading T00,S00
 
 FIRSTFILTER
+;gIsTSR
+         !byte FALSE      ; 0=true, 1=false
+                          ; reset before each operation
+                          ; set in IDBootloader() after reading T00,S00
 ;gIsDiversi
          !byte FALSE      ; 0=true, 1=false
                           ; reset before each operation
