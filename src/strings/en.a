@@ -284,7 +284,7 @@ StringTableHigh
 ; can be set directly before calling PrintByID.
 ;
 .header
-         !text "Passport by 4am               2020-07-22",$00
+         !text "Passport by 4am               2020-09-16",$00
 .mainmenu
          !text "________________________________________",$8D,$8D,$8D,$8D,$8D,$8D,$8D,$8D
          !text "               "
@@ -311,7 +311,7 @@ StringTableHigh
 .diskrwts
          !text "Using disk's own RWTS",$8D,$00
 .bb00
-         !text "T00,S05 Found $BB00 protection check",$8D
+         !text "T00,S05 Found Lock-It-Up protection",$8D
          !text "T00,S0A might be unreadable",$8D,$00
 .sunburst
          !text "T00,S04 Found Sunburst disk",$8D
