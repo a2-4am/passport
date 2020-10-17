@@ -341,7 +341,6 @@ UseUniversal
 +        lda   gIsTSR
          bne   +
          jsr   PatchUniversalRWTSForTSR
-         TODO
 ;
 ; On pure 13-sector disks, we just hijack the read routine to perform a
 ; verification instead.

@@ -112,6 +112,7 @@ AnalyzeT00
          !source "../patchers/artsci.a"
          !source "../patchers/springboard.a"
          !source "../patchers/hoffman.a"
+         !source "../patchers/datasoft2.a"
 
 ;add only above this line
 
