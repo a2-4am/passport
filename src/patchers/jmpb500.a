@@ -1,0 +1,35 @@
+;-------------------------------
+; #JMPB500
+; Boot1 jumps to $B500 for a
+; lightly obfuscated nibble check
+; that exits via $9D84 if successful
+;
+; tested on
+; Starship Commander (1981, Voyager Software)
+;-------------------------------
+!zone {
+         bit   gMode      ; nothing to do here in verify-only mode
+         bpl   .exit
+         lda   gIsRWTS    ; if DOS 3.3-shaped RWTS
+         bne   .exit
+         lda   #$0C
+         ldx   #$84
+         ldy   #$03
+         jsr   compare    ; if T00,S0C,$84 ==
+         !byte $4C,$00,$B5; JMP $B500
+         bcs   .exit
+         ;A is preserved, still #$0C
+         sta   gDisplayBytes+2       ; sector
+         lda   #$B5
+         sta   gDisplayBytes         ; address (hi)
+         lda   #$00
+         sta   gDisplayBytes+1       ; address (lo)
+         lda   #s_beforedos
+         jsr   PrintByID
+         lda   #$0C
+         ;X is preserved, still #$84
+         ldy   #$03
+         jsr   modify     ; then set T00,$0C,$84 =
+         !byte $AD,$E9,$B7
+.exit
+}

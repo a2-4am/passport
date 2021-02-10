@@ -113,6 +113,7 @@ AnalyzeT00
          !source "../patchers/springboard.a"
          !source "../patchers/hoffman.a"
          !source "../patchers/datasoft2.a"
+         !source "../patchers/jmpb500.a"
 
 ;add only above this line
 

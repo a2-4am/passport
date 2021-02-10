@@ -1,7 +1,7 @@
 ;-------------------------------
 ; #JMPB400
 ; Boot1 jumps to $B400 for a
-; self-decripting nibble check
+; self-decrypting nibble check
 ; that seeks to track $23
 ; and exits via $9D84 if successful
 ;
