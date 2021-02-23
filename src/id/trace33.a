@@ -216,6 +216,18 @@ _Inspect1a
          lda   #TRUE
          sta   gIsPhoenix
 ;
+; Check for MECC DOS loaded in lower memory
+; (sets flag for a specific patcher)
+;
++        lda   $08FE
+         cmp   #$36
+         bne   +
+         lda   $371A
+         cmp   #$0D
+         bne   +
+         lda   #TRUE
+         sta   gPossibleMECCSwapper
+;
 ; Turn off drive recalibration
 ;
 +        lda   jCallRWTS+2; check for code at $BDD2

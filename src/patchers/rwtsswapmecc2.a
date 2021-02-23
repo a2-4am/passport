@@ -1,0 +1,29 @@
+;-------------------------------
+; #RWTSSWAPMECC2
+; post-boot RWTS swapper in MECC
+; DOS disks
+;-------------------------------
+!zone {
+         bit   gMode      ; nothing to do here in verify-only mode
+         bpl   .exit
+         lda   gPossibleMECCSwapper
+         beq   .exit
+
+         ldy   #$08
+         jsr   SearchTrack
+         !byte $A9,$AA
+         !byte $2C
+         !byte $A9,$D5
+         !byte $8D,$7A,$BC
+         bcs   .exit      ; passport-test-suite/Word Wizards v1.0.woz [C=0] matches
+         sta   gDisplayBytes
+         inx
+         inx
+         inx
+         inx
+         inx
+         ldy   #$01
+         jsr   modify
+         !byte $60
+.exit
+}
