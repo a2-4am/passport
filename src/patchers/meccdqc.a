@@ -1,5 +1,7 @@
 ;-------------------------------
-; #MECCDBC
+; #MECCDQC
+; additional shenanigans in
+; MECC Database Composer
 ;-------------------------------
 !zone {
          bit   gMode      ; nothing to do here in verify-only mode
@@ -10,6 +12,17 @@
          lda   gMECCFastloadType
          cmp   #ID_MECC1
          bne   .jmpexit
+
+         lda   #$0B
+         ldx   #$02
+         ldy   #$06
+         jsr   compare
+         !byte $BD,$8C,$C0
+         !byte $10,$FB
+         !byte $C9
+         bcs   .exit      ; passport-test-suite/MECC Dataquest Composer.woz [C=0] matches
+
+         lda   gMECCFastloadType
          asl
          asl
          asl

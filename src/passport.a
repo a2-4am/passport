@@ -792,7 +792,7 @@ _applyToAll
          !source "patchers/bbf9.a"              ; gIsProDOS only
          !source "patchers/memory.config.a"     ; gIsProDOS only
          !source "patchers/origin.a"            ; gIsProDOS only
-         !source "patchers/meccdbc.a"           ; gMECCFastloadType==1 && gT07 only
+         !source "patchers/meccdqc.a"           ; gMECCFastloadType==1 && gT07 only
          !source "patchers/rwtsswapmecc.a"      ; gMECCFastloadType only
          !source "patchers/rwtsswapmecc2.a"     ; gPossibleMECCSwapper only
          !source "patchers/rwtsswappenguin.a"   ; T01 only
