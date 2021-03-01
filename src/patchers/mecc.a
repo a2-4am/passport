@@ -12,7 +12,7 @@
          bpl   .jmpexit
          lda   gMECCFastloadType
          cmp   #ID_MECC1
-         bcc   .jmpexit
+         bcc   .scaninfo
          cmp   #ID_MECC4+1
          bcs   .jmpexit
          asl              ; passport-test-suite/Coordinate Math v1.0 (MECC variant 1).woz [C=0] reaches here
@@ -54,6 +54,48 @@
          bne   -
 
 .jmpexit
+         jmp   .exit
+
+.scaninfo
+         lda   gIsProDOS
+         bne   .noinfo
+         lda   #$0B
+         ldx   #$2B
+         ldy   #$27
+         jsr   compare
+         !byte $16        ; storage type (seedling) and name length
+         !text "IDINFO"   ; filename
+         !byte $00,$00,$00,$00,$00,$00,$00,$00,$00
+                          ; pad
+         !byte $06        ; filetype (binary)
+         !byte $07, $00   ; key pointer
+         !byte $01, $00   ; blocks used
+         !byte $00, $02, $00
+                          ; filesize
+         !byte WILDCARD, WILDCARD, WILDCARD, WILDCARD
+                          ; creation date
+         !byte $08        ; creator ProDOS version (might need -> WILDCARD)
+         !byte $00        ; minimum ProDOS version
+         !byte $E3        ; access rights
+         !byte $00, $00   ; auxtype
+         !byte WILDCARD, WILDCARD, WILDCARD, WILDCARD
+                          ; last-mod date
+         !byte $02, $00   ; header pointer
+         bcs   .noinfo
+         lda   #s_idinfo
+         jsr   PrintByID
+         ldy   #$00
+         tya
+.erase   sta   (BASEPAGE << 8) + $100, y
+         sta   (BASEPAGE << 8) + $F00, y
+         iny
+         bne   .erase
+         lda   #$BD
+         sta   (BASEPAGE << 8) + $FFE
+         sta   (BASEPAGE << 8) + $FFF
+         inc   gPatchCount
+
+.noinfo
          jmp   .exit
 
 .table
