@@ -9,6 +9,19 @@
          lda   gMECCFastloadType
          beq   .exit
 
+         ldy   #$08
+         jsr   SearchTrack
+         !byte $A0,$02
+         !byte $AD,$88,$67
+         !byte $D0,$11
+         !byte $B9
+         bcs   +          ; passport-test-suite/MECC Dataquest Composer [C=0] matches
+         sta   gDisplayBytes
+         jsr   inx5
+         ldy   #$01
+         jsr   modify
+         !byte $24
++
          ldy   #$11
          jsr   SearchTrack
          !byte $0A

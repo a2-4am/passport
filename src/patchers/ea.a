@@ -87,11 +87,7 @@
          !byte $03,$4C     ;LDI  #$00
          !byte $04,$EB,$19 ;LDA  $c0e8
          bcs   +
-         inx
-         inx
-         inx
-         inx
-         inx
+         jsr   inx5
          ldy   #1
          jsr   modify
          !byte $04
@@ -113,12 +109,7 @@
          !byte $D0,$A7     ;BNE -$A7
          !byte $4C         ;JMP $xxxx
          bcs   +
-         inx
-         inx
-         inx
-         inx
-         inx
-         inx
+         jsr   inx6
          ldy   #1
          jsr   modify
          !byte $00         ;disable branch
@@ -210,11 +201,7 @@
          lda   #s_tamper
          jsr   PrintByID
          pla
-         inx
-         inx
-         inx
-         inx
-         inx
+         jsr   inx5
          ldy   #1
          jsr   modify
          !byte $00         ;new checksum value for cmp
@@ -231,12 +218,7 @@
          lda   #s_tamper
          jsr   PrintByID
          pla
-         inx
-         inx
-         inx
-         inx
-         inx
-         inx
+         jsr   inx6
          ldy   #1
          jsr   modify
          !byte $50         ;new checksum value for cmp
@@ -252,10 +234,7 @@
          lda   #s_tamper
          jsr   PrintByID
          pla
-         inx
-         inx
-         inx
-         inx
+         jsr   inx4
          ldy   #1
          jsr   modify
          !byte $50         ;new checksum value for cmp
@@ -267,12 +246,7 @@
          !byte $20,$00,$61 ;JSR $6100
          !byte $4C,$94,$69 ;JMP $6994
          bcs   +
-         inx
-         inx
-         inx
-         inx
-         inx
-         inx
+         jsr   inx6
          ldy   #1
          jsr   modify
          !byte $2C         ;JSR->BIT

@@ -127,10 +127,7 @@
          bcs   +
          pha
          tay
-         inx
-         inx
-         inx
-         inx
+         jsr   inx5
          txa
          pha
          tya
@@ -183,11 +180,7 @@
          !byte $28         ;PLP
          !byte $6C,$36,$00 ;JMP ($0036)
          bcs   +
-         inx
-         inx
-         inx
-         inx
-         inx
+         jsr   inx5
          ldy   #$01
          jsr   modify
          !byte $2C ;BIT $xxxx
@@ -213,10 +206,7 @@
          ldy   #$01
          jsr   modify
          !byte $EA         ;NOP
-         inx
-         inx
-         inx
-         inx
+         jsr   inx4
          ldy   #$01
          jsr   modify
          !byte $EA         ;NOP
@@ -296,10 +286,7 @@
          !byte $A9,$00     ;LDA #$00
          !byte $85,$48     ;STA $48
          !byte $BD,$89,$C0 ;LDA $C089,X
-         inx
-         inx
-         inx
-         inx
+         jsr   inx4
          bcs   ++
 +        sta   gDisplayBytes
          pha

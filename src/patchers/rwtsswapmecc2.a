@@ -17,11 +17,7 @@
          !byte $8D,$7A,$BC
          bcs   .exit      ; passport-test-suite/Word Wizards v1.0.woz [C=0] matches
          sta   gDisplayBytes
-         inx
-         inx
-         inx
-         inx
-         inx
+         jsr   inx5
          ldy   #$01
          jsr   modify
          !byte $60

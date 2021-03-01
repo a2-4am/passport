@@ -792,6 +792,7 @@ _applyToAll
          !source "patchers/bbf9.a"              ; gIsProDOS only
          !source "patchers/memory.config.a"     ; gIsProDOS only
          !source "patchers/origin.a"            ; gIsProDOS only
+         !source "patchers/meccdbc.a"           ; gMECCFastloadType==1 && gT07 only
          !source "patchers/rwtsswapmecc.a"      ; gMECCFastloadType only
          !source "patchers/rwtsswapmecc2.a"     ; gPossibleMECCSwapper only
          !source "patchers/rwtsswappenguin.a"   ; T01 only
@@ -842,6 +843,15 @@ _applyToAll
          sec              ; set carry if nothing happened
          rts
 
+inx6     inx
+inx5     inx
+inx4     inx
+         inx
+         inx
+         inx
+         rts
+
+
 universalrwts
          !bin "../build/universalrwts.pak"
          !source "exodecrunch.s"
@@ -849,13 +859,13 @@ universalrwts
 get_crunched_byte:
 _byte_lo = * + 1
 _byte_hi = * + 2
-	lda $1234		; needs to be set correctly before
-				; decrunch_file is called.
-	inc _byte_lo
-	bne _byte_skip_hi
-	inc _byte_hi
+         lda $1234        ; needs to be set correctly before
+                          ; decrunch_file is called.
+         inc _byte_lo
+         bne _byte_skip_hi
+         inc _byte_hi
 _byte_skip_hi:
-	rts
+         rts
 
 AnalyzeT00                ; placeholder to identify stack of packed data
          !bin "../build/t00only.pak"
