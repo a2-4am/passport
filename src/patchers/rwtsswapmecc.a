@@ -1,14 +1,42 @@
 ;-------------------------------
 ; #RWTSSWAPMECC
-; post-boot RWTS swapper in MECC
-; fastloader disks
+; post-boot RWTS swappers in
+; various MECC disks
 ;-------------------------------
 !zone {
          bit   gMode      ; nothing to do here in verify-only mode
          bpl   .exit
+
+         lda   gPossibleMECCSwapper
+         beq   +
+         ldy   #$08
+         jsr   SearchTrack
+         !byte $A9,$AA
+         !byte $2C
+         !byte $A9,$D5
+         !byte $8D,$7A,$BC
+         bcs   +          ; passport-test-suite/Word Wizards v1.0.woz [C=0] matches
+         sta   gDisplayBytes
+         jsr   inx5
+         ldy   #$01
+         jsr   modify
+         !byte $60
++
          lda   gMECCFastloadType
          beq   .exit
-
+         ldy   #$06
+         jsr   SearchTrack
+         !byte $8A
+         !byte $F0,$02
+         !byte $A2,$06
+         !byte $BD
+         bcs   +          ; passport-test-suite/Zoyon Patrol v1.0.woz [C=0] matches
+         sta   gDisplayBytes
+         jsr   inx4
+         ldy   #$01
+         jsr   modify
+         !byte $00
++
          ldy   #$08
          jsr   SearchTrack
          !byte $A0,$02
@@ -32,11 +60,12 @@
          !byte $8D,$8B,$C0
          !byte $B9,WILDCARD,WILDCARD
          !byte $8D,$AC,$D5
-         bcs   .exit      ; passport-test-suite/MECC Dataquest - Europe and Soviet Union.woz [C=0] matches
+         bcs   +          ; passport-test-suite/MECC Dataquest - Europe and Soviet Union.woz [C=0] matches
          sta   gDisplayBytes
          ldy   #$03
          jsr   modify
          !byte $A9,$00
          !byte $24
++
 .exit
 }
