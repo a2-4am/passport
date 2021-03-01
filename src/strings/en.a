@@ -136,6 +136,7 @@ StringTableLow
          !byte <.sve
          !byte <.cmpnopnop
          !byte <.tsr
+         !byte <.idinfo
 
 StringTableHigh
          !byte >.header
@@ -258,6 +259,7 @@ StringTableHigh
          !byte >.sve
          !byte >.cmpnopnop
          !byte >.tsr
+         !byte >.idinfo
 
 ;
 ; Text can contain substitution strings, which
@@ -614,4 +616,6 @@ StringTableHigh
          !text "T%t,S%0 Found SVE protection check",$8D,$00
 .tsr
          !text "T00,S00 Found TSR bootloader",$8D,$00
+.idinfo
+         !text "T00,S01 Erasing site license information",$00
 }
