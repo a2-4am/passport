@@ -833,6 +833,7 @@ _applyToAll
          !source "patchers/pdi.a"               ; gIsDiversi only
          !source "patchers/harvey.a"            ; T01 only
          !source "patchers/tsr.a"               ; T04 && gIsTSR only
+         !source "patchers/woodbury.a"          ; gPossibleWoodbury only
 
          lda   gPatchCount
          beq   .nopatches

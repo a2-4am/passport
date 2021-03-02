@@ -228,6 +228,21 @@ _Inspect1a
          lda   #TRUE
          sta   gPossibleMECCSwapper
 ;
+; Check for unusual init at $BFC8
+; (sets flag for a specific patcher
+;  and marks a certain sector optional)
+;
++        lda   $08FE
+         cmp   #$B7
+         bne   +
+         lda   $BFCC
+         cmp   #$10
+         bne   +
+         lda   #TRUE
+         sta   gPossibleWoodbury
+         lda   #kSectorOptional
+         sta   T14S06
+;
 ; Turn off drive recalibration
 ;
 +        lda   jCallRWTS+2; check for code at $BDD2

@@ -137,6 +137,7 @@ StringTableLow
          !byte <.cmpnopnop
          !byte <.tsr
          !byte <.idinfo
+         !byte <.badblock
 
 StringTableHigh
          !byte >.header
@@ -260,6 +261,7 @@ StringTableHigh
          !byte >.cmpnopnop
          !byte >.tsr
          !byte >.idinfo
+         !byte >.badblock
 
 ;
 ; Text can contain substitution strings, which
@@ -286,7 +288,7 @@ StringTableHigh
 ; can be set directly before calling PrintByID.
 ;
 .header
-         !text "Passport by 4am               2021-03-01",$00
+         !text "Passport by 4am               2021-03-02",$00
 .mainmenu
          !text "________________________________________",$8D,$8D,$8D,$8D,$8D,$8D,$8D,$8D
          !text "               "
@@ -618,4 +620,6 @@ StringTableHigh
          !text "T00,S00 Found TSR bootloader",$8D,$00
 .idinfo
          !text "T00,S01 Erasing site license information",$00
+.badblock
+         !text "T%t,S%0 Found bad block protection check",$00
 }

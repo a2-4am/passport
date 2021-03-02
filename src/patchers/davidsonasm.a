@@ -28,6 +28,10 @@
          !byte $20,$D2,$25; JSR $25D2
          !byte $4C,$74,$08; JMP $0874
          bcs   +          ; passport-test-suite/Word Attack Plus Spanish.woz [C=0] matches
+         pha
+         lda   #s_badblock
+         jsr   PrintByID
+         pla
          ldx   #$04
          ldy   #$01
          jsr   modify
