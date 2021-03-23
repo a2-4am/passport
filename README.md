@@ -378,6 +378,33 @@ IN THE SOFTWARE.
 
 ## History
 
+Development (unreleased)
+- NEW: patchers/tsr.a (Dawn Patrol,
+  Dungeon, Theseus and the Minotaur)
+- NEW: patchers/datasoft2.a (Canyon
+  Climber, Fathom's 40)
+- NEW: patchers/jmpb500.a (Starship
+  Commander)
+- NEW: patchers/woodbury.a (PlayWriter)
+- NEW: patchers/meccdqc.a (MECC
+  DataQuest Composer)
+- NEW: patchers/rwtsswapmecc2.a (Word
+  Wizards v1.0)
+- IMPROVED: patches/mecc.a to erase
+  site license information from final
+  generation of MECC disks (by qkumba)
+- IMPROVED: patchers/rwtsswapmecc.a
+  (fixes Zoyon Patrol)
+- IMPROVED: patchers/prodosmecc.a
+  (fixes Miner's Cave)
+- IMPROVED: patchers/rwtslog.a (fixes
+  La Guillotine)
+- "BB00 protection" renamed to its
+  marketing name "Lock-It-Up"
+- update Passport disk to ProDOS 2.4.2
+- Matching updates to the
+  [Passport test suite](https://github.com/a2-4am/passport-test-suite)
+
 2020-07-20
 - NEW: patchers/harvey.a (Buzz Bang
   Harvey, Harvey by Primes)
