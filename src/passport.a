@@ -834,6 +834,7 @@ _applyToAll
          !source "patchers/harvey.a"            ; T01 only
          !source "patchers/tsr.a"               ; T04 && gIsTSR only
          !source "patchers/woodbury.a"          ; gPossibleWoodbury only
+         !source "patchers/leisure.a"           ; gIsProDOS && T22 only
 
          lda   gPatchCount
          beq   .nopatches

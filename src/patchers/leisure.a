@@ -1,0 +1,37 @@
+;-------------------------------
+; #LEISURE
+; disk volume check
+;
+; Tested on
+; - Clue: Master Detective (Leisure Genius)
+; - Risk v1.4 (Leisure Genius)
+;-------------------------------
+!zone {
+         bit   gMode      ; nothing to do here in verify-only mode
+         bpl   .exit
+         lda   gIsProDOS
+         bne   .exit
+         lda   gTrack
+         cmp   #$22
+         bne   .exit
+
+         ldy   #$08
+         jsr   SearchTrack
+         !byte $AD,$70,$D3
+         !byte $C9,$01
+         !byte $D0,$01
+         !byte $60
+         bcs   .exit      ; passport-test-suite/Clue Master Detective.woz [C=0] matches
+         sta   gDisplayBytes
+         pha
+         lda   #$01
+         sta   gDisplayBytes+1
+         lda   #s_diskvol0x
+         jsr   PrintByID
+         pla
+         jsr   inx6
+         ldy   #$01
+         jsr   modify
+         !byte $00
+.exit
+}
