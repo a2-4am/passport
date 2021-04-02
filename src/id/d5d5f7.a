@@ -18,8 +18,10 @@
 ;-------------------------------
 !zone {
 IDD5D5F7
-         lda   $084C
-         cmp   #$08
+         lda   #$08
+         cmp   $08F2
+         beq   .yes       ; passport-test-suite/Trivia Fever (BB03 variant 3).woz [Z=1] matches
+         cmp   $084C
          bne   .no
          lda   $08B0
          cmp   #$B6
@@ -27,7 +29,7 @@ IDD5D5F7
          lda   $08D0
          cmp   #$20
          bne   .no
-         clc
+.yes     clc
          !byte $24
 .no      sec
          rts              ; passport-test-suite/RoboMath.woz [C=0] matches
