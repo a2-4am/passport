@@ -1,8 +1,9 @@
 ;-------------------------------
 ; #SSI protections
-; weak bit, magic values
+; weak bit, magic values,
+; the occasional fat track
 ;
-; module by qkumba
+; module by qkumba/4am
 ;-------------------------------
 !zone {
          bit   gMode      ; nothing to do here in verify-only mode
@@ -20,7 +21,7 @@
          !byte $C1,$00    ; CMP ($00,X)
          !byte $EA        ; NOP
          !byte $EA        ; NOP
-         bcs   .exit      ; passport-test-suite/Epidemic.woz [C=0] matches
+         bcs   +          ; passport-test-suite/Epidemic.woz [C=0] matches
 
          sta   gDisplayBytes
          pha
@@ -30,5 +31,17 @@
          ldy   #$01
          jsr   modify
          !byte $A9        ; LDA #$..
++
+         ldy   #$09
+         jsr   SearchTrack
+         !byte $AE,$F1,$BA; LDX $BAF1
+         !byte $BD,$89,$C0; LDA $C089,X
+         !byte $A9,$44    ; LDA #$22
+         !byte $20        ; JSR ...
+         bcs   .exit      ; passport-test-suite/Sixgun Shootout.woz [C=0] matches
+         sta   gDisplayBytes
+         ldy   #$01
+         jsr   modify
+         !byte $60        ; RTS
 .exit
 }
