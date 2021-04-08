@@ -284,11 +284,15 @@ ADStyle
 ;
          jsr   xHeredityDog
          bcs   +
-         lda   #s_bb00
+         lda   #$05
+         sta   gDisplayBytes
+         lda   #s_lockitup
          jsr   PrintByID
 +
          jsr   xSunburst
          bcs   +
+         lda   #$04
+         sta   gDisplayBytes
          lda   #s_sunburst
          jsr   PrintByID
 +
@@ -310,6 +314,8 @@ ADStyle
 +
          jsr   xRPS
          bcs   +
+         lda   #$01
+         sta   gDisplayBytes
          lda   #s_rps
          jsr   PrintByID
 +

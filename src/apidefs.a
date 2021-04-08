@@ -1,6 +1,6 @@
-TRUE     =     $00        ; Lots of code assumes this is $00
+TRUE     =     $00        ; Lots of code assumes this is zero
                           ; so it can branch with BEQ, so
-                          ; don't change it either!
+                          ; don't change it!
 FALSE    =     $01
 
 ;-------------------------------

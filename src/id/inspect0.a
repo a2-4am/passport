@@ -9,19 +9,29 @@
 IDBootloader
 ;
 ; Reset all per-disk globals.
-; These are used as filters later so irrelevant patchers can be skipped.
+; Some of these are used as filters later so irrelevant patchers can be skipped.
 ;
          ldx   #(LASTFILTER-FIRSTFILTER)
          lda   #FALSE
--        sta   FIRSTFILTER-1,x
+-        sta   FIRSTFILTER-1, x
          dex
          bne   -
+
+         ; X = 0
          stx   gMECCFastloadType
          stx   gLastTrack
+
+         txa
+         ; A = 0
+         ldx   #9
+-        sta   gDisplayBytes, x
+         dex
+         bpl   -
+
          ldx   #$0F
          ldy   #$F8
 -        tya
-         sta   precheck_sectors,x
+         sta   precheck_sectors, x
          iny
          dex
          bpl   -
@@ -223,6 +233,8 @@ IDBootloader
 ;
 +        jsr   IDDinkeyDOS
          bcs   +
+         lda   #$0B
+         sta   gDisplayBytes
          lda   #s_dinkeydos
          jsr   PrintByID
          lda   #TRUE

@@ -165,6 +165,8 @@ _Inspect1a
          bcs   .x6b       ; passport-test-suite/Tangram Puzzler.woz [C=0] matches
          jsr   IDMilliken
          bcs   .x6b
+         lda   #$0A
+         sta   gDisplayBytes
          lda   #s_milliken
          jsr   PrintByID
          lda   #kSectorOptional
