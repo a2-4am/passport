@@ -1,5 +1,6 @@
 ;-------------------------------
 ; #JMPBBFE
+; marketed as 'Lock-It-Up'
 ; boot0 jumps to ($BBFE) instead of ($08FD)
 ; for a weakbits check at $BB00
 ;
@@ -96,15 +97,45 @@ _jmpbbfe
          bpl   .exit
          lda   gIsBoot0   ; if DOS 3.3 boot0 loader
          bne   .exit
-         ldx   #$4A
-         ldy   #$03
-         jsr   compare    ; and T00,S00,$4A ==
-         !byte $6C,$FE,$BB
-         bcs   .exit      ; passport-test-suite/Quadrilaterals.woz [C=0] matches
-         lda   #$00
          ldx   #$4B
          ldy   #$02
-         jsr   modify     ; then set T00,S00,$4B =
-         !byte $FD,08
+         jsr   compare    ; and T00,S00,$4B ==
+         !byte $FE,$BB
+         bcs   .exit
+
+; variation 1 (common)
+
+         lda   #$05
+         ldx   #$20
+         tay
+         jsr   compare
+         !byte $A9,WILDCARD
+         !byte $8D,$00,$02
+         bcc   .yes      ; passport-test-suite/Quadrilaterals.woz [C=0] matches
+
+; variation 2 (earlier, less common)
+
+         ldx   #$19
+         tay
+         jsr   compare
+         !byte $A9,WILDCARD
+         !byte $8D,$00,$02
+         bcs   .exit
+
+.yes     stx   +          ; byte offset (varies)
+         inx
+         inx
+         inx
+         inx
+         inx
+         ldy   #$03
+         jsr   modify
+         !byte $6C,$FD,$08
+
+         ldx   #$FE
+         ldy   #$01
+         jsr   modify
++        !byte $FD        ; SMC (byte offset of new entry point)
+
 .exit
 }
