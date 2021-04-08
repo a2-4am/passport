@@ -8,8 +8,6 @@
 ;-------------------------------
 !zone {
 _rwtsswap2
-         bit   gMode      ; nothing to do here in verify-only mode
-         bpl   .exit
          lda   gIsBoot0   ; if DOS 3.3 boot0 loader
          bne   .exit
          lda   #$04

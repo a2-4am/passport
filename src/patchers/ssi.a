@@ -6,8 +6,6 @@
 ; module by qkumba/4am
 ;-------------------------------
 !zone {
-         bit   gMode      ; nothing to do here in verify-only mode
-         bpl   .exit
          ldy   gIsRDOS13
          bne   .exit
 

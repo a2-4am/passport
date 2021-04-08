@@ -57,8 +57,6 @@
 ; - Word Quest (1985)
 ;-------------------------------
 !zone {
-         bit   gMode      ; nothing to do here in verify-only mode
-         bpl   .exit
          sec
          lda   gIsRWTS    ; if DOS 3.3 RWTS
          bne   .exit

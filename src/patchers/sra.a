@@ -4,16 +4,14 @@
 ; seen on 13- and 16-sector disks by Science Research Associates
 ;
 ; tested on
-; Decimals C-2 (1981, SRA)
-; Decimals C-3 (1981, SRA)
-; Fractions C-2 (1981, SRA)
-; Fractions C-3 (1981, SRA)
-; Multiplication B (1981, SRA)
-; Measurement D-1 (1983, SRA)
+; - Decimals C-2 (1981, SRA)
+; - Decimals C-3 (1981, SRA)
+; - Fractions C-2 (1981, SRA)
+; - Fractions C-3 (1981, SRA)
+; - Multiplication B (1981, SRA)
+; - Measurement D-1 (1983, SRA)
 ;-------------------------------
 !zone {
-         bit   gMode      ; nothing to do here in verify-only mode
-         bpl   .exit
          lda   gIsDOS32
          bne   +
          lda   #$0C

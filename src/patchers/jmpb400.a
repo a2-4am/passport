@@ -14,8 +14,6 @@
 ; Success With Math - Multiplying and Dividing Fractions (1984, Mindscape)
 ;-------------------------------
 !zone {
-         bit   gMode      ; nothing to do here in verify-only mode
-         bpl   .exit
          lda   gIsBoot0
          bne   .exit
          lda   gTrack

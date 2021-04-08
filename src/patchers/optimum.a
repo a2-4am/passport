@@ -7,8 +7,6 @@
 ; module by qkumba
 ;-------------------------------
 !zone {
-         bit   gMode      ; nothing to do here in verify-only mode
-         bpl   .jmpexit1
          lda   gIsOptimum
          bne   .jmpexit1
          ldx   gTrack

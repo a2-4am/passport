@@ -6,8 +6,6 @@
 ; - Swordthrust
 ;-------------------------------
 !zone {
-         bit   gMode      ; nothing to do here in verify-only mode
-         bpl   .exit
          lda   #$01
          ldx   #$75
          ldy   #(@end_swordthrust-@begin_swordthrust)

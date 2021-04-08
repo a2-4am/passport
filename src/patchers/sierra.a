@@ -5,28 +5,29 @@
 ; disks in a way that doesn't trip the
 ; tamper check that checksums the code
 ;
-; Apple Cider Spider
-; Aquatron
-; BC's Quest For Tires
-; Cannonball Blitz
-; Crossfire
-; Dragon's Keep
-; Learning with Leeper
-; Marauder
-; Mr. Cool
-; Oil's Well
-; Sammy Lightfoot
-; Sierra Championship Boxing
-; Winnie the Pooh
-; Donald Duck
-; Mickey's Space Adventure
-; King's Quest I, II, III
-; Leisure Suit Larry
-; Space Quest I, II
-; The Black Cauldron
-; The Dark Crystal
-; Mixed Up Mother Goose
-; The Artist
+; tested on
+; - Apple Cider Spider
+; - Aquatron
+; - BC's Quest For Tires
+; - Cannonball Blitz
+; - Crossfire
+; - Dragon's Keep
+; - Learning with Leeper
+; - Marauder
+; - Mr. Cool
+; - Oil's Well
+; - Sammy Lightfoot
+; - Sierra Championship Boxing
+; - Winnie the Pooh
+; - Donald Duck
+; - Mickey's Space Adventure
+; - King's Quest I, II, III
+; - Leisure Suit Larry
+; - Space Quest I, II
+; - The Black Cauldron
+; - The Dark Crystal
+; - Mixed Up Mother Goose
+; - The Artist
 ;
 ; module by qkumba
 ;-------------------------------

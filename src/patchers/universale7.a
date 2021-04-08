@@ -8,8 +8,6 @@
 ;-------------------------------
 !zone {
 universale7
-         bit   gMode      ; nothing to do here in verify-only mode
-         bpl   .exit
          lda   #BASEPAGE+$0F
          sta   .sector+2
 .search  ldx   #$A0

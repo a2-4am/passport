@@ -2,12 +2,10 @@
 ; #TRILLIUM2
 ;
 ; tested on
-; Nine Princes of Amber
-; Perry Mason
+; - Nine Princes of Amber
+; - Perry Mason
 ;-------------------------------
 !zone {
-         bit   gMode      ; nothing to do here in verify-only mode
-         bpl   .exit
          lda   gTrack
          cmp   #$17
          bne   .exit

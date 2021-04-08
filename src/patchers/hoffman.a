@@ -15,8 +15,6 @@
 ; - Good Thinking! Sequencing Events Level Two (Hoffman Educational Systems)
 ;-------------------------------
 !zone {
-         bit   gMode      ; nothing to do here in verify-only mode
-         bpl   .exit
          lda   #$0C
          sta   gDisplayBytes
          ldx   #$00

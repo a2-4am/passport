@@ -12,8 +12,6 @@
 ; First Steps to Reading: Phonics II (1985, Grolier)
 ;-------------------------------
 !zone {
-         bit   gMode      ; nothing to do here in verify-only mode
-         bpl   .exit
          lda   gIsBoot0
          bne   .exit
          lda   #$0F

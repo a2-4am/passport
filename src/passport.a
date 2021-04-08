@@ -775,8 +775,14 @@ _applyToT00
          jsr   decrunch
          jsr   $2000
 _applyToAll
+         ; run these modules in verify and crack mode
          !source "patchers/t11diskvol.a"        ; T11 && gIsRWTS only
          !source "patchers/t02volumename.a"     ; T02 && gIsBoot0 only
+         bit   gMode
+         bmi   +
+         jmp   .checkPatchCount
++
+         ; only run these modules in crack mode
          !source "patchers/universale7.a"
          !source "patchers/c9ff.a"
          !source "patchers/a6bc95.a"            ; gIsPascal only
@@ -832,6 +838,7 @@ _applyToAll
          !source "patchers/woodbury.a"          ; gPossibleWoodbury only
          !source "patchers/leisure.a"           ; gIsProDOS && T22 only
 
+.checkPatchCount
          lda   gPatchCount
          beq   .nopatches
          clc
@@ -877,7 +884,9 @@ LastMover
   }
 } else {
   !if (HIGHPOINT - (LastMover - FirstMover)) < LOWPOINT {
-    !serious "code end (", HIGHPOINT - (LastMover - FirstMover), ") is below minimum (", LOWPOINT, ")!"
+    !serious "My spoon is too big (", HIGHPOINT - (LastMover - FirstMover), ") is below minimum (", LOWPOINT, ")!"
+  } else {
+    !warn "LowPoint=", HIGHPOINT - (LastMover - FirstMover)
   }
 
   !warn "CleanExit=",CleanExit

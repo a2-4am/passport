@@ -11,8 +11,6 @@
 ; - Leadsheeter Utilities
 ;-------------------------------
 !zone {
-         bit   gMode       ; nothing to do here in verify-only mode
-         bpl   .exit
          lda   gIsDiversi  ; only if we found Diversi-DOS boot sector earlier
          bne   .exit
          ldy   #14

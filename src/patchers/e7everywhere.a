@@ -19,8 +19,6 @@
 ; - Reading and Writing with The Boars (McGraw-Hill)
 ;------------------------------------------------------------------------------
 !zone {
-         bit   gMode      ; nothing to do here in verify-only mode
-         bpl   .exit
          lda   gIsBoot0
          beq   +
          lda   gIsProDOS

@@ -90,8 +90,6 @@
 ; - Zork Quest II
 ;-------------------------------
 !zone {
-         bit   gMode      ; nothing to do here in verify-only mode
-         bpl   .exit
          ldy   #$14
          jsr   SearchTrack
          !byte $BD,$89,$C0

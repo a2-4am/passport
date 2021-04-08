@@ -5,8 +5,6 @@
 ; e.g. Alien Addition
 ;-------------------------------
 !zone {
-         bit   gMode      ; nothing to do here in verify-only mode
-         bpl   .exit
          lda   gIsBoot0   ; if DOS 3.3 boot0 loader
          ora   gIsBoot1   ; and DOS 3.3 boot1 loader
          bne   .exit

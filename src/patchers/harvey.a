@@ -7,8 +7,6 @@
 ; Harvey by Primes (Queue)
 ;-------------------------------
 !zone {
-         bit   gMode      ; nothing to do here in verify-only mode
-         bpl   .exit
          lda   gIsBoot0
          bne   .exit
          ldx   gTrack

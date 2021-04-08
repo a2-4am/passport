@@ -13,8 +13,6 @@
 ; Swiss Family Robinson
 ;-------------------------------
 !zone {
-         bit   gMode      ; nothing to do here in verify-only mode
-         bpl   .exit
          ldy   #$1A
          jsr   SearchTrack
          !byte $A8        ; TAY

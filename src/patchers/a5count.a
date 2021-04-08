@@ -5,8 +5,6 @@
 ; e.g. Game Frame One, Game Frame Two
 ;-------------------------------
 !zone {
-         bit   gMode      ; nothing to do here in verify-only mode
-         bpl   .exit
          lda   gIsPascal  ; only ever seen this protection
          bne   .exit      ; on Pascal disks
 

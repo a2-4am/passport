@@ -8,8 +8,6 @@
 ; see jmpbeb1.a for compatibility list
 ;-------------------------------
 !zone {
-         bit   gMode      ; nothing to do here in verify-only mode
-         bpl   .exit
          lda   gIsRWTS    ; if DOS 3.3 RWTS
          bne   .exit
          lda   #$02

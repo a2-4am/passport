@@ -9,8 +9,6 @@
 ; - Photar
 ;-------------------------------
 !zone {
-         bit   gMode      ; nothing to do here in verify-only mode
-         bpl   .exit
          lda   gIsRWTS
          bne   .exit
 

@@ -3,10 +3,19 @@
 ; RWTS with per-file encryption keys
 ;
 ; module by qkumba
+;
+; tested on
+; - Agenda Files (Apple)
+; - Apple How To (Apple)
+; - Apple Music Theory: Music Fundamentals v1.0 (MECC)
+; - Bridge Tutor (Compu-Bridge)
+; - Diet Analysis Program (Tess)
+; - Geometry and Measurement Volume 1 & 2 (Charles Lund)
+; - MusiComp (Apple)
+; - Personal Finance Manager (Apple)
+; - Stepwise Multiple Regression (Belanger & Boyle)
 ;-------------------------------
 !zone {
-         bit   gMode      ; nothing to do here in verify-only mode
-         bpl   .exit
          lda   gIsPanglosDOS  ; only if PanglossianDOS
          bne   .exit
          ldy   #6

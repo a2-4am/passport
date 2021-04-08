@@ -3,21 +3,19 @@
 ; nibble check hidden inside encrypted startup program SSPROT$$1
 ;
 ; tested on
-; Grammar Lab 1 (1986, Southwell)
-; Grammar Lab 2 (1986, Southwell)
-; Mathematics Activities Courseware Level 4 (1983, Houghton Mifflin)
-; Mathematics Activities Courseware Level 6 (1983, Houghton Mifflin)
-; Sailing Through Story Problems (1987, DLM)
-; Spanish Grammar Review - Future and Conditional Tenses of Regular and Irregular Verbs (1984, Gessler)
-; Spanish Grammar Review - Familiar and Formal Commands in the Affirmative and Negative (1984, Gessler)
-; Spanish Grammar Review - Por vs. Para (1984, Gessler)
-; Water in the Air Quiz (1985, EME)
-; Comic Strip Maker (1986, Walt Disney)
-; Wortgefecht (Word Attack German) (1984, Gessler)
+; - Grammar Lab 1 (1986, Southwell)
+; - Grammar Lab 2 (1986, Southwell)
+; - Mathematics Activities Courseware Level 4 (1983, Houghton Mifflin)
+; - Mathematics Activities Courseware Level 6 (1983, Houghton Mifflin)
+; - Sailing Through Story Problems (1987, DLM)
+; - Spanish Grammar Review - Future and Conditional Tenses of Regular and Irregular Verbs (1984, Gessler)
+; - Spanish Grammar Review - Familiar and Formal Commands in the Affirmative and Negative (1984, Gessler)
+; - Spanish Grammar Review - Por vs. Para (1984, Gessler)
+; - Water in the Air Quiz (1985, EME)
+; - Comic Strip Maker (1986, Walt Disney)
+; - Wortgefecht (Word Attack German) (1984, Gessler)
 ;-------------------------------
 !zone {
-         bit   gMode      ; nothing to do here in verify-only mode
-         bpl   .exit0
          lda   gIsF7F6
          bne   .exit0
          lda   #$0F

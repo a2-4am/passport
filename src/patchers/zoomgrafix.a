@@ -7,8 +7,6 @@
 ; - Zoom Grafix (Phoenix Software) multiple versions
 ;-------------------------------
 !zone {
-         bit   gMode      ; nothing to do here in verify-only mode
-         bpl   .exit
          lda   gIsPhoenix ; only if we found Phoenix boot sector earlier
          bne   .exit
          ldy   #$0C

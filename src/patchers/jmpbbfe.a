@@ -93,8 +93,6 @@
 ;-------------------------------
 !zone {
 _jmpbbfe
-         bit   gMode      ; nothing to do here in verify-only mode
-         bpl   .exit
          lda   gIsBoot0   ; if DOS 3.3 boot0 loader
          bne   .exit
          ldx   #$4B

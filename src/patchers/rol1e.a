@@ -1,12 +1,22 @@
 ;-------------------------------
 ; #ROL1E
 ; RWTS stores timing bits in $1E
-; e.g. Spellicopter
+;
+; tested on
+; - CryptoCube (DesignWare)
+; - FasTrack Quizzer (DesignWare)
+; - PatternMaker (Scarborough)
+; - Remember (DesignWare)
+; - Spellagraph (DesignWare)
+; - Spellicopter (DesignWare)
+; - States and Traits (DesignWare)
+; - The Chambers of Vocab (Reader's Digest Services)
+; - The Grammar Examiner (DesignWare)
+; - The Story Machine (Spinnaker)
+; - Trickster Coyote (Reader's Digest Services)
 ;-------------------------------
 !zone {
 _rol1e
-         bit   gMode      ; nothing to do here in verify-only mode
-         bpl   .exit
          lda   #$03
          ldx   #$00
          ldy   #$06

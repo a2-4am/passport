@@ -3,22 +3,20 @@
 ; encrypted bootloader hides an evil RWTS
 ;
 ; tested on
-; - Sherwood Forest (Phoenix Software)
-; - Mad Rat (Phoenix Software)
-; - Masquerade (Phoenix Software)
 ; - Bats in the Belfry (Phoenix Software)
 ; - Bouncing Kamungas (Penguin Software)
 ; - Crime Wave (Penguin Software)
+; - Mad Rat (Phoenix Software)
+; - Masquerade (Phoenix Software)
+; - Pensate (Penguin Software)
+; - Sherwood Forest (Phoenix Software)
 ; - Thunder Bombs (Penguin Software)
 ; - The Spy Strikes Back (Penguin Software)
 ;-------------------------------
 !zone {
-         bit   gMode      ; nothing to do here in verify-only mode
-         bmi   +
--        jmp   .exit
-+        bvc   -          ; nothing to do here in demuffin mode
          lda   gIsHolle
-         bne   -
+         beq   +
+         jmp   .exit
 +        lda   gTrack
          bne   +
          jmp   .DecryptBootloader

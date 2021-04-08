@@ -10,8 +10,6 @@
 ;   (Jupiter, Saturn, Uranus, Nepture)
 ;-------------------------------
 !zone {
-         bit   gMode      ; nothing to do here in verify-only mode
-         bpl   .exit
          lda   gIsPascal
          bne   .exit
          lda   #$0D

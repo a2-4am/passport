@@ -4,8 +4,6 @@
 ; e.g. Canyon Climber, Fathom's 40
 ;-------------------------------
 !zone {
-         bit   gMode      ; nothing to do here in verify-only mode
-         bpl   .exit
          lda   gIsRWTS
          bne   .exit
 

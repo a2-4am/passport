@@ -10,8 +10,6 @@
 ; Shapes and Patterns
 ;-------------------------------
 !zone {
-         bit   gMode      ; nothing to do here in verify-only mode
-         bpl   .exit
          ldy   #$09
          jsr   SearchTrack
          !byte $AD,$EC,$C0

@@ -4,8 +4,6 @@
 ; e.g. The Secrets of Science Island
 ;-------------------------------
 !zone {
-         bit   gMode      ; nothing to do here in verify-only mode
-         bpl   .exit
          lda   gIsPascal  ; only ever seen this protection
          bne   .exit      ; on Pascal disks
 

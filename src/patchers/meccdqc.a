@@ -4,8 +4,6 @@
 ; MECC Database Composer
 ;-------------------------------
 !zone {
-         bit   gMode      ; nothing to do here in verify-only mode
-         bpl   .jmpexit
          lda   gTrack
          cmp   #7
          bne   .jmpexit

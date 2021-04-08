@@ -4,8 +4,6 @@
 ; but generally DOS-shaped
 ;-------------------------------
 !zone {
-         bit   gMode      ; nothing to do here in verify-only mode
-         bpl   .exit
          lda   gIsLaureate
          bne   .exit
          beq   +          ; passport-test-suite/Sound Ideas- Word Attack - Disk 1 - Ending Consonants.woz [Z=1] reaches here

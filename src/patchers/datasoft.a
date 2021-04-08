@@ -4,8 +4,6 @@
 ; e.g. Video Title Shop, Tomahawk //e
 ;-------------------------------
 !zone {
-         bit   gMode      ; nothing to do here in verify-only mode
-         bpl   .exit
          lda   gIsDatasoft
          bne   .exit
 

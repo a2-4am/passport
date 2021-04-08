@@ -4,14 +4,12 @@
 ; and user disk for saved games
 ;
 ; Tested on
-; Arcade Boot Camp
-; Transylvania 48K (1982 release)
-; Transylvania 128K (1982 release)
-; Xyphus
+; - Arcade Boot Camp
+; - Transylvania 48K (1982 release)
+; - Transylvania 128K (1982 release)
+; - Xyphus
 ;-------------------------------
 !zone {
-         bit   gMode      ; nothing to do here in verify-only mode
-         bpl   .exit
          ldx   gTrack     ; and track 1
          dex
          bne   .exit

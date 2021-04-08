@@ -22,8 +22,6 @@
 ;-------------------------------
 !zone {
          sec
-         bit   gMode      ; nothing to do here in verify-only mode
-         bpl   .noButInYellow
          lda   #$07       ; sector to check for David-DOS variant
          ldx   gIsDavidDOS
          beq   .maybe

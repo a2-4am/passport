@@ -14,8 +14,6 @@
 ; module by qkumba
 ;-------------------------------
 !zone {
-         bit   gMode      ; nothing to do here in verify-only mode
-         bpl   .jmpexit
          lda   gIsDOS32
          bne   .jmpexit
 

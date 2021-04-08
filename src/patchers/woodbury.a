@@ -8,8 +8,6 @@
 ; - PlayWriter: Castles and Creatures (1985, Woodbury)
 ;-------------------------------
 !zone {
-         bit   gMode      ; nothing to do here in verify-only mode
-         bpl   .exit
          lda   gPossibleWoodbury
          bne   .exit
 

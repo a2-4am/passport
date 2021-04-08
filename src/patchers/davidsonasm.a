@@ -14,8 +14,6 @@
 ; - Word Attack Plus Spanish 1.2
 ;-------------------------------
 !zone {
-         bit   gMode      ; nothing to do here in verify-only mode
-         bpl   .exit
          lda   gIsDavidson
          bne   .exit
 
