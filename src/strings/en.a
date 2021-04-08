@@ -5,7 +5,6 @@
 ;
 !ct "lcase.ct"
 k_verify =     "V"
-k_demuffin =   "D"
 k_crack  =     "C"
 k_slot   =     "S"
 k_quit   =     "Q"
@@ -32,7 +31,7 @@ StringTableLow
          !byte <.sync
          !byte <.optbad
          !byte <.passver
-         !byte <.passdemuf
+         !byte <.badblock
          !byte <.passcrack
          !byte <.passcrack0
          !byte <.fail
@@ -137,7 +136,6 @@ StringTableLow
          !byte <.cmpnopnop
          !byte <.tsr
          !byte <.idinfo
-         !byte <.badblock
 
 StringTableHigh
          !byte >.header
@@ -156,7 +154,7 @@ StringTableHigh
          !byte >.sync
          !byte >.optbad
          !byte >.passver
-         !byte >.passdemuf
+         !byte >.badblock
          !byte >.passcrack
          !byte >.passcrack0
          !byte >.fail
@@ -261,7 +259,6 @@ StringTableHigh
          !byte >.cmpnopnop
          !byte >.tsr
          !byte >.idinfo
-         !byte >.badblock
 
 ;
 ; Text can contain substitution strings, which
@@ -288,7 +285,7 @@ StringTableHigh
 ; can be set directly before calling PrintByID.
 ;
 .header
-         !text "Passport by 4am               2021-04-07",$00
+         !text "Passport by 4am               2021-04-08",$00
 .mainmenu
          !text "________________________________________",$8D,$8D,$8D,$8D,$8D,$8D,$8D,$8D
          !text "               "
@@ -339,8 +336,6 @@ StringTableHigh
          !text "T%t,S%s is unreadable (ignoring)",$8D,$00
 .passver
          !text "Verification complete. The disk is good.",$8D,$00
-.passdemuf
-         !text "Demuffin complete. ",$00
 .passcrack
          !text "Crack complete. ",$00
 .passcrack0

@@ -524,14 +524,7 @@ nextsector
          bcs   .linkread
 Pass
          bit   gMode
-         bmi   .passwrite
-         lda   #s_pass
-         bne   .passprint ; always branches
-.passwrite
-         bvs   .passcrack
-         lda   #s_passdemuf
-         bne   .passprint ; always branches
-.passcrack
+         bpl   .passverify
          lda   gUsingRAMDisk
          bne   +
          lda   #s_writing
@@ -543,6 +536,9 @@ Pass
          ldx   gPatchCount
          beq   .passprint
          lda   #s_passcrack
+         !byte $2C        ; hide next 2 bytes
+.passverify
+         lda   #s_pass
 .passprint
          jsr   PrintByID
          jmp   TheEnd
