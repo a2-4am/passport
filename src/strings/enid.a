@@ -123,4 +123,6 @@ s_sve        = $75
 s_cmpnopnop  = $76
 s_tsr        = $77
 s_idinfo     = $78
-STRINGCOUNT =  $79
+s_bar        = $79
+s_found      = $7A
+STRINGCOUNT  = $7B

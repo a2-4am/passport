@@ -7,17 +7,13 @@ kForceLower !byte $FF     ; AND mask for lowercase letters
 ; handles string substitutions and
 ; auto-uppercases on older machines
 ; in:  A = string ID
-; out: C clear if string was printed
-;      C set if string ID was invalid
-;      all other flags clobbered
-;      X register preserved, others clobbered
+; out: X register preserved, others clobbered
+;      all flags clobbered
 ;-------------------------------
 !zone {
 PrintByID
          stx   .x+1
          ldy   #0         ; substitution mode flag
-         cmp   #STRINGCOUNT
-         bcs   .error
          tax
          lda   StringTableLow,x
          sta   .print+1
@@ -26,7 +22,8 @@ PrintByID
 .print
          lda   $FFFF      ; modified at runtime
          beq   .done
-         cpy   #0         ; are we in substitution mode?
+         cpy   #0         ; are we in substitution mode or include mdoe?
+         bmi   .include   ; yes, include mode
          beq   .nosub     ; no -> branch
          ldy   #0
          cmp   #"t"       ; "%t" = current track
@@ -66,10 +63,14 @@ PrintByID
 .nosub
          cmp   #"%"
          bne   .stillnosub
-         iny              ; switch to substitution mode
-         bne   .next      ; (next character will be interpreted)
+         iny              ; Y=#$01 (substitution mode, next character will be interpreted)
+         bne   .next      ; unconditional branch
 .stillnosub
-         cmp   #$E1
+         cmp   #"@"
+         bne   +
+         dey              ; Y=#$FF (include mode, next character will be interpreted)
+         bne   .next      ; unconditional branch
++        cmp   #$E1
          bcc   .noforce
          and   kForceLower
 .noforce
@@ -78,12 +79,25 @@ PrintByID
          inc   .print+1
          bne   .print
          inc   .print+2
-         bne   .print
+         bne   .print     ; unconditional branch
 .done
-         clc
-.error
-.x       ldx   #$d1
+.x       ldx   #$FD       ; SMC
          rts
+.include
+         sta   .a+1
+         lda   .print+1
+         pha
+         lda   .print+2
+         pha
+         ldx   .x+1
+.a       lda   #$FD       ; SMC
+         jsr   PrintByID
+         pla
+         sta   .print+2
+         pla
+         sta   .print+1
+         ldy   #0
+         beq   .next      ; unconditional branch
 
 ;-------------------------------
 ; PrintByte

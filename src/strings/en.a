@@ -136,6 +136,8 @@ StringTableLow
          !byte <.cmpnopnop
          !byte <.tsr
          !byte <.idinfo
+         !byte <.bar
+         !byte <.found
 
 StringTableHigh
          !byte >.header
@@ -259,6 +261,8 @@ StringTableHigh
          !byte >.cmpnopnop
          !byte >.tsr
          !byte >.idinfo
+         !byte >.bar
+         !byte >.found
 
 ;
 ; Text can contain substitution strings, which
@@ -286,8 +290,10 @@ StringTableHigh
 ;
 .header
          !text "Passport by 4am               2021-04-08",$00
+.bar
+         !text "____________________________________",$00
 .mainmenu
-         !text "________________________________________",$8D,$8D,$8D,$8D,$8D,$8D,$8D,$8D
+         !text "@",s_bar,"____",$8D,$8D,$8D,$8D,$8D,$8D,$8D,$8D
          !text "               "
          !scrxor $40, "V"
          !text "erify disk",$8D,$8D
@@ -302,15 +308,17 @@ StringTableHigh
          !text "%S,D%D",$00
 .progbar
          !byte $8D
-         !text " ______________________________________",$8D
+         !text " @",s_bar,"__",$8D
          !text " "
          !scrxor $00, " "
-         !text "____________________________________"
+         !text "@",s_bar
          !scrxor $00, " ",$8D,$8D,$8D,$00
 .reading
          !text "Reading from S6,D1",$8D,$00
 .diskrwts
          !text "Using disk's own RWTS",$8D,$00
+.found
+         !text "T%t,S%0 Found ",$00
 .bb00
          !text "T00,S05 Found Lock-It-Up protection",$8D
          !text "T00,S0A might be unreadable",$8D,$00
@@ -318,7 +326,7 @@ StringTableHigh
          !text "T00,S04 Found Sunburst disk",$8D
          !text "T11,S0F might be unreadable",$8D,$00
 .optimum
-         !text "T00,S00 Found Optimum Resource disk",$8D
+         !text "@",s_found,"Optimum Resource disk",$8D
          !text "T01,S0F might be unreadable",$8D,$00
 .builtin
          !text "Using built-in RWTS",$8D,$00
@@ -412,19 +420,19 @@ StringTableHigh
 .modifyto
          !text " -> ",$00
 .dos33boot0
-         !text "T00,S00 Found DOS 3.3 bootloader",$8D,$00
+         !text "@",s_found,"DOS 3.3 bootloader",$8D,$00
 .dos32boot0
-         !text "T00,S00 Found DOS 3.2 bootloader",$8D,$00
+         !text "@",s_found,"DOS 3.2 bootloader",$8D,$00
 .prodosboot0
-         !text "T00,S00 Found ProDOS bootloader",$8D,$00
+         !text "@",s_found,"ProDOS bootloader",$8D,$00
 .pascalboot0
-         !text "T00,S00 Found Pascal bootloader",$8D,$00
+         !text "@",s_found,"Pascal bootloader",$8D,$00
 .mecc
-         !text "T00,S00 Found MECC bootloader",$8D,$00
+         !text "@",s_found,"MECC bootloader",$8D,$00
 .sierra
-         !text "T%t,S%0 Found Sierra protection check",$8D,$00
+         !text "@",s_found,"Sierra protection check",$8D,$00
 .a6bc95
-         !text "T%t,S%0 Found A6BC95 protection check",$8D,$00
+         !text "@",s_found,"A6BC95 protection check",$8D,$00
 .jmpbcf0
          !text "T00,S03 RWTS requires a timing bit after"
          !text "the first data epilogue by jumping to",$8D
@@ -437,13 +445,13 @@ StringTableHigh
          !text "protection check before running the real"
          !text "startup program.",$8D,$00
 .e7
-         !text "T%t,S%0 Found E7 bitstream",$8D,$00
+         !text "@",s_found,"E7 bitstream",$8D,$00
 .jmpbeca
          !text "T00,S02 RWTS requires extra nibbles and",$8D
          !text "timing bits after the data prologue by",$8D
          !text "jumping to $BECA.",$8D,$00
 .bb03
-         !text "T%t,S%0 Found a self-decrypting",$8D
+         !text "@",s_found,"a self-decrypting",$8D
          !text "protection check at $BB03.",$8D,$00
 .rps
          !text "T00,S01 Found RPS protection check",$8D
@@ -455,13 +463,13 @@ StringTableHigh
          !text "T00,S08 RWTS requires a non-standard",$8D
          !text "disk volume number.",$8D,$00
 .d5d5f7
-         !text "T%t,S%0 Found D5D5F7 protection check",$8D,$00
+         !text "%",s_found,"D5D5F7 protection check",$8D,$00
 .construct
          !text "T01,S0F Reconstructing missing data",$8D,$00
 .datasoftb0
-         !text "T00,S00 Found Datasoft bootloader",$8D,$00
+         !text "@",s_found,"Datasoft bootloader",$8D,$00
 .datasoft
-         !text "T%t,S%0 Found Datasoft protection check",$8D,$00
+         !text "%",s_found,"Datasoft protection check",$8D,$00
 .lsr6a
          !text "T%t,S%0 RWTS accepts $D4 or $D5 for the",$8D
          !text "first address prologue nibble.",$8D,$00
@@ -478,7 +486,7 @@ StringTableHigh
 .protserial
          !text "T%t,S%3 Erasing serial number %0%1%2",$8D,$00
 .fbff
-         !text "T%t,S%0 Found FBFF protection check",$8D,$00
+         !text "@",s_found,"FBFF protection check",$8D,$00
 .encoded44
          !byte $8D
          !text "T00,S00 Fatal error",$8D,$8D
@@ -490,11 +498,11 @@ StringTableHigh
          !text "Passport does not work on this disk,",$8D
          !text "because it uses a 5-and-3 encoding.",$8D,$00
 .specdel
-         !text "T00,S00 Found DOS 3.3P bootloader",$8D,$00
+         !text "@",s_found,"DOS 3.3P bootloader",$8D,$00
 .bytrack
          !text "T%t,S%0 RWTS changes based on track",$8D,$00
 .a5count
-         !text "T%t,S%0 Found A5 nibble count",$8D,$00
+         !text "@",s_found,"A5 nibble count",$8D,$00
 .restart
          !text "Restarting scan",$8D,$00
 .corrupter
@@ -516,24 +524,24 @@ StringTableHigh
          !text "T00,S0A Found Milliken protection check",$8D
          !text "T02,S05 might be unreadable",$8D,$00
 .jsr8b3
-         !text "T00,S00 Found JSR $08B3 bootloader",$8D,$00
+         !text "@",s_found,"JSR $08B3 bootloader",$8D,$00
 .daviddos
-         !text "T00,S00 Found David-DOS bootloader",$8D,$00
+         !text "@",s_found,"David-DOS bootloader",$8D,$00
 .quickdos
-         !text "T00,S00 Found Quick-DOS bootloader",$8D,$00
+         !text "@",s_found,"Quick-DOS bootloader",$8D,$00
 .diversidos
-         !text "T00,S00 Found Diversi-DOS bootloader",$8D,$00
+         !text "@",s_found,"Diversi-DOS bootloader",$8D,$00
 .prontodos
-         !text "T00,S00 Found Pronto-DOS bootloader",$8D,$00
+         !text "@",s_found,"Pronto-DOS bootloader",$8D,$00
 .beforedos
          !text "T%t,S%2 Disk calls a protection check",$8D
          !text "at $%0%1 before initializing DOS.",$8D,$00
 .laureate
-         !text "T00,S00 Found Laureate bootloader",$8D,$00
+         !text "@",s_found,"Laureate bootloader",$8D,$00
 .bbf9
-         !text "T%t,S%0 Found BBF9 protection check",$8D,$00
+         !text "@",s_found,"BBF9 protection check",$8D,$00
 .micrograms
-         !text "T00,S00 Found Micrograms bootloader",$8D,$00
+         !text "@",s_found,"Micrograms bootloader",$8D,$00
 .cmpbne0
          !text "T%t,S%0 RWTS accepts any value for the",$8D
          !text "first address epilogue nibble.",$8D,$00
@@ -546,7 +554,7 @@ StringTableHigh
          !text "T%t,S%0 RWTS accepts $D5 plus a timing",$8D
          !text "bit as the entire address prologue.",$8D,$00
 .advint
-         !text "T%t,S%0 Found Adventure International",$8D
+         !text "@",s_found,"Adventure International",$8D
          !text "protection check",$8D,$00
 .bootwrite
          !text "T00,S00 Writing Standard Delivery",$8D
@@ -554,9 +562,9 @@ StringTableHigh
 .rwtswrite
          !text "T00,S02 Writing built-in RWTS",$8D,$00
 .rdos
-         !text "T00,S00 Found RDOS 16-sector bootloader",$8D,$00
+         !text "@",s_found,"RDOS 16-sector bootloader",$8D,$00
 .sra
-         !text "T%t,S%0 Found SRA protection check",$8D,$00
+         !text "@",s_found,"SRA protection check",$8D,$00
 .muse
          !text "T00,S08 RWTS doubles every sector ID",$8D,$00
 .origin
@@ -569,52 +577,52 @@ StringTableHigh
 .dinkeydos
          !text "T00,S0B Found Dinkey-DOS",$8D,$00
 .trillium
-         !text "T%t,S%0 Found Trillium protection check",$8D,$00
+         !text "@",s_found,"Trillium protection check",$8D,$00
 .tamper
-         !text "T%t,S%0 Found anti-tamper check",$8D,$00
+         !text "@",s_found,"anti-tamper check",$8D,$00
 .microfun
-         !text "T%t,S%0 Found Micro Fun protection check",$00
+         !text "@",s_found,"Micro Fun protection check",$00
 .advent
-         !text "T00,S00 Found Interplay bootloader",$8D,$00
+         !text "@",s_found,"Interplay bootloader",$8D,$00
 .gathering
          !text "Gathering per-file encryption keys",$8D,$00
 .davidson
          !text "T%t Found Davidson & Associates disk",$8D,$00
 .rdos13
-         !text "T00,S00 Found RDOS 13-sector bootloader",$8D,$00
+         !text "@",s_found,"RDOS 13-sector bootloader",$8D,$00
 .ssi
-         !text "T%t,S%0 Found SSI protection check",$8D,$00
+         !text "@",s_found,"SSI protection check",$8D,$00
 .aacount
-         !text "T%t,S%0 Found AA nibble count",$8D,$00
+         !text "@",s_found,"AA nibble count",$8D,$00
 .infocom18
-         !text "T00,S00 Found Infocom 18-sector format",$8D,$00
+         !text "@",s_found,"Infocom 18-sector format",$8D,$00
 .toverify
          !text "Switching to verify-only mode",$8D,$00
 .sector13
-         !text "T00,S00 Found 13-sector format",$8D,$00
+         !text "@",s_found,"13-sector format",$8D,$00
 .springboard
          !text "T%t,S%0 RWTS requires a timing bit after"
          !text "the address epilogue",$8D,$00
 .hallabs
-         !text "T%t,S%0 Found HAL Labs protection check",$8D,$00
+         !text "@",s_found,"HAL Labs protection check",$8D,$00
 .holle
-         !text "T00,S00 Found Holle bootloader",$8D,$00
+         !text "@",s_found,"Holle bootloader",$8D,$00
 .hoffman
-         !text "T%t,S%0 Found Hoffman protection check",$8D,$00
+         !text "@",s_found,"Hoffman protection check",$8D,$00
 .diskvol0x
          !text "T%t,S%0 Disk requires volume number 0%1",$8D,$00
 .e7everywhere
-         !text "T%t,S%0 Found E7 Everywhere protection",$8D,$00
+         !text "@",s_found,"E7 Everywhere protection",$8D,$00
 .choplifter
          !text "Roland was here, but he left...",$8D,$00
 .pdi
-         !text "T%t,S%0 Found PDI protection check",$8D,$00
+         !text "@",s_found,"PDI protection check",$8D,$00
 .sve
-         !text "T%t,S%0 Found SVE protection check",$8D,$00
+         !text "@",s_found,"SVE protection check",$8D,$00
 .tsr
-         !text "T00,S00 Found TSR bootloader",$8D,$00
+         !text "@",s_found,"TSR bootloader",$8D,$00
 .idinfo
          !text "T00,S01 Erasing site license information",$00
 .badblock
-         !text "T%t,S%0 Found bad block protection check",$00
+         !text "@",s_found,"bad block protection check",$00
 }
