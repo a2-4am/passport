@@ -599,8 +599,8 @@ WriteRAMToDisk
          clc
 
 .exit
-         lda   #TRUE
-         sta   gUsingRAMDisk
+         ldx   #TRUE
+         stx   gUsingRAMDisk
          rts
 
 .cancel
