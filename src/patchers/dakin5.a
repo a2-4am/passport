@@ -35,6 +35,7 @@
          JMP   $B6B3
          bcs   .exit      ; passport-test-suite/MIRV.woz [C=0] matches
          pha
+         sta   gDisplayBytes
          lda   #s_dakin5
          jsr   PrintByID
          pla

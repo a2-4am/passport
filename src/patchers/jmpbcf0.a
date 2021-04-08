@@ -18,6 +18,7 @@ _jmpbcf0
          !byte $D0,$A9
          !byte $4C,$F0,$BC
          bcs   .exit      ; passport-test-suite/Easy as ABC.woz [C=0] matches
+         sta   gDisplayBytes
          lda   #s_jmpbcf0
          jsr   PrintByID
          lda   #$03

@@ -35,6 +35,7 @@
          bcs   .exit      ; passport-test-suite/Library Magic.woz [C=0] matches
 
 .yes
+         sta   gDisplayBytes
          lda   #s_jmpbeca ; passport-test-suite/Spelling Rules.woz [C=0] also reaches here
          jsr   PrintByID
          lda   #$02

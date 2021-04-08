@@ -321,6 +321,8 @@ TraceDOS32d
          jsr   CompareMemory
          !byte $20,$DD
          bcs   +          ; passport-test-suite/Robotwar.woz [C=0] matches
+         lda   #$08
+         sta   gDisplayBytes
          lda   #s_muse
          jsr   PrintByID
 

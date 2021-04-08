@@ -463,11 +463,11 @@ StringTableHigh
 .a6bc95
          !text "@",s_found,"A6BC95 @",s_protectioncheck,$8D,$00
 .jmpbcf0
-         !text "T00,S03 RWTS requires a timing bit after"
+         !text "@",s_rwts,"requires a timing bit after"
          !text "the first data epilogue by jumping to",$8D
          !text "$BCF0.",$8D,$00
 .rol1e
-         !text "T00,S03 RWTS accumulates timing bits in",$8D
+         !text "@",s_rwts,"accumulates timing bits in",$8D
          !text "$1E and checks its value later.",$8D,$00
 .runhello
          !text "T%t,S%0 Startup program executes a",$8D
@@ -476,7 +476,7 @@ StringTableHigh
 .e7
          !text "@",s_found,"E7 bitstream",$8D,$00
 .jmpbeca
-         !text "T00,S02 RWTS requires extra nibbles and",$8D
+         !text "@",s_rwts,"requires extra nibbles and",$8D
          !text "timing bits after the data prologue by",$8D
          !text "jumping to $BECA.",$8D,$00
 .bb03
@@ -489,7 +489,7 @@ StringTableHigh
          !text "T00,S0D Disk calls a @",s_protectioncheck," at"
          !text "$AE8E after initializing DOS.",$8D,$00
 .diskvol
-         !text "T00,S08 RWTS requires a non-standard",$8D
+         !text "@",s_rwts,"requires a non-standard",$8D
          !text "disk volume number.",$8D,$00
 .d5d5f7
          !text "%",s_found,"D5D5F7 @",s_protectioncheck,$8D,$00
@@ -506,7 +506,7 @@ StringTableHigh
          !text "@",s_rwts,"accepts $DE or a timing bit"
          !text "for the first address epilogue nibble.",$8D,$00
 .jmpb660
-         !text "T00,S02 RWTS requires timing bits after",$8D
+         !text "@",s_rwts,"requires timing bits after",$8D
          !text "the data prologue by jumping to $B660.",$8D,$00
 .protdos
          !text "@",s_found,"encrypted RWTS, key=$%1",$8D,$00
@@ -593,12 +593,12 @@ StringTableHigh
 .sra
          !text "@",s_found,"SRA @",s_protectioncheck,$8D,$00
 .muse
-         !text "T00,S08 RWTS doubles every sector ID",$8D,$00
+         !text "@",s_rwts,"doubles every sector ID",$8D,$00
 .origin
          !text "@",s_rwts,"alters the sector ID if the"
          !text "address epilogue contains a timing bit.",$8D,$00
 .dakin5
-         !text "T00,S03 RWTS XORs every sector ID",$8D,$00
+         !text "@",s_rwts,"XORs every sector ID",$8D,$00
 .volumename
          !text "T%t,S%0 Volume name is ",$00
 .dinkeydos

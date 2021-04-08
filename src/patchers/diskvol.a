@@ -60,6 +60,7 @@
          bcs   .exit
 
 .veryyes
+         sta   gDisplayBytes
          lda   #s_diskvol
          jsr   PrintByID  ; preserves X
 
