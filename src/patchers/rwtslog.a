@@ -14,29 +14,32 @@
          bit   gMode      ; nothing to do here in verify mode
          bmi   +
          jmp   .exit
+-
+         ldy   #$0A
+         jsr   compare
+         !byte $BD,$8C,$C0
+         !byte $10,$FB
+         !byte $4A
+         !byte WILDCARD,$6A
+         !byte $D0,$EF
+         rts
 +
 ; DOS 3.3 variant
          lda   #$03
          sta   gDisplayBytes
-         ldx   #$4F
-         ldy   #$0A
-         jsr   compare    ; if T00,S03,$4F ==
-         !byte $BD,$8C,$C0
-         !byte $10,$FB
-         !byte $4A
-         !byte WILDCARD,$6A
-         !byte $D0,$EF
+         ldx   #$4F       ; T00,S03,$4F
+         jsr   -
          bcc   .yeslsr    ; passport-test-suite/The Seasons.woz [C=0] matches
 ; RDOS variant
-         ldx   #$4D
-         ldy   #$0A
-         jsr   compare    ; or T00,S03,$4D ==
-         !byte $BD,$8C,$C0
-         !byte $10,$FB
-         !byte $4A
-         !byte WILDCARD,$6A
-         !byte $D0,$EF
-         bcs   .endlsr    ; passport-test-suite/Roadwar 2000.woz [C=0] matches
+         ldx   #$4D       ; T00,S03,$4D
+         jsr   -
+         bcc   .yeslsr    ; passport-test-suite/Roadwar 2000.woz [C=0] matches
+; Pascal variant
+         lda   #$0D
+         sta   gDisplayBytes
+         ldx   #$05       ; T00,S0D,$05
+         jsr   -
+         bcs   .endlsr    ; passport-test-suite/GATO v1.3.woz [C=0] matches
 .yeslsr
          lda   #s_lsr6a
          jsr   PrintByID
