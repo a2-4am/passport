@@ -143,6 +143,17 @@ StringTableLow
          !byte <.maybeunreadable
          !byte <.notthisdisk
          !byte <.rwts
+         !byte <.reasons
+         !byte <.protectiontrack
+         !byte <.passport
+         !byte <.bar9
+         !byte <.bar18
+         !byte <.space7
+         !byte <.builtinrwts
+         !byte <.thedisk
+         !byte <.timingbits
+         !byte <.acceptsany
+         !byte <.addressepilogue
 
 StringTableHigh
          !byte >.header
@@ -273,6 +284,17 @@ StringTableHigh
          !byte >.maybeunreadable
          !byte >.notthisdisk
          !byte >.rwts
+         !byte >.reasons
+         !byte >.protectiontrack
+         !byte >.passport
+         !byte >.bar9
+         !byte >.bar18
+         !byte >.space7
+         !byte >.builtinrwts
+         !byte >.thedisk
+         !byte >.timingbits
+         !byte >.acceptsany
+         !byte >.addressepilogue
 
 ;
 ; Text can contain substitution strings, which
@@ -305,22 +327,30 @@ StringTableHigh
 ; recursive; included strings may include other
 ; strings. It's strings all the way down.
 ;
+.passport
+         !text "Passport ",$00
 .header
-         !text "Passport by 4am               2021-04-08",$00
+         !text "@",s_passport,"by 4am               2021-04-10",$00
+.bar9
+         !text "_________",$00
+.bar18
+         !text "@",s_bar9,"@",s_bar9,$00
 .bar
-         !text "____________________________________",$00
+         !text "@",s_bar18,"@",s_bar18,$00
+.space7
+         !text "       ",$00
 .mainmenu
          !text "__","@",s_bar,"__",$8D,$8D,$8D,$8D,$8D,$8D,$8D,$8D
-         !text "               "
+         !text " @",s_space7,"@",s_space7
          !scrxor $40,"V"
          !text "erify disk",$8D,$8D
-         !text "               "
+         !text " @",s_space7,"@",s_space7
          !scrxor $40,"C"
          !text "rack disk",$8D,$8D
-         !text "               "
+         !text " @",s_space7,"@",s_space7
          !scrxor $40,"Q"
          !text "uit",$8D,$8D,$8D,$8D,$8D,$8D,$8D,$8D
-         !text "source: S6,D1              target: "
+         !text "source: S6,D1@",s_space7,"@",s_space7,"target: "
          !scrxor $40,"S"
          !text "%S,D%D",$00
 .progbar
@@ -343,9 +373,26 @@ StringTableHigh
 .maybeunreadable
          !text "might be unreadable",$00
 .notthisdisk
-         !text "Passport does not work on this disk",$00
+         !text "@",s_passport,"does not work on this disk",$00
 .rwts
          !text "T%t,S%0 RWTS ",$00
+.reasons
+         !byte $8D
+         !text "Possible reasons:",$8D,$00
+.protectioncheck
+         !text "protection check",$00
+.protectiontrack
+         !text "protection track",$00
+.builtinrwts
+         !text "built-in RWTS",$00
+.thedisk
+         !text "The disk ",$00
+.timingbits
+         !text "timing bits ",$00
+.acceptsany
+         !text "accepts any value for the",$00
+.addressepilogue
+         !text "address epilogue ",$00
 .lockitup
          !text "@",s_found,"Lock-It-Up protection",$8D
          !text "T00,S0A @",s_maybeunreadable,$8D,$00
@@ -356,66 +403,65 @@ StringTableHigh
          !text "@",s_found,"Optimum Resource disk",$8D
          !text "T01,S0F @",s_maybeunreadable,$8D,$00
 .builtin
-         !text "Using built-in RWTS",$8D,$00
+         !text "Using @",s_builtinrwts,$8D,$00
 .switch
-         !text "T%t,S%s Switching to built-in RWTS",$8D,$00
+         !text "T%t,S%s Switching to @",s_builtinrwts,$8D,$00
 .writing
          !text "Writing to S%S,D%D",$8D,$00
 .unformat
          !text "T%t is unformatted",$8D,$00
 .f7
-         !text "@",s_tfound,"$F7F6EFEEAB protection track",$8D,$00
+         !text "@",s_tfound,"$F7F6EFEEAB @",s_protectiontrack,$8D,$00
 .sync
-         !text "@",s_tfound,"nibble count protection track",$8D,$00
+         !text "@",s_tfound,"nibble count @",s_protectiontrack,$8D,$00
 .optbad
          !text "T%t,S%s is unreadable (ignoring)",$8D,$00
 .passver
-         !text "Verification complete. The disk is good.",$8D,$00
+         !text "Verification complete. @",s_thedisk,"is good.",$8D,$00
 .passcrack
          !text "Crack complete. ",$00
 .passcrack0
          !byte $8D
-         !text "The disk was copied successfully, but",$8D
-         !text "Passport did not apply any patches.",$8D,$8D
-         !text "Possible reasons:",$8D
+         !text "@",s_thedisk,"was copied successfully, but",$8D
+         !text "@",s_passport,"did not apply any patches.",$8D
+         !text "@",s_reasons
          !text "- The source disk is not copy protected."
          !text "- The target disk works without patches."
-         !text "- The disk uses an unknown protection,",$8D
-         !text "  and Passport can not help any further.",$8D,$00
+         !text "- @",s_thedisk,"uses an unknown protection,",$8D
+         !text "  and @",s_passport,"can not help any further.",$8D,$00
 .fail
          !byte $8D
-         !text "T%t,S%s Fatal read error",$8D,$8D,$00
+         !text "T%t,S%s Fatal read error",$8D,$00
 .fatal0000
-         !byte $8D
-         !text "Possible reasons:",$8D
+         !text "@",s_reasons
          !text "- There is no disk in S6,D1.",$8D
          !text "- It is not an Apple ][ disk.",$8D
-         !text "- The disk is unformatted.",$8D,$8D,$00
+         !text "- @",s_thedisk,"is unformatted.",$8D,$8D,$00
 .fatal220f
          !byte $8D
-         !text "@",s_notthisdisk,".",$8D,$8D
-         !text "Possible reasons:",$8D
+         !text "@",s_notthisdisk,".",$8D
+         !text "@",s_reasons
          !text "- This is not a 13- or 16-sector disk.",$8D
-         !text "- The disk modifies its RWTS in ways",$8D
-         !text "  that Passport is not able to detect.",$8D,$8D,$00
+         !text "- @",s_thedisk,"modifies its RWTS in ways",$8D
+         !text "  that @",s_passport,"is not able to detect.",$8D,$8D,$00
 .done
          !text "Press any key "
          !scrxor $40," ",$00
 .noslot6
-         !text "Passport requires a Disk II drive in S6.",$8D
+         !text "@",s_passport,"requires a Disk II drive in S6.",$8D
          !text "Press any key to quit "
          !scrxor $40," ",$00
 .writeerr
          !byte $8D
-         !text "T%t Fatal write error",$8D,$8D,$00
+         !text "T%t Fatal write error",$8D,$00
 ;
 ; MLI error $27
 ;
 .writeioerr
-         !text "Possible reasons:",$8D
+         !text "@",s_reasons,$8D
          !text "- There is no disk in S%S,D%D.",$8D
-         !text "- The disk has bad sectors.",$8D
-         !text "- The disk is unformatted.",$8D,$8D,$00
+         !text "- @",s_thedisk,"has bad sectors.",$8D
+         !text "- @",s_thedisk,"is unformatted.",$8D,$8D,$00
 ;
 ; MLI error $28
 ;
@@ -425,7 +471,7 @@ StringTableHigh
 ; MLI error $2B
 ;
 .writeprot
-         !text "The disk in S%S,D%D is write-protected.",$8D,$8D,$00
+         !text "@",s_thedisk,"in S%S,D%D is write-protected.",$8D,$8D,$00
 ;
 ; other MLI error
 ;
@@ -456,41 +502,39 @@ StringTableHigh
          !text "@",s_found,"Pascal @",s_bootloader,$8D,$00
 .mecc
          !text "@",s_found,"MECC @",s_bootloader,$8D,$00
-.protectioncheck
-         !text "protection check",$00
 .sierra
          !text "@",s_found,"Sierra @",s_protectioncheck,$8D,$00
 .a6bc95
          !text "@",s_found,"A6BC95 @",s_protectioncheck,$8D,$00
 .jmpbcf0
-         !text "@",s_rwts,"requires a timing bit after"
+         !text "@",s_rwts,"requires @",s_timingbits,"after",$8D
          !text "the first data epilogue by jumping to",$8D
-         !text "$BCF0.",$8D,$00
+         !text "$BCF0",$8D,$00
 .rol1e
-         !text "@",s_rwts,"accumulates timing bits in",$8D
-         !text "$1E and checks its value later.",$8D,$00
+         !text "@",s_rwts,"accumulates @",s_timingbits,"in",$8D
+         !text "$1E and checks its value later",$8D,$00
 .runhello
          !text "T%t,S%0 Startup program executes a",$8D
          !text "@",s_protectioncheck," before running the real"
-         !text "startup program.",$8D,$00
+         !text "startup program",$8D,$00
 .e7
          !text "@",s_found,"E7 bitstream",$8D,$00
 .jmpbeca
          !text "@",s_rwts,"requires extra nibbles and",$8D
-         !text "timing bits after the data prologue by",$8D
-         !text "jumping to $BECA.",$8D,$00
+         !text "@",s_timingbits,"after the data prologue by",$8D
+         !text "jumping to $BECA",$8D,$00
 .bb03
          !text "@",s_found,"a self-decrypting",$8D
-         !text "@",s_protectioncheck," at $BB03.",$8D,$00
+         !text "@",s_protectioncheck," at $BB03",$8D,$00
 .rps
          !text "@",s_found,"RPS @",s_protectioncheck,$8D
          !text "Some sectors on T02 @",s_maybeunreadable,$8D,$00
 .jmpae8e
          !text "T00,S0D Disk calls a @",s_protectioncheck," at"
-         !text "$AE8E after initializing DOS.",$8D,$00
+         !text "$AE8E after initializing DOS",$8D,$00
 .diskvol
          !text "@",s_rwts,"requires a non-standard",$8D
-         !text "disk volume number.",$8D,$00
+         !text "disk volume number",$8D,$00
 .d5d5f7
          !text "%",s_found,"D5D5F7 @",s_protectioncheck,$8D,$00
 .construct
@@ -501,13 +545,13 @@ StringTableHigh
          !text "%",s_found,"Datasoft @",s_protectioncheck,$8D,$00
 .lsr6a
          !text "@",s_rwts,"accepts $D4 or $D5 for the",$8D
-         !text "first address prologue nibble.",$8D,$00
+         !text "first address prologue nibble",$8D,$00
 .bcs08
-         !text "@",s_rwts,"accepts $DE or a timing bit"
-         !text "for the first address epilogue nibble.",$8D,$00
+         !text "@",s_rwts,"accepts $DE or @",s_timingbits
+         !text "for the first @",s_addressepilogue,"nibble",$8D,$00
 .jmpb660
-         !text "@",s_rwts,"requires timing bits after",$8D
-         !text "the data prologue by jumping to $B660.",$8D,$00
+         !text "@",s_rwts,"requires @",s_timingbits,"after",$8D
+         !text "the data prologue by jumping to $B660",$8D,$00
 .protdos
          !text "@",s_found,"encrypted RWTS, key=$%1",$8D,$00
 .decryptrwts
@@ -524,7 +568,7 @@ StringTableHigh
 .encoded53
          !byte $8D
          !text "T00,S00 Fatal error",$8D,$8D
-         !text "@",s_notthisdisk,".",$8D
+         !text "@",s_notthisdisk,",",$8D
          !text "because it uses a 5-and-3 encoding.",$8D,$8D,$00
 .specdel
          !text "@",s_found,"DOS 3.3P @",s_bootloader,$8D,$00
@@ -540,13 +584,13 @@ StringTableHigh
 .eaboot0
          !text "@",s_tfound,"Electronic Arts @",s_bootloader,$8D,$00
 .eatrk6
-         !text "@",s_tfound,"EA protection track",$8D,$00
+         !text "@",s_tfound,"EA @",s_protectiontrack,$8D,$00
 .poke
          !text "T%t,S%0 BASIC program POKEs protection",$8D
-         !text "check into memory and CALLs it.",$8D,$00
+         !text "check into memory and CALLs it",$8D,$00
 .bootcounter
          !text "T%t,S%0 Original disk destroys itself",$8D
-         !text "after a limited number of boots.",$8D,$00
+         !text "after a limited number of boots",$8D,$00
 .milliken
          !text "@",s_found,"Milliken @",s_protectioncheck,$8D
          !text "T02,S05 @",s_maybeunreadable,$8D,$00
@@ -562,7 +606,7 @@ StringTableHigh
          !text "@",s_found,"Pronto-DOS @",s_bootloader,$8D,$00
 .beforedos
          !text "T%t,S%2 Disk calls a @",s_protectioncheck,$8D
-         !text "at $%0%1 before initializing DOS.",$8D,$00
+         !text "at $%0%1 before initializing DOS",$8D,$00
 .laureate
          !text "@",s_found,"Laureate @",s_bootloader,$8D,$00
 .bbf9
@@ -570,16 +614,16 @@ StringTableHigh
 .micrograms
          !text "@",s_found,"Micrograms @",s_bootloader,$8D,$00
 .cmpbne0
-         !text "@",s_rwts,"accepts any value for the",$8D
-         !text "first address epilogue nibble.",$8D,$00
+         !text "@",s_rwts,"@",s_acceptsany,$8D
+         !text "first @",s_addressepilogue,"nibble",$8D,$00
 .cmpnopnop
-         !text "@",s_rwts,"accepts any value for the",$8D
-         !text "second address epilogue nibble.",$8D,$00
+         !text "@",s_rwts,"@",s_acceptsany,$8D
+         !text "second @",s_addressepilogue,"nibble",$8D,$00
 .writeram
          !text "Writing to RAM disk",$8D,$00
 .d5timing
-         !text "@",s_rwts,"accepts $D5 plus a timing",$8D
-         !text "bit as the entire address prologue.",$8D,$00
+         !text "@",s_rwts,"accepts $D5 + @",s_timingbits,$8D
+         !text "bit as the entire address prologue",$8D,$00
 .advint
          !text "@",s_found,"Adventure International",$8D
          !text "@",s_protectioncheck,$8D,$00
@@ -587,7 +631,7 @@ StringTableHigh
          !text "T00,S00 Writing Standard Delivery",$8D
          !text "@",s_bootloader,$8D,$00
 .rwtswrite
-         !text "T00,S02 Writing built-in RWTS",$8D,$00
+         !text "T00,S02 Writing @",s_builtinrwts,$8D,$00
 .rdos
          !text "@",s_found,"RDOS 16-sector @",s_bootloader,$8D,$00
 .sra
@@ -596,7 +640,7 @@ StringTableHigh
          !text "@",s_rwts,"doubles every sector ID",$8D,$00
 .origin
          !text "@",s_rwts,"alters the sector ID if the"
-         !text "address epilogue contains a timing bit.",$8D,$00
+         !text "@",s_addressepilogue,"contains @",s_timingbits,$8D,$00
 .dakin5
          !text "@",s_rwts,"XORs every sector ID",$8D,$00
 .volumename
@@ -628,8 +672,8 @@ StringTableHigh
 .sector13
          !text "@",s_found,"13-sector format",$8D,$00
 .springboard
-         !text "@",s_rwts,"requires a timing bit after"
-         !text "the address epilogue",$8D,$00
+         !text "@",s_rwts,"requires @",s_timingbits,"after",$8D
+         !text "the @",s_addressepilogue,$8D,$00
 .hallabs
          !text "@",s_found,"HAL Labs @",s_protectioncheck,$8D,$00
 .holle
