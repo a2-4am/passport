@@ -330,7 +330,7 @@ StringTableHigh
 .passport
          !text "Passport ",$00
 .header
-         !text "@",s_passport,"by 4am@",s_space7,"@",s_space7," 2021-04-10",$00
+         !text "@",s_passport,"by 4am@",s_space7,"@",s_space7," 2021-04-12",$00
 .bar9
          !text "_________",$00
 .bar18
@@ -623,7 +623,7 @@ StringTableHigh
          !text "Writing to RAM disk",$8D,$00
 .d5timing
          !text "@",s_rwts,"accepts $D5 + @",s_timingbits,$8D
-         !text "bit as the entire address prologue",$8D,$00
+         !text "as the entire address prologue",$8D,$00
 .advint
          !text "@",s_found,"Adventure International",$8D
          !text "@",s_protectioncheck,$8D,$00
