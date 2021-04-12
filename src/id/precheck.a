@@ -29,11 +29,10 @@ precheck_sectors
 ; FatalError, which does not return.
 ;-------------------------------
 PreCheckT00
-         lda   #$00
-         sta   gTrack
          ldy   #$00
+         sty   gTrack
 @precheck_loop
-         lda   precheck_sectors,y
+         lda   precheck_sectors, y
          bmi   +
          sta   gSector
          jsr   IgnoreAddressChecksum
