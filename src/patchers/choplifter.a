@@ -310,6 +310,10 @@ ReadChoplifter
 
 .readtracki !pseudopc $2000 {
          ldx   #$60
+         lda   #$E0
+         sta   tmpa
+         sta   tmpy
+
 .retry
          lda   tmpx
          sta   nibcount
@@ -318,7 +322,9 @@ ReadChoplifter
          lda   modsrc+1
          sta   moddest+1
          ldy   #$00
----      jsr   .readnibx
+---      inc   tmpa
+         beq   .inc_tmpy
+         jsr   .readnibx
 --       cmp   cmp2+1
          bne   ---
          jsr   .readnibx
@@ -359,6 +365,12 @@ ReadChoplifter
          cmp   unform+1 ; trailer epilog
          bne   .retry
          rts
+
+.inc_tmpy
+         inc   tmpy
+         bne   ---
+;;something
+         jmp   .cancel
 
 .readnibx
 -        lda   $C08C,x
