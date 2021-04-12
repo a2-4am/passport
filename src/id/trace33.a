@@ -5,31 +5,7 @@
 ;-------------------------------
 !zone {
 TraceDOS33
-;
-; Before we trace through the drive firmware (which --
-; at least on some machines -- will loop forever looking
-; for each sector), we do a pre-check to ensure that all
-; the sectors we're about to trace are actually readable.
-;
-         lda   #$00
-         sta   gTrack
-         ldy   #$00
-@precheck_loop
-         lda   precheck_sectors,y
-         bmi   +
-         sta   gSector
-         jsr   IgnoreAddressChecksum
-         tya
-         pha
-         jsr   ReadSector
-         pla
-         tay
-         bcc   +
-         jmp   FatalError
-+
-         iny
-         cpy   #$10
-         bne   @precheck_loop
+         jsr   PreCheckT00
 ;
 ; pre-check passed, do the trace
 ;

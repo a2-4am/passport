@@ -114,6 +114,7 @@ FirstMover
 
          !source "analyze.a"
          !source "id/inspect0.a"
+         !source "id/precheck.a"
          !source "id/trace.a"
          !source "id/trace33.a"
          !source "id/trace32.a"

@@ -32,6 +32,15 @@ IDSpecDel
 ; format on tracks 0-2)
 ;-------------------------------
 TraceSpecDel
+         ldx   #$0F
+         lda   #$FF
+-        sta   precheck_sectors, x
+         dex
+         bpl   -
+         inc   precheck_sectors
+         inc   precheck_sectors+7
+         jsr   PreCheckT00
+
          jsr   ClearTSBuffer
          lda   #$00       ; set a marker to see if entire
          sta   $3FFF      ; RWTS loads successfully later
