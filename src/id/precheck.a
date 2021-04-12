@@ -1,3 +1,15 @@
+precheck_sectors
+         ; This list is (re)initialized in IDBootloader,
+         ; then potentially altered in IDDOS33 and elsewhere.
+         ; Values are logical sector numbers.
+         ; There are always 16 (0x10) values in this list.
+         ; Negative values are ignored.
+         ; Positive values are treated as logical
+         ; sector numbers and read from track $00.
+         ; Sectors are read in the order listed here.
+         !byte $09,$08,$07,$06,$05,$04,$03,$02,$01
+         !byte $00,$FF,$FE,$FD,$FC,$FB,$FA,$F9,$F8
+
 ;-------------------------------
 ; PreCheckT00
 ;
@@ -7,10 +19,7 @@
 ; the sectors we're about to trace are actually readable.
 ;
 ; Before calling this function, you need to set all 16
-; bytes of the precheck_sectors array to a positive
-; number (check that sector) or a negative number (don't
-; check that sector). The array is ordered by logical
-; sectors, regardless of the type of disk.
+; bytes of the precheck_sectors array (see above for format).
 ;
 ; If all required sectors are readable by Passport's own
 ; sector read routine, this exits gracefully with all

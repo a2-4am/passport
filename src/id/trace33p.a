@@ -38,7 +38,8 @@ TraceSpecDel
          dex
          bpl   -
          inc   precheck_sectors
-         inc   precheck_sectors+7
+         lda   #$07
+         inc   precheck_sectors+1
          jsr   PreCheckT00
 
          jsr   ClearTSBuffer

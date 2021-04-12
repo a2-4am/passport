@@ -13,18 +13,6 @@ TraceDOS33
          ldx   #>TraceDOS33b
          jmp   Trace
 
-precheck_sectors
-         ; This list is (re)initialized in IDBootloader,
-         ; then potentially altered in IDDOS33.
-         ; Values are logical sector numbers.
-         ; There are always 16 (0x10) values in this list.
-         ; Negative values are ignored.
-         ; Positive values are treated as logical
-         ; sector numbers and read from track $00.
-         ; Sectors are read in the order listed here.
-         !byte $09,$08,$07,$06,$05,$04,$03,$02,$01
-         !byte $00,$FF,$FE,$FD,$FC,$FB,$FA,$F9,$F8
-
 ;-------------------------------
 ; TraceDOS33b
 ; set up 2nd boot trace at $084A
