@@ -377,7 +377,6 @@ StringTableHigh
 .rwts
          !text "T%t,S%0 RWTS ",$00
 .reasons
-         !byte $8D
          !text "Possible reasons:",$8D,$00
 .protectioncheck
          !text "protection check",$00
@@ -423,7 +422,7 @@ StringTableHigh
 .passcrack0
          !byte $8D
          !text "@",s_thedisk,"was copied successfully, but",$8D
-         !text "@",s_passport,"did not apply any patches.",$8D
+         !text "@",s_passport,"did not apply any patches.",$8D,$8D
          !text "@",s_reasons
          !text "- The source disk is not copy protected."
          !text "- The target disk works without patches."
@@ -431,7 +430,7 @@ StringTableHigh
          !text "  and @",s_passport,"can not help any further.",$8D,$00
 .fail
          !byte $8D
-         !text "T%t,S%s Fatal read error",$8D,$00
+         !text "T%t,S%s Fatal read error",$8D,$8D,$00
 .fatal0000
          !text "@",s_reasons
          !text "- There is no disk in S6,D1.",$8D
@@ -439,7 +438,7 @@ StringTableHigh
          !text "- @",s_thedisk,"is unformatted.",$8D,$8D,$00
 .fatal220f
          !byte $8D
-         !text "@",s_notthisdisk,".",$8D
+         !text "@",s_notthisdisk,".",$8D,$8D
          !text "@",s_reasons
          !text "- This is not a 13- or 16-sector disk.",$8D
          !text "- @",s_thedisk,"modifies its RWTS in ways",$8D
@@ -453,7 +452,7 @@ StringTableHigh
          !scrxor $40," ",$00
 .writeerr
          !byte $8D
-         !text "T%t Fatal write error",$8D,$00
+         !text "T%t Fatal write error",$8D,$8D,$00
 ;
 ; MLI error $27
 ;
