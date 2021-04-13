@@ -72,7 +72,8 @@ IDDOS33
 ;
 ; DOS 3.3 has JSR $FE89 / JSR $FE93 / JSR $FB2F
 ;
-         lda   #$00
+         ;A=0 here
+         ;lda   #$00
          ldx   #$3F
          ldy   #$0B
          jsr   compare    ; if T00,S00,$3F ==
@@ -84,7 +85,8 @@ IDDOS33
 ;
 ; some Sierra have STA $C050 / STA $C057 / STA $C055 instead
 ;
-         lda   #$00
+         ;A=0 here
+         ;lda   #$00
          ldx   #$3F
          ldy   #$0B
          jsr   compare    ; if T00,S00,$3F ==
@@ -98,8 +100,9 @@ IDDOS33
 ;
 ; Check sector order map
 ;
-         lda   #$00       ; passport-test-suite/Leisure Suit Larry.woz [C=0] matches previous compare
-         ldx   #$4D
+         ;A=0 here
+         ;lda   #$00
+         ldx   #$4D       ; passport-test-suite/Leisure Suit Larry.woz [C=0] matches previous compare
          ldy   #$10
          jsr   compare    ; if T00,S00,$4D ==
          !byte $00,$0D,$0B,$09,$07,$05,$03,$01
@@ -109,25 +112,27 @@ IDDOS33
 ;
 ; Check for MUSE sector order map
 ;
-         lda   #$00
+         ;A=0 here
+         ;lda   #$00
          ldx   #$55
          ldy   #$01
          jsr   compare    ; if T00,S00,$55 ==
          !byte $02
          bcs   +
-         lda   #TRUE      ; passport-test-suite/The Function Game.woz [C=0] matches previous compare
-         sta   gIsMUSERWTS
-         lda   #$0E
-         sta   precheck_sectors+1
-         lda   #kSectorIgnore
-         sta   T00S08
-         sta   T00S0F
+         ldy   #TRUE      ; passport-test-suite/The Function Game.woz [C=0] matches previous compare
+         sty   gIsMUSERWTS
+         ldy   #$0E
+         sty   precheck_sectors+1
+         ldy   #kSectorIgnore
+         sty   T00S08
+         sty   T00S0F
 +
 ;
 ; Minor variant jumps to $08F0 and back but is still safe to trace.
 ; Check for this jump and match the code at $08F0 exactly.
 ;
-         lda   #$00
+         ;A=0 here
+         ;lda   #$00
          ldx   #$1C
          ldy   #$03
          jsr   compare    ; if T00,S00,$1C ==
@@ -135,14 +140,16 @@ IDDOS33
                           ; standard code at $081C -> success
          bcc   .exit      ; passport-test-suite/Binomial Multiplication.woz [C=0] matches
 
-         lda   #$00
+         ;A=0 here
+         ;lda   #$00
          ldx   #$1C
          ldy   #$03
          jsr   compare    ; if T00,S00,$1C ==
          !byte $4C,$F0,$08; JMP $08F0
          bcs   .exit      ; unknown code at $081C -> failure
 
-         lda   #$00
+         ;A=0 here
+         ;lda   #$00
          ldx   #$F0
          ldy   #$09
          jsr   compare    ; if T00,S00,$F0 ==
