@@ -370,7 +370,8 @@ ReadChoplifter
          inc   tmpy
          bne   ---
 ;;something
-         jmp   .cancel
+         jsr   .cleanup
+         jmp   FatalError
 
 .readnibx
 -        lda   $C08C,x
