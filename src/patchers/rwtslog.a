@@ -11,7 +11,9 @@
 ; disk allows either $D4 or $D5 for the
 ; first address prologue nibble
 ;-------------------------------
-         jmp   +
+         bit   gMode      ; nothing to do here in verify mode
+         bmi   +
+         jmp   .exit
 -
          ldy   #$0A
          jsr   compare
