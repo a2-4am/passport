@@ -110,6 +110,7 @@ ScanForRAMAndHardDisks
          bne   --
 
          stx   gUsingRAMDisk
+         beq   - ;continue search, always taken
 
 .done
          rts
