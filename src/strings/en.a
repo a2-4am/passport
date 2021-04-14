@@ -25,7 +25,7 @@ StringTableLow
          !byte <.optimum
          !byte <.builtin
          !byte <.switch
-         !byte <.writing
+         !byte <.slotanddrive
          !byte <.unformat
          !byte <.f7
          !byte <.sync
@@ -99,7 +99,7 @@ StringTableLow
          !byte <.bbf9
          !byte <.micrograms
          !byte <.cmpbne0
-         !byte <.writeram
+         !byte <.ramdisk
          !byte <.d5timing
          !byte <.advint
          !byte <.dos32boot0
@@ -154,7 +154,9 @@ StringTableLow
          !byte <.timingbits
          !byte <.acceptsany
          !byte <.addressepilogue
-         !byte <.writehard
+         !byte <.writingto
+         !byte <.targetdisk
+         !byte <.targetfile
 
 StringTableHigh
          !byte >.header
@@ -167,7 +169,7 @@ StringTableHigh
          !byte >.optimum
          !byte >.builtin
          !byte >.switch
-         !byte >.writing
+         !byte >.slotanddrive
          !byte >.unformat
          !byte >.f7
          !byte >.sync
@@ -241,7 +243,7 @@ StringTableHigh
          !byte >.bbf9
          !byte >.micrograms
          !byte >.cmpbne0
-         !byte >.writeram
+         !byte >.ramdisk
          !byte >.d5timing
          !byte >.advint
          !byte >.dos32boot0
@@ -296,7 +298,9 @@ StringTableHigh
          !byte >.timingbits
          !byte >.acceptsany
          !byte >.addressepilogue
-         !byte >.writehard
+         !byte >.writingto
+         !byte >.targetdisk
+         !byte >.targetfile
 
 ;
 ; Text can contain substitution strings, which
@@ -332,7 +336,7 @@ StringTableHigh
 .passport
          !text "Passport ",$00
 .header
-         !text "@",s_passport,"by 4am@",s_space7,"@",s_space7," 2021-04-13",$00
+         !text "@",s_passport,"by 4am@",s_space7,"@",s_space7," 2021-04-14",$00
 .bar9
          !text "_________",$00
 .bar18
@@ -352,9 +356,13 @@ StringTableHigh
          !text " @",s_space7,"@",s_space7
          !scrxor $40,"Q"
          !text "uit",$8D,$8D,$8D,$8D,$8D,$8D,$8D,$8D
-         !text "source: S6,D1@",s_space7,"@",s_space7,"target: "
+         !text "source: S6,D1@",s_space7,"target: "
          !scrxor $40,"S"
-         !text "%S,D%D",$00
+         !text "%S,D%D (",$00
+.targetdisk
+         !text "disk)",$00
+.targetfile
+         !text "file)",$00
 .progbar
          !byte $8D
          !text " _@",s_bar,"_",$8D
@@ -364,6 +372,8 @@ StringTableHigh
          !scrxor $00," ",$8D,$8D,$8D,$00
 .reading
          !text "Reading from S6,D1",$8D,$00
+.writingto
+         !text "Writing to ",$00
 .diskrwts
          !text "Using disk's own RWTS",$8D,$00
 .found
@@ -407,8 +417,10 @@ StringTableHigh
          !text "Using @",s_builtinrwts,$8D,$00
 .switch
          !text "T%t,S%s Switching to @",s_builtinrwts,$8D,$00
-.writing
-         !text "Writing to S%S,D%D",$8D,$00
+.slotanddrive
+         !text "S%S,D%D",$8D,$00
+.ramdisk
+         !text "RAM disk",$8D,$00
 .unformat
          !text "T%t is unformatted",$8D,$00
 .f7
@@ -620,8 +632,6 @@ StringTableHigh
 .cmpnopnop
          !text "@",s_rwts,"@",s_acceptsany,$8D
          !text "second @",s_addressepilogue,"nibble",$8D,$00
-.writeram
-         !text "Writing to RAM disk",$8D,$00
 .d5timing
          !text "@",s_rwts,"accepts $D5 + @",s_timingbits,$8D
          !text "as the entire address prologue",$8D,$00
@@ -697,6 +707,4 @@ StringTableHigh
          !text "T00,S01 Erasing site license information",$00
 .badblock
          !text "@",s_found,"bad block @",s_protectioncheck,$00
-.writehard
-         !text "Writing to hard disk",$8D,$00
 }

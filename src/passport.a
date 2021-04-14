@@ -183,6 +183,12 @@ MainMenu
          jsr   PrintByID
          lda   #s_mainmenu
          jsr   PrintByID
+         lda   #s_targetdisk
+         ldx   gUsingHardDisk
+         bne   .printtargettype
+         lda   #s_targetfile
+.printtargettype
+         jsr   PrintByID
 .getkey
          jsr   WaitForKey
          cmp   #$80
@@ -536,7 +542,9 @@ Pass
          beq   +
          lda   gUsingRAMDisk
          bne   +
-         lda   #s_writing
+         lda   #s_writingto
+         jsr   PrintByID
+         lda   #s_slotanddrive
          jsr   PrintByID
          jsr   WriteRAMToDisk
          bcc   +
@@ -682,16 +690,30 @@ WriteTrackNA              ; entry point used by Special Delivery tracer
          bit   gMode
          bpl   .exit      ; verify mode -> no write
          lda   gSaidWriting
-         beq   .write
-         lda   #s_writehard ; only print "writing to hard disk" message once
+         beq   .write     ; only print 'writing to' message once
+         lda   #s_writingto
+         jsr   PrintByID
          ldx   gUsingHardDisk
-         beq   +
-         lda   #s_writeram ; only print "writing to RAM disk" message once
+         bne   +
+         lda   DiskImgPath
+         sta   .volumelen
+         ldx   #0
+-        lda   DiskImgPath+1, x
+         ora   #$80
+         jsr   PrintA
+         inx
+.volumelen=*+1
+         cpx   #$FD       ; SMC
+         bcc   -
+         lda   #$8D
+         jsr   PrintA
+         bvc   ++         ; always branches
++        lda   #s_ramdisk
          ldx   gUsingRAMDisk
          beq   +
-         lda   #s_writing ; only print "writing to slot/drive" message once
+         lda   #s_slotanddrive
 +        jsr   PrintByID
-         lda   #TRUE
+++       lda   #TRUE
          sta   gSaidWriting
 .write
          jsr   WriteTrackMLI
