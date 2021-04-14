@@ -332,7 +332,7 @@ StringTableHigh
 .passport
          !text "Passport ",$00
 .header
-         !text "@",s_passport,"by 4am@",s_space7,"@",s_space7," 2021-04-12",$00
+         !text "@",s_passport,"by 4am@",s_space7,"@",s_space7," 2021-04-13",$00
 .bar9
          !text "_________",$00
 .bar18
@@ -537,7 +537,7 @@ StringTableHigh
          !text "@",s_rwts,"requires a non-standard",$8D
          !text "disk volume number",$8D,$00
 .d5d5f7
-         !text "%",s_found,"D5D5F7 @",s_protectioncheck,$8D,$00
+         !text "@",s_found,"D5D5F7 @",s_protectioncheck,$8D,$00
 .construct
          !text "T01,S0F Reconstructing missing data",$8D,$00
 .datasoftb0
