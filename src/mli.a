@@ -62,7 +62,26 @@ WriteTrackMLI
          and   gUsingRAMDisk
          beq   +
          jsr   ReorderBuffer
-+        jsr   CalculateAndStoreUnitNumber
++
+; ProDOS 'unit number' is DSSS0000, where
+; D is the drive number (0=drive 1, 1=drive 2) and
+; SSS is the slot number (1-7)
+; c.f. 'Beneath Apple ProDOS' page 6-19
+;
+         lda   DRIVE      ; drive number is stored as ASCII text
+         sec
+         sbc   #$31
+         lsr
+         lda   #0
+         ror
+         sta   mliparam+1
+         lda   SLOT
+         asl
+         asl
+         asl
+         asl
+         ora   mliparam+1
+         sta   mliparam+1 ; ProDOS unit number
          lda   #$00
          sta   mliparam+2 ; lo byte of data buffer
          lda   #$08
@@ -110,37 +129,6 @@ WriteTrackMLI
          rts
 
 .blockcount !byte $FF
-}
-
-;-------------------------------
-; CalculateAndStoreUnitNumber
-;
-; ProDOS 'unit number' is DSSS0000, where
-; D is the drive number (0=drive 1, 1=drive 2) and
-; SSS is the slot number (1-7)
-; c.f. 'Beneath Apple ProDOS' page 6-19
-;
-; in:    @SLOT contains (slot x 16) + $30
-;        @DRIVE contains drive + $30
-; out:   mliparam+1 contains ProDOS unit number
-;-------------------------------
-!zone {
-CalculateAndStoreUnitNumber
-         lda   DRIVE      ; drive number is stored as ASCII text
-         sec
-         sbc   #$31
-         lsr
-         lda   #0
-         ror
-         sta   mliparam+1
-         lda   SLOT
-         asl
-         asl
-         asl
-         asl
-         ora   mliparam+1
-         sta   mliparam+1
-         rts
 }
 
 ;-------------------------------
@@ -763,7 +751,6 @@ CreateHardDir
 !zone {
 GetVolumeName
          sta   mliparam+1
-GetVolumeNameInternal
          lda   #<OnlineReturn
          sta   mliparam+2
          lda   #>OnlineReturn
