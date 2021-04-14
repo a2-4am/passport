@@ -36,7 +36,7 @@ OneTimeSetup
          jmp   CleanExit
 
 .founds6
-         jsr   ScanForRAMDisk
+         jsr   ScanForRAMAndHardDisks
          jsr   LoadPrefs  ; load preferences (if available)
          jmp   ($fe) ;;zp_dest_lo
 

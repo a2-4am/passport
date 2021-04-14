@@ -141,3 +141,4 @@ s_thedisk    = $87
 s_timingbits = $88
 s_acceptsany = $89
 s_addressepilogue = $8A
+s_writehard =   $8B

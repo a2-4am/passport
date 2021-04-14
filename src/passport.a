@@ -220,7 +220,7 @@ MainMenu
 Action
          sta   gMode
          bpl   +
-         jsr   CreateRAMFile
+         jsr   CreateRAMOrHardFile
 +        jsr   ResetProgress
          jsr   InitSectorMap
 Reaction
@@ -532,6 +532,8 @@ nextsector
 Pass
          bit   gMode
          bpl   .passverify
+         lda   gUsingHardDisk
+         beq   +
          lda   gUsingRAMDisk
          bne   +
          lda   #s_writing
@@ -614,7 +616,14 @@ FatalError
 
 TheEnd
          lda   $C0E8
-         lda   #s_done
+         lda   gHardDiskRef
+         beq   +
+         pha
+         jsr   SwapProDOS
+         pla
+         jsr   CloseFile
+         jsr   SwapProDOS
++        lda   #s_done
          jsr   PrintByID
          jsr   WaitForKey
          cmp   #$9B
@@ -649,7 +658,6 @@ CleanExit
          jsr   SavePrefs
 .checkRAM
          lda   gRAMDiskRef
-         beq   .doquit
          jsr   CloseFile ; leave it behind in case it's wanted
 .doquit
          jsr   MLI
@@ -675,6 +683,9 @@ WriteTrackNA              ; entry point used by Special Delivery tracer
          bpl   .exit      ; verify mode -> no write
          lda   gSaidWriting
          beq   .write
+         lda   #s_writehard ; only print "writing to hard disk" message once
+         ldx   gUsingHardDisk
+         beq   +
          lda   #s_writeram ; only print "writing to RAM disk" message once
          ldx   gUsingRAMDisk
          beq   +
@@ -907,6 +918,7 @@ LastMover
   !warn "VolumeName=",VolumeName
   !warn "GetVolumeInfo=",GetVolumeInfo
   !warn "mliparam=",mliparam
+  !warn "access=",access
   !warn "filetype=",filetype
   !warn "auxtype=",auxtype
   !warn "blocks=",blocks

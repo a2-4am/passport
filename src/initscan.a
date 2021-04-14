@@ -39,7 +39,7 @@ ScanForDiskII
 }
 
 !zone {
-ScanForRAMDisk
+ScanForRAMAndHardDisks
          lda   #$00
          sta   iunit
 -        lda   iunit
@@ -65,27 +65,18 @@ ScanForRAMDisk
          beq   -
          jsr   GetVolumeInfo
 
-         ;watch for RAM disk type
+         ;watch for ProDOS volume type
 
          lda   filetype
          and   #$0F
          cmp   #$0F
          bne   -
 
-         ;check for RAM[x] by name
+         ;ensure writable
 
-         ldy   OnlineReturn
-         cpy   #4
-         beq   +
-         cpy   #5
-         bne   -
-         dey
-+
---       lda   SlashRAM-1,y
-         cmp   VolumeName-1,y
-         bne   -
-         dey
-         bne   --
+         lda   filetype-1 ;;access
+         and   #$02
+         beq   -
 
          ;check free space
          ;need at least $118 blocks
@@ -101,10 +92,39 @@ ScanForRAMDisk
          bne   +
          cpx   #$18
          bcc   -
-+        lda   #TRUE
-         sta   gUsingRAMDisk
++        ldx   #TRUE
+
+         ;check for RAM[x] by name
+
+         ldy   OnlineReturn
+         cpy   #4
+         beq   +
+         cpy   #5
+         bne   ++
+         dey
++
+--       lda   SlashRAM-1,y
+         cmp   VolumeName-1,y
+         bne   ++
+         dey
+         bne   --
+
+         stx   gUsingRAMDisk
+
 .done
          rts
+
+++       lda   iunit
+         pha
+         lsr
+         lsr
+         lsr
+         lsr
+         tay
+         pla
+         sta   DiskIIArray+7-1,y ;;HardDiskArray-1,y
+         stx   gHardDiskExists
+         bne   - ;continue search, always taken
 
 SlashRAM !byte $2F, $52, $41, $4D
 }

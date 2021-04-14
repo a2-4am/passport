@@ -154,6 +154,7 @@ StringTableLow
          !byte <.timingbits
          !byte <.acceptsany
          !byte <.addressepilogue
+         !byte <.writehard
 
 StringTableHigh
          !byte >.header
@@ -295,6 +296,7 @@ StringTableHigh
          !byte >.timingbits
          !byte >.acceptsany
          !byte >.addressepilogue
+         !byte >.writehard
 
 ;
 ; Text can contain substitution strings, which
@@ -695,4 +697,6 @@ StringTableHigh
          !text "T00,S01 Erasing site license information",$00
 .badblock
          !text "@",s_found,"bad block @",s_protectioncheck,$00
+.writehard
+         !text "Writing to hard disk",$8D,$00
 }

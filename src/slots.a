@@ -1,21 +1,26 @@
 DiskIIArray
          !byte 00,00,00,00,00,00,00
+HardDiskArray
+         !byte 00,00,00,00,00,00,00
+         !byte 00,00,00,00,00,00,00,00
 
 ;-------------------------------
 ; NextSlot
 ;-------------------------------
 !zone {
 NextSlot
+         ldy   #FALSE
          lda   DRIVE
          cmp   #$31
          bne   .incslot
          lda   #$32
          sta   DRIVE
-         bne   .done      ; unconditional branch
+         bne   .getslot   ; unconditional branch
 .incslot
          lda   #$31
          sta   DRIVE
          inc   SLOT
+.getslot
          lda   SLOT
          cmp   #$38
          bne   .nowrap
@@ -26,8 +31,24 @@ NextSlot
          sbc   #$30
          tax
          lda   DiskIIArray-1,x
+         bne   .done
+         lda   DRIVE
+         lsr
+         bcs   .checkdrive
+         txa
+         ora   #8
+         tax
+.checkdrive
+         lda   HardDiskArray-1,x
          beq   .incslot
+         pha
+         jsr   SwapProDOS
+         pla
+         jsr   GetVolumeName
+         jsr   SwapProDOS
+         ldy   #TRUE
 .done
+         sty   gUsingHardDisk
          lda   SLOT
          cmp   #$36
          bne   .reallydone

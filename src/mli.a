@@ -32,9 +32,16 @@ PRODOSMLI =    $BF00      ; [callable] MLI entry point
 RAMFileName    !text "PASSPORTTMP.DSK"
 RAMFileName_e
 
+HardDirName    !text "PASSPORT.IMG"
+HardDirName_e
+
+HardDiskName    !text "/IMG0000.DSK"
+HardDiskName_e
+
 ; MLI error codes
 ERR_FNF  =     $46
 ERR_EOF  =     $4C
+ERR_EXIST =    $47
 
 ;-------------------------------
 ; WriteTrackMLI - write the contents of
@@ -51,7 +58,8 @@ ERR_EOF  =     $4C
 !zone {
 WriteTrackMLI
          jsr   SwapProDOS
-         lda   gUsingRAMDisk
+         lda   gUsingHardDisk
+         and   gUsingRAMDisk
          beq   +
          jsr   ReorderBuffer
 +        lda   DRIVE      ; ProDOS "unit number" is
@@ -86,7 +94,8 @@ WriteTrackMLI
          lda   #BASEPAGE  ; hi byte of data buffer
          sta   mliparam+3
 .writeloop
-         lda   gUsingRAMDisk
+         lda   gUsingHardDisk
+         and   gUsingRAMDisk
          beq   +
          lda   #$81       ; 'write block' command
          ldy   #$03       ; parameter count
@@ -100,14 +109,15 @@ WriteTrackMLI
          clc
          bcc   .writedone
 
-+        jsr   WriteToRAMFile
++        jsr   WriteToFile
          bcc   -
 
 .writeerr
 .writedone
          php
          pha
-         lda   gUsingRAMDisk
+         lda   gUsingHardDisk
+         and   gUsingRAMDisk
          beq   +
          jsr   ReorderBuffer
 +        jsr   SwapProDOS
@@ -329,10 +339,10 @@ CloseFile
          rts
 
 ;-------------------------------
-; create a file via ProDOS MLI
+; create a directory or file via ProDOS MLI
 ; always sets access bits to $C3 (full access)
 ; always sets creation to 0 (current date/time)
-; always sets storage type to 1 (file)
+; always sets storage type to $0D (directory) or 1 (file)
 ; in:  caller has filled @mliparam
 ;        with address of pathname,
 ;        file type, aux file type
@@ -341,16 +351,23 @@ CloseFile
 ;-------------------------------
 accessbits =   $C3        ; full access
 
+CreateDir
+         lda   #$0D
+         ldy   #$0F
+         bne   .createFile
 CreateFile
+         lda   #1
+         ldy   #6
+.createFile
+         sta   mliparam+7 ; storage type (directory or file)
+         sty   mliparam+4 ; file type (directory or binary)
          lda   #accessbits
          sta   mliparam+3 ; access bits (full access)
-         ldy   #1
-         sty   mliparam+7 ; storage type (file)
-         dey
-         sty   mliparam+8 ; creation date (current)
-         sty   mliparam+9
-         sty   mliparam+10 ; creation time (current)
-         sty   mliparam+11
+         lda   #0
+         sta   mliparam+8 ; creation date (current)
+         sta   mliparam+9
+         sta   mliparam+10 ; creation time (current)
+         sta   mliparam+11
          lda   #CMD_CREATE ; MLI create command
          ldy   #PC_CREATE ; number of parameters for 'create' command
          jsr   mli
@@ -370,46 +387,109 @@ DeleteFile
          rts
 
 ;-------------------------------
-; CreateRAMFile - create image file on RAM disk
-;   if RAM disk is in use
-; in:  nothing (assumes that prefix is set to /RAM)
+; CreateRAMOrHardFile - create image file on RAM or hard disk
+;   if RAM or hard disk is in use
+; in:  nothing (assumes that prefix is set already)
 ; out: if C set, write failed (A contains MLI error code)
 ;      if C clear, write succeeded (A is clobbered)
 ;      all other flags clobbered
 ;      all registers clobbered
 ;-------------------------------
 !zone {
-CreateRAMFile
+CreateRAMOrHardFile
+         lda   gUsingHardDisk
+         lsr              ; TRUE/FALSE in C instead of Z
+         bcc   .createHardFile
          lda   gUsingRAMDisk
-         bne   .done
+         beq   .createRAMFile
 
+.gotRAM
+         rts
+
+.createRAMFile
          ;existing file being reused?
 
          lda   gRAMDiskRef
-         bne   .done
+         bne   .gotRAM
 
          ;no, create a new one
 
+.createHardFile
+         php
          jsr   SwapProDOS
          lda   OnlineReturn
+         and   #$0F
          tay
+         plp
+         php
+         bcs   .prefRAM
          clc
-         adc   #(RAMFileName_e-RAMFileName)+1
-         sta   RAMPath
+         adc   #(HardDirName_e-HardDirName)+2
+         sta   DiskImgPath
          tax
          lda   #$2F
-         sta   RAMPath+1,y
+         sta   DiskImgPath+1
+         sta   DiskImgPath+2,y
 -        lda   OnlineReturn,y
-         sta   RAMPath,y
+         sta   DiskImgPath+1,y
+         dey
+         bne   -
+         ldy   #(HardDirName_e-HardDirName)
+-        lda   HardDirName-1,y
+         sta   DiskImgPath,x
+         dex
+         dey
+         bne   -
+         jsr   CreateHardDir
+
+         clc
+         lda   DiskImgPath
+         adc   #(HardDiskName_e-HardDiskName)
+         sta   DiskImgPath
+         pha
+         tax
+         ldy   #(HardDiskName_e-HardDiskName)
+-        lda   HardDiskName-1,y
+         sta   DiskImgPath,x
+         dex
+         dey
+         bne   -
+         pla
+         tax
+
+.findSpare
+         jsr   GetFileInfo
+         bcs   .foundSpare
+
+.nextDigit
+         inc   DiskImgPath-4,x
+         lda   DiskImgPath-4,x
+         cmp   #'9'+1
+         bcc   .findSpare
+         lda   #'0'
+         sta   DiskImgPath-4,x
+         dex
+         bne   .nextDigit
+
+.prefRAM
+         clc
+         adc   #(RAMFileName_e-RAMFileName)+1
+         sta   DiskImgPath
+         tax
+         lda   #$2F
+         sta   DiskImgPath+1,y
+-        lda   OnlineReturn,y
+         sta   DiskImgPath,y
          dey
          bne   -
          ldy   #(RAMFileName_e-RAMFileName)
 -        lda   RAMFileName-1,y
-         sta   RAMPath,x
+         sta   DiskImgPath,x
          dex
          dey
          bne   -
          jsr   DeleteRAMFile
+.foundSpare
          jsr   CreateFile
          bcs   .createfail
          lda   #0
@@ -419,8 +499,16 @@ CreateRAMFile
          jsr   OpenFile
          bcs   .openfail
 
+         plp
+         php
+         bcc   .storeHardRef
          sta   gRAMDiskRef
+         bcs   .setSize
 
+.storeHardRef
+         sta   gHardDiskRef
+
+.setSize
          ;140kb
 
          ldx   #0
@@ -430,24 +518,43 @@ CreateRAMFile
          ldx   #2
          stx   mliparam+4
          jsr   SetEOF
+         lda   #0
+         rol
 
          ;update file buffer array
 
+         plp
+         pha
          php
          jsr   SaveGlobal
          plp
-         bcc   .restore
+         pla
+         beq   .restore
 
+         php
          lda   gRAMDiskRef
+         bcs   .closeRef
+         lda   gHardDiskRef
+         ldx   #0
+         stx   gHardDiskRef
+
+.closeRef
          jsr   CloseFile
 
 .openfail
+         plp
+         php
          pha
-         jsr   DeleteRAMFile
+         jsr   DeleteFile
          pla
-         sec
 
 .createfail
+         plp
+         bcs   .failRAM
+         jsr   SwapProDOS
+         jmp   FatalWriteError
+
+.failRAM
          ldx   #FALSE
          stx   gUsingRAMDisk
 
@@ -461,15 +568,17 @@ CreateRAMFile
 .done
          rts
 
-RAMPath  !byte $d1
+DiskImgPath
+         !byte $d1
          !fill 17
-         !fill RAMFileName_e-RAMFileName
+         !fill HardDirName_e-HardDirName
+         !fill HardDiskName_e-HardDiskName
 
 }
 
 ;-------------------------------
-; WriteToRAMFile - write memory to image file on RAM disk
-;   if RAM disk is in use
+; WriteToFile - write memory to image file on RAM or hard disk
+;   if RAM or hard disk is in use
 ; in:  called has filled @mliparam
 ;        with block number and write address
 ; out: if error, C set and A contains error code
@@ -478,7 +587,7 @@ RAMPath  !byte $d1
 ;      all registers clobbered
 ;-------------------------------
 !zone {
-WriteToRAMFile
+WriteToFile
          lda   mliparam+2
          pha
          lda   mliparam+3
@@ -494,8 +603,10 @@ WriteToRAMFile
          sta   mliparam+4
          lda   #0
          sta   mliparam+2
+         lda   gHardDiskRef
+         bne   +
          lda   gRAMDiskRef
-         jsr   SetMark
++        jsr   SetMark
          tax
          pla
          sta   mliparam+3
@@ -507,8 +618,10 @@ WriteToRAMFile
          sta   mliparam+4
          lda   #2
          sta   mliparam+5
+         lda   gHardDiskRef
+         bne   +
          lda   gRAMDiskRef
-         jsr   WriteFile
++        jsr   WriteFile
 
 .done
          pha
@@ -599,14 +712,30 @@ CloseDeleteRAMFile
          lda   #0
          sta   gRAMDiskRef
 DeleteRAMFile
-         lda   #<RAMPath
+         lda   #<DiskImgPath
          sta   mliparam+1
-         lda   #>RAMPath
+         lda   #>DiskImgPath
          sta   mliparam+2
-         jsr   DeleteFile
+         jmp   DeleteFile
+}
 
-.done
-         rts
+
+;-------------------------------
+; CreateHardDir - create images directory on hard disk
+;   if hard disk is in use
+; in:  nothing
+; out: if error, C set and A contains error code
+;      if success, C clear
+;      all other flags clobbered
+;      all registers clobbered
+;-------------------------------
+!zone {
+CreateHardDir
+         lda   #<DiskImgPath
+         sta   mliparam+1
+         lda   #>DiskImgPath
+         sta   mliparam+2
+         jmp   CreateDir
 }
 
 
@@ -624,8 +753,7 @@ GetVolumeName
          sta   mliparam+2
          lda   #>OnlineReturn
          sta   mliparam+3
-         jsr   Online
-         rts
+         bne   Online
 OnlineReturn
          !byte $FF
 VolumeName
@@ -672,6 +800,8 @@ GetVolumeInfo
          sta   mliparam+1
          lda   #>OnlineReturn
          sta   mliparam+2
+
+GetFileInfo
          lda   #CMD_GETFILEINFO
          ldy   #PC_GETFILEINFO
          jsr   mli
@@ -695,7 +825,8 @@ mli      sta   mlicmd     ; store command code
 mlicmd   !byte 00         ; command number
          !word mliparam   ; address of parameter table
          rts
-mliparam !byte $FE,$FE,$FE,$FE
+mliparam !byte $FE,$FE,$FE
+access   !byte $FE        ; access privileges (set by MLI get_file_info)
 filetype !byte $FE        ; file type (set by MLI get_file_info)
 auxtype                   ; auxiliary file type (2 bytes, set by MLI get_file_info)
 refnum   !byte $FE        ; file refnum (set by MLI open)

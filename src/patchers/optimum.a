@@ -319,14 +319,15 @@
 
          ;read other page in block
          ;sector $01 pairs with $0F on disk, but
-         ;sector $0E pairs with $0F in RAM disk
+         ;sector $0E pairs with $0F in RAM disk or image
 
-         lda   #1
-         sta   gTrack
-         ldx   gUsingRAMDisk
+         ldx   #1
+         stx   gTrack
+         lda   gUsingHardDisk
+         and   gUsingRAMDisk
          bne   +
-         lda   #$0E
-+        sta   gSector
+         ldx   #$0E
++        stx   gSector
          dec   gAddress+1 ; and $2000-20FF
          jsr   ReadSector
 
@@ -336,14 +337,15 @@
          sta   mliparam+3 ; hi byte of data buffer
          dec   mliparam+4 ; lo byte of block number
          jsr   SwapProDOS
-         lda   gUsingRAMDisk
+         lda   gUsingHardDisk
+         and   gUsingRAMDisk
          beq   +
          lda   #$81       ; 'write block' command
          ldy   #$03       ; parameter count
          jsr   mli
          bcs   .writeerr
          bcc   .writedone
-+        jsr   WriteToRAMFile
++        jsr   WriteToFile
 
 .writeerr
 .writedone

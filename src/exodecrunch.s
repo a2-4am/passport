@@ -227,6 +227,7 @@ no_hi_decr:
         dey
         jsr get_crunched_byte
         sta (zp_dest_lo),y
+sta $400
 } else {
 literal_start1:
         jsr get_crunched_byte

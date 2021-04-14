@@ -36,6 +36,15 @@
 ;gDisplayBytes
          !fill 10         ; array of ten bytes for use as
                           ; substitution strings
+;gHardDiskRef
+         !byte 00         ; handle of hard disk file
+                          ; non-zero if open
+;gUsingHardDisk
+         !byte FALSE      ; 0=true, 1=false
+
+;gHardDiskExists
+         !byte FALSE      ; 0=true, 1=false
+
 ;gRAMDiskRef
          !byte 00         ; handle of RAM disk
                           ; non-zero if open
