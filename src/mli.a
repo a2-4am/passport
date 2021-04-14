@@ -461,7 +461,6 @@ CreateRAMOrHardFile
          lda   DiskImgPath
          adc   #(HardDiskName_e-HardDiskName)
          sta   DiskImgPath
-         pha
          tax
          ldy   #(HardDiskName_e-HardDiskName)
 -        lda   HardDiskName-1,y
@@ -469,12 +468,11 @@ CreateRAMOrHardFile
          dex
          dey
          bne   -
-         pla
-         tax
 
 .findSpare
          jsr   GetFileInfo
          bcs   .foundSpare
+         ldx   DiskImgPath
 
 .nextDigit
          inc   DiskImgPath-4,x
