@@ -74,14 +74,13 @@ _Inspect1a
          !byte $84,$48
          !byte $85,$49
          bcc   .x1
+
          lda   jCallRWTS+2
          ldy   #$03
          jsr   CompareMemory
          !byte $20,$AF,$BE
-         bcs   .useuniv   ; passport-test-suite/Mastery Arithmetic Games.woz [C=0] here
+         bcs   .notmastery ; passport-test-suite/Mastery Arithmetic Games.woz [C=0] here
          lda   jCallRWTS+2
-         ;C=0 here
-         ;clc
          adc   #$01
          ldx   #$AF
          ldy   #$08
@@ -91,6 +90,29 @@ _Inspect1a
          !byte $A0,$04
          !byte $B1,$48
          bcc   .x1        ; passport-test-suite/Mastery Arithmetic Games.woz [C=0] here
+.notmastery
+         lda   jCallRWTS+2
+         cmp   #$BD
+         bne   .notkidwriter
+         ldy   #$03
+         jsr   CompareMemory
+         !byte $20,$CC,$B6
+         bcs   .notkidwriter ; passport-test-suite/Kidwriter.woz [C=0] here
+         lda   #$B6
+         ldx   #$CC
+         ldy   #$08
+         jsr   CompareMemory
+         !byte $84,$48
+         !byte $85,$49
+         !byte $AD,$EC,$B7
+         !byte $F0
+         bcs   .notkidwriter ; passport-test-suite/Kidwriter.woz [C=0] here
+         lda   #<gTrack   ; this entry point assumes track number is in $B7EC
+         sta   $B6D1      ; which isn't true, so change the code to look at
+         lda   #>gTrack   ; Passport's gTrack instead
+         sta   $B6D2
+         bne   .x1        ; always branches
+.notkidwriter
 .useuniv jmp   UseUniversal
 .x1      lda   #$B9       ; check for "SEC;RTS" at $B942
          ldx   #$42

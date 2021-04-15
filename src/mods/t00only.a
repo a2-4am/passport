@@ -115,6 +115,7 @@ AnalyzeT00
          !source "../patchers/datasoft2.a"
          !source "../patchers/jmpb500.a"
          !source "../patchers/mastery.a"
+         !source "../patchers/jsrb6cc.a"
 
 ;add only above this line
 
