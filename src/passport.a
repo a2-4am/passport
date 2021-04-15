@@ -183,11 +183,25 @@ MainMenu
          jsr   PrintByID
          lda   #s_mainmenu
          jsr   PrintByID
-         lda   #s_targetdisk
          ldx   gUsingHardDisk
-         bne   .printtargettype
+         beq   .usingharddisk
+         lda   SLOT
+         and   #$0F
+         ora   #$C0
+         ldx   #$28
+         ldy   #$06
+         jsr   CompareMemory
+         !byte $20,$33,$CD
+         !byte $18
+         !byte $90,$2E
+         bcc   .usingcffa
+         lda   #s_targetdisk
+         !byte $2C
+.usingcffa
+         lda   #s_targetcffa
+         !byte $2C
+.usingharddisk
          lda   #s_targetfile
-.printtargettype
          jsr   PrintByID
 .getkey
          jsr   WaitForKey

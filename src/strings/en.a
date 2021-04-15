@@ -157,6 +157,7 @@ StringTableLow
          !byte <.writingto
          !byte <.targetdisk
          !byte <.targetfile
+         !byte <.targetcffa
 
 StringTableHigh
          !byte >.header
@@ -301,6 +302,7 @@ StringTableHigh
          !byte >.writingto
          !byte >.targetdisk
          !byte >.targetfile
+         !byte >.targetcffa
 
 ;
 ; Text can contain substitution strings, which
@@ -363,6 +365,8 @@ StringTableHigh
          !text "disk)",$00
 .targetfile
          !text "file)",$00
+.targetcffa
+         !text "CFFA)",$00
 .progbar
          !byte $8D
          !text " _@",s_bar,"_",$8D

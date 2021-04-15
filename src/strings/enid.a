@@ -144,3 +144,4 @@ s_addressepilogue = $8A
 s_writingto =  $8B
 s_targetdisk = $8C
 s_targetfile = $8D
+s_targetcffa = $8E
