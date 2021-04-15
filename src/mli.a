@@ -698,10 +698,6 @@ WriteRAMToDisk
 ;-------------------------------
 !zone {
 CloseDeleteRAMFile
-         bit   $c010
--        bit   $c000
-         bpl   -
-         bit   $c010
          lda   gRAMDiskRef
          beq   +
          jsr   CloseFile
