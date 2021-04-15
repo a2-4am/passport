@@ -28,14 +28,14 @@ PC_SETEOF  =   $02
 
 PRODOSMLI =    $BF00      ; [callable] MLI entry point
 
-!ct "lcase.ct"
-RAMFileName    !text "PASSPORTTMP.DSK"
+;!ct "lcase.ct"
+RAMFileName    !raw "PASSPORTTMP.DSK"
 RAMFileName_e
 
-HardDirName    !text "PASSPORT"
+HardDirName    !raw "PASSPORT"
 HardDirName_e
 
-HardDiskName    !text "/IMG0000.DSK"
+HardDiskName    !raw "/IMG0000.DSK"
 HardDiskName_e
 
 ; MLI error codes
@@ -443,7 +443,11 @@ CreateRAMOrHardFile
          dex
          dey
          bne   -
-         jsr   CreateHardDir
+         lda   #<DiskImgPath
+         sta   mliparam+1
+         lda   #>DiskImgPath
+         sta   mliparam+2
+         jsr   CreateDir
 
          clc
          lda   DiskImgPath
@@ -525,11 +529,7 @@ CreateRAMOrHardFile
          ;update file buffer array
 
          plp
-         pha
-         php
-         jsr   SaveGlobal
-         plp
-         pla
+         jsr   SaveProDOS
          beq   .restore
 
          php
@@ -560,14 +560,7 @@ CreateRAMOrHardFile
          stx   gUsingRAMDisk
 
 .restore
-         php
-         pha
-         jsr   SwapProDOS
-         pla
-         plp
-
-.done
-         rts
+         jmp   SwapProDOS
 
 DiskImgPath
          !byte $d1
@@ -625,12 +618,10 @@ WriteToFile
 +        jsr   WriteFile
 
 .done
-         pha
-         lda   .tmpparm4
-         sta   mliparam+4
-         lda   .tmpparm5
-         sta   mliparam+5
-         pla
+         ldx   .tmpparm4
+         stx   mliparam+4
+         ldx   .tmpparm5
+         stx   mliparam+5
          rts
 
 .tmpparm4 !byte 0
@@ -691,8 +682,7 @@ WriteRAMToDisk
          rts
 
 .cancel
-         lda   #TRUE
-         sta   gUsingRAMDisk
+         jsr   .exit
          jmp   Cancel
 
 }
@@ -708,7 +698,12 @@ WriteRAMToDisk
 ;-------------------------------
 !zone {
 CloseDeleteRAMFile
+         bit   $c010
+-        bit   $c000
+         bpl   -
+         bit   $c010
          lda   gRAMDiskRef
+         beq   +
          jsr   CloseFile
          lda   #0
          sta   gRAMDiskRef
@@ -717,28 +712,9 @@ DeleteRAMFile
          sta   mliparam+1
          lda   #>DiskImgPath
          sta   mliparam+2
-         jmp   DeleteFile
+         jsr   DeleteFile
++        rts
 }
-
-
-;-------------------------------
-; CreateHardDir - create images directory on hard disk
-;   if hard disk is in use
-; in:  nothing
-; out: if error, C set and A contains error code
-;      if success, C clear
-;      all other flags clobbered
-;      all registers clobbered
-;-------------------------------
-!zone {
-CreateHardDir
-         lda   #<DiskImgPath
-         sta   mliparam+1
-         lda   #>DiskImgPath
-         sta   mliparam+2
-         jmp   CreateDir
-}
-
 
 ;-------------------------------
 ; get volume name of disk in specific slot+drive

@@ -639,10 +639,11 @@ FatalError
 TheEnd
          lda   $C0E8
          lda   gHardDiskRef
+         ora   gRAMDiskRef
          beq   +
-         pha
          jsr   SwapProDOS
-         pla
+         jsr   CloseDeleteRAMFile    ; does nothing if RAM disk was not used
+         lda   gHardDiskRef
          jsr   CloseFile
          jsr   SwapProDOS
 +        lda   #s_done
@@ -676,13 +677,10 @@ HandleRedo
 CleanExit
          jsr   SwapProDOS
          lda   gChangedPrefs
-         bne   .checkRAM
+         bne   +
          jsr   SavePrefs
-.checkRAM
-         lda   gRAMDiskRef
-         jsr   CloseFile ; leave it behind in case it's wanted
-.doquit
-         jsr   MLI
++        jsr   CloseDeleteRAMFile
+         jsr   MLI                   ; does not return
          !byte $65
          !word .quitparm
 .quitparm
