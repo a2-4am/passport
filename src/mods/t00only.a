@@ -54,10 +54,10 @@ AnalyzeT00
          stx   gIsMaster
 
          lda   #$07
-         ldx   #$00
-         ldy   #$40
+         ldx   #$04
+         ldy   #$3C
          jsr   compare    ; if T00,S07,$00 ==
-         !byte $84,$48,$85,$49,$A0,$02,$8C,WILDCARD
+         !byte $A0,$02,$8C,WILDCARD
          !byte WILDCARD,$A0,$04,$8C,WILDCARD,WILDCARD,$A0,$01
          !byte $B1,$48,$AA,$A0,$0F,$D1,$48,$F0
          !byte $1B,$8A,$48,$B1,$48,$AA,$68,$48
@@ -114,6 +114,7 @@ AnalyzeT00
          !source "../patchers/hoffman.a"
          !source "../patchers/datasoft2.a"
          !source "../patchers/jmpb500.a"
+         !source "../patchers/mastery.a"
 
 ;add only above this line
 
