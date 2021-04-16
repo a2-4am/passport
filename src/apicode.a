@@ -43,7 +43,7 @@
          !byte FALSE      ; 0=true, 1=false
 
 ;gHardDiskExists
-         !byte FALSE      ; 0=true, 1=false
+;         !byte FALSE      ; 0=true, 1=false
 
 ;gRAMDiskRef
          !byte 00         ; handle of RAM disk

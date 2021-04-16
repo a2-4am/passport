@@ -1,11 +1,16 @@
 DiskIIArray
          !byte 00,00,00,00,00,00,00
-HardDiskArray
+HardDiskArray                                   ; must be immediately after DiskIIArray
          !byte 00,00,00,00,00,00,00
          !byte 00,00,00,00,00,00,00,00
 
 ;-------------------------------
 ; NextSlot
+; in:    DiskIIArray, HardDiskArray filled by calling
+;          ScanForDiskII and ScanForRAMAndHardDisks
+; out:   @SLOT, @DRIVE set to ASCII values of
+;          next available slot/drive
+;        @g
 ;-------------------------------
 !zone {
 NextSlot
@@ -41,9 +46,7 @@ NextSlot
 .checkdrive
          lda   HardDiskArray-1,x
          beq   .incslot
-         pha
-         jsr   SwapProDOS
-         pla
+         jsr   SwapProDOS            ; preserves A
          jsr   GetVolumeName
          jsr   SwapProDOS
          ldy   #TRUE

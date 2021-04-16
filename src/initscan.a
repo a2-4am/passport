@@ -124,7 +124,7 @@ ScanForRAMAndHardDisks
          tay
          pla
          sta   DiskIIArray+7-1,y ;;HardDiskArray-1,y
-         stx   gHardDiskExists
+;         stx   gHardDiskExists
          bne   - ;continue search, always taken
 
 SlashRAM !byte $2F, $52, $41, $4D
