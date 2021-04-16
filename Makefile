@@ -41,6 +41,7 @@ asm:
 	grep "OnlineReturn=" build/vars.log | cut -d":" -f3 | cut -d"(" -f1 >> build/vars.a
 	grep "GetVolumeInfo=" build/vars.log | cut -d":" -f3 | cut -d"(" -f1 >> build/vars.a
 	grep "filetype=" build/vars.log | cut -d":" -f3 | cut -d"(" -f1 >> build/vars.a
+	grep "access=" build/vars.log | cut -d":" -f3 | cut -d"(" -f1 >> build/vars.a
 	grep "VolumeName=" build/vars.log | cut -d":" -f3 | cut -d"(" -f1 >> build/vars.a
 	grep "auxtype=" build/vars.log | cut -d":" -f3 | cut -d"(" -f1 >> build/vars.a
 	grep "blocks=" build/vars.log | cut -d":" -f3 | cut -d"(" -f1 >> build/vars.a

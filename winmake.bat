@@ -33,6 +33,7 @@ for /f "tokens=4,* delims=:(" %%q in ('find "GetVolumeName=" ..\build\out.txt') 
 for /f "tokens=4,* delims=:(" %%q in ('find "OnlineReturn=" ..\build\out.txt') do echo %%q >> ..\build\vars.a
 for /f "tokens=4,* delims=:(" %%q in ('find "GetVolumeInfo=" ..\build\out.txt') do echo %%q >> ..\build\vars.a
 for /f "tokens=4,* delims=:(" %%q in ('find "filetype=" ..\build\out.txt') do echo %%q >> ..\build\vars.a
+for /f "tokens=4,* delims=:(" %%q in ('find "access=" ..\build\out.txt') do echo %%q >> ..\build\vars.a
 for /f "tokens=4,* delims=:(" %%q in ('find "VolumeName=" ..\build\out.txt') do echo %%q >> ..\build\vars.a
 for /f "tokens=4,* delims=:(" %%q in ('find "auxtype=" ..\build\out.txt') do echo %%q >> ..\build\vars.a
 for /f "tokens=4,* delims=:(" %%q in ('find "blocks=" ..\build\out.txt') do echo %%q >> ..\build\vars.a

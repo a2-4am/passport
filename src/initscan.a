@@ -58,25 +58,20 @@ ScanForRAMAndHardDisks
          tay
          pla
          ldx   DiskIIArray-1,y
-         bne   -
+         bne   -                     ; ScanForDiskII already detected that this slot is a floppy drive, so skip it
          jsr   GetVolumeName
-         bcs   -
+         bcs   -                     ; can't get a volume name, so skip it
          lda   OnlineReturn
-         beq   -
+         and   #$0F
+         beq   -                     ; volume name length=0 means an error occurred, so skip it
          jsr   GetVolumeInfo
-
-         ;watch for ProDOS volume type
-
          lda   filetype
          and   #$0F
          cmp   #$0F
-         bne   -
-
-         ;ensure writable
-
-         lda   filetype-1 ;;access
+         bne   -                     ; ProDOS volume type says this isn't a directory, so skip it
+         lda   access
          and   #$02
-         beq   -
+         beq   -                     ; volume is not writeable, so skip it
 
          ;check free space
          ;need at least $118 blocks
@@ -88,10 +83,10 @@ ScanForRAMAndHardDisks
          lda   auxtype+1
          sbc   blocks+1
          cmp   #1
-         bcc   -
+         bcc   -                     ; not enough free space, so skip it
          bne   +
          cpx   #$18
-         bcc   -
+         bcc   -                     ; not enough free space, so skip it
 +        ldx   #TRUE
 
          ;check for RAM[x] by name

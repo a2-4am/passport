@@ -41,7 +41,7 @@ tmpx     =     $FD        ; byte
 tmpy     =     $FE        ; byte
 flag     =     $FF        ; byte
 
-; Application constants (not zero addresses)
+; Other application-specific addresses
 !ifdef RELBASE {
 !set VERBOSE = $00        ; override for make script
 } else {
@@ -50,8 +50,10 @@ RELBASE  =     $2000      ; dummy assignment for first build
 }
 LOWPOINT =     $4000      ; lowest available address for code
 HIGHPOINT =    $B200      ; highest available address+1 for code
-BASEPAGE =     $10        ; Special Delivery tracer assumes
-                          ; this is $10, so don't change it!
+BASEPAGE =     $10        ; high byte of $1000-byte buffer that
+                          ; holds sector data for current track
+                          ; Special Delivery tracer assumes this
+                          ; is $10, so don't change it!
 
 ;-------------------------------
 ; globally-accessible variables
@@ -116,7 +118,6 @@ gMECCFastloadType             = gIs13Sector-$01                   ; byte
 gOnAClearDayYouCanReadForever = gMECCFastloadType-$01             ; byte
 gUsingRAMDisk                 = gOnAClearDayYouCanReadForever-$01 ; byte
 gRAMDiskRef                   = gUsingRAMDisk-$01                 ; byte
-;gHardDiskExists               = gRAMDiskRef-1                     ; byte
 gUsingHardDisk                = gRAMDiskRef-1                     ; byte
 gHardDiskRef                  = gUsingHardDisk-$01                ; byte
 gDisplayBytes                 = gHardDiskRef-$0A                  ; 10 bytes
@@ -194,7 +195,6 @@ ConstructStandardDelivery = jConstructStandardDelivery
 !warn "gOnAClearDayYouCanReadForever=",gOnAClearDayYouCanReadForever
 !warn "gUsingRAMDisk=",gUsingRAMDisk
 !warn "gRAMDiskRef=",gRAMDiskRef
-;!warn "gHardDiskExists=",gHardDiskExists
 !warn "gUsingHardDisk=",gUsingHardDisk
 !warn "gHardDiskRef=",gHardDiskRef
 !warn "gDisplayBytes=",gDisplayBytes
