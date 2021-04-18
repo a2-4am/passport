@@ -1,12 +1,22 @@
 ;-------------------------------
 ; Progress bar functions
 ;
-; ResetProgress   - called once when verify/demuffin/crack process starts
+; ShowInitialProgressScreen - called once when a verify or crack process starts
+; ResetProgress   - called once when a verify or crack process starts
 ; IncProgress     - called repeatedly during process (visibly increments progress bar)
 ; RestartProgress - called from certain patchers (Sierra) or when writing from RAM disk
 ;                   (visibly clears progress bar and exits via ResetProgress)
 ;-------------------------------
-!zone {
+ShowInitialProgressScreen
+         jsr   ClearScreen
+         lda   #s_header
+         jsr   PrintByID
+         lda   #s_progbar
+         jsr   PrintByID
+         lda   VPOS
+         sta   TEXTTOP
+         bne   ResetProgress         ; always branches
+
 RestartProgress
          lda   VPOS
          pha
@@ -20,16 +30,15 @@ RestartProgress
          ; /!\ execution falls through here
 
 ResetProgress
-         lda   #$82       ; reset progress indicator
+         lda   #$82                  ; reset progress indicator
          sta   progressind+1
          lda   #$05
          sta   progressind+2
          rts
 
 IncProgress
-         lda   #$20       ; display minimal progress indicator
+         lda   #$20                  ; display minimal progress indicator
 progressind
-         sta   $FFFF      ; set at runtime
+         sta   $FFFF                 ; SMC
          inc   progressind+1
          rts
-}

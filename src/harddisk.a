@@ -24,6 +24,7 @@ HardDiskImagePath
 ; out:   if C set, create or open failed (A contains MLI error code)
 ;        if C clear, everything succeeded (A is clobbered)
 ;        all other registers and flags clobbered
+;        ProDOS is in memory
 ;-------------------------------
 CreateFileOnHardDisk
          jsr   LookupUnitNumberOfSelectedHardDisk
@@ -112,8 +113,8 @@ CreateFileOnHardDisk
 ; does not return any error status because no one cares
 ;
 ; in:    ProDOS is in memory
-; out:   ProDOS is in memory
-;        all registers and flags clobbered
+; out:   all registers and flags clobbered
+;        ProDOS is in memory
 ;-------------------------------
 CloseFileOnHardDisk
          lda   gHardDiskRef
@@ -127,7 +128,7 @@ CloseFileOnHardDisk
 ; PrintHardDiskImagePath
 ; print full path of file on hard disk
 ;
-; in:    @HardDiskImagePath must be populated and have non-zero length
+; in:    @HardDiskImagePath is populated and has non-zero length
 ; out:   all registers and flags clobbered
 ;-------------------------------
 PrintHardDiskImagePath

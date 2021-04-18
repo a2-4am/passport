@@ -1,10 +1,10 @@
 RAMDiskImagePath
-         !byte 0                                ; length byte (0 means no suitable RAM disk is available)
-         !fill 1                                ; / character
-         !fill 4                                ; longest possible volume name for supported RAM disks
-                                                ; (code only matches 'RAM' or 'RAMn' where n is usually a slot number)
-         !fill 1                                ; / character
-         !fill 15                               ; filename without leading slash (constant, see initscan.a)
+         !byte 0                     ; length byte (0 means no suitable RAM disk is available)
+         !fill 1                     ; / character
+         !fill 4                     ; longest possible volume name for supported RAM disks
+                                     ; (code only matches 'RAM' or 'RAMn' where n is usually a slot number)
+         !fill 1                     ; / character
+         !fill 15                    ; filename without leading slash (constant, see initscan.a)
 
 ;-------------------------------
 ; CreateFileOnRAMDisk
@@ -66,6 +66,7 @@ DeleteFileOnRAMDisk
 ; in:    ProDOS is in memory
 ; out:   if error, C set and A contains error code
 ;        if success, C clear
+;        if a key is pressed, exits via Cancel
 ;        all other flags clobbered
 ;        all registers clobbered
 ;        ProDOS is in memory

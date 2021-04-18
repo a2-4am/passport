@@ -213,6 +213,42 @@ tsr_callback
          jmp   $B9A0
 }
 
+SwitchToUniv
+         lda   gSector
+         sta   gDisplayBytes
+         lda   #s_switch
+         !byte $2C        ; hide next LDA
+StartWithUniv
+         lda   #s_builtin
+         jsr   PrintByID
+         lda   #TRUE
+         sta   gTriedUniv
+         lda   #FALSE
+         sta   gIsProtDOS
+         ; /!\ execution falls through here
+
+CopyUniversal
+         lda   #$B8
+CopyUniversalAnywhere
+         sta   universalrwts
+         clc
+         adc   #$02
+         sta   .cu+2
+         lda   #>universalrwts
+         sta   _byte_hi
+         lda   #<universalrwts
+         sta   _byte_lo
+         jsr   decrunch
+         sty   jCallRWTS+1
+         lda   #$BD
+         sta   jCallRWTS+2
+         ldy   #$96
+.culoop  lda   gNIBTable,y
+.cu      sta   $d100,y    ; set at runtime
+         iny
+         bne   .culoop
+         rts
+
 gTrack   !byte $00
 gSector  !byte $00
 

@@ -199,38 +199,42 @@ MainMenu
 @usingHardDisk
          lda   #s_targetfile
          jsr   PrintByID
-.getkey
+@getkey
          jsr   WaitForKey
          cmp   #$80
          bne   +
          jsr   EnterCFFAIfAvailable
          bcc   ResetVector
-         bcs   .getkey
-+        cmp   #$9B       ; esc
-         beq   .jmptoexit
-         cmp   #$91       ; ctrl-Q
-         beq   .jmptoexit
+         bcs   @getkey
+
++        cmp   #$9B                  ; Esc quits
+         beq   @jumpToExit
+         cmp   #$91                  ; Ctrl-Q quits
+         beq   @jumpToExit
          cmp   #k_quit
          bne   +
-.jmptoexit
+@jumpToExit
          jmp   CleanExit
+
 +        cmp   #k_slot
          bne   +
          jsr   NextSlot
          lda   #TRUE
          sta   gChangedPrefs
-         beq   MainMenu   ; always branches
+         beq   MainMenu              ; always branches
+
 +        cmp   #k_verify
          bne   +
          lda   #%00000000
-         beq   Action     ; unconditional branch
+         beq   Action                ; always branches
+
 +        cmp   #k_crack
-         bne   .getkey
+         bne   @getkey
          lda   #%11000000
          ; /!\ execution falls through here
+
 Action
          sta   gMode
-         jsr   ResetProgress
          jsr   InitSectorMap
 Reaction
          lda   #FALSE
@@ -246,13 +250,7 @@ Reaction
          sta   jCallRWTS+1
          lda   #$08
          sta   gAddress+1
-         jsr   ClearScreen
-         lda   #s_header
-         jsr   PrintByID
-         lda   #s_progbar
-         jsr   PrintByID
-         lda   VPOS
-         sta   TEXTTOP
+         jsr   ShowInitialProgressScreen
 
          lda   gMode
          bpl   @printReading         ; don't create RAM disk or hard disk file in verify mode
@@ -274,7 +272,6 @@ Reaction
          lda   #0                    ; failed to create temporary file on RAM disk
          sta   RAMDiskImagePath      ; this is not fatal, but we'll mark the RAM
                                      ; disk as unavailable so we don't bother with it
-         ; /!\ execution falls through here
 @printReading
          lda   #s_reading
          jsr   PrintByID
@@ -592,43 +589,6 @@ Pass
          jsr   PrintByID
          jmp   TheEnd
 
-SwitchToUniv
-         lda   gSector
-         sta   gDisplayBytes
-         lda   #s_switch
-         !byte $2C        ; hide next LDA
-StartWithUniv
-         lda   #s_builtin
-         jsr   PrintByID
-         lda   #TRUE
-         sta   gTriedUniv
-         lda   #FALSE
-         sta   gIsProtDOS
-
-; note: execution falls through here
-
-CopyUniversal
-         lda   #$B8
-CopyUniversalAnywhere
-         sta   universalrwts
-         clc
-         adc   #$02
-         sta   .cu+2
-         lda   #>universalrwts
-         sta   _byte_hi
-         lda   #<universalrwts
-         sta   _byte_lo
-         jsr   decrunch
-         sty   jCallRWTS+1
-         lda   #$BD
-         sta   jCallRWTS+2
-         ldy   #$96
-.culoop  lda   gNIBTable,y
-.cu      sta   $d100,y    ; set at runtime
-         iny
-         bne   .culoop
-         rts
-
 Cancel
          lda   #s_canceled
          jsr   PrintByID
@@ -651,8 +611,7 @@ FatalError
 .failont22s0f
          lda   #s_fatal220f
          jsr   PrintByID
-
-; note: execution falls through here
+         ; /!\ execution falls through here
 
 TheEnd
          lda   $C0E8
@@ -672,33 +631,43 @@ TheEnd
          jmp   MainMenu
 
 HandleRedoWithIgnore
-         jsr   ResetProgress
          jsr   InitSectorMapWithIgnore
          jmp   Reaction
 
 HandleRedo
-         jsr   ClearScreen
-         lda   #s_header
-         jsr   PrintByID
-         lda   #s_progbar
-         jsr   PrintByID
-         lda   VPOS
-         sta   TEXTTOP
+         jsr   ShowInitialProgressScreen
          lda   #s_reading
          jsr   PrintByID
-         jmp   RestartScan
+         ; /!\ execution falls through here
+
+;-------------------------------
+; RestartScan
+; Print 'Restarting scan...' then do exactly that.
+; Used by several patchers that find evidence of a protection
+; then activate an expensive search the second time around.
+; Can be called from anywhere.
+; Resets stack, never returns.
+; Exits via ReadWithRWTS
+;-------------------------------
+RestartScan
+         lda   #s_restart
+         jsr   PrintByID
+         jsr   RestartProgress
+         jsr   IncProgress
+         ldx   #$FF
+         txs
+         jmp   ReadWithRWTS
 
 CleanExit
-         jsr   SwapProDOS
+         jsr   SwapProDOS            ; ProDOS out -> in
          lda   gChangedPrefs
          bne   +
          jsr   SavePrefs
 +        jsr   DeleteFileOnRAMDisk   ; always safe to call
          jsr   MLI                   ; does not return
          !byte $65
-         !word .quitparm
-.quitparm
-         !byte $04,$00,$00,$00,$00,$00,$00
+         !word +
++        !byte $04
 
          !source "progress.a"
 
@@ -802,24 +771,6 @@ ChangeSector
          adc   #BASEPAGE
          sta   gAddress+1
          rts
-
-;-------------------------------
-; RestartScan
-; Print 'Restarting scan...' then do exactly that.
-; Used by several patchers that find evidence of a protection
-; then activate an expensive search the second time around.
-; Can be called from anywhere.
-; Resets stack, never returns.
-; Exits via ReadWithRWTS
-;-------------------------------
-RestartScan
-         lda   #s_restart
-         jsr   PrintByID
-         jsr   RestartProgress
-         jsr   IncProgress
-         ldx   #$FF
-         txs
-         jmp   ReadWithRWTS
 
 ;-------------------------------
 ; AnalyzeTrack routine
