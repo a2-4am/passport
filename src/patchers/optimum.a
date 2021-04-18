@@ -323,9 +323,9 @@
 
          ldx   #1
          stx   gTrack
-         lda   gUsingHardDisk
-         and   gUsingRAMDisk
-         bne   +
+         lda   gHardDiskRef
+         ora   gRAMDiskRef
+         beq   +
          ldx   #$0E
 +        stx   gSector
          dec   gAddress+1 ; and $2000-20FF
@@ -336,10 +336,10 @@
          lda   #$20       ; $2000-21FF
          sta   mliparam+3 ; hi byte of data buffer
          dec   mliparam+4 ; lo byte of block number
-         jsr   SwapProDOS
-         lda   gUsingHardDisk
-         and   gUsingRAMDisk
-         beq   +
+         jsr   SwapProDOS            ; ProDOS out -> in
+         lda   gHardDiskRef
+         ora   gRAMDiskRef
+         bne   +
          lda   #$81       ; 'write block' command
          ldy   #$03       ; parameter count
          jsr   mli
@@ -349,7 +349,7 @@
 
 .writeerr
 .writedone
-         jsr   SwapProDOS
+         jsr   SwapProDOS            ; ProDOS in -> out
 
          ;restore original disk location
 

@@ -34,6 +34,7 @@ asm:
 	grep "SaveProDOS=" build/vars.log | cut -d":" -f3 | cut -d"(" -f1 > build/vars.a
 	grep "kForceLower=" build/vars.log | cut -d":" -f3 | cut -d"(" -f1 >> build/vars.a
 	grep "DiskIIArray=" build/vars.log | cut -d":" -f3 | cut -d"(" -f1 >> build/vars.a
+	grep "HardDiskArray=" build/vars.log | cut -d":" -f3 | cut -d"(" -f1 >> build/vars.a
 	grep "PrintByID=" build/vars.log | cut -d":" -f3 | cut -d"(" -f1 >> build/vars.a
 	grep "WaitForKey=" build/vars.log | cut -d":" -f3 | cut -d"(" -f1 >> build/vars.a
 	grep "CleanExit=" build/vars.log | cut -d":" -f3 | cut -d"(" -f1 >> build/vars.a
@@ -43,6 +44,7 @@ asm:
 	grep "filetype=" build/vars.log | cut -d":" -f3 | cut -d"(" -f1 >> build/vars.a
 	grep "access=" build/vars.log | cut -d":" -f3 | cut -d"(" -f1 >> build/vars.a
 	grep "VolumeName=" build/vars.log | cut -d":" -f3 | cut -d"(" -f1 >> build/vars.a
+	grep "RAMDiskImagePath=" build/vars.log | cut -d":" -f3 | cut -d"(" -f1 >> build/vars.a
 	grep "auxtype=" build/vars.log | cut -d":" -f3 | cut -d"(" -f1 >> build/vars.a
 	grep "blocks=" build/vars.log | cut -d":" -f3 | cut -d"(" -f1 >> build/vars.a
 	grep "PREFSVER=" build/vars.log | cut -d":" -f3 | cut -d"(" -f1 >> build/vars.a

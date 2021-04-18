@@ -1,0 +1,107 @@
+RAMDiskImagePath
+         !byte 0                                ; length byte (0 means no suitable RAM disk is available)
+         !fill 1                                ; / character
+         !fill 4                                ; longest possible volume name for supported RAM disks
+                                                ; (code only matches 'RAM' or 'RAMn' where n is usually a slot number)
+         !fill 1                                ; / character
+         !fill 15                               ; filename without leading slash (constant, see initscan.a)
+
+;-------------------------------
+; CreateFileOnRAMDisk
+; create 140KB file on RAM disk (filename is hardcoded)
+;
+; in:    ProDOS is in memory
+;        RAMDiskImagePath populated
+; out:   if C set, creation failed (A contains MLI error code)
+;        if C clear, creation succeeded (A clobbered, gRAMDiskRef contains file refnum)
+;        all other flags clobbered
+;        all registers clobbered
+;        ProDOS is in memory
+;-------------------------------
+CreateFileOnRAMDisk
+         jsr   DeleteFileOnRAMDisk   ; always safe to call
+         lda   #<RAMDiskImagePath
+         sta   mliparam+1
+         lda   #>RAMDiskImagePath
+         sta   mliparam+2
+         jsr   Create140KFile
+         bcs   +
+         sta   gRAMDiskRef
++        rts
+
+;-------------------------------
+; DeleteFileOnRAMDisk
+; delete our temporary image file on RAM disk
+;
+; always safe to call
+; gracefully returns if no RAM disk was detected
+; gracefully closes file before deleting, if it was open
+; does not return any error status because no one cares
+;
+; in:    ProDOS is in memory
+; out:   all registers and flags clobbered
+;        gRAMDiskRef=0
+;        ProDOS is in memory
+;-------------------------------
+DeleteFileOnRAMDisk
+         lda   RAMDiskImagePath
+         beq   @exit                 ; no RAM disk available
+
+         lda   gRAMDiskRef
+         beq   +
+         jsr   CloseFile             ; close existing file
+         lda   #0
+         sta   gRAMDiskRef
++
+         lda   #<RAMDiskImagePath
+         sta   mliparam+1
+         lda   #>RAMDiskImagePath
+         sta   mliparam+2
+         jsr   DeleteFile            ; delete file, ignore error
+@exit    rts
+
+;-------------------------------
+; WriteRAMToDisk - write image file in RAM to physical disk
+;   if RAM disk is in use
+; in:    ProDOS is in memory
+; out:   if error, C set and A contains error code
+;        if success, C clear
+;        all other flags clobbered
+;        all registers clobbered
+;        ProDOS is in memory
+;-------------------------------
+WriteRAMToDisk
+         lda   #0
+         sta   mliparam+2
+         sta   mliparam+3
+         sta   mliparam+4
+         sta   gTrack
+         lda   gRAMDiskRef
+         jsr   SetMark
+
+         jsr   RestartProgress       ; restart progress bar
+
+@writeRAMToDiskLoop
+         lda   #$00
+         sta   mliparam+2
+         sta   mliparam+4
+         lda   #$10
+         sta   mliparam+3
+         sta   mliparam+5
+         lda   gRAMDiskRef
+         jsr   ReadFile
+         jsr   IncProgress
+         jsr   WriteTrackSecondPass
+         bcs   @exit
+         lda   KEY
+         bmi   @cancel
+         inc   gTrack
+         lda   gTrack
+         cmp   #$23
+         bne   @writeRAMToDiskLoop
+
+         jsr   IncProgress
+         clc
+@exit    rts
+@cancel
+         jmp   Cancel

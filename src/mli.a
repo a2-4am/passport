@@ -26,17 +26,11 @@ PC_CLOSE =     $01
 PC_SETMARK =   $02
 PC_SETEOF  =   $02
 
+; MLI addresses
 PRODOSMLI =    $BF00      ; [callable] MLI entry point
 
-;!ct "lcase.ct"
-RAMFileName    !raw "PASSPORTTMP.DSK"
-RAMFileName_e
-
-HardDirName    !raw "PASSPORT"
-HardDirName_e
-
-HardDiskName    !raw "/IMG0000.DSK"
-HardDiskName_e
+; MLI constants
+FULL_ACCESS =   $C3
 
 ; MLI error codes
 ERR_FNF  =     $46
@@ -44,33 +38,37 @@ ERR_EOF  =     $4C
 ERR_EXIST =    $47
 
 ;-------------------------------
-; WriteTrackMLI - write the contents of
-;   BASEPAGE data buffer to disk
-; in:  @SLOT contains (slot x 16) + $30
-;      @DRIVE contains drive + $30
-;      @gTrack contains track number
-;      @BASEPAGE contains data to write ($1000 bytes)
-; out: if C set, write failed (A contains MLI error code)
-;      if C clear, write succeeded (A is clobbered)
-;      all other flags clobbered
-;      all registers clobbered
+; WriteTrackFirstPass
+;
+; write the contents of BASEPAGE data buffer to the selected target
+; (or possibly an intermediate target, such as a RAM disk)
+;
+; in:    @SLOT contains (slot x 16) + $30
+;        @DRIVE contains drive + $30
+;        @gTrack contains track number
+;        @BASEPAGE contains data to write ($1000 bytes)
+;        ProDOS is in memory
+; out:   if C set, write failed (A contains MLI error code)
+;        if C clear, write succeeded (A is clobbered)
+;        all other registers and flags clobbered
+;        ProDOS is in memory
 ;-------------------------------
-!zone {
-WriteTrackMLI
-         jsr   SwapProDOS
-         lda   gUsingHardDisk
-         and   gUsingRAMDisk
-         beq   +
+WriteTrackFirstPass
+         lda   gHardDiskRef
+         ora   gRAMDiskRef
+         bne   +
+         ; we're writing directly to a disk drive, so we
+         ; reorder the data buffer so we can write the
+         ; logical sectors as ProDOS blocks
          jsr   ReorderBuffer
 +
-; ProDOS 'unit number' is DSSS0000, where
-; D is the drive number (0=drive 1, 1=drive 2) and
-; SSS is the slot number (1-7)
-; c.f. 'Beneath Apple ProDOS' page 6-19
-;
-         lda   DRIVE      ; drive number is stored as ASCII text
+         ; ProDOS 'unit number' is DSSS0000, where
+         ; D is the drive number (0=drive 1, 1=drive 2) and
+         ; SSS is the slot number (1-7)
+         ; c.f. 'Beneath Apple ProDOS' page 6-19
+         lda   DRIVE
          sec
-         sbc   #$31
+         sbc   #$31                  ; drive number is stored as ASCII text
          lsr
          lda   #0
          ror
@@ -81,76 +79,101 @@ WriteTrackMLI
          asl
          asl
          ora   mliparam+1
-         sta   mliparam+1 ; ProDOS unit number
+         sta   mliparam+1            ; ProDOS unit number
          lda   #$00
-         sta   mliparam+2 ; lo byte of data buffer
+         sta   mliparam+2            ; lo byte of data buffer
          lda   #$08
-         sta   .blockcount
+         sta   @blockcount           ; 8 blocks = 16 sectors
          lda   gTrack
          asl
          asl
          asl
-         sta   mliparam+4 ; lo byte of block number
+         sta   mliparam+4            ; lo byte of block number
          rol
          and   #$01
-         sta   mliparam+5 ; hi byte of block number
-         lda   #BASEPAGE  ; hi byte of data buffer
+         sta   mliparam+5            ; hi byte of block number
+         lda   #BASEPAGE             ; hi byte of data buffer
          sta   mliparam+3
-.writeloop
-         lda   gUsingHardDisk
-         and   gUsingRAMDisk
-         beq   +
-         lda   #$81       ; 'write block' command
-         ldy   #$03       ; parameter count
+@writeloop
+         lda   gHardDiskRef
+         ora   gRAMDiskRef
+         bne   +
+         lda   #$81                  ; 'write block' command
+         ldy   #$03                  ; parameter count
          jsr   mli
-         bcs   .writeerr
--        inc   mliparam+3 ; 2 pages per block
+         bcs   @writeerr
+-        inc   mliparam+3            ; 2 pages per block
          inc   mliparam+3
          inc   mliparam+4
-         dec   .blockcount
-         bne   .writeloop
+         dec   @blockcount
+         bne   @writeloop
          clc
-         bcc   .writedone
+         bcc   @writedone            ; always branches
 
 +        jsr   WriteToFile
          bcc   -
 
-.writeerr
-.writedone
+@writeerr
+@writedone
          php
          pha
-         lda   gUsingHardDisk
-         and   gUsingRAMDisk
-         beq   +
+         lda   gHardDiskRef
+         ora   gRAMDiskRef
+         bne   +
          jsr   ReorderBuffer
-+        jsr   SwapProDOS
-         pla
++        pla
          plp
          rts
 
-.blockcount !byte $FF
-}
+@blockcount !byte $FF
+
+;-------------------------------
+; WriteTrackSecondPass
+;
+; write the contents of BASEPAGE data buffer
+; from a file on a RAM disk
+; to the final destination drive
+;
+; in:    gRAMDiskRef contains file reference number of open file on RAM disk
+;        ProDOS is in memory
+; out:   if C set, write failed (A contains MLI error code)
+;        if C clear, write succeeded (A is clobbered)
+;        all other registers and flags clobbered
+;        ProDOS is in memory
+;-------------------------------
+WriteTrackSecondPass
+         lda   gRAMDiskRef
+         pha
+         lda   #0
+         sta   gRAMDiskRef
+         jsr   WriteTrackFirstPass
+         tax
+         pla
+         sta   gRAMDiskRef
+         txa
+         rts
 
 ;-------------------------------
 ; SaveFile1Shot
 ; save a file to disk all at once,
 ;   using ProDOS MLI calls
 ;
-; in:  stack contains 11 ($0B) bytes of parameters:
-;      +1 address of pathname
-;      +3 [byte] file type
-;      +4 [word] aux file type
-;      +6 address of data buffer
-;      +8 [word] length of data buffer
-;      +A address of ProDOS file buffer
-; out: if C set, save failed and A contains error code
-;        from open or write
-;      if C clear, save succeeded
-;      all other flags clobbered
-;      all registers clobbered
-;      stack set to next instruction after parameters
+; in:    ProDOS is in memory
+;        stack contains 11 ($0B) bytes of parameters:
+;        +1 address of pathname
+;        +3 [byte] file type
+;        +4 [word] aux file type
+;        +6 address of data buffer
+;        +8 [word] length of data buffer
+;        +A address of ProDOS file buffer
+; out:   ProDOS is in memory
+;        if C set, save failed and A contains error code
+;          from open or write
+;        if C clear, save succeeded
+;        all other flags clobbered
+;        all registers clobbered
+;        stack set to next instruction after parameters
 ;-------------------------------
-!zone {
 SaveFile1Shot
          clc
          pla
@@ -181,7 +204,7 @@ SaveFile1Shot
          lda   ($00),y    ; hi byte of aux file type
          sta   mliparam+6
          jsr   CreateFile
-         bcs   .savefile1s
+         bcs   +
 
          ldy   #$0A
          lda   ($00),y    ; lo byte of ProDOS file buffer
@@ -190,7 +213,7 @@ SaveFile1Shot
          lda   ($00),y    ; hi byte of ProDOS file buffer
          sta   mliparam+4
          jsr   OpenFile
-         bcs   .savefile1s
+         bcs   +
 
          pha              ; push file reference number
          ldy   #$06
@@ -215,32 +238,29 @@ SaveFile1Shot
                           ; (so caller gets codes from write attempt,
                           ; not close)
 
-.savefile1s
-         rts
-}
++        rts
 
 ;-------------------------------
 ; open file via ProDOS MLI
 ;
-; in:  caller has filled @mliparam with address of
-;        pathname, address of data buffer, and maximum
-;        data length
-; out: if C set, open failed and A contains error code
-;      if C clear, open succeeded and A contains
-;        file reference number
+; in:    ProDOS is in memory
+;        caller has filled @mliparam with address of
+;          pathname, address of data buffer, and maximum
+;          data length
+; out:   if C set, open failed and A contains error code
+;        if C clear, open succeeded and A contains
+;          file reference number
+;        ProDOS is in memory
 ;-------------------------------
-!zone {
 OpenFile
          lda   #CMD_OPEN  ; MLI command
          ldy   #PC_OPEN   ; number of parameters for 'open' command
          jsr   mli
-         bcs   .openfile
+         bcs   +
          lda   refnum     ; caller should save file reference number
                           ; as this memory location may be
                           ; overwritten by later MLI calls
-.openfile
-         rts
-}
++        rts
 
 ;-------------------------------
 ; read an open file via ProDOS MLI
@@ -252,17 +272,14 @@ OpenFile
 ;      if C clear, read succeeded and A contains the same
 ;        file reference number that was passed in
 ;-------------------------------
-!zone {
 ReadFile
          sta   mliparam+1 ; store file reference number
          lda   #CMD_READ  ; MLI read command
          ldy   #PC_READ   ; number of parameters for 'read' command
          jsr   mli
-         bcs   .readfile
+         bcs   +
          lda   mliparam+1 ; if no error, return file reference number
-.readfile
-         rts
-}
++        rts
 
 ;-------------------------------
 ; change file position in an open file via ProDOS MLI
@@ -274,16 +291,14 @@ ReadFile
 ;      if C clear, set_mark call succeeded and A contains
 ;        the same file reference number that was passed in
 ;-------------------------------
-!zone {
 SetMark
          sta   mliparam+1 ; store file reference number
          lda   #CMD_SETMARK ; MLI set_mark command
          ldy   #PC_SETMARK ; number of params for 'set_mark' cmd
          jsr   mli
-         bcs   .exit
+         bcs   +
          lda   mliparam+1 ; if no error, return file refnum
-.exit    rts
-}
++        rts
 
 ;-------------------------------
 ; write to an open file via ProDOS MLI
@@ -295,17 +310,14 @@ SetMark
 ;      if C clear, write succeeded and A contains the same
 ;        file reference number that was passed in
 ;-------------------------------
-!zone {
 WriteFile
          sta   mliparam+1 ; store file reference number
          lda   #CMD_WRITE ; MLI write command
          ldy   #PC_WRITE  ; number of parameters for 'write' command
          jsr   mli
-         bcs   .writefile
+         bcs   +
          lda   mliparam+1 ; if no error, return file reference number
-.writefile
-         rts
-}
++        rts
 
 ;-------------------------------
 ; set file size in an open file via ProDOS MLI
@@ -317,258 +329,114 @@ WriteFile
 ;      if C clear, set_eof call succeeded and A contains
 ;        the same file reference number that was passed in
 ;-------------------------------
-!zone {
 SetEOF
          sta   mliparam+1 ; store file reference number
          lda   #CMD_SETEOF ; MLI set_eof command
          ldy   #PC_SETEOF ; number of params for 'set_eof' cmd
          jsr   mli
-         bcs   .exit
+         bcs   +
          lda   mliparam+1 ; if no error, return file refnum
-.exit    rts
-}
++        rts
 
 ;-------------------------------
 ; close an open file
-; in:  A = file reference number
-; out: if error, C set and A contains error code
-;      if success, C clear
+; in:    ProDOS is in memory
+;        A = file reference number
+; out:   if error, C set and A contains error code
+;        if success, C clear
+;        ProDOS is in memory
 ;-------------------------------
 CloseFile
-         sta   mliparam+1 ; store file reference number
-         lda   #CMD_CLOSE ; MLI close command
-         ldy   #PC_CLOSE  ; number of parameters for 'close' command
-         jsr   mli
-         rts
+         sta   mliparam+1            ; store file reference number
+         lda   #CMD_CLOSE            ; MLI close command
+         ldy   #PC_CLOSE             ; number of parameters for 'close' command
+         jmp   mli
 
 ;-------------------------------
+; Create140KFile
+;
+; in:    @mliparam+1 points to pathname
+; out:   C clear if file create+open succeeded, and A = file reference number
+;        C set on error, and A = MLI error code
+;-------------------------------
+Create140KFile
+         jsr   CreateFile
+         bcs   @exit
+         lda   #$00
+         sta   mliparam+3            ; io_buffer at address $0800
+         lda   #$08
+         sta   mliparam+4
+         jsr   OpenFile
+         bcs   @deleteAndReturn
+
+         ldx   #$00
+         stx   mliparam+2
+         ldx   #$30
+         stx   mliparam+3
+         ldx   #$02
+         stx   mliparam+4            ; set file size (140KB)
+         jsr   SetEOF
+         bcc   @exit
+
+         pha
+         jsr   CloseFile
+         pla
+
+@deleteAndReturn
+         pha                         ; save error code
+         jsr   DeleteFile            ; delete file
+         pla                         ; restore error code
+         sec
+@exit    rts
+
+;-------------------------------
+; CreateDir/CreateFile
+;
 ; create a directory or file via ProDOS MLI
 ; always sets access bits to $C3 (full access)
 ; always sets creation to 0 (current date/time)
 ; always sets storage type to $0D (directory) or 1 (file)
-; in:  caller has filled @mliparam
-;        with address of pathname,
-;        file type, aux file type
-; out: if error, C set and A contains error code
-;      if success, C clear
+; always sets file type to $0F (directory) or 6 (BIN file)
+; in:    caller has filled @mliparam+1 with address of pathname
+; out:   if error, C set and A contains error code
+;        if success, C clear and A clobbered
 ;-------------------------------
-accessbits =   $C3        ; full access
-
 CreateDir
          lda   #$0D
          ldy   #$0F
-         bne   .createFile
+         bne   +
 CreateFile
          lda   #1
          ldy   #6
-.createFile
-         sta   mliparam+7 ; storage type (directory or file)
-         sty   mliparam+4 ; file type (directory or binary)
-         lda   #accessbits
-         sta   mliparam+3 ; access bits (full access)
++        sta   mliparam+7            ; storage type (directory or file)
+         sty   mliparam+4            ; file type (directory or binary)
+         lda   #FULL_ACCESS
+         sta   mliparam+3            ; access bits (full access)
          lda   #0
-         sta   mliparam+8 ; creation date (current)
+         sta   mliparam+8            ; creation date (current)
          sta   mliparam+9
-         sta   mliparam+10 ; creation time (current)
+         sta   mliparam+10           ; creation time (current)
          sta   mliparam+11
-         lda   #CMD_CREATE ; MLI create command
-         ldy   #PC_CREATE ; number of parameters for 'create' command
+         lda   #CMD_CREATE           ; MLI create command
+         ldy   #PC_CREATE            ; number of parameters for 'create' command
          jsr   mli
          rts
 
 ;-------------------------------
+; DeleteFile
 ; delete a file using ProDOS MLI
-; in:  caller has filled @mliparam
-;        with address of pathname
-; out: if error, C set and A contains error code
-;      if success, C clear
+;
+; in:    ProDOS is in memory
+;        caller has filled @mliparam+1 with address of pathname
+; out:   if error, C set and A contains error code
+;        if success, C clear
+;        ProDOS is in memory
 ;-------------------------------
 DeleteFile
          lda   #CMD_DESTROY ; MLI destroy command
          ldy   #PC_DESTROY ; number of parameters for 'destroy' command
          jsr   mli
          rts
-
-;-------------------------------
-; CreateRAMOrHardFile - create image file on RAM or hard disk
-;   if RAM or hard disk is in use
-; in:  nothing (assumes that prefix is set already)
-; out: if C set, write failed (A contains MLI error code)
-;      if C clear, write succeeded (A is clobbered)
-;      all other flags clobbered
-;      all registers clobbered
-;-------------------------------
-!zone {
-CreateRAMOrHardFile
-         lda   gUsingHardDisk
-         lsr              ; TRUE/FALSE in C instead of Z
-         bcc   .createHardFile
-         lda   gUsingRAMDisk
-         beq   .createRAMFile
-
-.gotRAM
-         rts
-
-.createRAMFile
-         ;existing file being reused?
-
-         lda   gRAMDiskRef
-         bne   .gotRAM
-
-         ;no, create a new one
-
-.createHardFile
-         php
-         jsr   SwapProDOS
-         lda   OnlineReturn
-         and   #$0F
-         tay
-         plp
-         php
-         bcs   .prefRAM
-         clc
-         adc   #(HardDirName_e-HardDirName)+2
-         sta   DiskImgPath
-         tax
-         lda   #$2F
-         sta   DiskImgPath+1
-         sta   DiskImgPath+2,y
--        lda   OnlineReturn,y
-         sta   DiskImgPath+1,y
-         dey
-         bne   -
-         ldy   #(HardDirName_e-HardDirName)
--        lda   HardDirName-1,y
-         sta   DiskImgPath,x
-         dex
-         dey
-         bne   -
-         lda   #<DiskImgPath
-         sta   mliparam+1
-         lda   #>DiskImgPath
-         sta   mliparam+2
-         jsr   CreateDir
-
-         clc
-         lda   DiskImgPath
-         adc   #(HardDiskName_e-HardDiskName)
-         sta   DiskImgPath
-         tax
-         ldy   #(HardDiskName_e-HardDiskName)
--        lda   HardDiskName-1,y
-         sta   DiskImgPath,x
-         dex
-         dey
-         bne   -
-
-.findSpare
-         jsr   GetFileInfo
-         bcs   .foundSpare
-         ldx   DiskImgPath
-
-.nextDigit
-         inc   DiskImgPath-4,x
-         lda   DiskImgPath-4,x
-         cmp   #'9'+1
-         bcc   .findSpare
-         lda   #'0'
-         sta   DiskImgPath-4,x
-         dex
-         bne   .nextDigit
-
-.prefRAM
-         clc
-         adc   #(RAMFileName_e-RAMFileName)+1
-         sta   DiskImgPath
-         tax
-         lda   #$2F
-         sta   DiskImgPath+1,y
--        lda   OnlineReturn,y
-         sta   DiskImgPath,y
-         dey
-         bne   -
-         ldy   #(RAMFileName_e-RAMFileName)
--        lda   RAMFileName-1,y
-         sta   DiskImgPath,x
-         dex
-         dey
-         bne   -
-         jsr   DeleteRAMFile
-.foundSpare
-         jsr   CreateFile
-         bcs   .createfail
-         lda   #0
-         sta   mliparam+3
-         lda   #8
-         sta   mliparam+4
-         jsr   OpenFile
-         bcs   .openfail
-
-         plp
-         php
-         bcc   .storeHardRef
-         sta   gRAMDiskRef
-         bcs   .setSize
-
-.storeHardRef
-         sta   gHardDiskRef
-
-.setSize
-         ;140kb
-
-         ldx   #0
-         stx   mliparam+2
-         ldx   #$30
-         stx   mliparam+3
-         ldx   #2
-         stx   mliparam+4
-         jsr   SetEOF
-         lda   #0
-         rol
-
-         ;update file buffer array
-
-         plp
-         jsr   SaveProDOS
-         beq   .restore
-
-         php
-         lda   gRAMDiskRef
-         bcs   .closeRef
-         lda   gHardDiskRef
-         ldx   #0
-         stx   gHardDiskRef
-
-.closeRef
-         jsr   CloseFile
-
-.openfail
-         plp
-         php
-         pha
-         jsr   DeleteFile
-         pla
-
-.createfail
-         plp
-         bcs   .failRAM
-         jsr   SwapProDOS
-         jmp   FatalWriteError
-
-.failRAM
-         ldx   #FALSE
-         stx   gUsingRAMDisk
-
-.restore
-         jmp   SwapProDOS
-
-DiskImgPath
-         !byte $d1
-         !fill 17
-         !fill HardDirName_e-HardDirName
-         !fill HardDiskName_e-HardDiskName
-
-}
 
 ;-------------------------------
 ; WriteToFile - write memory to image file on RAM or hard disk
@@ -580,7 +448,6 @@ DiskImgPath
 ;      all other flags clobbered
 ;      all registers clobbered
 ;-------------------------------
-!zone {
 WriteToFile
          lda   mliparam+2
          pha
@@ -588,11 +455,11 @@ WriteToFile
          pha
 
          lda   mliparam+4
-         sta   .tmpparm4
+         sta   @tmpparm4
          asl
          sta   mliparam+3
          lda   mliparam+5
-         sta   .tmpparm5
+         sta   @tmpparm5
          rol
          sta   mliparam+4
          lda   #0
@@ -607,7 +474,7 @@ WriteToFile
          pla
          sta   mliparam+2
          txa
-         bcs   .done
+         bcs   @done
          lda   #0
          sta   mliparam+4
          lda   #2
@@ -617,100 +484,15 @@ WriteToFile
          lda   gRAMDiskRef
 +        jsr   WriteFile
 
-.done
-         ldx   .tmpparm4
+@done
+         ldx   @tmpparm4
          stx   mliparam+4
-         ldx   .tmpparm5
+         ldx   @tmpparm5
          stx   mliparam+5
          rts
 
-.tmpparm4 !byte 0
-.tmpparm5 !byte 0
-}
-
-;-------------------------------
-; WriteRAMToDisk - write image file in RAM to physical disk
-;   if RAM disk is in use
-; in:  nothing
-; out: if error, C set and A contains error code
-;      if success, C clear
-;      all other flags clobbered
-;      all registers clobbered
-;-------------------------------
-!zone {
-WriteRAMToDisk
-         lda   #0
-         sta   mliparam+2
-         sta   mliparam+3
-         sta   mliparam+4
-         sta   gTrack
-         jsr   SwapProDOS
-         lda   gRAMDiskRef
-         jsr   SetMark
-         jsr   SwapProDOS
-
-         jsr   RestartProgress       ; restart progress bar
-         lda   #FALSE
-         sta   gUsingRAMDisk         ; prevent track write from calling RAM again
-
--        lda   #0
-         sta   mliparam+2
-         sta   mliparam+4
-         lda   #$10
-         sta   mliparam+3
-         sta   mliparam+5
-         jsr   SwapProDOS
-         lda   gRAMDiskRef
-         jsr   ReadFile
-         jsr   SwapProDOS
-         jsr   IncProgress
-         jsr   WriteTrackMLI
-         bcs   .exit
-         lda   KEY
-         bmi   .cancel
-         inc   gTrack
-         lda   gTrack
-         cmp   #$23
-         bne   -
-
-         jsr   IncProgress
-         clc
-
-.exit
-         ldx   #TRUE
-         stx   gUsingRAMDisk
-         rts
-
-.cancel
-         jsr   .exit
-         jmp   Cancel
-
-}
-
-;-------------------------------
-; (Close)DeleteRAMFile - (close and) remove image file on RAM disk
-;   if RAM disk is in use
-; in:  nothing
-; out: if error, C set and A contains error code
-;      if success, C clear
-;      all other flags clobbered
-;      all registers clobbered
-;-------------------------------
-!zone {
-CloseDeleteRAMFile
-         lda   gRAMDiskRef
-         beq   +
-         jsr   CloseFile
-         lda   #0
-         sta   gRAMDiskRef
-DeleteRAMFile
-         lda   #<DiskImgPath
-         sta   mliparam+1
-         lda   #>DiskImgPath
-         sta   mliparam+2
-         jsr   DeleteFile
-+        rts
-}
+@tmpparm4 !byte 0
+@tmpparm5 !byte 0
 
 ;-------------------------------
 ; get volume name of disk in specific slot+drive
@@ -720,7 +502,6 @@ DeleteRAMFile
 ;      (up to 15 character name, no leading slash)
 ;      note: lower 4 bits of @OnlineReturn contain length of @VolumeName
 ;-------------------------------
-!zone {
 GetVolumeName
          sta   mliparam+1
          lda   #<OnlineReturn
@@ -733,7 +514,6 @@ OnlineReturn
 VolumeName
          !byte $FF,$FF,$FF,$FF,$FF,$FF,$FF
          !byte $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
-}
 
 ;-------------------------------
 ; check if volume is online
@@ -752,10 +532,11 @@ Online
 ;-------------------------------
 ; query volume information
 ; using ProDOS MLI
-; in:  nothing (queries last fetched volume)
-; out: if error, C set and A contains error code
-;      if success, C clear and MLI buffer is filled
-;      (access, file type, block count, dates and times)
+; in:    @OnlineReturn+@VolumeName contain the length+name of the volume to query
+;        (this will be true if you just called GetVolumeName)
+; out:   if error, C set and A contains error code
+;        if success, C clear and MLI buffer is filled
+;        (access, file type, block count, dates and times)
 ;-------------------------------
 GetVolumeInfo
          lda   OnlineReturn

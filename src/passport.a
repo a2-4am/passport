@@ -153,6 +153,8 @@ FirstMover
          !source "memory.a"
          !source "sectormap.a"
          !source "mli.a"
+         !source "ramdisk.a"
+         !source "harddisk.a"
          !source "slots.a"
          !source "prefs.a"
          !source "keys.a"
@@ -169,6 +171,9 @@ ResetVector
          sta   $C004
          sta   $C00C
          sta   $C00E
+         jsr   ThisSlot
+         ; /!\ execution falls through here
+
 MainMenu
          lda   #<ResetVector
          sta   $03F2
@@ -183,24 +188,15 @@ MainMenu
          jsr   PrintByID
          lda   #s_mainmenu
          jsr   PrintByID
-         ldx   gUsingHardDisk
-         beq   .usingharddisk
-         lda   SLOT
-         and   #$0F
-         ora   #$C0
-         ldx   #$28
-         ldy   #$06
-         jsr   CompareMemory
-         !byte $20,$33,$CD
-         !byte $18
-         !byte $90,$2E
-         bcc   .usingcffa
+         bit   gTargetType
+         bmi   @usingHardDisk
+         bvs   @usingCFFA
          lda   #s_targetdisk
          !byte $2C
-.usingcffa
+@usingCFFA
          lda   #s_targetcffa
          !byte $2C
-.usingharddisk
+@usingHardDisk
          lda   #s_targetfile
          jsr   PrintByID
 .getkey
@@ -218,30 +214,23 @@ MainMenu
          bne   +
 .jmptoexit
          jmp   CleanExit
-+
-         cmp   #k_slot
++        cmp   #k_slot
          bne   +
          jsr   NextSlot
          lda   #TRUE
          sta   gChangedPrefs
-         jmp   MainMenu
-+
-         cmp   #k_verify
+         beq   MainMenu   ; always branches
++        cmp   #k_verify
          bne   +
          lda   #%00000000
          beq   Action     ; unconditional branch
-+
-         cmp   #k_crack
++        cmp   #k_crack
          bne   .getkey
          lda   #%11000000
-
-; note: execution falls through here
-
+         ; /!\ execution falls through here
 Action
          sta   gMode
-         bpl   +
-         jsr   CreateRAMOrHardFile
-+        jsr   ResetProgress
+         jsr   ResetProgress
          jsr   InitSectorMap
 Reaction
          lda   #FALSE
@@ -264,6 +253,29 @@ Reaction
          jsr   PrintByID
          lda   VPOS
          sta   TEXTTOP
+
+         lda   gMode
+         bpl   @printReading         ; don't create RAM disk or hard disk file in verify mode
+         jsr   LookupUnitNumberOfSelectedHardDisk
+         beq   @notHardDrive
+         jsr   SwapProDOS            ; ProDOS out -> in
+         jsr   CreateFileOnHardDisk
+         jsr   SwapProDOS            ; ProDOS in -> out (preserves flags)
+         bcc   @printReading
+         jmp   FatalWriteError       ; failed to create target file on hard disk
+                                     ; this is fatal
+@notHardDrive
+         lda   RAMDiskImagePath
+         beq   @printReading         ; no RAM disk available
+         jsr   SwapProDOS            ; ProDOS out -> in
+         jsr   CreateFileOnRAMDisk
+         jsr   SwapProDOS            ; ProDOS in -> out (preserves flags)
+         bcc   @printReading
+         lda   #0                    ; failed to create temporary file on RAM disk
+         sta   RAMDiskImagePath      ; this is not fatal, but we'll mark the RAM
+                                     ; disk as unavailable so we don't bother with it
+         ; /!\ execution falls through here
+@printReading
          lda   #s_reading
          jsr   PrintByID
          lda   #$B2
@@ -551,26 +563,32 @@ nextsector
          bcs   .linkread
 Pass
          bit   gMode
-         bpl   .passverify
-         lda   gUsingHardDisk
-         beq   +
-         lda   gUsingRAMDisk
-         bne   +
+         bpl   @passVerify
+         lda   gRAMDiskRef
+         beq   @printFinalMessage    ; not using RAM disk, so we're done
+
+         ; we've written the entire cracked disk as a file on the RAM disk,
+         ; now a second pass to write that file out to the target disk drive
          lda   #s_writingto
          jsr   PrintByID
          lda   #s_slotanddrive
          jsr   PrintByID
+         jsr   SwapProDOS            ; ProDOS out -> in
          jsr   WriteRAMToDisk
-         bcc   +
+         jsr   SwapProDOS            ; ProDOS in -> out (preserves flags)
+         bcc   @printFinalMessage
          jmp   FatalWriteError
-+        lda   #s_passcrack0
-         ldx   gPatchCount
-         beq   .passprint
-         lda   #s_passcrack
-         !byte $2C        ; hide next 2 bytes
-.passverify
-         lda   #s_pass
-.passprint
+
+@printFinalMessage
+         lda   gPatchCount
+         beq   @passWithZeroPatches
+         lda   #s_passcrack          ; 'crack complete'
+         !byte $2C
+@passWithZeroPatches
+         lda   #s_passcrack0         ; 'crack complete but no patches'
+         !byte $2C
+@passVerify
+         lda   #s_pass               ; 'verification complete'
          jsr   PrintByID
          jmp   TheEnd
 
@@ -638,15 +656,11 @@ FatalError
 
 TheEnd
          lda   $C0E8
-         lda   gHardDiskRef
-         ora   gRAMDiskRef
-         beq   +
-         jsr   SwapProDOS
-         jsr   CloseDeleteRAMFile    ; does nothing if RAM disk was not used
-         lda   gHardDiskRef
-         jsr   CloseFile
-         jsr   SwapProDOS
-+        lda   #s_done
+         jsr   SwapProDOS            ; ProDOS out -> in
+         jsr   DeleteFileOnRAMDisk   ; always safe to call
+         jsr   CloseFileOnHardDisk   ; always safe to call
+         jsr   SwapProDOS            ; ProDOS in -> out
+         lda   #s_done
          jsr   PrintByID
          jsr   WaitForKey
          cmp   #$9B
@@ -679,7 +693,7 @@ CleanExit
          lda   gChangedPrefs
          bne   +
          jsr   SavePrefs
-+        jsr   CloseDeleteRAMFile
++        jsr   DeleteFileOnRAMDisk   ; always safe to call
          jsr   MLI                   ; does not return
          !byte $65
          !word .quitparm
@@ -697,46 +711,49 @@ MLI_WRITEPROT = $2B
 
 WriteTrack
          jsr   AnalyzeTrack
-WriteTrackNA              ; entry point used by Special Delivery tracer
-                          ; to write track with "N"o "A"nalysis
+WriteTrackNA                         ; entry point used by Special Delivery tracer
+                                     ; to write track with 'N'o 'A'nalysis
          bit   gMode
-         bpl   .exit      ; verify mode -> no write
+         bpl   @exit                 ; don't write anything in verify mode
          lda   gSaidWriting
-         beq   .write     ; only print 'writing to' message once
+         beq   @doTheWriteThing      ; only print 'writing to' message once
+
+         ; we haven't yet printed any 'writing to...' message in the log, so
+         ; figure out what that should look like and do it now
          lda   #s_writingto
          jsr   PrintByID
-         ldx   gUsingHardDisk
-         bne   +
-         lda   DiskImgPath
-         sta   .volumelen
-         ldx   #0
--        lda   DiskImgPath+1, x
-         ora   #$80
-         jsr   PrintA
-         inx
-.volumelen=*+1
-         cpx   #$FD       ; SMC
-         bcc   -
-         lda   #$8D
-         jsr   PrintA
-         bvc   ++         ; always branches
-+        lda   #s_ramdisk
-         ldx   gUsingRAMDisk
-         beq   +
-         lda   #s_slotanddrive
-+        jsr   PrintByID
-++       lda   #TRUE
+
+         lda   gHardDiskRef
+         beq   @maybeWritingToRAMDisk
+         ; we are writing to a file on a hard disk, so print the
+         ; full pathname of that file
+         jsr   PrintHardDiskImagePath
+         bvc   @doneSaidWriting      ; always branches
+
+@maybeWritingToRAMDisk
+         lda   gRAMDiskRef
+         beq   @notWritingToRAMDisk
+         lda   #s_ramdisk            ; writing to (a file on) a RAM disk
+         !byte $2C
+@notWritingToRAMDisk
+         lda   #s_slotanddrive       ; writing to a slot and drive
+         jsr   PrintByID
+
+@doneSaidWriting
+         lda   #TRUE
          sta   gSaidWriting
-.write
-         jsr   WriteTrackMLI
+
+@doTheWriteThing
+         jsr   SwapProDOS            ; ProDOS out -> in
+         jsr   WriteTrackFirstPass
+         jsr   SwapProDOS            ; ProDOS in -> out
          bcs   FatalWriteError
-.exit
-         rts
+@exit    rts
 
 ;-------------------------------
 ; FatalWriteError
-; in:    A has MLI code (from WriteTrackMLI)
-; out:   exits via TheEnd
+; in:    A has MLI code (from WriteTrackFirstPass or WriteTrackSecondPass)
+; out:   does not return, exits via TheEnd
 ;-------------------------------
 FatalWriteError
          sta   gDisplayBytes ; for use in error messages, if any
@@ -950,6 +967,7 @@ LastMover
   !warn "GetVolumeName=",GetVolumeName
   !warn "OnlineReturn=",OnlineReturn
   !warn "VolumeName=",VolumeName
+  !warn "RAMDiskImagePath=",RAMDiskImagePath
   !warn "GetVolumeInfo=",GetVolumeInfo
   !warn "mliparam=",mliparam
   !warn "access=",access
@@ -965,4 +983,5 @@ LastMover
   !warn "kForceLower=",kForceLower
   !warn "PrintByID=",PrintByID
   !warn "DiskIIArray=",DiskIIArray
+  !warn "HardDiskArray=",HardDiskArray
 }

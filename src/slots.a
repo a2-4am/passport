@@ -1,62 +1,85 @@
 DiskIIArray
-         !byte 00,00,00,00,00,00,00
-HardDiskArray                                   ; must be immediately after DiskIIArray
-         !byte 00,00,00,00,00,00,00
-         !byte 00,00,00,00,00,00,00,00
+         !fill 7
+HardDiskArray
+         !fill 15
 
 ;-------------------------------
 ; NextSlot
-; in:    DiskIIArray, HardDiskArray filled by calling
-;          ScanForDiskII and ScanForRAMAndHardDisks
-; out:   @SLOT, @DRIVE set to ASCII values of
-;          next available slot/drive
-;        @g
+; in:    DiskIIArray populated by calling ScanForDiskII
+;        HardDiskArray populated by calling ScanForRAMAndHardDisks
+; out:   @SLOT, @DRIVE set to ASCII values of next available slot/drive
+;        @gTargetType set based on type of target (see apidefs.a for values)
 ;-------------------------------
-!zone {
 NextSlot
-         ldy   #FALSE
          lda   DRIVE
          cmp   #$31
-         bne   .incslot
-         lda   #$32
+         bne   NextSlotLoop
+         lda   #$32                  ; cycle from drive 1 to drive 2 of the same slot
          sta   DRIVE
-         bne   .getslot   ; unconditional branch
-.incslot
-         lda   #$31
+         bne   ThisSlot              ; always branches
+NextSlotLoop
+         lda   #$31                  ; cycle to drive 1 of the next slot
          sta   DRIVE
          inc   SLOT
-.getslot
+ThisSlot
          lda   SLOT
          cmp   #$38
-         bne   .nowrap
-         lda   #$31
+         bne   +
+         lda   #$31                  ; cycle from slot 7 back to slot 1
          sta   SLOT
-.nowrap
++        sec
+         sbc   #$30
+         tax
+         lda   DiskIIArray-1, x
+         beq   @maybeHardDisk
+
+         lda   SLOT
+         and   #$0F
+         ora   #$C0
+         ldx   #$28
+         ldy   #$06
+         jsr   CompareMemory         ; check for signature of CFFA3000 virtual drive in slot ROM
+         !byte $20,$33,$CD
+         !byte $18
+         !byte $90,$2E
+         bcc   @foundCFFA
+
+         lda   SLOT
+         cmp   #$36
+         bne   @foundDiskII
+         lda   #$32                  ; never return S6,D1
+         sta   DRIVE
+         bne   @foundDiskII          ; always branches
+
+@maybeHardDisk
+         jsr   LookupUnitNumberOfSelectedHardDisk ; see if we found a hard disk
+         beq   NextSlotLoop          ; no hard disk at this location, keep cycling
+
+         lda   #ID_FILE_ON_HARD_DISK
+         !byte $2C
+@foundCFFA
+         lda   #ID_CFFA_VIRTUAL_DISK
+         !byte $2C
+@foundDiskII
+         lda   #ID_DISK_II
+         sta   gTargetType
+         rts
+
+LookupUnitNumberOfSelectedHardDisk
+; in:    HardDiskArray populated
+; out:   if selected slot and drive contain a suitable hard disk
+;          then A=ProDOS unit number, Z=0
+;        otherwise A=0, Z=1
+;        X clobbered
+         lda   SLOT
          sec
          sbc   #$30
          tax
-         lda   DiskIIArray-1,x
-         bne   .done
          lda   DRIVE
          lsr
-         bcs   .checkdrive
+         bcs   +
          txa
          ora   #8
          tax
-.checkdrive
-         lda   HardDiskArray-1,x
-         beq   .incslot
-         jsr   SwapProDOS            ; preserves A
-         jsr   GetVolumeName
-         jsr   SwapProDOS
-         ldy   #TRUE
-.done
-         sty   gUsingHardDisk
-         lda   SLOT
-         cmp   #$36
-         bne   .reallydone
-         lda   #$32
-         sta   DRIVE
-.reallydone
++        lda   HardDiskArray-1, x
          rts
-}

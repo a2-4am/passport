@@ -1,0 +1,145 @@
+HardDirName    !raw "PASSPORT"
+HardDirName_e
+
+HardDiskName    !raw "/IMG0000.DSK"
+HardDiskName_e
+
+HardDiskImagePath
+         !byte 0                                ; length byte
+         !fill 1                                ; / character
+         !fill 15                               ; longest possible volume name
+         !fill 1                                ; / character
+         !fill HardDirName_e-HardDirName        ; directory name (constant, see above)
+         !fill HardDiskName_e-HardDiskName      ; filename with leading slash
+                                                ; (modified at runtime but always the same length)
+
+;-------------------------------
+; CreateFileOnHardDisk
+; create a new autonumbered image file on the user's selected target,
+; which should be a hard disk
+;
+; in:    HardDiskArray populated
+;        user's select target is a hard disk
+;        ProDOS is in memory
+; out:   if C set, create or open failed (A contains MLI error code)
+;        if C clear, everything succeeded (A is clobbered)
+;        all other registers and flags clobbered
+;-------------------------------
+CreateFileOnHardDisk
+         jsr   LookupUnitNumberOfSelectedHardDisk
+         jsr   GetVolumeName
+         lda   OnlineReturn
+         and   #$0F                  ; A=volume name length
+         tay
+         clc
+         adc   #(HardDirName_e-HardDirName)+2
+         sta   HardDiskImagePath
+         tax
+         lda   #$2F
+         sta   HardDiskImagePath+1
+         sta   HardDiskImagePath+2, y
+-        lda   OnlineReturn, y
+         sta   HardDiskImagePath+1, y
+         dey
+         bne   -
+         ldy   #(HardDirName_e-HardDirName)
+-        lda   HardDirName-1, y
+         sta   HardDiskImagePath, x
+         dex
+         dey
+         bne   -
+
+         ; @HardDiskImagePath = fully qualified pathname of target volume +
+         ;   our hardcoded directory
+
+         lda   #<HardDiskImagePath
+         sta   mliparam+1
+         lda   #>HardDiskImagePath
+         sta   mliparam+2
+         jsr   CreateDir                        ; create hardcoded directory
+                                                ; (don't care if this fails)
+         lda   HardDiskImagePath
+         clc
+         adc   #(HardDiskName_e-HardDiskName)
+         sta   HardDiskImagePath
+         tax
+         ldy   #(HardDiskName_e-HardDiskName)
+-        lda   HardDiskName-1, y
+         sta   HardDiskImagePath, x
+         dex
+         dey
+         bne   -
+
+         ; @HardDiskImagePath = fully qualified pathname of target volume +
+         ;   our hardcoded directory + our default filename
+         ; This file might already exist, in which case we will repeatedly
+         ; construct sequentially numbered filenames until we find one that
+         ; doesn't exist.
+
+@findSpare
+         jsr   GetFileInfo
+         bcs   @tryCreate                       ; branch if file does not exist (good)
+
+         ; construct next filename
+         ; (filename starts as IMG0000.DSK so we ignore the last 4 characters
+         ; and increment the digits as base 10)
+
+         ldx   HardDiskImagePath
+@nextDigit
+         inc   HardDiskImagePath-4, x
+         lda   HardDiskImagePath-4, x
+         cmp   #'9'+1
+         bcc   @findSpare                       ; loop back to check if new filename exists
+         lda   #'0'
+         sta   HardDiskImagePath-4, x
+         dex
+         bne   @nextDigit
+
+@tryCreate
+         ; @mliparam+1 still points to @HardDiskImagePath, which now contains
+         ; the full pathname of the file we want to create
+
+         jsr   Create140KFile
+         bcs   +
+         sta   gHardDiskRef
++        rts
+
+;-------------------------------
+; CloseFileOnHardDisk
+; close the previously open file on a hard disk, if any
+;
+; always safe to call (gracefully returns if no file is open)
+; does not return any error status because no one cares
+;
+; in:    ProDOS is in memory
+; out:   ProDOS is in memory
+;        all registers and flags clobbered
+;-------------------------------
+CloseFileOnHardDisk
+         lda   gHardDiskRef
+         beq   +
+         jsr   CloseFile
+         lda   #0
+         sta   gHardDiskRef
++        rts
+
+;-------------------------------
+; PrintHardDiskImagePath
+; print full path of file on hard disk
+;
+; in:    @HardDiskImagePath must be populated and have non-zero length
+; out:   all registers and flags clobbered
+;-------------------------------
+PrintHardDiskImagePath
+         lda   HardDiskImagePath
+         sta   @volumelen
+         ldx   #0
+-        lda   HardDiskImagePath+1, x
+         ora   #$80
+         jsr   PrintA
+         inx
+@volumelen=*+1
+         cpx   #$FD       ; SMC
+         bcc   -
+         lda   #$8D
+         jmp   PrintA

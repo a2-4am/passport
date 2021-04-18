@@ -26,6 +26,7 @@ for /f "tokens=2,3 delims=)" %%q in ('find "RELBASE =" ..\build\out.txt') do set
 for /f "tokens=4,* delims=:(" %%q in ('find "SaveProDOS=" ..\build\out.txt') do echo %%q > ..\build\vars.a
 for /f "tokens=4,* delims=:(" %%q in ('find "kForceLower=" ..\build\out.txt') do echo %%q >> ..\build\vars.a
 for /f "tokens=4,* delims=:(" %%q in ('find "DiskIIArray=" ..\build\out.txt') do echo %%q >> ..\build\vars.a
+for /f "tokens=4,* delims=:(" %%q in ('find "HardDiskArray=" ..\build\out.txt') do echo %%q >> ..\build\vars.a
 for /f "tokens=4,* delims=:(" %%q in ('find "PrintByID=" ..\build\out.txt') do echo %%q >> ..\build\vars.a
 for /f "tokens=4,* delims=:(" %%q in ('find "WaitForKey=" ..\build\out.txt') do echo %%q >> ..\build\vars.a
 for /f "tokens=4,* delims=:(" %%q in ('find "CleanExit=" ..\build\out.txt') do echo %%q >> ..\build\vars.a
@@ -35,6 +36,7 @@ for /f "tokens=4,* delims=:(" %%q in ('find "GetVolumeInfo=" ..\build\out.txt') 
 for /f "tokens=4,* delims=:(" %%q in ('find "filetype=" ..\build\out.txt') do echo %%q >> ..\build\vars.a
 for /f "tokens=4,* delims=:(" %%q in ('find "access=" ..\build\out.txt') do echo %%q >> ..\build\vars.a
 for /f "tokens=4,* delims=:(" %%q in ('find "VolumeName=" ..\build\out.txt') do echo %%q >> ..\build\vars.a
+for /f "tokens=4,* delims=:(" %%q in ('find "RAMDiskImagePath=" ..\build\out.txt') do echo %%q >> ..\build\vars.a
 for /f "tokens=4,* delims=:(" %%q in ('find "auxtype=" ..\build\out.txt') do echo %%q >> ..\build\vars.a
 for /f "tokens=4,* delims=:(" %%q in ('find "blocks=" ..\build\out.txt') do echo %%q >> ..\build\vars.a
 for /f "tokens=4,* delims=:(" %%q in ('find "PREFSVER=" ..\build\out.txt') do echo %%q >> ..\build\vars.a

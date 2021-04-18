@@ -1,54 +1,65 @@
+SlashRAM       !raw "/RAM"
+SlashRAM_e
+
+RAMFileName    !raw "PASSPORTTMP.DSK"
+RAMFileName_e
+
 ;-------------------------------
 ; ScanForDiskII
-; scan all slots for things that
-; look like Disk II cards
+; scan all slots for things that look like Disk II cards
 ;
-; out: all registers clobbered
-;      all flags clobbered
-;      DiskIIArray filled with 00 or FF
+; in:    none
+; out:   DiskIIArray populated
+;        all registers and flags clobbered
 ;-------------------------------
-!zone {
 ScanForDiskII
          lda   #$00
          sta   cmp1
          ldx   #$07
-.fingerprint
-         txa
+-        txa
          ora   #$C0
          sta   cmp1+1
          ldy   #$01
-         lda   (cmp1),y
+         lda   (cmp1), y
          cmp   #$20
-         bne   .next
+         bne   +
          ldy   #$03
-         lda   (cmp1),y
-         bne   .next
+         lda   (cmp1), y
+         bne   +
          ldy   #$05
-         lda   (cmp1),y
+         lda   (cmp1), y
          cmp   #$03
-         bne   .next
+         bne   +
          ldy   #$FF
-         lda   (cmp1),y
-         bne   .next
+         lda   (cmp1), y
+         bne   +
          tya
-         sta   DiskIIArray-1,x
-.next
-         dex
-         bne   .fingerprint
+         sta   DiskIIArray-1, x
++        dex
+         bne   -
          rts
-}
 
-!zone {
+;-------------------------------
+; ScanForRAMAndHardDisks
+; scan all slots for things that look like RAM disks or hard drives
+;
+; in:    none
+; out:   HardDriveArray populated
+;        RAMDiskImagePath possibly populated (if a suitable RAM disk was found)
+;        all registers and flags clobbered
+;-------------------------------
 ScanForRAMAndHardDisks
          lda   #$00
          sta   iunit
--        lda   iunit
+@nextunit
+         lda   iunit
          clc
          adc   #$10
          sta   iunit
-         beq   .done
-         cmp   #$80
-         beq   -
+         bne   +
+         rts
++        cmp   #$80
+         beq   @nextunit
          pha
          and   #$70
          lsr
@@ -57,60 +68,52 @@ ScanForRAMAndHardDisks
          lsr
          tay
          pla
-         ldx   DiskIIArray-1,y
-         bne   -                     ; ScanForDiskII already detected that this slot is a floppy drive, so skip it
+         ldx   DiskIIArray-1, y
+         bne   @nextunit             ; ScanForDiskII already detected that this slot is a floppy drive, so skip it
          jsr   GetVolumeName
-         bcs   -                     ; can't get a volume name, so skip it
+         bcs   @nextunit             ; can't get a volume name, so skip it
          lda   OnlineReturn
          and   #$0F
-         beq   -                     ; volume name length=0 means an error occurred, so skip it
+         beq   @nextunit             ; volume name length=0 means an error occurred, so skip it
          jsr   GetVolumeInfo
          lda   filetype
          and   #$0F
          cmp   #$0F
-         bne   -                     ; ProDOS volume type says this isn't a directory, so skip it
+         bne   @nextunit             ; ProDOS volume type says this isn't a directory, so skip it
          lda   access
          and   #$02
-         beq   -                     ; volume is not writeable, so skip it
+         beq   @nextunit             ; volume is not writeable, so skip it
 
-         ;check free space
-         ;need at least $118 blocks
-
-         sec
+         ; check free space on volume (need at least $118 blocks)
          lda   auxtype
+         sec
          sbc   blocks
          tax
          lda   auxtype+1
          sbc   blocks+1
          cmp   #1
-         bcc   -                     ; not enough free space, so skip it
+         bcc   @nextunit             ; not enough free space, so skip it
          bne   +
          cpx   #$18
-         bcc   -                     ; not enough free space, so skip it
-+        ldx   #TRUE
-
-         ;check for RAM[x] by name
-
-         ldy   OnlineReturn
-         cpy   #4
-         beq   +
-         cpy   #5
-         bne   ++
-         dey
+         bcc   @nextunit             ; not enough free space, so skip it
 +
---       lda   SlashRAM-1,y
-         cmp   VolumeName-1,y
-         bne   ++
-         dey
-         bne   --
+         ; check if this volume is a RAM disk
+         ; if so, we will use it as temporary storage when writing to a disk in a disk drive
+         ; (writing to a file on the RAM disk, then writing that to the target disk all at once)
+         jsr   .IsRAMDisk
+         bne   @foundHardDrive
 
-         stx   gUsingRAMDisk
-         beq   - ;continue search, always taken
+         lda   RAMDiskImagePath
+         bne   @nextunit             ; we already found a suitable RAM disk, so skip this one
 
-.done
-         rts
+         ; now that we've found the first suitable RAM disk, construct
+         ; the full path of the RAM disk image file and store it in
+         ; RAMDiskImagePath
+         jsr   .ConstructRAMDiskImagePath
+         beq   @nextunit             ; always branches
 
-++       lda   iunit
+@foundHardDrive
+         lda   iunit
          pha
          lsr
          lsr
@@ -118,12 +121,58 @@ ScanForRAMAndHardDisks
          lsr
          tay
          pla
-         sta   DiskIIArray+7-1,y ;;HardDiskArray-1,y
-;         stx   gHardDiskExists
-         bne   - ;continue search, always taken
+         sta   HardDiskArray-1, y
+         bne   @nextunit             ; always branches
 
-SlashRAM !byte $2F, $52, $41, $4D
-}
+.IsRAMDisk
+; in:    @OnlineReturn+@VolumeName contains length+name of a ProDOS volume
+; out:   Z=1 if volume is a suitable RAM disk
+;        Z=0 otherwise
+;        all other registers and flags clobbered
+         lda   OnlineReturn
+         and   #$0F
+         cmp   #4
+         beq   +
+         cmp   #5
+         bne   @exit                 ; volume name isn't the right length for a supported RAM disk
++
+         ; due to limitations of the ProDOS API, we settle for checking if the volume name =
+         ; 'RAM' or 'RAMn' where n is a slot number, which covers the common cases ('RAM3' for
+         ; third-party memory cards, 'RAM5' on a IIgs)
+
+         ldy   #(SlashRAM_e-SlashRAM)
+-        lda   SlashRAM-1, y
+         cmp   VolumeName-1, y
+         bne   @exit                 ; volume name does not match 'RAM' or 'RAMn' pattern
+         dey
+         bne   -
+@exit    rts
+
+.ConstructRAMDiskImagePath
+; in:    @OnlineReturn+@VolumeName contains length+name of RAM disk
+; out:   Z=1
+;        Y=0
+;        all other registers and flags clobbered
+         lda   OnlineReturn
+         and   #$0F
+         tay
+         clc
+         adc   #(RAMFileName_e-RAMFileName)+1
+         sta   RAMDiskImagePath
+         tax
+         lda   #$2F
+         sta   RAMDiskImagePath+1, y
+-        lda   OnlineReturn, y
+         sta   RAMDiskImagePath, y
+         dey
+         bne   -
+         ldy   #(RAMFileName_e-RAMFileName)
+-        lda   RAMFileName-1, y
+         sta   RAMDiskImagePath, x
+         dex
+         dey
+         bne   -
+         rts
 
 ;-------------------------------
 ; LoadPrefs
@@ -140,11 +189,9 @@ LoadPrefs
          !word PREFSREADLEN
          !word PREFSBUFFER
          jsr   ValidatePrefs
-         bcc   .goodprefs
+         bcc   +
          jmp   SavePrefs
-
-.goodprefs
-         rts
++        rts
 
 ;-------------------------------
 ; LoadFile1Shot
@@ -164,7 +211,6 @@ LoadPrefs
 ;      all registers clobbered
 ;      stack set to next instruction after parameters
 ;-------------------------------
-!zone {
 LoadFile1Shot
          clc
          pla
@@ -179,33 +225,33 @@ LoadFile1Shot
          pha
 
          ldy   #$01
-         lda   ($00),y    ; lo byte of pathname
+         lda   ($00), y    ; lo byte of pathname
          sta   mliparam+1
          iny
-         lda   ($00),y    ; hi byte of pathname
+         lda   ($00), y    ; hi byte of pathname
          sta   mliparam+2
          ldy   #$07
-         lda   ($00),y    ; lo byte of ProDOS file buffer
+         lda   ($00), y    ; lo byte of ProDOS file buffer
          sta   mliparam+3
          iny
-         lda   ($00),y    ; hi byte of ProDOS file buffer
+         lda   ($00), y    ; hi byte of ProDOS file buffer
          sta   mliparam+4
 
          jsr   OpenFile
-         bcs   .loadfile1s ; C set on error
+         bcs   @exit      ; C set on error
 
          pha              ; push file reference number
          ldy   #$03
-         lda   ($00),y    ; lo address of data buffer
+         lda   ($00), y   ; lo address of data buffer
          sta   mliparam+2
          iny
-         lda   ($00),y    ; hi address of data buffer
+         lda   ($00), y   ; hi address of data buffer
          sta   mliparam+3
          iny
-         lda   ($00),y    ; lo data length
+         lda   ($00), y   ; lo data length
          sta   mliparam+4
          iny
-         lda   ($00),y    ; hi data length
+         lda   ($00), y   ; hi data length
          sta   mliparam+5
          pla              ; pull file reference number
          jsr   ReadFile
@@ -216,6 +262,4 @@ LoadFile1Shot
          plp              ; restore flags from readfile
                           ; (so caller gets codes from read attempt,
                           ; not close)
-.loadfile1s
-         rts
-}
+@exit    rts

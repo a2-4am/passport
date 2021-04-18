@@ -22,6 +22,14 @@ ID_MECC3    = $03
 ID_MECC4    = $04
 ID_MECC_UNK = $FF
 
+;-------------------------------
+;target types (for gTargetType)
+;-------------------------------
+
+ID_DISK_II           = %00000000     ; BIT + BPL + BVC -> target is Disk II drive
+ID_CFFA_VIRTUAL_DISK = %01000000     ; BIT + BPL + BVS -> target is a CFFA3000-managed virtual disk drive
+ID_FILE_ON_HARD_DISK = %10000000     ; BIT + BMI ->       target is a file on a hard disk
+
 ; Zero-page addresses we use for variables
 nibsrcindex =  $EC        ; byte
 nibdestindex = $ED        ; byte
@@ -116,10 +124,9 @@ gIs13Sector                   = gIsInfocom18-$01                  ; byte
 gMECCFastloadType             = gIs13Sector-$01                   ; byte
 
 gOnAClearDayYouCanReadForever = gMECCFastloadType-$01             ; byte
-gUsingRAMDisk                 = gOnAClearDayYouCanReadForever-$01 ; byte
-gRAMDiskRef                   = gUsingRAMDisk-$01                 ; byte
-gUsingHardDisk                = gRAMDiskRef-1                     ; byte
-gHardDiskRef                  = gUsingHardDisk-$01                ; byte
+gTargetType                   = gOnAClearDayYouCanReadForever-$01 ; byte
+gRAMDiskRef                   = gTargetType-$01                   ; byte
+gHardDiskRef                  = gRAMDiskRef-$01                   ; byte
 gDisplayBytes                 = gHardDiskRef-$0A                  ; 10 bytes
 jcompare                      = gDisplayBytes-$03                 ; 3-byte
 jmodify                       = jcompare-$03                      ; 3-byte
@@ -193,9 +200,8 @@ ConstructStandardDelivery = jConstructStandardDelivery
 !warn "gIsInfocom18=",gIsInfocom18
 !warn "gIs13Sector=",gIs13Sector
 !warn "gOnAClearDayYouCanReadForever=",gOnAClearDayYouCanReadForever
-!warn "gUsingRAMDisk=",gUsingRAMDisk
+!warn "gTargetType=",gTargetType
 !warn "gRAMDiskRef=",gRAMDiskRef
-!warn "gUsingHardDisk=",gUsingHardDisk
 !warn "gHardDiskRef=",gHardDiskRef
 !warn "gDisplayBytes=",gDisplayBytes
 !warn "jcompare=",jcompare

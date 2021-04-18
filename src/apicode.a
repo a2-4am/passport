@@ -37,19 +37,14 @@
          !fill 10         ; array of ten bytes for use as
                           ; substitution strings
 ;gHardDiskRef
-         !byte 00         ; handle of hard disk file
+         !byte 00         ; ProDOS file reference number of target file on hard disk
                           ; non-zero if open
-;gUsingHardDisk
-         !byte FALSE      ; 0=true, 1=false
-
-;gHardDiskExists
-;         !byte FALSE      ; 0=true, 1=false
-
 ;gRAMDiskRef
-         !byte 00         ; handle of RAM disk
+         !byte 00         ; ProDOS file reference number of temporary file on RAM disk
                           ; non-zero if open
-;gUsingRAMDisk
-         !byte FALSE      ; 0=true, 1=false
+;gTargetType
+         !byte FALSE      ; target type (disk drive, CFFA virtual drive, file on hard disk)
+                          ; see apidefs.a for values
 
 ;gOnAClearDayYouCanReadForever
          !byte FALSE      ; 0=true, 1=false

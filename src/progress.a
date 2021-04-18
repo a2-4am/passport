@@ -17,8 +17,7 @@ RestartProgress
          pla
          sta   VPOS
          jsr   $FC22
-
-; note: execution falls through here
+         ; /!\ execution falls through here
 
 ResetProgress
          lda   #$82       ; reset progress indicator
