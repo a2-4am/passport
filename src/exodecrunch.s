@@ -64,6 +64,7 @@ EXTRA_TABLE_ENTRY_FOR_LENGTH_THREE = 1
 ; -------------------------------------------------------------------
 ; zero page addresses used
 ; -------------------------------------------------------------------
+zp_show_progress_ui = $a6
 zp_len_lo = $a7
 zp_len_hi = $a8
 
@@ -155,13 +156,17 @@ decrunch:
 ; -------------------------------------------------------------------
 ; show initial on-screen progress UI
 ;
+        ror
+        sta zp_show_progress_ui
+        bit zp_show_progress_ui
+        bpl done_init_progress_loop
         ldy #7
 init_progress_loop:
         lda progress_char,y
         jsr show_one_progress_char
         dey
         bpl init_progress_loop
-
+done_init_progress_loop:
 ; -------------------------------------------------------------------
 ; init zeropage, x and y regs. (12 bytes)
 ;
@@ -240,6 +245,8 @@ no_hi_decr:
         sta (zp_dest_lo),y
 
 ; periodically update on-screen progress UI
+        bit zp_show_progress_ui
+        bpl dont_update_progress_ui
         dec progress_counter
         bne dont_update_progress_ui
         tya
