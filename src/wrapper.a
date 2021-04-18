@@ -4,59 +4,57 @@
 
          !source "../build/vars.a"
 
-         lda   $BF98 ;MachineID
-         and   #$20  ;64kb+
+         lda   $BF98                 ; ProDOS MachineID
+         and   #$20                  ; at least 64K?
          bne   good_mem
-         jsr   $BF00
-         !byte $65
+         jsr   $BF00                 ; immediately quit on 48K machine
+         !byte $65                   ; (but congratulations on launching Passport at all)
          !word quit
 quit     !byte 4
 
 good_mem
+         jsr   $FE89                 ; PR#0
+         jsr   $FE93                 ; IN#0
+         jsr   $FB2F                 ; TEXT
+         jsr   $FC58                 ; HOME
          jsr   decrunch
-         sty   $fe ;;zp_dest_lo
-
-MACHINEID =    $FBB3
+         sty   $fe                   ;;zp_dest_lo
 
 OneTimeSetup
-         lda   $C0E8
-         jsr   SaveProDOS
-         ldx   MACHINEID
-         cpx   #$EA
-         bne   .slotscan
-         lda   #$DF
+         jsr   SaveProDOS            ; save a copy of ProDOS system global page
+         lda   $FBB3                 ; ROM MachineID
+         cmp   #$EA                  ; ][+?
+         bne   +
+         lda   #$DF                  ; AND mask to force characters to uppercase on ][+
          sta   kForceLower
-.slotscan
-         jsr   ScanForDiskII
++
+         jsr   ScanForDiskII         ; scan slots for Disk II drives
          lda   DiskIIArray+5
-         bne   .founds6
-         lda   #s_noslot6
+         bne   +
+         lda   #s_noslot6            ; no Disk II in slot 6, this is fatal
          jsr   PrintByID
          jsr   WaitForKey
          jmp   CleanExit
-
-.founds6
-         jsr   ScanForRAMAndHardDisks
-         jsr   LoadPrefs  ; load preferences (if available)
-         jmp   ($fe) ;;zp_dest_lo
++
+         jsr   ScanForRAMAndHardDisks; scan for things that look like RAM disks or hard disks
+         jsr   LoadPrefs             ; load preferences (if available)
+         jmp   ($fe)                 ; jump to decompressed code (FirstMover)
 
          !source "apidefs.a"
          !source "strings/enid.a"
          !source "initscan.a"
          !source "exodecrunch.s"
 
-get_crunched_byte:
-	lda _byte_lo
-	bne _byte_skip_hi
-	dec _byte_hi
-_byte_skip_hi:
-	dec _byte_lo
+get_crunched_byte
+         lda _byte_lo
+         bne _byte_skip_hi
+         dec _byte_hi
+_byte_skip_hi
+         dec _byte_lo
 _byte_lo = * + 1
 _byte_hi = * + 2
-	lda packend		; needs to be set correctly before
-				; decrunch_file is called.
-	rts
-
+         lda packend                 ; needs to be set correctly before decrunch_file is called
+         rts
 
 !bin "../build/passport.pak"
 !word HIGHPOINT

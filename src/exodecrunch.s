@@ -151,6 +151,17 @@ gb_get_hi:
 ; no constraints on register content, however the
 ; decimal flag has to be #0 (it almost always is, otherwise do a cld)
 decrunch:
+
+; -------------------------------------------------------------------
+; show initial on-screen progress UI
+;
+        ldy #7
+init_progress_loop:
+        lda progress_char,y
+        jsr show_one_progress_char
+        dey
+        bpl init_progress_loop
+
 ; -------------------------------------------------------------------
 ; init zeropage, x and y regs. (12 bytes)
 ;
@@ -227,7 +238,25 @@ no_hi_decr:
         dey
         jsr get_crunched_byte
         sta (zp_dest_lo),y
-sta $400
+
+; periodically update on-screen progress UI
+        dec progress_counter
+        bne dont_update_progress_ui
+        tya
+        pha
+        ldy progress_index
+        lda progress_char,y
+        jsr show_one_progress_char
+        inc progress_index
+        lda progress_index
+        and #$07
+        sta progress_index
+        tay
+        lda #$20
+        jsr show_one_progress_char
+        pla
+        tay
+dont_update_progress_ui:
 } else {
 literal_start1:
         jsr get_crunched_byte
@@ -422,6 +451,28 @@ tabl_bit:
 tabl_bit:
         !BYTE $8c, $e2
 }
+progress_index:
+        !BYTE $00
+progress_counter:
+        !BYTE $00
+progress_char:
+        !BYTE $DC, $FC, $AF, $AD, $DC, $FC, $AF, $AD
+progress_address_lo:
+        !BYTE $BB, $BC, $BD, $3D, $BD, $BC, $BB, $3B
+progress_address_hi:
+        !BYTE $05, $05, $05, $06, $06, $06, $06, $06
+show_one_progress_char:
+; in: A=ASCII char to show
+;     y=0..7 index into progress_address_lo/hi array
+        pha
+        lda progress_address_lo,y
+        sta progress_STA+1
+        lda progress_address_hi,y
+        sta progress_STA+2
+        pla
+progress_STA:
+        sta $FFFF
+        rts
 ; -------------------------------------------------------------------
 ; end of decruncher
 ; -------------------------------------------------------------------

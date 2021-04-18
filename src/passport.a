@@ -37,33 +37,7 @@
 VERBOSE  = $00       ; set to $01 to display API label addresses
 }
 
-; Supported languages
-; (each has its own localized strings file
-; and its own output filename)
-ENGLISH  =     1          ; src/strings/en, PASSPORT.SYSTEM
-FRENCH   =     2          ; src/strings/fr, PASSPORT.FR
-SPANISH  =     3          ; src/strings/es, PASSPORT.ES
-ITALIAN  =     4          ; src/strings/it, PASSPORT.IT
-FINNISH  =     5          ; src/strings/fi, PASSPORT.FI
-
-; Current language for this assembly
-LANG     =     ENGLISH
-
-         !if LANG=ENGLISH {
-                !to "../build/PASSPORT.TMP",plain
-         }
-         !if LANG=FRENCH {
-                !to "../build/PASSPORT.FR",plain
-         }
-         !if LANG=SPANISH {
-                !to "../build/PASSPORT.SP",plain
-         }
-         !if LANG=ITALIAN {
-                !to "../build/PASSPORT.IT",plain
-         }
-         !if LANG=FINNISH {
-                !to "../build/PASSPORT.FI",plain
-         }
+!to "../build/PASSPORT.TMP",plain
 
 ;-------------------------------
 ; Addresses we read/call
@@ -93,25 +67,7 @@ UNIV_D3 = $B8FC
 FirstMover
          jmp    ResetVector
 
-!zone
-; use localized strings based on current language
-
-         !if LANG=ENGLISH {
-                !source "strings/en.a"
-         }
-         !if LANG=FRENCH {
-                !source "strings/fr.a"
-         }
-         !if LANG=SPANISH {
-                !source "strings/es.a"
-         }
-         !if LANG=ITALIAN {
-                !source "strings/it.a"
-         }
-         !if LANG=FINNISH {
-                !source "strings/fi.a"
-         }
-
+         !source "strings/en.a"
          !source "analyze.a"
          !source "id/inspect0.a"
          !source "id/precheck.a"
