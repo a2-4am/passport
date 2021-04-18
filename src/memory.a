@@ -120,6 +120,7 @@ ReorderBuffer
          lda   #BASEPAGE+1
          ldx   #BASEPAGE+$0E
          ldy   #$07
+         clc
          ; /!\ execution falls through here
 
 ;-------------------------------
