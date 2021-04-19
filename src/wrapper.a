@@ -21,7 +21,11 @@ good_mem
          sty   $fe                   ;;zp_dest_lo
 
 OneTimeSetup
-         jsr   SaveProDOS            ; save a copy of ProDOS system global page
+         ldy   #0                    ; save a copy of ProDOS system global page
+-        lda   $BF00, y              ; (will be copied back and forth by SwapProDOS later)
+         sta   $0F00, y
+         iny
+         bne   -
          lda   $FBB3                 ; ROM MachineID
          cmp   #$EA                  ; ][+?
          bne   +

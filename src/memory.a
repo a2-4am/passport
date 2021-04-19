@@ -8,7 +8,7 @@
 ; 0B00..0BFF - used by RAM disk
 ; 0C00..0CFF - clobbered by Special Delivery tracer
 ; 0D00..0EFF - unused
-; 0F00..0FFF - backup of page $BF (SaveProDOS, SwapProDOS)
+; 0F00..0FFF - backup of page $BF (SwapProDOS)
 ; 1000..1FFF - data buffer for current track
 ; 2000..35FF - clobbered by Special Delivery tracer
 ; 3600..3FFF - clobbered by lomem DOS 3.3 / Special Delivery tracers
@@ -16,25 +16,6 @@
 ; B200..BFFF - clobbered by DOS boot tracer (RDOS is B200+, DOS 3.x is B600+)
 ;-------------------------------
 
-
-;-------------------------------
-; SaveProDOS
-; saves memory pages used by ProDOS
-; pages $BF
-; in:  none
-; out: all flags and registers preserved
-;-------------------------------
-!zone {
-SaveProDOS
-         php
-         pha
-         lda   #$BF
-         ldx   #$0F
-         ldy   #$01
-         jsr   CopyMemory
-         pla
-         plp
-         rts
 
 ;-------------------------------
 ; SwapProDOS
@@ -218,4 +199,3 @@ ReorderLogicalToPhysical
          iny
          bne   -
          rts
-}

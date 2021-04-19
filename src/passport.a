@@ -868,7 +868,6 @@ LastMover
 
   !warn "CleanExit=",CleanExit
   !warn "WaitForKey=",WaitForKey
-  !warn "SaveProDOS=",SaveProDOS
   !warn "OpenFile=",OpenFile
   !warn "ReadFile=",ReadFile
   !warn "CloseFile=",CloseFile
