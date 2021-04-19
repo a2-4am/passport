@@ -814,6 +814,7 @@ _applyToAll
          !source "patchers/tsr.a"               ; T04 && gIsTSR only
          !source "patchers/woodbury.a"          ; gPossibleWoodbury only
          !source "patchers/leisure.a"           ; gIsProDOS && T22 only
+         !source "patchers/b4bbbasic.a"         ; gPossibleB4BBBasic only
 
 .checkPatchCount
          lda   gPatchCount

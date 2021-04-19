@@ -378,14 +378,12 @@ b4bbcompare
          ldx   #$01       ; track
          ;;ldy   #$00       ; sector
 .all
-         stx   gTrack
-         sty   gSector
          lda   #$00
          sta   gAddress
          lda   #$0C
          adc   #BASEPAGE
          sta   gAddress+1
-         jsr   ReadSector ; read sector so we can look for 'JMP $B4BB' marker
+         jsr   ReadSectorXY ; read sector so we can look for 'JMP $B4BB' marker
          bcs   _b4bbexit
          lda   #$0C
          ldx   #$84
@@ -400,14 +398,17 @@ b4bbcompare
 .dos32b
          ldy   #$09       ; sector
 .allb
-         stx   gTrack
-         sty   gSector
-         jsr   ReadSector ; read sector to get address prologue 3 for rest of disk
+         jsr   ReadSectorXY ; read sector to get address prologue 1 for rest of disk
          bcs   _b4bbexit
          lda   #$0C
          adc   #BASEPAGE
          sta   x0+2
 x0       lda   $FFC2      ; high byte modified at runtime (above)
+         cmp   #$D5       ; some disks lie and manually set the prologue later
+         bne   b4bbmodify ; passport-test-suite/SocMate Analogies Games.woz [Z=1] here
+         lda   #TRUE
+         sta   gPossibleB4BBBasic
+         lda   #$BB
 b4bbmodify
          sta   $FFFF      ; modified at runtime (high byte in Inspect1, low byte above)
          lda   #$DE
@@ -518,12 +519,10 @@ xHarvey
          ldx   #$00
          stx   gAddress
          inx
-         stx   gTrack
-         inx
-         stx   gSector
-         ldx   #$09
-         stx   gAddress+1
-         jsr   ReadSector            ; read T01S01 into $900
+         ldy   #$02
+         lda   #$09
+         sta   gAddress+1
+         jsr   ReadSectorXY          ; read T01,S02 into $0900
          bcs   .exit
          lda   #$09
          ldx   #$32

@@ -16,14 +16,13 @@ IDMilliken
 ; already identified a marker on T00,S01 that strongly
 ; suggests the presence of this routine, so it's worth
 ; doing an extra disk read here to be sure)
-         lda   #$00
-         sta   gTrack
-         lda   #$0A
-         sta   gSector
+         ldx   #$00
+         ldy   #$0A
+         tya
          clc
          adc   #BASEPAGE
          sta   gAddress+1
-         jsr   ReadSector
+         jsr   ReadSectorXY
          bcs   .exit
 
 IDMilliken1

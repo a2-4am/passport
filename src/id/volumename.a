@@ -15,17 +15,16 @@
 !zone {
 IDVolumeName
 ; read T00,S0B (volume key block)
-         lda   #$00
-         sta   gTrack
-         sta   cmp1
-         lda   #$0B
-         sta   gSector
+         ldx   #$00
+         stx   cmp1
+         ldy   #$0B
+         tya
          sta   gDisplayBytes
          clc
          adc   #BASEPAGE
          sta   gAddress+1
          sta   cmp1+1
-         jsr   ReadSector
+         jsr   ReadSectorXY
          bcs   .error
 
          lda   gIsPascal

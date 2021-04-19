@@ -1,0 +1,19 @@
+;-------------------------------
+; #B4BBBASIC
+; RWTS swapper in BASIC
+;
+; tested on
+; - SocMate Analogies Games
+;-------------------------------
+         lda   gPossibleB4BBBasic
+         bne   +
+
+         ldy   #$07
+         jsr   SearchTrack
+         !byte $B9,$34,$37,$34       ; 'POKE 47445,' in Applesoft BASIC (POKE opcode is $B9)
+         !byte $34,$35,$2C
+         bcs   +                     ; passport-test-suite/SocMate Analogies Games.woz [C=0] matches
+         ldy   #$01
+         jsr   modify
+         !byte $B2                   ; change POKE opcode to REM
++

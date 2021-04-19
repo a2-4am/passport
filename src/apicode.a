@@ -68,6 +68,10 @@
                           ; set in IDBootloader() after reading T00,S00
 
 FIRSTFILTER
+;gPossibleB4BBBasic
+         !byte FALSE      ; 0=true, 1=false
+                          ; reset before each operation
+                          ; set in xB4BB() after tracing DOS 3.3-shaped RWTS
 ;gPossibleWoodbury
          !byte FALSE      ; 0=true, 1=false
                           ; reset before each operation

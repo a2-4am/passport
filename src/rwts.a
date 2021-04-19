@@ -8,6 +8,9 @@
 ;      C clear if read was successful
 ;      C set if read failed
 ;-------------------------------
+ReadSectorXY
+         stx   gTrack
+         sty   gSector
 ReadSector
 ;
 ; Lots of custom RWTS routines need these zero page locations
