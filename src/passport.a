@@ -65,7 +65,7 @@ UNIV_D3 = $B8FC
 !source "apidefs.a"
 
 FirstMover
-         jmp    ResetVector
+         jmp    MainMenu
 
          !source "strings/en.a"
          !source "analyze.a"
@@ -118,7 +118,15 @@ FirstMover
          !source "rwts.a"
          !source "standarddelivery.a"
 
-ResetVector
+MainMenu
+         lda   #<MainMenu
+         sta   $03F2
+         lda   #>MainMenu
+         sta   $03F3
+         eor   #$A5
+         sta   $03F4
+         ldx   #$FF
+         txs
          lda   $C0E8
          jsr   PR0
          jsr   IN0
@@ -129,17 +137,6 @@ ResetVector
          sta   $C00E
          jsr   CleanupFiles
          jsr   ThisSlot
-         ; /!\ execution falls through here
-
-MainMenu
-         lda   #<ResetVector
-         sta   $03F2
-         lda   #>ResetVector
-         sta   $03F3
-         eor   #$A5
-         sta   $03F4
-         ldx   #$FF
-         txs
          jsr   ClearScreen
          lda   #s_header
          jsr   PrintByID
@@ -161,7 +158,7 @@ MainMenu
          cmp   #$80
          bne   +
          jsr   EnterCFFAIfAvailable
-         bcc   ResetVector
+         bcc   MainMenu
          bcs   @getkey
 
 +        cmp   #$9B                  ; Esc quits
