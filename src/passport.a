@@ -748,7 +748,6 @@ _applyToT00
          sta   _byte_hi
          lda   #<AnalyzeT00
          sta   _byte_lo
-         clc                                    ; don't show progress UI during decrunch
          jsr   decrunch
          jsr   $2000
 _applyToAll

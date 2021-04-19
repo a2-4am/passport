@@ -241,7 +241,6 @@ CopyUniversalAnywhere
          sta   _byte_hi
          lda   #<universalrwts
          sta   _byte_lo
-         clc                         ; don't show progress UI during decrunch
          jsr   decrunch
          sty   jCallRWTS+1
          lda   #$BD

@@ -17,7 +17,6 @@ good_mem
          jsr   $FE93                 ; IN#0
          jsr   $FB2F                 ; TEXT
          jsr   $FC58                 ; HOME
-         sec                         ; show progress UI during decrunch
          jsr   decrunch
          sty   $fe                   ;;zp_dest_lo
 
@@ -44,6 +43,9 @@ OneTimeSetup
          !source "apidefs.a"
          !source "strings/enid.a"
          !source "initscan.a"
+
+SHOW_PROGRESS_DURING_DECRUNCH = 1    ; activates optional UI code in exodecrunch
+
          !source "exodecrunch.s"
 
 get_crunched_byte

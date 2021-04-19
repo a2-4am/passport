@@ -1,8 +1,10 @@
 ; This source code is altered and is not the original version found on
 ; the Exomizer homepage.
 ; It contains modifications made by qkumba to depack a packed file
-; optionally crunched forward.
-
+; optionally crunched forward, and additional modifications by 4am
+; for an optional progress UI.
+;
+; Original copyright statement follows:
 ;
 ; Copyright (c) 2002 - 2018 Magnus Lind.
 ;
@@ -62,9 +64,13 @@
 ; compression at the cost of a larger decrunch table.
 EXTRA_TABLE_ENTRY_FOR_LENGTH_THREE = 1
 ; -------------------------------------------------------------------
+; optional progress UI
+!IFNDEF SHOW_PROGRESS_DURING_DECRUNCH {
+        SHOW_PROGRESS_DURING_DECRUNCH = 0
+}
+; -------------------------------------------------------------------
 ; zero page addresses used
 ; -------------------------------------------------------------------
-zp_show_progress_ui = $a6
 zp_len_lo = $a7
 zp_len_hi = $a8
 
@@ -153,13 +159,10 @@ gb_get_hi:
 ; decimal flag has to be #0 (it almost always is, otherwise do a cld)
 decrunch:
 
+!IF SHOW_PROGRESS_DURING_DECRUNCH = 1 {
 ; -------------------------------------------------------------------
 ; show initial on-screen progress UI
 ;
-        ror
-        sta zp_show_progress_ui
-        bit zp_show_progress_ui
-        bpl done_init_progress_loop
         ldy #7
 init_progress_loop:
         lda progress_char,y
@@ -167,6 +170,7 @@ init_progress_loop:
         dey
         bpl init_progress_loop
 done_init_progress_loop:
+}
 ; -------------------------------------------------------------------
 ; init zeropage, x and y regs. (12 bytes)
 ;
@@ -244,9 +248,8 @@ no_hi_decr:
         jsr get_crunched_byte
         sta (zp_dest_lo),y
 
+!IF SHOW_PROGRESS_DURING_DECRUNCH = 1 {
 ; periodically update on-screen progress UI
-        bit zp_show_progress_ui
-        bpl dont_update_progress_ui
         dec progress_counter
         bne dont_update_progress_ui
         tya
@@ -264,6 +267,7 @@ no_hi_decr:
         pla
         tay
 dont_update_progress_ui:
+}
 } else {
 literal_start1:
         jsr get_crunched_byte
@@ -458,6 +462,7 @@ tabl_bit:
 tabl_bit:
         !BYTE $8c, $e2
 }
+!IF SHOW_PROGRESS_DURING_DECRUNCH = 1 {
 progress_index:
         !BYTE $00
 progress_counter:
@@ -480,6 +485,7 @@ show_one_progress_char:
 progress_STA:
         sta $FFFF
         rts
+}
 ; -------------------------------------------------------------------
 ; end of decruncher
 ; -------------------------------------------------------------------
