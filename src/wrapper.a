@@ -6,21 +6,19 @@
 
          lda   $BF98                 ; ProDOS MachineID
          and   #$20                  ; at least 64K?
-         bne   good_mem
+         bne   OneTimeSetup
          jsr   $BF00                 ; immediately quit on 48K machine
          !byte $65                   ; (but congratulations on launching Passport at all)
          !word quit
 quit     !byte 4
 
-good_mem
+OneTimeSetup
          jsr   $FE89                 ; PR#0
          jsr   $FE93                 ; IN#0
          jsr   $FB2F                 ; TEXT
          jsr   $FC58                 ; HOME
-         jsr   decrunch
-         sty   $fe                   ;;zp_dest_lo
-
-OneTimeSetup
+         jsr   decrunch              ; decompress main Passport code
+         sty   $fe                   ;;zp_dest_lo = low byte of Passport entry point
          ldy   #0                    ; save a copy of ProDOS system global page
 -        lda   $BF00, y              ; (will be copied back and forth by SwapProDOS later)
          sta   $0F00, y

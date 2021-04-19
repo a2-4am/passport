@@ -127,6 +127,7 @@ ResetVector
          sta   $C004
          sta   $C00C
          sta   $C00E
+         jsr   CleanupFiles
          jsr   ThisSlot
          ; /!\ execution falls through here
 
@@ -571,10 +572,7 @@ FatalError
 
 TheEnd
          lda   $C0E8
-         jsr   SwapProDOS            ; ProDOS out -> in
-         jsr   DeleteFileOnRAMDisk   ; always safe to call
-         jsr   CloseFileOnHardDisk   ; always safe to call
-         jsr   SwapProDOS            ; ProDOS in -> out
+         jsr   CleanupFiles
          lda   #s_done
          jsr   PrintByID
          jsr   WaitForKey
@@ -619,13 +617,19 @@ CleanExit
          lda   gChangedPrefs
          bne   +
          jsr   SavePrefs
-+        jsr   DeleteFileOnRAMDisk   ; always safe to call
++        jsr   CleanupFiles
          jsr   MLI                   ; does not return
          !byte $65
          !word +
 +        !byte $04
 
          !source "progress.a"
+
+CleanupFiles
+         jsr   SwapProDOS            ; ProDOS out -> in
+         jsr   DeleteFileOnRAMDisk   ; always safe to call
+         jsr   CloseFileOnHardDisk   ; always safe to call
+         jmp   SwapProDOS            ; ProDOS in -> out
 
 ;-------------------------------
 ; WriteTrack
