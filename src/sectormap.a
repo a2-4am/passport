@@ -56,60 +56,91 @@ InitSectorMap
          bpl   @A
          rts
 
-sectormap
-T00S00
-T00      !byte $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
-T00S08   !byte                                 $FF
-T00S09   !byte                                     $FF
-T00S0A   !byte                                         $FF
-T00S0B   !byte                                             $FF
-T00S0C   !byte                                                 $FF
-T00S0D   !byte                                                     $FF
-T00S0E   !byte                                                         $FF
-T00S0F   !byte                                                             $FF
-T01      !byte $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
-T01S0F   !byte                                                             $FF
-T02      !byte $FF,$FF,$FF,$FF
-T02S04   !byte                 $FF
-T02S05   !byte                     $FF
-         !byte                         $FF,$FF,$FF,$FF
-T02S0A   !byte                                         $FF,$FF
-T02S0C   !byte                                                 $FF
-         !byte                                                     $FF,$FF
-T02S0F   !byte                                                             $FF
-T03      !byte $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
-T04      !byte $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
-T05      !byte $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
-T06      !byte $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
-T07      !byte $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
-T08      !byte $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
-T09      !byte $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
-T0A      !byte $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
-T0B      !byte $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
-T0C      !byte $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
-T0D      !byte $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
-T0E      !byte $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
-T0F      !byte $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
-T10      !byte $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
-T11      !byte $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
-T11S0F   !byte                                                             $FF
-T12      !byte $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
-T13      !byte $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
-T14      !byte $FF,$FF,$FF,$FF,$FF,$FF
-T14S06   !byte                         $FF
-         !byte                             $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
-T15      !byte $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
-T16      !byte $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
-T17      !byte $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
-T18      !byte $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
-T19      !byte $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
-T1A      !byte $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
-T1B      !byte $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
-T1C      !byte $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
-T1D      !byte $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
-T1E      !byte $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
-T1F      !byte $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
-T20      !byte $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
-T21      !byte $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
-T22      !byte $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
-T22S0F   !byte                                                             $FF
+sectormap = $CD0
+T00       = sectormap
+T00S00    = T00
+T00S08    = T00 + $08
+T00S09    = T00 + $09
+T00S0A    = T00 + $0A
+T00S0B    = T00 + $0B
+T00S0C    = T00 + $0C
+T00S0D    = T00 + $0D
+T00S0E    = T00 + $0E
+T00S0F    = T00 + $0F
+
+T01       = T00 + $10
+T01S0F    = T01 + $0F
+
+T02       = T01 + $10
+T02S04    = T02 + $04
+T02S05    = T02 + $05
+T02S0A    = T02 + $0A
+T02S0C    = T02 + $0C
+T02S0F    = T02 + $0F
+
+T03       = T02 + $10
+
+T04       = T03 + $10
+
+T05       = T04 + $10
+
+T06       = T05 + $10
+
+T07       = T06 + $10
+
+T08       = T07 + $10
+
+T09       = T08 + $10
+
+T0A       = T09 + $10
+
+T0B       = T0A + $10
+
+T0C       = T0B + $10
+
+T0D       = T0C + $10
+
+T0E       = T0D + $10
+
+T0F       = T0E + $10
+
+T10       = T0F + $10
+
+T11       = T10 + $10
+T11S0F    = T11 + $0F
+
+T12       = T11 + $10
+
+T13       = T12 + $10
+
+T14       = T13 + $10
+T14S06    = T14 + $06
+
+T15       = T14 + $10
+
+T16       = T15 + $10
+
+T17       = T16 + $10
+
+T18       = T17 + $10
+
+T19       = T18 + $10
+
+T1A       = T19 + $10
+
+T1B       = T1A + $10
+
+T1C       = T1B + $10
+
+T1D       = T1C + $10
+
+T1E       = T1D + $10
+
+T1F       = T1E + $10
+
+T20       = T1F + $10
+
+T21       = T20 + $10
+
+T22       = T21 + $10
+T22S0F    = T22 + $0F

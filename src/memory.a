@@ -7,7 +7,7 @@
 ; 0A00..0AFF - backup of zero page during Special Delivery tracer, used by RAM disk
 ; 0B00..0BFF - used by RAM disk
 ; 0C00..0CFF - clobbered by Special Delivery tracer
-; 0D00..0EFF - unused
+; 0CD0..0EFF - sector map
 ; 0F00..0FFF - backup of page $BF (SwapProDOS)
 ; 1000..1FFF - data buffer for current track
 ; 2000..35FF - clobbered by Special Delivery tracer
