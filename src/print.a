@@ -147,10 +147,10 @@ SaveAXY
 ClearScreen
          jsr   TEXT
          lda   $C061
-         bpl   .home
+         bpl   @home
          lda   $C062
-         bpl   .home
-.begin
+         bpl   @home
+@begin
          ldx   #$04
          stx   counter
          stx   @loop+2
@@ -180,6 +180,6 @@ ClearScreen
          lda   #$01
          jsr   WAIT
          lda   flag
-         bne   .begin
-.home
+         bne   @begin
+@home
          jmp   HOME

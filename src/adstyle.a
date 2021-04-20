@@ -63,7 +63,6 @@ ADStyle
 ; out: C clear if protection code was found
 ;      C set if protection code was not found
 ;-------------------------------
-!zone {
 xHeredityDog
          lda   $08FE
          clc
@@ -76,12 +75,10 @@ xHeredityDog
          !byte $C0,$10,$FB,$C9,$D5,$D0,$EE,$BD,$8C,$C0,$10,$FB,$C9,$AA,$D0,$E5
          !byte $A9,$4C,$A0,$00,$99,$00,$95,$88,$D0,$FA,$CE,$46,$BB,$AD,$46,$BB
          !byte $C9,$07,$D0,$EC,$A9,$18,$8D,$42,$B9,$A9,$0A,$8D,$ED,$B7,$D0,$05
-         bcs   .exit
+         bcs   @exit
          lda   #kSectorOptional
          sta   T00S0A
-.exit
-         rts
-}
+@exit    rts
 
 ;-------------------------------
 ; xSunburst
@@ -93,7 +90,6 @@ xHeredityDog
 ; out: C clear if Sunburst RWTS was found
 ;      C set otherwise
 ;-------------------------------
-!zone {
 xSunburst
          lda   $08FE
          clc
@@ -107,13 +103,10 @@ xSunburst
          !byte $11,$D0,$03,$A9,$02,$AC,$A9,$0E
          !byte $8D,$C0,$BF,$68,$69,$00,$48,$AD
          !byte $78,$04,$90,$2B
-         bcs   .no
-.yes
+         bcs   @exit
          lda   #kSectorOptional
          sta   T11S0F
-.no
-         rts
-}
+@exit    rts
 
 ;-------------------------------
 ; xOptimumRes
@@ -125,7 +118,6 @@ xSunburst
 ; out: C clear if OptimumRes bootloader was found
 ;      C set otherwise
 ;-------------------------------
-!zone {
 xOptimumRes
          lda   #$08
          ldx   #$5D
@@ -133,13 +125,10 @@ xOptimumRes
          jsr   CompareMemory
          !byte $68,$85,WILDCARD,$68,$85,WILDCARD,$A0,$01
          !byte $B1,WILDCARD,$85,$54
-         bcs   .no
-.yes
+         bcs   @exit
          lda   #kSectorOptional
          sta   T01S0F
-.no
-         rts
-}
+@exit    rts
 
 ;-------------------------------
 ; xB4BB
@@ -152,7 +141,6 @@ xOptimumRes
 ; out: C clear if RWTS was modified in this routine
 ;      C set otherwise
 ;-------------------------------
-!zone {
 xB4BB
          lda   gTrack
          pha
@@ -169,22 +157,22 @@ b4bbcompare
          !byte $42,$A9,$FE,$85,$3E,$A0,$00,$AD
          bcs   _b4bbexit
          ldy   gIsDOS32
-         beq   .dos32
+         beq   @dos32
          lda   #$55       ; low byte of address that checks address prologue 1
          sta   b4bbmodify+1
          lda   #$91       ; low byte of address that checks address epilogue 1
          sta   b4bbmodify2+1
          ldx   #$00       ; track
          ldy   #$0C       ; sector
-         bne   .all       ; always branches
-.dos32
+         bne   @all       ; always branches
+@dos32
          lda   #$76       ; low byte of address that checks address prologue 1
          sta   b4bbmodify+1
          lda   #$B2       ; low byte of address that checks address epilogue 1
          sta   b4bbmodify2+1
          ldx   #$01       ; track
          ;;ldy   #$00       ; sector
-.all
+@all
          lda   #$00
          sta   gAddress
          lda   #$0C
@@ -201,10 +189,10 @@ b4bbcompare
          ldx   #$02       ; track
          ldy   #$02       ; sector
          lda   gIsDOS32
-         bne   .allb
-.dos32b
+         bne   @allb
+@dos32b
          ldy   #$09       ; sector
-.allb
+@allb
          jsr   ReadSectorXY ; read sector to get address prologue 1 for rest of disk
          bcs   _b4bbexit
          lda   #$0C
@@ -231,7 +219,6 @@ _b4bbexit
          pla
          sta   gTrack
          rts
-}
 
 ;-------------------------------
 ; xB660
@@ -248,7 +235,6 @@ _b4bbexit
 ; out: C clear if $B660 routine was found
 ;      C set otherwise
 ;-------------------------------
-!zone {
 xB660
          lda   #$08
          ldx   #$60
@@ -258,13 +244,10 @@ xB660
          !byte $F4,$A9,$F8,$3D,$8C,$C0,$D0,$02
          !byte $EA,$EA,$EA,$EA,$BD,$8C,$C0,$2A
          !byte $30,$02
-         bcs   .no
-.yes
+         bcs   @exit
          lda   #kSectorSwitchToBuiltinRWTS
          sta   T00S09
-.no
-         rts
-}
+@exit    rts
 
 ;-------------------------------
 ; xSVE
@@ -276,7 +259,6 @@ xB660
 ; out: C clear if SVE bootloader was found
 ;      C set otherwise
 ;-------------------------------
-!zone {
 xSVE
          lda   #$BE
          ldx   #$5A
@@ -284,7 +266,6 @@ xSVE
          jsr   CompareMemory
          !byte $4C,$71,$A9
          rts
-}
 
 ;-------------------------------
 ; xHarvey
@@ -296,14 +277,13 @@ xSVE
 ; out: RWTS may have been patched in memory
 ;      all flags and registers clobbered
 ;-------------------------------
-!zone {
 xHarvey
          lda   #$B7
          ldx   #$47
          ldy   #$03
          jsr   CompareMemory
          !byte $4C,$82,$A2
-         bcs   .exit
+         bcs   @exit
          ldx   #$00
          stx   gAddress
          inx
@@ -311,7 +291,7 @@ xHarvey
          lda   #$09
          sta   gAddress+1
          jsr   ReadSectorXY          ; read T01,S02 into $0900
-         bcs   .exit
+         bcs   @exit
          lda   #$09
          ldx   #$32
          ldy   #$18
@@ -325,14 +305,13 @@ xHarvey
          !byte $A9,WILDCARD
          !byte $8D,$60,$BC
          !byte $4C,$84,$9D
-         bcs   .exit
+         bcs   @exit
          lda   #$60
          sta   $0947                 ; RTS instead of JMP
          jsr   $0932                 ; call to apply RWTS patches
          lda   #kSectorSwitchToBuiltinRWTS
          sta   T02S0F
-.exit    rts
-}
+@exit    rts
 
 ;-------------------------------
 ; xRPS
@@ -346,7 +325,6 @@ xHarvey
 ; out: C clear if protection found
 ;      C set if protection was not found
 ;-------------------------------
-!zone {
 xRPS
          lda   #$B7
          ldx   #$47
@@ -356,7 +334,7 @@ xRPS
          !byte $60
          !byte $48
          !byte $A9,$02
-         bcs   .exit
+         bcs   @exit
          lda   #kSectorOptional
          sta   T02S05
          sta   T02S0A
@@ -368,5 +346,4 @@ xRPS
          sty   $BAFF
          ldy   #$3F
          sty   $BA96
-.exit    rts
-}
+@exit    rts

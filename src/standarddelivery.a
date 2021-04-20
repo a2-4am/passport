@@ -11,54 +11,53 @@
 ;        A,X clobbered
 ;        Y preserved
 ;-------------------------------
-!zone {
 ConstructStandardDelivery
          dex
-         beq   .construct32
+         beq   @construct32
          dex
-         beq   .construct32lo
+         beq   @construct32lo
          dex
-         beq   .constructrdos
+         beq   @constructrdos
 
-.construct33p
+@construct33p
          lda   #<SD_DOS33p
          ldx   #>SD_DOS33p
          bne   +
 
-.construct32
+@construct32
          lda   #<SD_DOS32
          ldx   #>SD_DOS32
          bne   +
 
-.construct32lo
+@construct32lo
          lda   #<SD_DOS32LO
          ldx   #>SD_DOS32LO
          bne   +
 
-.constructrdos
+@constructrdos
          lda   #<SD_RDOS13
          ldx   #>SD_RDOS13
 
-+        sta   .A+1
-         stx   .A+2
++        sta   @A+1
+         stx   @A+2
          ldx   #$00
          txa
 -        sta   $1000,x
          inx
          bne   -
          ldx   #$4C
--        lda   .code,x
+-        lda   @code,x
          sta   $1000,x
          dex
          bpl   -
 -        inx
-.A       lda   $FFFF,x
+@A       lda   $FFFF,x
          sta   $104D,x
          cmp   #$C0
          bne   -
          rts
 
-.code
+@code
          !byte $01,$a8,$ee,$06,$08,$ad,$4e,$08
          !byte $c9,$c0,$f0,$40,$85,$27,$c8,$c0
          !byte $10,$90,$09,$f0,$05,$20,$2f,$08
@@ -69,7 +68,6 @@ ConstructStandardDelivery
          !byte $3c,$08,$e6,$40,$a5,$40,$29,$03
          !byte $2a,$05,$2b,$a8,$b9,$80,$c0,$a9
          !byte $30,$4c,$a8,$fc,$4c
-}
 
 ;
 ; Format for Standard Delivery parameter table
