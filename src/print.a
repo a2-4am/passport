@@ -183,3 +183,198 @@ ClearScreen
          bne   @begin
 @home
          jmp   HOME
+
+;-------------------------------
+; CheckCache
+; Intercept text about to be scrolled off the screen
+; Cache it in spare LC space for viewing later
+;-------------------------------
+CheckCache
+         ldx   $25
+         cpx   #$17
+         bne   .nocache
+         ldx   $24
+         cpx   #$27
+         beq   .docache
+         cmp   #$8D
+         bne   .nocache
+.docache
+         pha
+         cmp   #$8D
+         beq   .skipcr
+         sta   $7F7
+.skipcr
+         bit   $C081
+         bit   $C081
+         ldx   #$27
+cachesrc
+         lda   $700, x
+CacheDst
+         sta   $D400, x
+         dex
+         bpl   cachesrc
+         lda   CacheDst+1
+         adc   #$27
+         sta   CacheDst+1
+         bcc   .skiphi
+         inc   CacheDst+2
+.skiphi
+         pla
+
+.nocache
+         jmp   $FDF0
+
+;-------------------------------
+; CheckLogKeys
+; Enable scrolling of log, if more than once screen worth
+; Left/Right (all)
+; Up/Down (not II or II+)
+;-------------------------------
+
+CheckLogKeys
+         ldx   CacheDst+1
+         ldy   CacheDst+2
+         cpy   #$D4
+         bne   .yeslog
+         cpx   #0
+         beq   .nolog
+
+.yeslog
+         stx   .startline1+1
+         sty   .startline1+2
+         stx   .startline2+1
+         sty   .startline2+2
+         pha
+         jsr   .substart
+         pla
+         bmi   .skipkey
+
+.checkkey
+         jsr   WaitForKey
+.skipkey
+         cmp   #k_left
+         beq   .checkup
+         cmp   #k_up
+         beq   .checkup
+         cmp   #k_right
+         beq   .checkdown
+         cmp   #k_down
+         beq   .checkdown
+.nolog
+         rts
+
+.checkup
+         lda   .startline1+2
+         cmp   #$D4
+         bne   .scrollup
+         lda   .startline1+1
+         beq   .checkkey
+
+.scrollup
+         jsr   .substart
+         bit   $C081
+         bit   $C081
+         ldx   #$27
+.copyend1
+         lda   $7D0,x
+.endline1
+         sta   $D428,x
+         dex
+         bpl   .copyend1
+
+         ldx   #22
+.scrollscreen
+         txa
+         jsr   $FBC1 ;BASCALC
+         lda   $28
+         sta   $2A
+         lda   $29
+         sta   $2B
+         inx
+         txa
+         jsr   $FBC1 ;BASCALC
+         ldy   #$27
+.copyline
+         lda   ($2A),y
+         sta   ($28),y
+         dey
+         bpl   .copyline
+         dex
+         dex
+         cpx   #5
+         bne   .scrollscreen
+         bit   $C083
+         ldx   #$27
+.copystart1
+.startline1
+         lda   $D400,x
+         sta   $700,x
+         dex
+         bpl   .copystart1
+         bit   $C081
+         jmp   .checkkey
+
+.checkdown
+         lda   .endline1+2
+         cmp   CacheDst+2
+         bne   .scrolldown
+         lda   .endline1+1
+         cmp   CacheDst+1
+         beq   .checkkey
+
+.scrolldown
+         bit   $C081
+         bit   $C081
+         ldx   #$27
+.copystart2
+         lda   $700,x
+.startline2
+         sta   $D400,x
+         dex
+         bpl   .copystart2
+         lda   #$8D
+         jsr   $FDF0
+         bit   $C083
+         bit   $C083
+         ldx   #$27
+.copyend2
+.endline2
+         lda   $D428,x
+         sta   $7D0,x
+         dex
+         bpl   .copyend2
+         bit   $C081
+         jsr   .addstart
+         jmp   .checkkey
+
+.substart
+         sec
+         lda   .startline1+1
+         sta   .endline1+1
+         sta   .endline2+1
+         sbc   #$28
+         sta   .startline1+1
+         sta   .startline2+1
+         lda   .startline1+2
+         sta   .endline1+2
+         sta   .endline2+2
+         sbc   #0
+         sta   .startline1+2
+         sta   .startline2+2
+         rts
+
+.addstart
+         clc
+         lda   .endline1+1
+         sta   .startline1+1
+         sta   .startline2+1
+         adc   #$28
+         sta   .endline1+1
+         sta   .endline2+1
+         lda   .endline1+2
+         sta   .startline1+2
+         sta   .startline2+2
+         adc   #0
+         sta   .endline1+2
+         sta   .endline2+2
+         rts

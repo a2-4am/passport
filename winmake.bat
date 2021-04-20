@@ -50,6 +50,7 @@ for /f "tokens=4,* delims=:(" %%q in ('find "mliparam=" ..\build\out.txt') do ec
 for /f "tokens=4,* delims=:(" %%q in ('find "OpenFile=" ..\build\out.txt') do echo %%q >> ..\build\vars.a
 for /f "tokens=4,* delims=:(" %%q in ('find "ReadFile=" ..\build\out.txt') do echo %%q >> ..\build\vars.a
 for /f "tokens=4,* delims=:(" %%q in ('find "CloseFile=" ..\build\out.txt') do echo %%q >> ..\build\vars.a
+for /f "tokens=4,* delims=:(" %%q in ('find "CheckCache=" ..\build\out.txt') do echo %%q > ..\build\vars.a
 cd ..\build
 %EXOMIZER% raw -q -P23 -T4 -b passport.tmp -o passport.pak
 cd ..\src

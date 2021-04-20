@@ -170,8 +170,11 @@ Reaction
          sta   gSector
          sta   gPatchCount
          sta   jCallRWTS+1
+         sta   CacheDst+1
          lda   #$08
          sta   gAddress+1
+         lda   #$D4
+         sta   CacheDst+2
          jsr   ShowInitialProgressScreen
 
          lda   gMode
@@ -226,6 +229,7 @@ TheEnd
          beq   HandleRedo
          cmp   #k_redo_with_ignore
          beq   HandleRedoWithIgnore
+         jsr   CheckLogKeys
          jmp   MainMenu
 
 HandleRedoWithIgnore
@@ -462,4 +466,5 @@ LastMover
   !warn "DiskIIArray=",DiskIIArray
   !warn "HardDiskArray=",HardDiskArray
   !warn "ThisSlot=",ThisSlot
+  !warn "CheckCache=",CheckCache
 }

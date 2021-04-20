@@ -49,6 +49,10 @@ OneTimeSetup
          jsr   ScanForRAMAndHardDisks; scan for things that look like RAM disks or hard disks
          jsr   LoadPrefs             ; load preferences (if available)
          jsr   ThisSlot
+         lda   #<CheckCache
+         sta   $36
+         lda   #>CheckCache
+         sta   $37
          lda   $FE
          sta   $03F2
          lda   $FF
