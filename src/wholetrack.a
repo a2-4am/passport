@@ -3,30 +3,29 @@
 ; out:   C clear if we should skip this track
 ;        C set if we should not skip this track
 ;-------------------------------
-!zone {
 SkipTrack
 ; don't look for whole-track protections on track 0, that's silly
          lda   gTrack
          sec
-         beq   .linknoskip
+         beq   @linknoskip
 ;
 ; Electronic Arts protection track?
 ;
          jsr   IsEATrack6
          lda   #s_eatrk6
-         bcc   .print
+         bcc   @print
 ;
 ; Nibble count track?
 ;
          jsr   JustTheSameDamnThingOverAndOver
          lda   #s_sync
-         bcc   .print     ; always branches
+         bcc   @print     ; always branches
 ;
 ; Unformatted track?
 ;
          jsr   IsUnformatted
-.linknoskip
-         bcs   .donotskip
+@linknoskip
+         bcs   @donotskip
 ;
 ; $F7F6EFEAAB protection track?
 ; (initially presents as unformatted, needs separate test because it
@@ -34,15 +33,15 @@ SkipTrack
 ;
          jsr   IsF7F6
          lda   #s_unformat
-         bcs   .print
+         bcs   @print
          lda   #s_f7
          bit   gMode
-         bpl   .print
-         bvc   .print
+         bpl   @print
+         bvc   @print
 ; if we're in 'crack' mode, restart the scan to find the protection code
          jmp   SetupF7F6SecondRound
 
-.print
+@print
          jsr   PrintByID
 ;
 ; Skipping T22 on a ProDOS disk might indicate the presence of a
@@ -55,13 +54,12 @@ SkipTrack
          lda   gTrack
          cmp   #$22
          clc
-         bne   .donotskip
+         bne   @donotskip
          lda   gIsProDOS
-         bne   .donotskip
+         bne   @donotskip
          sta   gPossibleGamco
-.donotskip
+@donotskip
          rts
-}
 
 ;-------------------------------
 ; IsF7F6
@@ -73,7 +71,6 @@ SkipTrack
 ; out C clear if sequence was found
 ;     C set if sequence was not found
 ;-------------------------------
-!zone {
 IsF7F6
          lda   $C0E9
          lda   #$00
@@ -84,45 +81,27 @@ IsF7F6
 -        jsr   ReadNib
          cmp   #$F7
          beq   +
-.restart iny
+@restart iny
          bne   -
          dec   nibcount
          bne   -
          sec
-         beq   .driveoff
-+
-         jsr   ReadNib
+         beq   @driveoff
++        jsr   ReadNib
          cmp   #$F6
-         bne   .restart
+         bne   @restart
          jsr   ReadNib
          cmp   #$EF
-         bne   .restart
+         bne   @restart
          jsr   ReadNib
          cmp   #$EE
-         bne   .restart
+         bne   @restart
          jsr   ReadNib
          cmp   #$AB
-         bne   .restart
+         bne   @restart
          clc
-.driveoff
+@driveoff
          lda   $C0E8
-         rts
-}
-
-ReadNib
--        lda   $C0EC
-         bpl   -
-         rts
-
-Read4x4
--        lda   $C0EC
-         bpl   -
-         sec
-         rol
-         sta   tmp
--        lda   $C0EC
-         bpl   -
-         and   tmp
          rts
 
 ;-------------------------------
@@ -138,24 +117,22 @@ SetupF7F6SecondRound
 ; Mark in the sector map that we should ignore
 ; this protection track the second time around.
          lda   checksector+1
-         sta   .a+1
+         sta   @a+1
          lda   checksector+2
-         sta   .a+2
+         sta   @a+2
          ldy   gSector
          lda   #kSectorIgnore
-.a       sta   $D1D1      ; modifed at runtime
-         ldx   .a+1
+@a       sta   $D1D1      ; modifed at runtime
+         ldx   @a+1
          bne   +
-         dec   .a+2
-+        dec   .a+1
+         dec   @a+2
++        dec   @a+1
          dey
-         bpl   .a
-; print that we found the protection track
-         lda   #s_f7
+         bpl   @a
+         lda   #s_f7      ; print that we found the protection track
          jsr   PrintByID
-; set global to activate expensive patcher
          lda   #TRUE
-         sta   gIsF7F6
+         sta   gIsF7F6    ; set global to activate expensive patcher
          jmp   RestartScan
 
 ;-------------------------------
@@ -166,7 +143,6 @@ SetupF7F6SecondRound
 ; out C clear if found
 ;     C set otherwise
 ;-------------------------------
-!zone {
 JustTheSameDamnThingOverAndOver
          lda   $C0E9      ; turn on drive motor, but we assume it's already spun up from previous reads so no waiting
          lda   #$60
@@ -177,30 +153,29 @@ JustTheSameDamnThingOverAndOver
 ;
 ; Timing-sensitive code! Cycle counts in margin for worst case path
 ;
-.reset   clv              ; 2
+@reset   clv              ; 2
          ldy   #$00       ; 2
-         sta   .cmp+1     ; 4
-.loop    lda   $C0EC      ; 4
-         bpl   .loop      ; 2 when not taken
+         sta   @cmp+1     ; 4
+@loop    lda   $C0EC      ; 4
+         bpl   @loop      ; 2 when not taken
          dex              ; 2
-         bne   .cmp       ; 2 when not taken
+         bne   @cmp       ; 2 when not taken
          dec   unform+1   ; 5
-         beq   .notfound  ; 2 when not taken
-.cmp     cmp   #$d1       ; 2
-         bne   .reset     ; 2 when not taken
+         beq   @notfound  ; 2 when not taken
+@cmp     cmp   #$d1       ; 2
+         bne   @reset     ; 2 when not taken
          iny              ; 2
-         bne   .loop      ; 2 when not taken (3 when taken)
-         bvs   .found     ; 2 when not taken
+         bne   @loop      ; 2 when not taken (3 when taken)
+         bvs   @found     ; 2 when not taken
          bit   tmp        ; 3 (sets overflow flag)
-         bvs   .loop      ; 3 (always taken)
-.found
+         bvs   @loop      ; 3 (always taken)
+@found
          clc
          !byte $24
-.notfound
+@notfound
          sec
          lda   $C0E8
          rts
-}
 
 ;-------------------------------
 ; IsUnformatted
@@ -211,7 +186,6 @@ JustTheSameDamnThingOverAndOver
 ; out C clear if track is unformatted
 ;     C set if track is formatted
 ;-------------------------------
-!zone {
 IsUnformatted
          lda   #$FD
          sta   gNIBTableFF
@@ -224,27 +198,26 @@ IsUnformatted
 ;
 ; Timing-sensitive code! Cycle counts in margin for worst case path
 ;
-.reset   ldy   #$00
-.loop    ldx   $C0EC      ; 4
-         bpl   .loop      ; 2 when not taken
+@reset   ldy   #$00
+@loop    ldx   $C0EC      ; 4
+         bpl   @loop      ; 2 when not taken
          dec   unform     ; 5
          bne   +          ; 2 when not taken
          dec   unform+1   ; 5
-         beq   .unformatted;2 when not taken
+         beq   @unformatted;2 when not taken
 +        lda   gNIBTable,x; 4
-         bmi   .reset     ; 2 when not taken
+         bmi   @reset     ; 2 when not taken
          iny              ; 2
-         bne   .loop      ; 3 when taken
+         bne   @loop      ; 3 when taken
          sec
          !byte $24
-.unformatted
+@unformatted
          clc
          lda   $C0E8
 
          lda   #$3F
          sta   gNIBTableFF
          rts
-}
 
 ;-------------------------------
 ; IsEATrack6
@@ -264,3 +237,34 @@ IsEATrack6
          sbc   #5
          cmp   #1
 +        rts
+
+;-------------------------------
+; ReadNib
+; read a single nibble from S6,D1
+;
+; in:    S6,D1 must be spun up and ready to read
+; out:   A contains nibble value
+;-------------------------------
+ReadNib
+-        lda   $C0EC
+         bpl   -
+         rts
+
+;-------------------------------
+; Read4x4
+; read a 4-4-encoded value from S6,D1
+;
+; in:    S6,D1 must be spun up and ready to read
+; out:   A contains decoded value
+;        @tmp clobbered
+;-------------------------------
+Read4x4
+-        lda   $C0EC
+         bpl   -
+         sec
+         rol
+         sta   tmp
+-        lda   $C0EC
+         bpl   -
+         and   tmp
+         rts

@@ -39,13 +39,11 @@ VERBOSE  = $00       ; set to $01 to display API label addresses
 
 !to "../build/PASSPORT.TMP",plain
 
-         !source "apidefs.a"         ; no code in here
-
 FirstMover
          jmp    ResetVector
 
+         !source "apidefs.a"
          !source "strings/en.a"
-         !source "analyze.a"
          !source "id/inspect0.a"
          !source "id/precheck.a"
          !source "id/trace.a"
@@ -95,6 +93,7 @@ FirstMover
          !source "progress.a"
          !source "rwts.a"
          !source "standarddelivery.a"
+         !source "wholetrack.a"
          !source "adstyle.a"
          !source "universalstyle.a"
          !source "crackme.a"
