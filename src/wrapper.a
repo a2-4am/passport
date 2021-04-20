@@ -18,7 +18,7 @@ OneTimeSetup
          jsr   $FB2F                 ; TEXT
          jsr   $FC58                 ; HOME
          jsr   decrunch              ; decompress main Passport code
-         sty   $fe                   ;;zp_dest_lo = low byte of Passport entry point
+         sty   $FE                   ;;zp_dest_lo = low byte of Passport entry point
          ldy   #0                    ; save a copy of ProDOS system global page
 -        lda   $BF00, y              ; (will be copied back and forth by SwapProDOS later)
          sta   $0F00, y
@@ -40,7 +40,13 @@ OneTimeSetup
 +
          jsr   ScanForRAMAndHardDisks; scan for things that look like RAM disks or hard disks
          jsr   LoadPrefs             ; load preferences (if available)
-         jmp   ($fe)                 ; jump to decompressed code (FirstMover)
+         lda   $FE
+         sta   $03F2
+         lda   $FF
+         sta   $03F3
+         eor   #$A5
+         sta   $03F4
+         jmp   ($FE)                 ; jump to decompressed code (FirstMover)
 
          !source "apidefs.a"
          !source "strings/enid.a"

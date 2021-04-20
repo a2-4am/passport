@@ -65,7 +65,7 @@ UNIV_D3 = $B8FC
 !source "apidefs.a"
 
 FirstMover
-         jmp    MainMenu
+         jmp    ResetVector
 
          !source "strings/en.a"
          !source "analyze.a"
@@ -115,16 +115,11 @@ FirstMover
          !source "prefs.a"
          !source "keys.a"
          !source "cffa.a"
+         !source "progress.a"
          !source "rwts.a"
          !source "standarddelivery.a"
 
-MainMenu
-         lda   #<MainMenu
-         sta   $03F2
-         lda   #>MainMenu
-         sta   $03F3
-         eor   #$A5
-         sta   $03F4
+ResetVector
          ldx   #$FF
          txs
          lda   $C0E8
@@ -135,8 +130,10 @@ MainMenu
          sta   $C004
          sta   $C00C
          sta   $C00E
-         jsr   CleanupFiles
          jsr   ThisSlot
+         jsr   CleanupFiles          ; RAM/HD files might be left open after Ctrl-Reset
+         ; /!\ execution falls through here
+MainMenu
          jsr   ClearScreen
          lda   #s_header
          jsr   PrintByID
@@ -581,6 +578,24 @@ TheEnd
          beq   HandleRedoWithIgnore
          jmp   MainMenu
 
+;-------------------------------
+; CleanupFiles
+;
+; Cleans up open files (if any)
+;
+; in:    ProDOS is NOT in memory
+; out:   all registers and flags clobbered
+;-------------------------------
+CleanupFiles
+         lda   gHardDiskRef
+         ora   gRAMDiskRef
+         beq   +
+         jsr   SwapProDOS            ; ProDOS out -> in
+         jsr   DeleteFileOnRAMDisk
+         jsr   CloseFileOnHardDisk
+         jsr   SwapProDOS            ; ProDOS out -> in
++        rts
+
 HandleRedoWithIgnore
          jsr   InitSectorMapWithIgnore
          jmp   Reaction
@@ -609,24 +624,25 @@ RestartScan
          txs
          jmp   ReadWithRWTS
 
+;-------------------------------
+; CleanExit
+;
+; Cleans up open files, saves preferences (if modified),
+; and quits via ProDOS MLI
+;
+; in:    ProDOS is NOT in memory
+; out:   does not return
+;-------------------------------
 CleanExit
+         jsr   CleanupFiles
          jsr   SwapProDOS            ; ProDOS out -> in
          lda   gChangedPrefs
          bne   +
          jsr   SavePrefs
-+        jsr   CleanupFiles
-         jsr   MLI                   ; does not return
++        jsr   MLI                   ; does not return
          !byte $65
          !word +
 +        !byte $04
-
-         !source "progress.a"
-
-CleanupFiles
-         jsr   SwapProDOS            ; ProDOS out -> in
-         jsr   DeleteFileOnRAMDisk   ; always safe to call
-         jsr   CloseFileOnHardDisk   ; always safe to call
-         jmp   SwapProDOS            ; ProDOS in -> out
 
 ;-------------------------------
 ; WriteTrack
