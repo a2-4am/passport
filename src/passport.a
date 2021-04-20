@@ -8,7 +8,7 @@
 ;-------------------------------
 ; Passport
 ; a 4am hack
-; (c) 2016-2020 by 4am
+; (c) 2016-2021 by 4am
 ;
 ; Permission is hereby granted, free of charge, to any
 ; person obtaining a copy of this software and associated
@@ -39,30 +39,7 @@ VERBOSE  = $00       ; set to $01 to display API label addresses
 
 !to "../build/PASSPORT.TMP",plain
 
-;-------------------------------
-; Addresses we read/call
-TEXTTOP  =     $22
-VPOS     =     $25
-MLI      =     $BF00
-REBOOT   =     $FAA6
-TEXT     =     $FB2F
-MACHINEID =    $FBB3
-HOME     =     $FC58
-WAIT     =     $FCA8
-PRBYTE   =     $FDDA
-COUT     =     $FDED
-PR0      =     $FE89
-IN0      =     $FE93
-
-;Universal RWTS-specific values
-UNIV_A1 = $B956           ; must LSR before setting
-UNIV_A2 = $B95F
-UNIV_A3 = $B968
-UNIV_D1 = $B8E7
-UNIV_D2 = $B8F1
-UNIV_D3 = $B8FC
-
-!source "apidefs.a"
+         !source "apidefs.a"         ; no code in here
 
 FirstMover
          jmp    ResetVector
@@ -123,14 +100,6 @@ ResetVector
          ldx   #$FF
          txs
          lda   $C0E8
-         jsr   PR0
-         jsr   IN0
-         sta   $C000
-         sta   $C002
-         sta   $C004
-         sta   $C00C
-         sta   $C00E
-         jsr   ThisSlot
          jsr   CleanupFiles          ; RAM/HD files might be left open after Ctrl-Reset
          ; /!\ execution falls through here
 MainMenu
@@ -584,7 +553,8 @@ TheEnd
 ; Cleans up open files (if any)
 ;
 ; in:    ProDOS is NOT in memory
-; out:   all registers and flags clobbered
+; out:   ProDOS is NOT in memory
+;        all registers and flags clobbered
 ;-------------------------------
 CleanupFiles
          lda   gHardDiskRef
@@ -593,7 +563,7 @@ CleanupFiles
          jsr   SwapProDOS            ; ProDOS out -> in
          jsr   DeleteFileOnRAMDisk
          jsr   CloseFileOnHardDisk
-         jsr   SwapProDOS            ; ProDOS out -> in
+         jsr   SwapProDOS            ; ProDOS in -> out
 +        rts
 
 HandleRedoWithIgnore
@@ -639,7 +609,7 @@ CleanExit
          lda   gChangedPrefs
          bne   +
          jsr   SavePrefs
-+        jsr   MLI                   ; does not return
++        jsr   PRODOSMLI             ; does not return
          !byte $65
          !word +
 +        !byte $04
@@ -908,4 +878,5 @@ LastMover
   !warn "PrintByID=",PrintByID
   !warn "DiskIIArray=",DiskIIArray
   !warn "HardDiskArray=",HardDiskArray
+  !warn "ThisSlot=",ThisSlot
 }

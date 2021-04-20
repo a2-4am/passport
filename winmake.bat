@@ -27,6 +27,7 @@ for /f "tokens=4,* delims=:(" %%q in ('find "SaveProDOS=" ..\build\out.txt') do 
 for /f "tokens=4,* delims=:(" %%q in ('find "kForceLower=" ..\build\out.txt') do echo %%q >> ..\build\vars.a
 for /f "tokens=4,* delims=:(" %%q in ('find "DiskIIArray=" ..\build\out.txt') do echo %%q >> ..\build\vars.a
 for /f "tokens=4,* delims=:(" %%q in ('find "HardDiskArray=" ..\build\out.txt') do echo %%q >> ..\build\vars.a
+for /f "tokens=4,* delims=:(" %%q in ('find "ThisSlot=" ..\build\out.txt') do echo %%q >> ..\build\vars.a
 for /f "tokens=4,* delims=:(" %%q in ('find "PrintByID=" ..\build\out.txt') do echo %%q >> ..\build\vars.a
 for /f "tokens=4,* delims=:(" %%q in ('find "WaitForKey=" ..\build\out.txt') do echo %%q >> ..\build\vars.a
 for /f "tokens=4,* delims=:(" %%q in ('find "CleanExit=" ..\build\out.txt') do echo %%q >> ..\build\vars.a

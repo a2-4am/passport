@@ -26,9 +26,6 @@ PC_CLOSE =     $01
 PC_SETMARK =   $02
 PC_SETEOF  =   $02
 
-; MLI addresses
-PRODOSMLI =    $BF00      ; [callable] MLI entry point
-
 ; MLI constants
 FULL_ACCESS =   $C3
 

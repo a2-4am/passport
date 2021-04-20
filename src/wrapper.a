@@ -4,6 +4,16 @@
 
          !source "../build/vars.a"
 
+         bit   $C082
+         sta   $C00E
+         sta   $C00C
+         sta   $C000
+         sta   $C002
+         jsr   $FB2F
+         jsr   $FC58
+         jsr   $FE84
+         jsr   $FE93
+         jsr   $FE89
          lda   $BF98                 ; ProDOS MachineID
          and   #$20                  ; at least 64K?
          bne   OneTimeSetup
@@ -15,8 +25,6 @@ quit     !byte 4
 OneTimeSetup
          jsr   $FE89                 ; PR#0
          jsr   $FE93                 ; IN#0
-         jsr   $FB2F                 ; TEXT
-         jsr   $FC58                 ; HOME
          jsr   decrunch              ; decompress main Passport code
          sty   $FE                   ;;zp_dest_lo = low byte of Passport entry point
          ldy   #0                    ; save a copy of ProDOS system global page
@@ -40,6 +48,7 @@ OneTimeSetup
 +
          jsr   ScanForRAMAndHardDisks; scan for things that look like RAM disks or hard disks
          jsr   LoadPrefs             ; load preferences (if available)
+         jsr   ThisSlot
          lda   $FE
          sta   $03F2
          lda   $FF

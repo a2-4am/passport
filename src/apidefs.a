@@ -30,6 +30,18 @@ ID_DISK_II           = %00000000     ; BIT + BPL + BVC -> target is Disk II driv
 ID_CFFA_VIRTUAL_DISK = %01000000     ; BIT + BPL + BVS -> target is a CFFA3000-managed virtual disk drive
 ID_FILE_ON_HARD_DISK = %10000000     ; BIT + BMI ->       target is a file on a hard disk
 
+; Standard zero-page addresses
+TEXTTOP  =     $22
+VPOS     =     $25
+
+; Standard addresses
+PRODOSMLI=     $BF00
+TEXT     =     $FB2F
+HOME     =     $FC58
+WAIT     =     $FCA8
+PRBYTE   =     $FDDA
+COUT     =     $FDED
+
 ; Zero-page addresses we use for variables
 nibsrcindex =  $EC        ; byte
 nibdestindex = $ED        ; byte
@@ -62,6 +74,14 @@ BASEPAGE =     $10        ; high byte of $1000-byte buffer that
                           ; holds sector data for current track
                           ; Special Delivery tracer assumes this
                           ; is $10, so don't change it!
+
+; Universal RWTS-specific addresses
+UNIV_A1 = $B956           ; must LSR before setting
+UNIV_A2 = $B95F
+UNIV_A3 = $B968
+UNIV_D1 = $B8E7
+UNIV_D2 = $B8F1
+UNIV_D3 = $B8FC
 
 ;-------------------------------
 ; globally-accessible variables
