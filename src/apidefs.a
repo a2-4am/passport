@@ -36,6 +36,8 @@ VPOS     =     $25
 
 ; Standard addresses
 PRODOSMLI=     $BF00
+KEY      =     $C000
+STROBE   =     $C010
 TEXT     =     $FB2F
 HOME     =     $FC58
 WAIT     =     $FCA8

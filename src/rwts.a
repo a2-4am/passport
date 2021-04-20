@@ -1,3 +1,16 @@
+gTrack   !byte $00
+gSector  !byte $00
+
+gRWTSParams
+         !byte $01,$60,$01,$00
+_track   !byte $00
+_sector  !byte $00
+         !word dct
+gAddress !word $1F00
+         !byte $00,$00
+gCommand !byte $01,$00,$FE,$60,$01,$00,$00
+dct      !byte $00,$01,$EF,$D8,$00
+
 ;-------------------------------
 ; ReadSector
 ; high-level function to read a single sector.
@@ -32,16 +45,14 @@ ReadSector
 
          lda   gIsProtDOS
          beq   _protread
-
-setuprwts
+@go
          ldy   #<gRWTSParams
          lda   #>gRWTSParams
          jsr   jCallRWTS
-         bcc   endread
+         bcc   +
          lda   gOnAClearDayYouCanReadForever
-         beq   setuprwts
-endread
-         rts
+         beq   @go
++        rts
 
 ;
 ; "Protected.DOS" has enough differences that we just
@@ -51,35 +62,31 @@ endread
 ; nibble is stored in zp$4E and varies based on track
 ; and sector.
 ;
-!zone {
 _protread
          lda   gTrack     ; T02,S05+ use "protected" mode
          cmp   #$03       ; (altered data prologue and
-         bcs   .protected ; nibble translate table)
+         bcs   @protected ; nibble translate table)
          cmp   #$02       ; T00,S00 - T02,S04 use
-         bcc   .standard  ; "standard" mode
+         bcc   @standard  ; "standard" mode
          lda   gSector
          cmp   #$05
-         bcs   .protected
-.standard
+         bcs   @protected
+@standard
          lda   #$9B
          sta   $BF2C
-         bne   .go        ; unconditional branch
-.protected
+         bne   @go        ; unconditional branch
+@protected
          lda   #$B5
          sta   $4E
          lda   #$D5
          sta   $BF2C      ; execution falls through here
-.go
-         lda   #<gRWTSParams
+@go      lda   #<gRWTSParams
          ldy   #>gRWTSParams
          jsr   $BA00      ; note non-standard entry point
-         bcc   endprotread
+         bcc   +
          lda   gOnAClearDayYouCanReadForever
-         beq   .go
-endprotread
-         rts
-}
+         beq   @go
++        rts
 
 ;-------------------------------
 ; PreReadSector
@@ -125,9 +132,9 @@ IgnoreAddressChecksum
 ; in:  A = new track
 ;-------------------------------
 ChangeTrack
-         sta   .new+1
+         sta   @new+1
          jsr   WriteTrack
-.new     lda   #$d1       ; modified at runtime
+@new     lda   #$d1       ; modified at runtime
 
 ; note: execution falls through here
 
@@ -194,39 +201,25 @@ WriteTrackNA                         ; entry point used by Special Delivery trac
 
 ;-------------------------------
 ; FatalWriteError
-; in:    A has MLI code (from WriteTrackFirstPass or WriteTrackSecondPass)
+; in:    A has MLI error code
 ; out:   does not return, exits via TheEnd
 ;-------------------------------
 FatalWriteError
-         sta   gDisplayBytes ; for use in error messages, if any
+         sta   gDisplayBytes
          tax
          lda   #s_writeioerr
          cpx   #MLI_IOERR
-         beq   .printerr
+         beq   @print
          lda   #s_writenodev
          cpx   #MLI_NODEV
-         beq   .printerr
+         beq   @print
          lda   #s_writeprot
          cpx   #MLI_WRITEPROT
-         beq   .printerr
+         beq   @print
          lda   #s_othermli
-.printerr
-         pha
+@print   pha
          lda   #s_writeerr
          jsr   PrintByID
          pla
          jsr   PrintByID
          jmp   TheEnd
-
-gTrack   !byte $00
-gSector  !byte $00
-
-gRWTSParams               ; used to read each sector
-         !byte $01,$60,$01,$00
-_track   !byte $00
-_sector  !byte $00
-         !word dct
-gAddress !word $1F00
-         !byte $00,$00
-gCommand !byte $01,$00,$FE,$60,$01,$00,$00
-dct      !byte $00,$01,$EF,$D8,$00

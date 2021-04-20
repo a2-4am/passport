@@ -15,7 +15,6 @@
 ;      oVerflow bit clear
 ;      all other flags clobbered
 ;-------------------------------
-!zone {
 modify
          sta   gDisplayBytes
          clc
@@ -31,49 +30,43 @@ modify
          tya
          clc
          adc   modsrc
-         bcc   .noinc
+         bcc   +
          inx
-.noinc
-         sta   tmp
++        sta   tmp
          txa
          pha
          lda   tmp
          pha
          sty   modtmp
          bit   gMode
-         bpl   .exitnomod ; verify mode -> no modify
-         bvc   .exitnomod ; demuffin mode -> no modify
+         bpl   @exitnomod ; verify mode -> no modify
          lda   #s_modify
          jsr   PrintByID
          ldy   #0
-.dest
-         lda   (moddest),y
+-        lda   (moddest), y
          jsr   PrintByte
          iny
          cpy   modtmp
-         bne   .dest
+         bne   -
          lda   #s_modifyto
          jsr   PrintByID
          ldy   #0
-.src
-         iny
-         lda   (modsrc),y
+-        iny
+         lda   (modsrc), y
          jsr   PrintByte
          cpy   modtmp
-         bne   .src
+         bne   -
          lda   #$8D
          jsr   PrintA
          bvc   +
-.mod
-         sta   (moddest),y
-+        lda   (modsrc),y
+-        sta   (moddest), y
++        lda   (modsrc), y
          dey
-         bpl   .mod
-.exit
+         bpl   -
+@exit
          inc   gPatchCount
-.exitnomod
+@exitnomod
          lda   gDisplayBytes
          ldx   moddest
          clv
          rts
-}

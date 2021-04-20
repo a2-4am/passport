@@ -1,16 +1,13 @@
-!zone {
 EnterCFFAIfAvailable
          ldy   #$04
 -        lda   $C7F6, y
-         cmp   CFFASignature, y
+         cmp   @CFFASignature, y
          sec
          bne   +
          dey
          bpl   -
          jsr   $C730
          clc
-+
-         rts
-CFFASignature
++        rts
+@CFFASignature
          !byte $43,$46,$33,$4B,$31
-}
