@@ -30,6 +30,9 @@ PC_SETEOF  =   $02
 FULL_ACCESS =   $C3
 
 ; MLI error codes
+MLI_IOERR =    $27
+MLI_NODEV =    $28
+MLI_WRITEPROT = $2B
 ERR_FNF  =     $46
 ERR_EOF  =     $4C
 ERR_EXIST =    $47

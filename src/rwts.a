@@ -88,169 +88,135 @@ endprotread
 ;      assume all other things clobbered
 ;-------------------------------
 PreReadSector
-!zone {
          cmp   #kSectorResetAdaptiveRWTS
-         beq   .reset
+         beq   @reset
          cmp   #kSectorIgnoreAddressChecksum
          beq   IgnoreAddressChecksum
          cmp   #kSectorCustomDOS32B4BB
-         beq   .b4bb
+         beq   @b4bb
          rts
-.reset
+@reset
          jsr   CopyUniversal
          lda   #kSectorRequired
          rts
-.b4bb
+@b4bb
          ldx   jCallRWTS+2
          dex
          dex
          dex
          dex
-         stx   .a+2
-         stx   .b+2
+         stx   @a+2
+         stx   @b+2
          ldx   #$D5
-.a       stx   $FF76
+@a       stx   $FF76
          ldx   #$ED
-.b       stx   $FFB2
-.exit    rts
-}
+@b       stx   $FFB2
+         rts
 
-!zone {
 IgnoreAddressChecksum
 ; out: A,Y preserved
 ;      X clobbered
          ldx   #$00
          stx   $B98A
          rts
-}
 
-!zone {
-PatchUniversalRWTSForNoRecal
-         lda   #$B0
-         sta   $BDD2
-         lda   #$30
-         sta   $BDD3
+;-------------------------------
+; ChangeTrack
+; in:  A = new track
+;-------------------------------
+ChangeTrack
+         sta   .new+1
+         jsr   WriteTrack
+.new     lda   #$d1       ; modified at runtime
+
+; note: execution falls through here
+
+ChangeTrackNW             ; "N"o "W"rite
+         sta   gTrack
+         jsr   ClearTSBuffer
          rts
-}
 
-!zone {
-PatchUniversalRWTSForAdaptive
-; out:    N flag set
-         ldy   #$09
--        lda   .addressepilogue, y
-         sta   $B994, y
-         lda   .dataepilogue, y
-         sta   $B938, y
-         dey
-         bpl   -
-         rts
-.addressepilogue          ; to $B994
-         !byte $8D,$91,$B9
-         !byte $A9,$AE
-         !byte $8D,$93,$B9
-         !byte $D0,$00
-.dataepilogue             ; to $B938
-         !byte $8D,$35,$B9
-         !byte $A9,$0A
-         !byte $8D,$37,$B9
-         !byte $18
-         !byte $60
-}
-
-!zone {
-PatchUniversalRWTSForOrigin
-; out:    N=1
-         ldy   #$0F
--        lda   .addressepilogue, y
-         sta   $B990, y
-         dey
-         bpl   -
-         ldy   #$0A
--        lda   .dataepilogue, y
-         sta   $B92F, y
-         dey
-         bpl   -
-         rts
-.addressepilogue          ; to $B990
-         !byte $C9,$AB
-         !byte $D0,$0A
-         !byte $EA
-         !byte $BD,$8C,$C0
-         !byte $C9,$AB
-         !byte $F0,$95
-         !byte $D0,$00
-         !byte $18,$60
-.dataepilogue             ; to $B92F
-         !byte $18
-         !byte $60
-         !byte $38
-         !byte $A5,$2D
-         !byte $E9,$11
-         !byte $85,$2D
-         !byte $18
-         !byte $60
-}
-
-!zone {
-PatchUniversalRWTSForTSR
-; out:   Z=0
-         lda   #<tsr_callback
-         sta   $BE8C
-         lda   #>tsr_callback
-         sta   $BE8D
-         rts
-tsr_callback
-         pha
-         ldy   gTrack
-         cpy   #$05
-         bcc   .normal
-         lda   $F800, y
-         and   #$42
-         bne   +
-         lda   #$42
-+        ora   #$B5
-         !byte $2C
-.normal  lda   #$AD
-         sta   $B8FC
-         pla
-         jmp   $B9A0
-}
-
-SwitchToUniv
-         lda   gSector
-         sta   gDisplayBytes
-         lda   #s_switch
-         !byte $2C        ; hide next LDA
-StartWithUniv
-         lda   #s_builtin
-         jsr   PrintByID
-         lda   #TRUE
-         sta   gTriedUniv
-         lda   #FALSE
-         sta   gIsProtDOS
-         ; /!\ execution falls through here
-
-CopyUniversal
-         lda   #$B8
-CopyUniversalAnywhere
-         sta   universalrwts
+;-------------------------------
+; ChangeSector
+; in:  A = new sector
+;-------------------------------
+ChangeSector
+         sta   gSector
          clc
-         adc   #$02
-         sta   .cu+2
-         lda   #>universalrwts
-         sta   _byte_hi
-         lda   #<universalrwts
-         sta   _byte_lo
-         jsr   decrunch
-         sty   jCallRWTS+1
-         lda   #$BD
-         sta   jCallRWTS+2
-         ldy   #$96
-.culoop  lda   gNIBTable,y
-.cu      sta   $d100,y    ; set at runtime
-         iny
-         bne   .culoop
+         adc   #BASEPAGE
+         sta   gAddress+1
          rts
+
+;-------------------------------
+; WriteTrack
+; in:    none
+;-------------------------------
+WriteTrack
+         jsr   AnalyzeTrack
+WriteTrackNA                         ; entry point used by Special Delivery tracer
+                                     ; to write track with 'N'o 'A'nalysis
+         bit   gMode
+         bpl   @exit                 ; don't write anything in verify mode
+         lda   gSaidWriting
+         beq   @doTheWriteThing      ; only print 'writing to' message once
+
+         ; we haven't yet printed any 'writing to...' message in the log, so
+         ; figure out what that should look like and do it now
+         lda   #s_writingto
+         jsr   PrintByID
+
+         lda   gHardDiskRef
+         beq   @maybeWritingToRAMDisk
+         ; we are writing to a file on a hard disk, so print the
+         ; full pathname of that file
+         jsr   PrintHardDiskImagePath
+         bvc   @doneSaidWriting      ; always branches
+
+@maybeWritingToRAMDisk
+         lda   gRAMDiskRef
+         beq   @notWritingToRAMDisk
+         lda   #s_ramdisk            ; writing to (a file on) a RAM disk
+         !byte $2C
+@notWritingToRAMDisk
+         lda   #s_slotanddrive       ; writing to a slot and drive
+         jsr   PrintByID
+
+@doneSaidWriting
+         lda   #TRUE
+         sta   gSaidWriting
+
+@doTheWriteThing
+         jsr   SwapProDOS            ; ProDOS out -> in
+         jsr   WriteTrackFirstPass
+         jsr   SwapProDOS            ; ProDOS in -> out
+         bcs   FatalWriteError
+@exit    rts
+
+;-------------------------------
+; FatalWriteError
+; in:    A has MLI code (from WriteTrackFirstPass or WriteTrackSecondPass)
+; out:   does not return, exits via TheEnd
+;-------------------------------
+FatalWriteError
+         sta   gDisplayBytes ; for use in error messages, if any
+         tax
+         lda   #s_writeioerr
+         cpx   #MLI_IOERR
+         beq   .printerr
+         lda   #s_writenodev
+         cpx   #MLI_NODEV
+         beq   .printerr
+         lda   #s_writeprot
+         cpx   #MLI_WRITEPROT
+         beq   .printerr
+         lda   #s_othermli
+.printerr
+         pha
+         lda   #s_writeerr
+         jsr   PrintByID
+         pla
+         jsr   PrintByID
+         jmp   TheEnd
 
 gTrack   !byte $00
 gSector  !byte $00

@@ -1,0 +1,196 @@
+ReadWithRWTS
+         lda   #$22
+         jsr   ChangeTrackNW
+         lda   #$0F
+         ldx   gIs13Sector
+         bne   +
+         lda   #$0C
++        jsr   ChangeSector
+         lda   #<T22S0F
+         sta   checksector+1
+         lda   #>T22S0F
+         sta   checksector+2
+.read
+         lda   KEY
+         bpl   .checkinfocom
+         bit   STROBE
+         cmp   #$e0 ;ignore backtick (MAME debug break)
+         beq   .checkinfocom
+         jmp   Cancel
+.checkinfocom
+         lda   gIsInfocom18
+         bne   checksector
+         jsr   VerifyInfocom18
+         bcc   .passtrack
+         jmp   FatalError
+.passtrack
+         jmp   .prevtrack
+
+checksector
+         lda   $FFFF                            ; status of current sector in sector map (modified above)
+         cmp   #kSectorCustomFirst              ; call a custom routine before deciding what to do with this sector?
+         bcc   +
+         cmp   #kSectorCustomLast
+         bcs   +
+         jsr   PreReadSector
++        pha                                    ; replace status (on stack) with new status returned from PreReadSector
+         cmp   #kSectorIgnore                   ; skip this sector?
+         beq   nextsector
+         cmp   #kSectorSwitchToBuiltinRWTS      ; switch to built-in RWTS before reading this sector?
+         bne   +
+         lda   gTriedUniv
+         beq   +
+         jsr   SwitchToUniv
++        jsr   ReadSector
+         bcc   nextsector
+;
+; Uh oh, we got a read error. But do we care?
+; If we just got to this track, check for whole-track protections.
+;
+         ldx   #$0F ;16-sector
+         lda   gIs13Sector
+         beq   .expect13
+         lda   gIsDOS32
+         bne   +
+.expect13
+         ldx   #$0C ;13-sector
++        cpx   gSector
+         bne   .checkoptional
+         stx   .sub+1
+         jsr   SkipTrack
+         bcs   .checkoptional
+; Skip this track (we already printed the reason)
+         lda   #$00
+         jsr   ChangeSector
+         lda   checksector+1
+         sec
+.sub     sbc   #$0F ;self-modified according to sectors per track
+         sta   checksector+1
+         bcs   +
+         dec   checksector+2
++        jmp   nextsector
+
+; do this only *after* checking for track-skip
+; to avoid fatal errors on unformatted tracks
+
+.checkoptional
+         pla
+         pha
+;
+; Maybe we marked this sector as optional based
+; on markers in the bootloader.
+;
+         cmp   #kSectorOptional
+         beq   .optional
+
+;
+; Otherwise we're in the middle of a track, so try switching to
+; the universal RWTS and see if that helps. (Many disks contain
+; an RWTS that can't read the early tracks or sectors that
+; contain the RWTS code, since those are loaded by the
+; disk controller firmware.)
+;
+
+.tryuniversal
+         lda   gIsDOS32   ; is this a DOS 3.2 disk?
+         beq   .fatal     ; yes, so read error is fatal
+         lda   gTriedUniv ; have we tried the universal RWTS?
+         beq   .maybedavidson ; yes, but check one last thing
+         jsr   SwitchToUniv ; no, switch it in now
+         jmp   .read      ; and re-read this sector
+
+.maybedavidson
+         jsr   IDDavidson
+         bcc   .optional
+
+.fatal   pla              ; if we get to here, we've
+         jmp   FatalError ; decided the read error is fatal
+
+.optional
+         lda   #s_optbad  ; say we're skipping this
+         jsr   PrintByID  ; optional sector
+         ; /!\ execution falls through here
+
+nextsector
+         pla
+         lda   checksector+1
+         bne   .nodec
+         dec   checksector+2
+.nodec
+         dec   checksector+1
+         ldy   gSector
+         dey
+         tya
+         jsr   ChangeSector
+         lda   gSector
+         bmi   .prevtrack
+.linkread
+         jmp   .read
+.prevtrack
+         lda   #$0F
+         ldx   gIs13Sector
+         bne   +
+         lda   #$0C
++        jsr   ChangeSector
+         ldy   gTrack
+         dey
+         tya
+         jsr   ChangeTrack
+         jsr   IncProgress
+         lda   gTrack
+         bmi   Pass
+         cmp   gLastTrack
+         bcs   .linkread
+Pass
+         bit   gMode
+         bpl   @passVerify
+         lda   gRAMDiskRef
+         beq   @printFinalMessage    ; not using RAM disk, so we're done
+
+         ; we've written the entire cracked disk as a file on the RAM disk,
+         ; now a second pass to write that file out to the target disk drive
+         lda   #s_writingto
+         jsr   PrintByID
+         lda   #s_slotanddrive
+         jsr   PrintByID
+         jsr   SwapProDOS            ; ProDOS out -> in
+         jsr   WriteRAMToDisk
+         jsr   SwapProDOS            ; ProDOS in -> out (preserves flags)
+         bcc   @printFinalMessage
+         jmp   FatalWriteError
+
+@printFinalMessage
+         lda   gPatchCount
+         beq   @passWithZeroPatches
+         lda   #s_passcrack          ; 'crack complete'
+         !byte $2C
+@passWithZeroPatches
+         lda   #s_passcrack0         ; 'crack complete but no patches'
+         !byte $2C
+@passVerify
+         lda   #s_pass               ; 'verification complete'
+         jsr   PrintByID
+         jmp   TheEnd
+
+Cancel
+         lda   #s_canceled
+         jsr   PrintByID
+         jmp   TheEnd
+
+FatalError
+         lda   #s_fail
+         jsr   PrintByID
+         lda   gTrack
+         cmp   #$22
+         bne   @TheEnd
+         lda   gSector
+         cmp   #$0F
+         beq   @failont22s0f
+         ldx   gIsDOS32
+         bne   @TheEnd
+         cmp   #$0C
+         bne   @TheEnd
+@failont22s0f
+         lda   #s_fatal220f
+         jsr   PrintByID
+@TheEnd  jmp   TheEnd

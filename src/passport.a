@@ -95,6 +95,9 @@ FirstMover
          !source "progress.a"
          !source "rwts.a"
          !source "standarddelivery.a"
+         !source "adstyle.a"
+         !source "universalstyle.a"
+         !source "crackme.a"
 
 ResetVector
          ldx   #$FF
@@ -212,327 +215,6 @@ Reaction
          jmp   TheEnd
 +        jmp   IDBootloader ; /src/id/inspect0
 
-
-
-
-
-
-;
-; We are now fairly confident that the RWTS in memory
-; is normal enough to call, Advanced Demuffin style.
-;
-ADStyle
-         jsr   IncProgress
-         lda   #s_diskrwts
-         jsr   PrintByID
-;
-; Check for protections in early boot that
-; might indicate intentional bad sectors
-; elsewhere in the disk that we should skip,
-; or changes we need to make to the RWTS
-; before we start.
-;
-         jsr   xHeredityDog
-         bcs   +
-         lda   #$05
-         sta   gDisplayBytes
-         lda   #s_lockitup
-         jsr   PrintByID
-+
-         jsr   xSunburst
-         bcs   +
-         lda   #$04
-         sta   gDisplayBytes
-         lda   #s_sunburst
-         jsr   PrintByID
-+
-         jsr   xOptimumRes
-         bcs   +
-         lda   #TRUE
-         sta   gIsOptimum
-         lda   #s_optimum
-         jsr   PrintByID
-+
-         jsr   xSVE
-         bcs   +
-         lda   #s_sve
-         jsr   PrintByID
-         lda   #$CA
-         sta   $BE5B
-         lda   #$B6
-         sta   $BE5C
-+
-         jsr   xRPS
-         bcs   +
-         lda   #$01
-         sta   gDisplayBytes
-         lda   #s_rps
-         jsr   PrintByID
-+
-         jsr   xB660
-         jsr   xB4BB
-         jsr   xHarvey
-         jmp   ReadWithRWTS
-
-UseUniversal
-         jsr   IncProgress
-         jsr   StartWithUniv
-;
-; On Dinkey-DOS disks (e.g. Ultima V, Times of Lore), we start with the
-; universal RWTS then apply a patch in memory.
-; These disks use a hybrid RWTS that alters the sector number in the
-; address field based on the address epilogue. Once we normalize the
-; sector numbers, no further patches are required, since the RWTS can also
-; read unprotected disks. A separate patcher finds the actual code that
-; alters the sector number to print it to the log.
-;
-         lda   gIsDinkeyDOS
-         bne   +
-         jsr   PatchUniversalRWTSForOrigin
-         bmi   ReadWithRWTS          ; always branches
-;
-; On TSR disks (e.g. Dawn Patrol, Dungeon), we start with the universal
-; RWTS then apply a patch in memory.
-;
-+        lda   gIsTSR
-         bne   +
-         jsr   PatchUniversalRWTSForTSR
-;
-; On pure 13-sector disks, we just hijack the read routine to perform a
-; verification instead.
-;
-+        lda   gIs13Sector
-         bne   +
-         lda   #<read13
-         sta   jCallRWTS+1
-         lda   #>read13
-         sta   jCallRWTS+2
-         bne   ReadWithRWTS          ; always branches
-;
-; On other disks that use the universal RWTS for the entire disk, we use
-; an adaptive RWTS that accepts any epilogue on the first sector but then
-; enforces all other sectors to have the same epilogue.
-;
-+        jsr   PatchUniversalRWTSForAdaptive
-;
-; Disable drive recalibration on bad sectors so we give up on bad sectors
-; faster and detect unformatted or specially structured tracks faster.
-;
-         jsr   PatchUniversalRWTSForNoRecal
-;
-; Some disks have different epilogues on track 0, so we stop using the
-; adaptive RWTS so we don't falsely accuse those disks of being damaged.
-;
-         lda   #kSectorResetAdaptiveRWTS
-         sta   T00S0F
-;
-; Some disks have an intentionally invalid checksum on T00,S00 (read by
-; the drive firmware, which doesn't verify it).
-;
-         lda   #kSectorIgnoreAddressChecksum
-         sta   T00S00
-;
-; note: execution falls through here
-;
-ReadWithRWTS
-         lda   #$22
-         jsr   ChangeTrackNW
-         lda   #$0F
-         ldx   gIs13Sector
-         bne   +
-         lda   #$0C
-+        jsr   ChangeSector
-         lda   #<T22S0F
-         sta   checksector+1
-         lda   #>T22S0F
-         sta   checksector+2
-.read
-         lda   KEY
-         bpl   .checkinfocom
-         bit   STROBE
-         cmp   #$e0 ;ignore backtick (MAME debug break)
-         beq   .checkinfocom
-         jmp   Cancel
-.checkinfocom
-         lda   gIsInfocom18
-         bne   checksector
-         jsr   VerifyInfocom18
-         bcc   .passtrack
-         jmp   FatalError
-.passtrack
-         jmp   .prevtrack
-
-checksector
-         lda   $FFFF                            ; status of current sector in sector map (modified above)
-         cmp   #kSectorCustomFirst              ; call a custom routine before deciding what to do with this sector?
-         bcc   +
-         cmp   #kSectorCustomLast
-         bcs   +
-         jsr   PreReadSector
-+        pha                                    ; replace status (on stack) with new status returned from PreReadSector
-         cmp   #kSectorIgnore                   ; skip this sector?
-         beq   nextsector
-         cmp   #kSectorSwitchToBuiltinRWTS      ; switch to built-in RWTS before reading this sector?
-         bne   +
-         lda   gTriedUniv
-         beq   +
-         jsr   SwitchToUniv
-+        jsr   ReadSector
-         bcc   nextsector
-;
-; Uh oh, we got a read error. But do we care?
-; If we just got to this track, check for whole-track protections.
-;
-         ldx   #$0F ;16-sector
-         lda   gIs13Sector
-         beq   .expect13
-         lda   gIsDOS32
-         bne   +
-.expect13
-         ldx   #$0C ;13-sector
-+        cpx   gSector
-         bne   .checkoptional
-         stx   .sub+1
-         jsr   SkipTrack
-         bcs   .checkoptional
-; Skip this track (we already printed the reason)
-         lda   #$00
-         jsr   ChangeSector
-         lda   checksector+1
-         sec
-.sub     sbc   #$0F ;self-modified according to sectors per track
-         sta   checksector+1
-         bcs   +
-         dec   checksector+2
-+        jmp   nextsector
-
-; do this only *after* checking for track-skip
-; to avoid fatal errors on unformatted tracks
-
-.checkoptional
-         pla
-         pha
-;
-; Maybe we marked this sector as optional based
-; on markers in the bootloader.
-;
-         cmp   #kSectorOptional
-         beq   .optional
-
-;
-; Otherwise we're in the middle of a track, so try switching to
-; the universal RWTS and see if that helps. (Many disks contain
-; an RWTS that can't read the early tracks or sectors that
-; contain the RWTS code, since those are loaded by the
-; disk controller firmware.)
-;
-
-.tryuniversal
-         lda   gIsDOS32   ; is this a DOS 3.2 disk?
-         beq   .fatal     ; yes, so read error is fatal
-         lda   gTriedUniv ; have we tried the universal RWTS?
-         beq   .maybedavidson ; yes, but check one last thing
-         jsr   SwitchToUniv ; no, switch it in now
-         jmp   .read      ; and re-read this sector
-
-.maybedavidson
-         jsr   IDDavidson
-         bcc   .optional
-
-.fatal   pla              ; if we get to here, we've
-         jmp   FatalError ; decided the read error is fatal
-
-.optional
-         lda   #s_optbad  ; say we're skipping this
-         jsr   PrintByID  ; optional sector
-
-; note: execution falls through here
-
-nextsector
-         pla
-         lda   checksector+1
-         bne   .nodec
-         dec   checksector+2
-.nodec
-         dec   checksector+1
-         ldy   gSector
-         dey
-         tya
-         jsr   ChangeSector
-         lda   gSector
-         bmi   .prevtrack
-.linkread
-         jmp   .read
-.prevtrack
-         lda   #$0F
-         ldx   gIs13Sector
-         bne   +
-         lda   #$0C
-+        jsr   ChangeSector
-         ldy   gTrack
-         dey
-         tya
-         jsr   ChangeTrack
-         jsr   IncProgress
-         lda   gTrack
-         bmi   Pass
-         cmp   gLastTrack
-         bcs   .linkread
-Pass
-         bit   gMode
-         bpl   @passVerify
-         lda   gRAMDiskRef
-         beq   @printFinalMessage    ; not using RAM disk, so we're done
-
-         ; we've written the entire cracked disk as a file on the RAM disk,
-         ; now a second pass to write that file out to the target disk drive
-         lda   #s_writingto
-         jsr   PrintByID
-         lda   #s_slotanddrive
-         jsr   PrintByID
-         jsr   SwapProDOS            ; ProDOS out -> in
-         jsr   WriteRAMToDisk
-         jsr   SwapProDOS            ; ProDOS in -> out (preserves flags)
-         bcc   @printFinalMessage
-         jmp   FatalWriteError
-
-@printFinalMessage
-         lda   gPatchCount
-         beq   @passWithZeroPatches
-         lda   #s_passcrack          ; 'crack complete'
-         !byte $2C
-@passWithZeroPatches
-         lda   #s_passcrack0         ; 'crack complete but no patches'
-         !byte $2C
-@passVerify
-         lda   #s_pass               ; 'verification complete'
-         jsr   PrintByID
-         jmp   TheEnd
-
-Cancel
-         lda   #s_canceled
-         jsr   PrintByID
-         jmp   TheEnd
-
-FatalError
-         lda   #s_fail
-         jsr   PrintByID
-         lda   gTrack
-         cmp   #$22
-         bne   TheEnd
-.failont22
-         lda   gSector
-         cmp   #$0F
-         beq   .failont22s0f
-         ldx   gIsDOS32
-         bne   TheEnd
-         cmp   #$0C
-         bne   TheEnd
-.failont22s0f
-         lda   #s_fatal220f
-         jsr   PrintByID
-         ; /!\ execution falls through here
-
 TheEnd
          lda   $C0E8
          jsr   CleanupFiles
@@ -546,25 +228,6 @@ TheEnd
          cmp   #k_redo_with_ignore
          beq   HandleRedoWithIgnore
          jmp   MainMenu
-
-;-------------------------------
-; CleanupFiles
-;
-; Cleans up open files (if any)
-;
-; in:    ProDOS is NOT in memory
-; out:   ProDOS is NOT in memory
-;        all registers and flags clobbered
-;-------------------------------
-CleanupFiles
-         lda   gHardDiskRef
-         ora   gRAMDiskRef
-         beq   +
-         jsr   SwapProDOS            ; ProDOS out -> in
-         jsr   DeleteFileOnRAMDisk
-         jsr   CloseFileOnHardDisk
-         jsr   SwapProDOS            ; ProDOS in -> out
-+        rts
 
 HandleRedoWithIgnore
          jsr   InitSectorMapWithIgnore
@@ -595,6 +258,25 @@ RestartScan
          jmp   ReadWithRWTS
 
 ;-------------------------------
+; CleanupFiles
+;
+; Cleans up open files (if any)
+;
+; in:    ProDOS is NOT in memory
+; out:   ProDOS is NOT in memory
+;        all registers and flags clobbered
+;-------------------------------
+CleanupFiles
+         lda   gHardDiskRef
+         ora   gRAMDiskRef
+         beq   +
+         jsr   SwapProDOS            ; ProDOS out -> in
+         jsr   DeleteFileOnRAMDisk
+         jsr   CloseFileOnHardDisk
+         jsr   SwapProDOS            ; ProDOS in -> out
++        rts
+
+;-------------------------------
 ; CleanExit
 ;
 ; Cleans up open files, saves preferences (if modified),
@@ -615,135 +297,37 @@ CleanExit
 +        !byte $04
 
 ;-------------------------------
-; WriteTrack
-;-------------------------------
-MLI_IOERR =    $27
-MLI_NODEV =    $28
-MLI_WRITEPROT = $2B
-
-WriteTrack
-         jsr   AnalyzeTrack
-WriteTrackNA                         ; entry point used by Special Delivery tracer
-                                     ; to write track with 'N'o 'A'nalysis
-         bit   gMode
-         bpl   @exit                 ; don't write anything in verify mode
-         lda   gSaidWriting
-         beq   @doTheWriteThing      ; only print 'writing to' message once
-
-         ; we haven't yet printed any 'writing to...' message in the log, so
-         ; figure out what that should look like and do it now
-         lda   #s_writingto
-         jsr   PrintByID
-
-         lda   gHardDiskRef
-         beq   @maybeWritingToRAMDisk
-         ; we are writing to a file on a hard disk, so print the
-         ; full pathname of that file
-         jsr   PrintHardDiskImagePath
-         bvc   @doneSaidWriting      ; always branches
-
-@maybeWritingToRAMDisk
-         lda   gRAMDiskRef
-         beq   @notWritingToRAMDisk
-         lda   #s_ramdisk            ; writing to (a file on) a RAM disk
-         !byte $2C
-@notWritingToRAMDisk
-         lda   #s_slotanddrive       ; writing to a slot and drive
-         jsr   PrintByID
-
-@doneSaidWriting
-         lda   #TRUE
-         sta   gSaidWriting
-
-@doTheWriteThing
-         jsr   SwapProDOS            ; ProDOS out -> in
-         jsr   WriteTrackFirstPass
-         jsr   SwapProDOS            ; ProDOS in -> out
-         bcs   FatalWriteError
-@exit    rts
-
-;-------------------------------
-; FatalWriteError
-; in:    A has MLI code (from WriteTrackFirstPass or WriteTrackSecondPass)
-; out:   does not return, exits via TheEnd
-;-------------------------------
-FatalWriteError
-         sta   gDisplayBytes ; for use in error messages, if any
-         tax
-         lda   #s_writeioerr
-         cpx   #MLI_IOERR
-         beq   .printerr
-         lda   #s_writenodev
-         cpx   #MLI_NODEV
-         beq   .printerr
-         lda   #s_writeprot
-         cpx   #MLI_WRITEPROT
-         beq   .printerr
-         lda   #s_othermli
-.printerr
-         pha
-         lda   #s_writeerr
-         jsr   PrintByID
-         pla
-         jsr   PrintByID
-         jmp   TheEnd
-
-;-------------------------------
-; ChangeTrack
-; in:  A = new track
-;-------------------------------
-ChangeTrack
-         sta   .new+1
-         jsr   WriteTrack
-.new     lda   #$d1       ; modified at runtime
-
-; note: execution falls through here
-
-ChangeTrackNW             ; "N"o "W"rite
-         sta   gTrack
-         jsr   ClearTSBuffer
-         rts
-
-;-------------------------------
-; ChangeSector
-; in:  A = new sector
-;-------------------------------
-ChangeSector
-         sta   gSector
-         clc
-         adc   #BASEPAGE
-         sta   gAddress+1
-         rts
-
-;-------------------------------
 ; AnalyzeTrack routine
 ; Looks at buffer in memory to detect known
 ; copy protections and disable/revert/modify them
 ; to work on standard disks.
 ; Prints through COUT
 ; Makes modifications in memory only.
-; in:  $BASEPAGE page contains one track worth of data
-; out: if C set, no known protections were found and
-;        no modifications were made
-;      if C clear, at least one modification was made
+; in:    @BASEPAGE contains one track worth of data ($1000 bytes)
+;        gTrack contains track number
+; out:   if C set, no known protections were found and
+;          no modifications were made
+;        if C clear, at least one modification was made
 ;-------------------------------
 AnalyzeTrack
          lda   gTrack
-         bne   _applyToAll
-_applyToT00
+         bne   @applyToAll
+         ; Track 0 patchers are stored compressed in memory
+         ; then decompressed into $2000 when needed
          lda   #>AnalyzeT00
          sta   _byte_hi
          lda   #<AnalyzeT00
          sta   _byte_lo
          jsr   decrunch
          jsr   $2000
-_applyToAll
+         ; /!\ execution falls through here
+@applyToAll
          ; run these modules in verify and crack mode
          !source "patchers/t11diskvol.a"        ; T11 && gIsRWTS only
          !source "patchers/t02volumename.a"     ; T02 && gIsBoot0 only
          bit   gMode
          bmi   +
-         jmp   .checkPatchCount
+         jmp   _checkPatchCount
 +
          ; only run these modules in crack mode
          !source "patchers/universale7.a"
@@ -802,15 +386,16 @@ _applyToAll
          !source "patchers/leisure.a"           ; gIsProDOS && T22 only
          !source "patchers/b4bbbasic.a"         ; gPossibleB4BBBasic only
 
-.checkPatchCount
+_checkPatchCount
          lda   gPatchCount
-         beq   .nopatches
+         beq   @noPatches
          clc
          !byte $24        ; hide next SEC
-.nopatches
+@noPatches
          sec              ; set carry if nothing happened
          rts
 
+; utility functions used by several patchers
 inx6     inx
 inx5     inx
 inx4     inx
@@ -818,7 +403,6 @@ inx4     inx
          inx
          inx
          rts
-
 
 universalrwts
          !bin "../build/universalrwts.pak"
