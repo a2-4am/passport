@@ -165,6 +165,7 @@ Reaction
          sta   gIsProtDOS
          sta   gIsInfocom18
          sta   gIs13Sector
+         sta   gIsRW18
          lda   #$00
          sta   gTrack
          sta   gSector
@@ -440,31 +441,31 @@ LastMover
     !warn "LowPoint=", HIGHPOINT - (LastMover - FirstMover)
   }
 
-  !warn "CleanExit=",CleanExit
-  !warn "WaitForKey=",WaitForKey
-  !warn "OpenFile=",OpenFile
-  !warn "ReadFile=",ReadFile
-  !warn "CloseFile=",CloseFile
-  !warn "GetVolumeName=",GetVolumeName
-  !warn "OnlineReturn=",OnlineReturn
-  !warn "VolumeName=",VolumeName
-  !warn "RAMDiskImagePath=",RAMDiskImagePath
-  !warn "GetVolumeInfo=",GetVolumeInfo
-  !warn "mliparam=",mliparam
-  !warn "access=",access
-  !warn "filetype=",filetype
-  !warn "auxtype=",auxtype
-  !warn "blocks=",blocks
-  !warn "PREFSFILE=",PREFSFILE
-  !warn "PREFSBUFFER=",PREFSBUFFER
-  !warn "PREFSREADLEN=",PREFSREADLEN
-  !warn "PREFSVER=",PREFSVER
-  !warn "SavePrefs=",SavePrefs
-  !warn "ValidatePrefs=",ValidatePrefs
-  !warn "kForceLower=",kForceLower
-  !warn "PrintByID=",PrintByID
-  !warn "DiskIIArray=",DiskIIArray
-  !warn "HardDiskArray=",HardDiskArray
-  !warn "ThisSlot=",ThisSlot
-  !warn "CheckCache=",CheckCache
+  !warn "^!set CleanExit=",CleanExit
+  !warn "^!set WaitForKey=",WaitForKey
+  !warn "^!set OpenFile=",OpenFile
+  !warn "^!set ReadFile=",ReadFile
+  !warn "^!set CloseFile=",CloseFile
+  !warn "^!set GetVolumeName=",GetVolumeName
+  !warn "^!set OnlineReturn=",OnlineReturn
+  !warn "^!set VolumeName=",VolumeName
+  !warn "^!set RAMDiskImagePath=",RAMDiskImagePath
+  !warn "^!set GetVolumeInfo=",GetVolumeInfo
+  !warn "^!set mliparam=",mliparam
+  !warn "^!set access=",access
+  !warn "^!set filetype=",filetype
+  !warn "^!set auxtype=",auxtype
+  !warn "^!set blocks=",blocks
+  !warn "^!set PREFSFILE=",PREFSFILE
+  !warn "^!set PREFSBUFFER=",PREFSBUFFER
+  !warn "^!set PREFSREADLEN=",PREFSREADLEN
+  !warn "^!set PREFSVER=",PREFSVER
+  !warn "^!set SavePrefs=",SavePrefs
+  !warn "^!set ValidatePrefs=",ValidatePrefs
+  !warn "^!set kForceLower=",kForceLower
+  !warn "^!set PrintByID=",PrintByID
+  !warn "^!set DiskIIArray=",DiskIIArray
+  !warn "^!set HardDiskArray=",HardDiskArray
+  !warn "^!set ThisSlot=",ThisSlot
+  !warn "^!set CheckCache=",CheckCache
 }

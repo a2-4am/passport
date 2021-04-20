@@ -40,6 +40,10 @@ IDBootloader
          ldx   gIsInfocom18
          beq   .printinfo
 
+         lda   #s_rw18
+         ldx   gIsRW18
+         beq   .printinfo
+
 .check13
          lda   gIs13Sector
          bne   .sanity
@@ -341,7 +345,9 @@ PrereadT00Partial
 ; when the initial read failed
 ; identifies Infocom 18-sector side B disks
 ; and pure 13-sector disks
+; and Broderbund RW18 disks
 ; doubles as Infocom verification routine after ID
+; triples as RW18 verification routine after ID
 ; written by qkumba
 ;
 ; in:    nothing
@@ -372,7 +378,8 @@ VerifyInfocom18
          dec   modsrc
          beq   .no
          lda   gIsInfocom18
-         beq   .no        ; if in Infocom mode already then we have a true failure
+         and   gIsRW18
+         beq   .no        ; if in Infocom/RW18 mode already then we have a true failure
          bne   .retry13   ; otherwise, try to identify 13-sector instead
                           ; the issue being that both have a D5 AA AD sequence
 
@@ -381,6 +388,8 @@ VerifyInfocom18
 --       cmp   #$D5
          bne   ---
          jsr   ReadNib
+         cmp   #$9D
+         beq   .RW18
          cmp   #$AA
          bne   --
          jsr   ReadNib
@@ -431,6 +440,14 @@ VerifyInfocom18
          lda   $C0E8
          rts
 
+.RW18
+         jsr   .rw18pro
+         bne   --
+         ldx   gIsRW18
+         beq   .verifyrw18
+         sta   gIsRW18
+         bne   .checkmode ; always taken
+
          ;build 5-and-3 decoding table
          ;for 13-sector support
 
@@ -452,6 +469,88 @@ VerifyInfocom18
          bne   -
          sty   gIs13Sector
          beq   .checkmode  ; always taken
+
+.verifyrw18
+         ldx   #$06       ; six sectors, three times the usual size
+         stx   tmp        ; sector counter
+         bne   +
+---      jsr   ReadNib
+--       cmp   #$D5
+         bne   ---
+         jsr   ReadNib
+         cmp   #$9D
+         bne   --
+         jsr   .rw18pro
+         bne   .badrw18
++        ldy   #4
+-        dey
+         beq   .badrw18
+         jsr   ReadNib6
+         eor   #$A5
+         bne   -
+         sta   $3A
+         tay
+--       ldx   $C0EC
+         bpl   --
+         eor   $3A
+         eor   $BA00,x
+         sta   $2F
+         lda   $BA00,x
+         asl
+         asl
+         sta   $30
+-        ldx   $C0EC
+         bpl   -
+         and   #$C0
+         ora   $BA00,x
+         sta   $3A
+         lda   $30
+         asl
+         asl
+-        ldx   $C0EC
+         bpl   -
+         sta   $30
+         and   #$C0
+         ora   $BA00,x
+         sta   $3B
+         lda   $30
+         asl
+-        ldx   $C0EC
+         bpl   -
+         asl
+         ora   $BA00,x
+         eor   $3B
+         eor   $2F
+         iny
+         bne   --
+-        ldx   $C0EC
+         bpl   -
+         eor   $BA00,x
+         eor   $3A
+         and   #$3F
+         bne   .badrw18
+         jsr   ReadNib
+         cmp   #$D4
+         bne   .badrw18
+         dec   tmp
+         bne   ---
+         jmp   .checkmode
+
+.badrw18
+         jmp   .badsect
+
+.rw18pro
+         jsr   ReadNib6   ; region (half)
+         sta   $2C
+         jsr   ReadNib6   ; region (half)
+         sta   $2D
+         jsr   ReadNib6   ; checksum
+         eor   $2C
+         eor   $2D
+         bne   .badrw18
+         jsr   ReadNib6   ; epilogue
+         eor   #$AA
+         rts
 
 read13
          lda   $C0E9

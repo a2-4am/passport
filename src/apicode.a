@@ -67,6 +67,11 @@
                           ; reset before each operation
                           ; set in IDBootloader() after reading T00,S00
 
+;gIsRW18
+         !byte FALSE      ; 0=true, 1=false
+                          ; reset before each operation
+                          ; set in IDBootFailure() after reading T00
+
 FIRSTFILTER
 ;gPossibleB4BBBasic
          !byte FALSE      ; 0=true, 1=false

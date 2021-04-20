@@ -19,6 +19,7 @@ ReadWithRWTS
          jmp   Cancel
 .checkinfocom
          lda   gIsInfocom18
+         and   gIsRW18
          bne   checksector
          jsr   VerifyInfocom18
          bcc   .passtrack

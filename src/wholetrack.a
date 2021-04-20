@@ -251,6 +251,21 @@ ReadNib
          rts
 
 ;-------------------------------
+; ReadNib6
+; read a single nibble from S6,D1
+; return corresponding 6-bit value
+;
+; in:    S6,D1 must be spun up and ready to read
+; out:   A contains 6-bit value
+;        X contains nibble value
+;-------------------------------
+ReadNib6
+         jsr   ReadNib
+         tax
+         lda   $BA00,x
+         rts
+
+;-------------------------------
 ; Read4x4
 ; read a 4-4-encoded value from S6,D1
 ;
