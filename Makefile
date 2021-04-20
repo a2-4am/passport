@@ -58,7 +58,7 @@ asm:
 	grep "OpenFile=" build/vars.log | cut -d":" -f3 | cut -d"(" -f1 >> build/vars.a
 	grep "ReadFile=" build/vars.log | cut -d":" -f3 | cut -d"(" -f1 >> build/vars.a
 	grep "CloseFile=" build/vars.log | cut -d":" -f3 | cut -d"(" -f1 >> build/vars.a
-        grep "CheckCache=" build/vars.log | cut -d":" -f3 | cut -d"(" -f1 >> build/vars.a
+	grep "CheckCache=" build/vars.log | cut -d":" -f3 | cut -d"(" -f1 >> build/vars.a
 	$(EXOMIZER) -b build/passport.tmp -o build/passport.pak
 	cd src && $(ACME) -DFORWARD_DECRUNCHING=0 wrapper.a
 	cp res/work.po "$(BUILDDISK)".po
