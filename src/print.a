@@ -234,23 +234,18 @@ CacheDst
 CheckLogKeys
          ldx   CacheDst+1
          ldy   CacheDst+2
-         cpy   #$D4
-         bne   .yeslog
-         cpx   #0
-         beq   .nolog
-
-.yeslog
          stx   .startline1+1
          sty   .startline1+2
          stx   .startline2+1
          sty   .startline2+2
-         pha
-         jsr   .substart
-         pla
-         bmi   .skipkey
+         cpy   #$D4
+         bne   .skipkey
+         cpx   #0
+         beq   .nolog
 
 .checkkey
          jsr   WaitForKey
+
 .skipkey
          cmp   #k_left
          beq   .checkup
@@ -315,10 +310,10 @@ CheckLogKeys
          jmp   .checkkey
 
 .checkdown
-         lda   .endline1+2
+         lda   .startline1+2
          cmp   CacheDst+2
          bne   .scrolldown
-         lda   .endline1+1
+         lda   .startline1+1
          cmp   CacheDst+1
          beq   .checkkey
 
