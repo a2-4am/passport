@@ -440,7 +440,7 @@ Development (unreleased)
   Sixgun Shootout)
 - IMPROVED: id/d5d5f7.a (fixes Trivia
   Fever)
-- IMPROVED: patchers/bb03.a (fixes
+- IMPROVED: patchers/jmpbbfe.a (fixes
   The Desecration, Depreciation Log)
 - "BB00 protection" renamed to its
   marketing name "Lock-It-Up"
