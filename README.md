@@ -72,6 +72,9 @@ were common in educational software.
 - Abracadata
   e.g. Design Your Own Home
 
+- American Guidance Service
+  e.g. SocMate Analogies Games
+
 - Apple "Special Delivery"
   e.g. Ernie's Quiz, Instant Zoo
 
@@ -168,6 +171,9 @@ were common in educational software.
 - Marshware
   e.g. Squeegee Learns About Drugs
 
+- Mastery Development
+  e.g. Mastery Arithmetic Games
+
 - MECC
   e.g. Word Munchers, Clock Works
 
@@ -255,6 +261,8 @@ were common in educational software.
 - Unicorn Software
   e.g. Magical Myths, Ten Little Robots
 
+- Woodbury Software
+  e.g. PlayWriter (series)
 
 The latest version of Passport can also
 recognize and defeat the protection
@@ -285,6 +293,9 @@ software, so your mileage may vary.
 - Dakin-5
   e.g. MIRV, Rings of Saturn
 
+- Datasoft
+  e.g. Canyon Climber, Fathoms 40
+
 - Data East
   e.g. Ikari Warriors, Batman
 
@@ -306,6 +317,9 @@ software, so your mileage may vary.
 - Interplay
   e.g. Borrowed Time, Tracer Sanction
 
+- Leisure Genius
+  e.g. Clue Master Detective, RISK
+
 - MicroFun
   e.g. Crown of Arthain, Miner 2049er
 
@@ -320,6 +334,9 @@ software, so your mileage may vary.
 
 - Polarware
   e.g. Oo-topos, The Crimson Crown
+
+- Professional Software
+  e.g. Trivia Fever
 
 - Softape
   e.g. Photar
@@ -336,13 +353,19 @@ software, so your mileage may vary.
   e.g. Rendezvous with Rama, Fahrenheit
   451
 
+- TSR
+  e.g. Dawn Patrol, Dungeon
+
+- Voyager Software
+  e.g. Starship Commander
+
 ## License
 
 Passport is open source and is
 distributed under the MIT license.
 
 Passport
-Copyright (c) 2016-2020 by 4am
+Copyright (c) 2016-2021 by 4am
 
 Permission is hereby granted, free of
 charge, to any person obtaining a copy
@@ -381,10 +404,10 @@ IN THE SOFTWARE.
 Development (unreleased)
 - Target can be a hard disk, which will
   save an autonumbered .DSK file in
-  PASSPORT subdirectory (thanks qkumba)
+  PASSPORT subdirectory (by qkumba)
 - If the log scrolls off the screen,
   you can scroll back with arrows
-  (thanks qkumba)
+  (by qkumba)
 - NEW: patchers/earthware.a (Black
   Belt, Zoo Master)
 - NEW: patchers/tsr.a (Dawn Patrol,
