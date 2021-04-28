@@ -34,6 +34,7 @@ kSectorCustomLast = $D0
 kSectorResetAdaptiveRWTS = $C0       ; will accept any epilogue on next sector, then remember it
 kSectorIgnoreAddressChecksum = $C1   ; will ignore address field checksum
 kSectorCustomDOS32B4BB = $C2         ; DOS 3.2 / JMP B4BB RWTS swapper
+kSectorCustomEarthware = $C3         ; Earthware reverse RWTS swapper
 ;-------------------------------
 InitSectorMapWithIgnore
          lda   #kSectorOptional

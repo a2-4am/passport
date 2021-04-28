@@ -379,6 +379,14 @@ IN THE SOFTWARE.
 ## History
 
 Development (unreleased)
+- Target can be a hard disk, which will
+  save an autonumbered .DSK file in
+  PASSPORT subdirectory (thanks qkumba)
+- If the log scrolls off the screen,
+  you can scroll back with arrows
+  (thanks qkumba)
+- NEW: patchers/earthware.a (Black
+  Belt, Zoo Master)
 - NEW: patchers/tsr.a (Dawn Patrol,
   Dungeon, Theseus and the Minotaur)
 - NEW: patchers/datasoft2.a (Canyon
@@ -390,6 +398,12 @@ Development (unreleased)
   DataQuest Composer)
 - NEW: patchers/rwtsswapmecc2.a (Word
   Wizards v1.0)
+- NEW: patchers/b4bbbasic.a (SocMate
+  Analogies Games)
+- NEW: patchers/jsrb6cc.a (Kidwriter)
+- NEW: patchers/mastery.a (Mastery
+  Arithmetic Games)
+- NEW: patchers/leisure.a (Clue, RISK)
 - IMPROVED: patches/mecc.a to erase
   site license information from final
   generation of MECC disks (by qkumba)
@@ -398,10 +412,16 @@ Development (unreleased)
 - IMPROVED: patchers/prodosmecc.a
   (fixes Miner's Cave)
 - IMPROVED: patchers/rwtslog.a (fixes
-  La Guillotine)
+  La Guillotine, GATO v1.3)
+- IMPROVED: patchers/ssi.a (fixes
+  Sixgun Shootout)
+- IMPROVED: id/d5d5f7.a (fixes Trivia
+  Fever)
+- IMPROVED: patchers/bb03.a (fixes
+  The Desecration, Depreciation Log)
 - "BB00 protection" renamed to its
   marketing name "Lock-It-Up"
-- update Passport disk to ProDOS 2.4.2
+- Update Passport disk to ProDOS 2.4.2
 - Matching updates to the
   [Passport test suite](https://github.com/a2-4am/passport-test-suite)
 

@@ -116,6 +116,7 @@ AnalyzeT00
          !source "../patchers/jmpb500.a"
          !source "../patchers/mastery.a"
          !source "../patchers/jsrb6cc.a"
+         !source "../patchers/earthware.a"
 
 ;add only above this line
 

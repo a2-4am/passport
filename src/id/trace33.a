@@ -324,6 +324,31 @@ _Inspect1a
          lda   #>gTrack   ; Passport's gTrack instead
          sta   $B77A
 ;
+; Check for Earthware reverse RWTS swapper
+; (need to pre-swap RWTS then swap it back at T02,S04)
+;
++        lda   jCallRWTS+2
+         sec
+         sbc   #$07
+         ldx   #$89
+         ldy   #$0E
+         jsr   CompareMemory
+         !byte $BD,$8C,$C0
+         !byte $10,$FB
+         !byte $C9,$AD
+         !byte $D0,$13
+         !byte WILDCARD,WILDCARD
+         !byte $9D,$8D,$C0
+         bcs   +
+         lda   #$BD
+         sta   $B8F6
+         lda   #$8C
+         sta   $B8F7
+         lda   #$C0
+         sta   $B8F8
+         lda   #kSectorCustomEarthware
+         sta   T02S04
+;
 ; good to go
 ;
 +        jmp   ADStyle    ; use this RWTS to read the disk

@@ -101,6 +101,8 @@ PreReadSector
          beq   IgnoreAddressChecksum
          cmp   #kSectorCustomDOS32B4BB
          beq   @b4bb
+         cmp   #kSectorCustomEarthware
+         beq   @earthware
          rts
 @reset
          jsr   CopyUniversal
@@ -118,6 +120,14 @@ PreReadSector
 @a       stx   $FF76
          ldx   #$ED
 @b       stx   $FFB2
+         rts
+@earthware
+         ldx   #$4C
+         stx   $B8F6
+         ldx   #$89
+         stx   $B8F7
+         ldx   #$B6
+         stx   $B8F8
          rts
 
 IgnoreAddressChecksum
