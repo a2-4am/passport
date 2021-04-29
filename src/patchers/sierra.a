@@ -316,6 +316,7 @@
          lda   #s_tamper
          jsr   PrintByID
          txa
+         clc
          adc   #5
          tax
          pla

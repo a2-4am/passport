@@ -124,6 +124,7 @@
          lda   #s_tamper
          jsr   PrintByID
          txa
+         clc
          adc   #7
          tax
          adc   #4
@@ -155,6 +156,7 @@
          lda   #s_tamper
          jsr   PrintByID
          txa
+         clc
          adc   #11
          tax
          pla
@@ -176,6 +178,7 @@
          lda   #s_tamper
          jsr   PrintByID
          txa
+         clc
          adc   #11
          tax
          pla
@@ -390,6 +393,7 @@
          lda   #s_tamper
          jsr   PrintByID
          txa
+         clc
          adc   #12
          tax
          pla
@@ -414,12 +418,13 @@
          lda   #s_tamper
          jsr   PrintByID
          txa
+         clc
          adc   #24
          tax
          pla
          ldy   #1
          jsr   compare
-         !byte $AB
+         !byte $AB         ;Last Gladiator
          bcs   ++
          ldy   #1
          jsr   modify
@@ -427,7 +432,7 @@
          bvc   +
 ++       ldy   #1
          jsr   compare
-         !byte $DB
+         !byte $D4         ;Arctic Fox, PHM Pegasus
          bcs   ++
          ldy   #1
          jsr   modify
@@ -440,6 +445,13 @@
          ldy   #1
          jsr   modify
          !byte $2D         ;new checksum value for eor
+++       ldy   #1
+         jsr   compare
+         !byte $DB         ;Adventure Construction Set, Archon, Marble Madness, Bard's Tale
+         bcs   ++
+         ldy   #1
+         jsr   modify
+         !byte $D4         ;new checksum value for eor
 ++
 
 +        ldy   #23
@@ -539,6 +551,7 @@
          lda   #s_tamper
          jsr   PrintByID
          txa
+         clc
          adc   #25
          tax
          pla

@@ -18,6 +18,7 @@ cd ..\..\build
 cd ..\src\mods
 %ACME% -r ..\..\build\t00only.lst t00only.a
 cd ..\..\build
+2>nul del vars.a
 %EXOMIZER% mem -lnone -q -P23 -f t00only.bin@0x2000 -o t00only.pak
 cd ..\src
 2>..\build\out.txt %ACME% -DFORWARD_DECRUNCHING=1 passport.a
