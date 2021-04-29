@@ -66,7 +66,7 @@ DeleteFileOnRAMDisk
 ; in:    ProDOS is in memory
 ; out:   if error, C set and A contains error code
 ;        if success, C clear
-;        if a key is pressed, exits via Cancel
+;        if a key is pressed, C clear and A contains keycode
 ;        all other flags clobbered
 ;        all registers clobbered
 ;        ProDOS is in memory
@@ -95,7 +95,7 @@ WriteRAMToDisk
          jsr   WriteTrackSecondPass
          bcs   @exit
          lda   KEY
-         bmi   @cancel
+         bmi   @exit
          inc   gTrack
          lda   gTrack
          cmp   #$23
@@ -104,5 +104,3 @@ WriteRAMToDisk
          jsr   IncProgress
          clc
 @exit    rts
-@cancel
-         jmp   Cancel

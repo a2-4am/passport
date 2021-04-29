@@ -157,6 +157,8 @@ Pass
          jsr   SwapProDOS            ; ProDOS out -> in
          jsr   WriteRAMToDisk
          jsr   SwapProDOS            ; ProDOS in -> out (preserves flags)
+         lda   KEY
+         bmi   Cancel
          bcc   @printFinalMessage
          jmp   FatalWriteError
 
