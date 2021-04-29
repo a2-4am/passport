@@ -432,6 +432,14 @@
          ldy   #1
          jsr   modify
          !byte $D4         ;new checksum value for eor
+         bvc   +
+++       ldy   #1
+         jsr   compare
+         !byte $2C
+         bcs   ++
+         ldy   #1
+         jsr   modify
+         !byte $2D         ;new checksum value for eor
 ++
 
 +        ldy   #23
