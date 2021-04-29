@@ -344,7 +344,7 @@ StringTableHigh
 .passport
          !text "Passport ",$00
 .header
-         !text "@",s_passport,"by 4am@",s_space7,"@",s_space7," 2021-04-28",$00
+         !text "@",s_passport,"by 4am@",s_space7,"@",s_space7," 2021-04-29",$00
 .bar9
          !text "_________",$00
 .bar18
@@ -565,7 +565,7 @@ StringTableHigh
 .datasoftb0
          !text "@",s_found,"Datasoft @",s_bootloader,$8D,$00
 .datasoft
-         !text "%",s_found,"Datasoft @",s_protectioncheck,$8D,$00
+         !text "@",s_found,"Datasoft @",s_protectioncheck,$8D,$00
 .lsr6a
          !text "@",s_rwts,"accepts $D4 or $D5 for the",$8D
          !text "first address prologue nibble",$8D,$00
