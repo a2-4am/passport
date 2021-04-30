@@ -72,6 +72,21 @@ IDVolumeName
          bne   -
          lda   #$8D
          jsr   PrintA
+
+; while we're here, we check for a specific file that is
+; always (!) in a specific place in the root directory
+; (this will unlock a patcher with an expensive search)
+         lda   #$0B
+         ldx   #$7A
+         ldy   #$06
+         jsr   compare
+         !byte $4C,$4F,$57,$44,$4F,$53
+         bcs   +
+         lda   #TRUE
+         sta   gIsLowDOS
+         lda   #kSectorOptional
+         sta   T00S0C
++
          clc
          !byte $24        ; hide next SEC
 .error

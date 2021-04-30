@@ -1,0 +1,53 @@
+;-------------------------------
+; #ERRORD51
+; sneaky bad block check sets an error callback
+; then expects the RWTS call not to return
+; (prints ']ERROR D51' on failure)
+;
+; tested on
+; - Granny Applebee's Cookie Factory
+; - Hugo Hound's Vowel Sounds (series)
+; - Marty's Family Reader (series)
+; - Marty's Reading Workout (series)
+; - Uncle Clyde's Consonant Slides (series)
+;-------------------------------
+ERRORD51
+         lda   gIsLowDOS
+         bne   @exit
+
+         ldy   #$10
+         jsr   SearchTrack
+         !byte $A9,WILDCARD
+         !byte $8D,$07,WILDCARD
+         !byte $A9,WILDCARD
+         !byte $8D,$08,WILDCARD
+         !byte $A9,$01
+         !byte $8D,WILDCARD,WILDCARD
+         !byte $20
+         bcs   @exit
+         sta   gDisplayBytes
+         pha
+         clc
+         adc   #BASEPAGE
+         sta   @highBytePtr+2
+         txa
+         pha
+         jsr   inx6
+         stx   @highBytePtr+1
+         lda   #s_badblock
+         jsr   PrintByID
+         pla
+         tax
+         pla
+         ldy   #$01
+         jsr   modify
+         !byte $4C        ; JMP opcode
+@highBytePtr
+         ldy   $FDFD      ; SMC
+         sty   +
+         inx
+         inx
+         ldy   #$01
+         jsr   modify
++        !byte $FD        ; SMC (high byte of JMP address)
+@exit

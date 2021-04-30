@@ -389,6 +389,7 @@ AnalyzeTrack
          !source "patchers/woodbury.a"          ; gPossibleWoodbury only
          !source "patchers/leisure.a"           ; gIsProDOS && T22 only
          !source "patchers/b4bbbasic.a"         ; gPossibleB4BBBasic only
+         !source "patchers/errord51.a"          ; gIsLowDOS only
 
 _checkPatchCount
          lda   gPatchCount

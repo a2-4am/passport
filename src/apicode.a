@@ -73,6 +73,11 @@
                           ; set in IDBootFailure() after reading T00
 
 FIRSTFILTER
+;gIsLowDOS
+         !byte FALSE      ; 0=true, 1=false
+                          ; reset before each operation
+                          ; set in IDVolumeName() after identifying ProDOS bootloader
+
 ;gPossibleB4BBBasic
          !byte FALSE      ; 0=true, 1=false
                           ; reset before each operation

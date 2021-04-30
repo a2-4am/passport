@@ -184,7 +184,8 @@ were common in educational software.
   e.g. Fantasy Land, Behind The Wheel
 
 - Micrograms
-  e.g. Wild West Math
+  e.g. Wild West Math, Granny
+  Applebee's Cookie Factory
 
 - Millennium Group
   e.g. The Brain Game, Concentration
@@ -427,6 +428,9 @@ Development (unreleased)
 - NEW: patchers/mastery.a (Mastery
   Arithmetic Games)
 - NEW: patchers/leisure.a (Clue, RISK)
+- NEW: patchers/errord51.a (Granny
+  Applebee's Cookie Factory, Uncle
+  Clyde's Consonant Slides)
 - IMPROVED: patches/mecc.a to erase
   site license information from final
   generation of MECC disks (by qkumba)
