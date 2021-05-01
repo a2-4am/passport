@@ -53,6 +53,8 @@ _nibtable
 .fixread
          lda   #$6A
          sta   .loopcheck+1
+         lda   #.nibcheck-.noskip
+         sta   .nibskip+1       ; enable wildcard
          lda   #$96
          ldx   #<(gNIBTableBase+$16)
          ldy   #>(gNIBTableBase+$16)
@@ -70,6 +72,7 @@ _nibtable
          sta   .loopcheck+1
          lda   #$29
          ldx   #$00
+         stx   .nibskip+1       ; disable wildcard
          ldy   #$20
 
 .common
@@ -88,6 +91,9 @@ _nibtable
 
 .nibload1
          lda   $D1D1,y
+.nibskip
+         bmi   .noskip
+.noskip
          cmp   (BASEPAGE*256)+$400,x
          beq   .nibcheck
 

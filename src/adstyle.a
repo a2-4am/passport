@@ -40,6 +40,13 @@ ADStyle
          sta   $BE5B
          lda   #$B6
          sta   $BE5C
+         lda   $B6CE
+         cmp   #$A9
+         bne   +
+         lda   #$DA
+         sta   $B6CD
+         lda   #$B6
+         sta   $B6CE
 +
          jsr   xRPS
          bcs   +
