@@ -54,15 +54,29 @@ PanglosDOS
          sta   .patch5+2
          sta   .patch6+2
          sta   .patch7+2
+         sta   .patch16+2
+         sta   .patch17+2
+         sta   .patch18+2
+         sta   .patch19+2
          sec
-         sbc   #5
+         sbc   #4
+         sta   .patch14+2
+         sta   .patch15+2
+         sta   .patch20+2
+         sta   .patch21+2
+         sbc   #1
          sta   .patch1+2
          sta   .patch2+2
          sta   .patch3+2
          sta   .patch4+2
          sta   .patch8+2
          sta   .patch9+2
+         sta   .patch10+2
+         sta   .patch11+2
+         sta   .patch12+2
+         sta   .patch13+2
          ldy   #0
+         sty   .onetime-1
          tya
 -        sta   $2000,y
          sta   $2100,y
@@ -86,6 +100,21 @@ PanglosDOS
          sta   $3880
 .patch4
          sta   $38EE
+         ldy   #3
+.hookpro
+         lda   .hookD5,y
+.patch10
+         sta   $3867,y
+.patch11
+         sta   $38D5,y
+         dey
+         bpl   .hookpro
+         lda   #$F3
+.patch12
+         sta   $386B
+         lda   #$EF
+.patch13
+         sta   $38D9
          lda   #$0F
          sta   .sector+1
 .readdir lda   #$11
@@ -95,7 +124,38 @@ PanglosDOS
          lda   #BASEPAGE
          sta   gAddress+1
          jsr   ReadSector
-         bcs   .jmpexit1
+         bcs   .jmpexit3
+         bcc   .onetime
+.onetime
+         lda   #.goodnib-.onetime
+         sta   .onetime-1
+         lda   (BASEPAGE * 256) + $2B
+         cmp   #$A0
+         beq   .goodnib
+         lda   #$20
+.patch14
+         sta   $39D5
+         lda   #$D5
+.patch15
+         sta   $39D6
+         jsr   ReadSector
+         lda   (BASEPAGE * 256) + $2B
+         cmp   #$A0
+         bne   .jmpexit3
+         lda   #$20
+.patch16
+         sta   $3D00
+         lda   #<.callback3
+.patch17
+         sta   $3D01
+         lda   #>.callback3
+.patch18
+         sta   $3D02
+         lda   #$EA
+.patch19
+         sta   $3D03
+
+.goodnib
          inc   gAddress+1
          lda   #$0B ;entry offset
 .parsedir
@@ -110,6 +170,7 @@ PanglosDOS
          sta   gTrack
          stx   gSector
          jsr   ReadSector
+.jmpexit3
          bcs   .jmpexit2
          ldx   #0
          ldy   #0
@@ -148,7 +209,7 @@ PanglosDOS
          adc   #$23
          bne   .parsedir
          dec   .sector+1
-         bne   .readdir
+         bne   .jmpreaddir
 
 .setpanglos
          lda   #$20
@@ -166,6 +227,40 @@ PanglosDOS
          clc
 .jmpexit2
          jmp   .exit
+
+.jmpreaddir
+         jmp   .readdir
+
+.callback3
+         sty   $48
+         sta   $49
+         ldy   #4
+         lda   ($48),y
+         cmp   #2
+         bne   .notyet
+         iny
+         lda   ($48),y
+         cmp   #$0F
+         bne   .notyet
+         lda   #$D5
+.patch20
+         sta   $39D5
+         lda   #$20
+.patch21
+         sta   $39D6
+.notyet
+         rts
+
+.hookD5
+         jsr   .callback2
+         !byte $D0
+
+.callback2
+         cmp   #$D5
+         beq   .goodpro
+         cmp   #$D6
+.goodpro
+         rts
 
 .callback
          sty   $578

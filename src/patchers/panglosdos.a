@@ -11,6 +11,7 @@
 ; - Bridge Tutor (Compu-Bridge)
 ; - Diet Analysis Program (Tess)
 ; - Geometry and Measurement Volume 1 & 2 (Charles Lund)
+; - L.A. Land Monopoly (Continental)
 ; - MusiComp (Apple)
 ; - Personal Finance Manager (Apple)
 ; - Stepwise Multiple Regression (Belanger & Boyle)
@@ -44,5 +45,25 @@
          ldy   #$02
          jsr   modify
          !byte $A9,$00 ;LDA #$00
+
+         ;Monopoly
+         ldy   #6
+         jsr   SearchTrack
+         !byte $C9,$AB ;CMP #$AB
+         !byte $D0,$A4 ;BNE *-$5A
+         !byte $18     ;CLC
+         !byte $60     ;RTS
+         bcs   .exit
+         inx
+         ldy   #$01
+         jsr   modify
+         !byte $AA
+         ldy   #3
+         jsr   SearchTrack
+         !byte $4C,$56,$BB ;JMP $BB56
+         bcs   .exit
+         ldy   #$03
+         jsr   modify
+         !byte $AD,$00,$E0 ;LDA $E000
 .exit
 }

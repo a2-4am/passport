@@ -238,6 +238,9 @@ no_fixup_lohi:
 ; -------------------------------------------------------------------
 ; copy one literal byte to destination (11(10) bytes)
 ;
+!ifndef FORWARD_DECRUNCHING {
+  !set FORWARD_DECRUNCHING = 1
+}
 !if FORWARD_DECRUNCHING = 0 {
 literal_start1:
         tya
