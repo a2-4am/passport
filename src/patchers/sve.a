@@ -9,6 +9,17 @@
 !zone {
          lda   gIsRWTS               ; if DOS 3.3 RWTS
          bne   .exit
+         lda   #$08
+         ldx   #$5A
+         ldy   #$03
+         jsr   compare
+         !byte $4C,$71,$A9           ; JMP $A971
+         bcs   .exit
+         lda   #$08
+         ldx   #$5A
+         ldy   #$03
+         jsr   modify
+         !byte $48,$A0,$01
          lda   #$06
          ldx   #$56
          ldy   #$07
@@ -28,16 +39,5 @@
 .config
          !byte $64
 .noconfig
-         lda   #$08
-         ldx   #$5A
-         ldy   #$03
-         jsr   compare
-         !byte $4C,$71,$A9           ; JMP $A971
-         bcs   .exit
-         lda   #$08
-         ldx   #$5A
-         ldy   #$03
-         jsr   modify
-         !byte $48,$A0,$01
 .exit
 }
