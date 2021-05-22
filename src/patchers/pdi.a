@@ -21,16 +21,13 @@
          !byte $88         ; DEY
          !byte $10,$F7     ; BPL *-9
          !byte $4C,$E3,$93 ; JMP $93E3
-         bcs   .exit
+         bcs   .exit       ; passport-test-suite/Polywriter.woz [C=0] matches
          sta   gDisplayBytes
          pha
          lda   #s_pdi
          jsr   PrintByID
-         txa
-         clc
-         adc   #12
-         tax
          pla
+         jsr   inx0C
          ldy   #$02
          jsr   modify
          !byte $99,$8E     ; jmp directly to decoder

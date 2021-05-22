@@ -344,7 +344,7 @@ StringTableHigh
 .passport
          !text "Passport ",$00
 .header
-         !text "@",s_passport,"by 4am@",s_space7,"@",s_space7," 2021-05-11",$00
+         !text "@",s_passport,"by 4am@",s_space7,"@",s_space7," 2021-05-22",$00
 .bar9
          !text "_________",$00
 .bar18
@@ -607,7 +607,7 @@ StringTableHigh
 .eaboot0
          !text "@",s_tfound,"Electronic Arts @",s_bootloader,$8D,$00
 .eatrk6
-         !text "@",s_tfound,"EA @",s_protectiontrack,$8D,$00
+         !text "@",s_tfound,"extra wide @",s_protectiontrack,$8D,$00
 .poke
          !text "T%t,S%0 BASIC program POKEs protection",$8D
          !text "check into memory and CALLs it",$8D,$00

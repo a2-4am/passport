@@ -390,6 +390,7 @@ AnalyzeTrack
          !source "patchers/leisure.a"           ; gIsProDOS && T22 only
          !source "patchers/b4bbbasic.a"         ; gPossibleB4BBBasic only
          !source "patchers/errord51.a"          ; gIsLowDOS only
+         !source "patchers/sigcheck.a"          ; gIsDiversi only
 
 _checkPatchCount
          lda   gPatchCount
@@ -401,6 +402,15 @@ _checkPatchCount
          rts
 
 ; utility functions used by several patchers
+inx0F    inx
+inx0E    inx
+inx0D    inx
+inx0C    inx
+inx0B    inx
+inx0A    inx
+inx9     inx
+inx8     inx
+inx7     inx
 inx6     inx
 inx5     inx
 inx4     inx

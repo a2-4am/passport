@@ -21,11 +21,7 @@ _prodosrwts
          !byte $38
          bcs   .exit      ; passport-test-suite/Mystery Objects v1.1.woz [C=0] matches
          sta   gDisplayBytes
-         tay
-         txa
-         adc   #$0F
-         tax
-         tya
+         jsr   inx0F
          ldy   #$01
          jsr   compare
          !byte $DE

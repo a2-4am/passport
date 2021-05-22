@@ -109,7 +109,7 @@ were common in educational software.
 
 - EME
   e.g. Metric System Tutor,
-  Water in the Air
+  Water in the Air, Complex Circuits
 
 - Encyclopaedia Britannica
   e.g. Problem Solving in Algebra,
@@ -431,6 +431,8 @@ Development (unreleased)
 - NEW: patchers/errord51.a (Granny
   Applebee's Cookie Factory, Uncle
   Clyde's Consonant Slides)
+- NEW: patchers/sigcheck.a (Advanced
+  Electricity, Complex Circuits)
 - IMPROVED: patches/mecc.a to erase
   site license information from final
   generation of MECC disks (by qkumba)

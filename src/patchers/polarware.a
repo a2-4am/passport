@@ -47,9 +47,7 @@
          bcs   .exit      ; passport-test-suite/The Crimson Crown.woz [C=0] matches
          sta   gDisplayBytes
          pha
-         txa
-         adc   #$09
-         tax
+         jsr   inx9
          lda   #s_tamper
          jsr   PrintByID
          pla

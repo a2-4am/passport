@@ -32,22 +32,11 @@
          !byte $60        ; RTS
          bcs   .exit      ; passport-test-suite/Mr. Pixel's Programming Paint Set.woz [C=0] matches
          sta   gDisplayBytes
-         pha
-         txa
-         clc
-         adc   #$09
-         tax
-         stx   gDisplayBytes+1
-         pla
-         pha
+         jsr   inx9
          ldy   #$01
          jsr   modify
          !byte $DE
-         lda   gDisplayBytes+1
-         clc
-         adc   #$0A
-         tax
-         pla
+         jsr   inx0A
          ldy   #$01
          jsr   modify
          !byte $AA
