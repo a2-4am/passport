@@ -315,6 +315,14 @@ IDBootloader
          jsr   PrintByID
          lda   #TRUE
          sta   gIsHolle
+;
+; 555 bootloader
+;
++        jsr   ID555
+         bcs   +
+         lda   #s_555
+         jsr   PrintByID
+         jmp   Do555
 
 +        jmp   UseUniversal
 }
@@ -442,7 +450,7 @@ VerifyInfocom18
 
 .RW18
          jsr   .rw18pro
-         bne   --
+         bne   .badsect
          ldx   gIsRW18
          beq   .verifyrw18
          sta   gIsRW18
@@ -547,10 +555,10 @@ VerifyInfocom18
          jsr   ReadNib6   ; checksum
          eor   $2C
          eor   $2D
-         bne   .badrw18
+         bne   +
          jsr   ReadNib6   ; epilogue
          eor   #$AA
-         rts
++        rts
 
 read13
          lda   $C0E9

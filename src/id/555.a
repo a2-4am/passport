@@ -1,0 +1,29 @@
+;-------------------------------
+; ID555
+; identify 555 bootloader
+;
+; in:  track buffer contains T00,S00
+; out: C clear if 555 bootloader found
+;      C set otherwise
+;      all registers clobbered
+;      all other flags clobbered
+;
+; tested with
+; - Bumble Games
+;-------------------------------
+ID555
+         lda   #8
+         ldy   #22
+         jsr   SearchSector
+         !byte $85,$27          ; STA $27
+         !byte $E8              ; INX
+         !byte $86,WILDCARD     ; STX $xx
+         !byte $84,WILDCARD     ; STY $xx
+         !byte $B9,WILDCARD,$08 ; LDA $08xx,Y
+         !byte $85,$3D          ; STA $3D
+         !byte $20,WILDCARD,$08 ; JSR $08xx
+         !byte $A4,WILDCARD     ; LDY $xx
+         !byte $C8              ; INY
+         !byte $C4,WILDCARD     ; CPY $xx
+         !byte $90,$EF          ; BCC *-$0F
+         rts

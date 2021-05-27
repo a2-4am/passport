@@ -146,3 +146,4 @@ s_targetdisk = $8C
 s_targetfile = $8D
 s_targetcffa = $8E
 s_rw18       = $8F
+s_555        = $90

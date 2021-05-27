@@ -163,6 +163,7 @@ StringTableLow
          !byte <.targetfile
          !byte <.targetcffa
          !byte <.rw18
+         !byte <.x555
 
 StringTableHigh
          !byte >.header
@@ -309,6 +310,7 @@ StringTableHigh
          !byte >.targetfile
          !byte >.targetcffa
          !byte >.rw18
+         !byte >.x555
 
 ;
 ; Text can contain substitution strings, which
@@ -344,7 +346,7 @@ StringTableHigh
 .passport
          !text "Passport ",$00
 .header
-         !text "@",s_passport,"by 4am@",s_space7,"@",s_space7," 2021-05-22",$00
+         !text "@",s_passport,"by 4am@",s_space7,"@",s_space7," 2021-05-26",$00
 .bar9
          !text "_________",$00
 .bar18
@@ -719,4 +721,7 @@ StringTableHigh
          !text "@",s_found,"bad block @",s_protectioncheck,$00
 .rw18
          !text "@",s_found,"RW18-sector format",$8D,$00
+.x555
+         !text "@",s_found,"555 @",s_bootloader,$8D
+         !text "Doing it the hard way.",$8D,$00
 }

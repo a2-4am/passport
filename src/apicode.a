@@ -52,12 +52,7 @@
                           ; instead of falling back to built-in RWTS
                           ; compile-time flag, no way to change at runtime
 
-;gIs13Sector
-         !byte FALSE      ; 0=true, 1=false
-                          ; reset before each operation
-                          ; set in IDBootFailure() after reading T00
-
-;gIsInfocom18
+;gIsRW18
          !byte FALSE      ; 0=true, 1=false
                           ; reset before each operation
                           ; set in IDBootFailure() after reading T00
@@ -67,7 +62,12 @@
                           ; reset before each operation
                           ; set in IDBootloader() after reading T00,S00
 
-;gIsRW18
+;gIs13Sector
+         !byte FALSE      ; 0=true, 1=false
+                          ; reset before each operation
+                          ; set in IDBootFailure() after reading T00
+
+;gIsInfocom18
          !byte FALSE      ; 0=true, 1=false
                           ; reset before each operation
                           ; set in IDBootFailure() after reading T00

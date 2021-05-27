@@ -1,0 +1,388 @@
+;-------------------------------
+; #555
+; RWTS reads 5 sectors from
+; three consecutive half-tracks
+;
+; module by qkumba
+;
+; tested on
+; - Bumble Games
+;-------------------------------
+!zone {
+         jmp   .exit2     ; reachable only via inspect
+
+.refindPC
+         inc   $3E
+         sec
+         !byte $A9
+Do555
+         clc
+         inc   $3E
+         php
+
+.findPC
+         lda   #8
+         ldy   #3
+         ldx   $3E
+         jsr   CompareMemory
+         !byte $A9,WILDCARD ; LDA #$xx
+         !byte $48          ; PHA
+         bcc   .checkpha
+         ldy   #0
+         lda   ($3E),y
+         jsr   $F88E      ; INSDS2
+         lda   $2F
+         sec
+         adc   $3E
+         sta   $3E
+         bcc   .findPC
+         jmp   .fatal
+
+.checkpha
+         plp
+         bcc   .refindPC
+
+         lda   #0
+         sta   .curtrk+1
+         ldy   #1
+         adc   ($3E),y    ; add 1, carry is set by CMP
+         sta   .initPC+1
+         tya
+.loopsect
+         sta   gSector
+         jsr   ReadSector
+         bcs   .jmpexit
+         lda   #8
+         sta   $3B
+.initPC
+         ldx   #0         ; SMC
+         ldy   #5
+         jsr   CompareMemory
+         !byte $46, $4A           ; LSR $4A
+         !byte $20, WILDCARD, $04 ; JSR $04xx
+         bcc   .foundstage
+         ldy   gSector
+         iny
+         tya
+         and   #$0F
+         bne   .loopsect
+.jmpexit
+         jmp   .fatal
+
+         ;search for seek routine
+         ;so we can count calls to whole-track seek
+
+.foundstage
+         lda   gSector
+         sta   .cmpsect+1
+         ldy   $803,x
+.retrystage
+         sty   .stagePC1+1
+         sty   .stagePC5+1
+         sty   .patch1+1
+         iny
+         sty   .stagePC3+1
+         sty   .stagePC6+1
+         iny
+         sty   .stagePC2+1
+         iny
+         sty   .stagePC4+1
+         sty   .patch2+1
+
+.stagePC1
+         lda   $800       ; SMC
+         cmp   #$20
+         bne   .jmpexit
+.stagePC2
+         lda   $800       ; SMC
+         cmp   #4
+         bne   .jmpexit
+.stagePC3
+         ldy   $800       ; SMC
+.stagePC4
+         cpy   #$D1       ; SMC
+         beq   .foundseek
+.stagePC5
+         ldx   #$D1       ; SMC
+         bne   .retrystage ; always
+
+.foundseek
+         stx   $3A
+
+.walkcode
+         ldy   #0
+         lda   ($3A),y
+         cmp   #$AA
+         beq   .isldx
+         cmp   #$A2
+         bne   .tryseek
+         iny
+.isldx
+         iny
+         lda   ($3A),y
+         cmp   #$20
+         bne   .sizeinst
+         iny
+.skipjsr2
+         iny
+.skipjsr1
+         tya
+         bne   .skipinst  ; always
+
+.tryseek
+         cmp   #$20
+         bne   .trylda
+         iny
+         iny
+         lda   ($3A),y
+         cmp   #4
+         bne   .skipjsr1
+         dey
+         lda   ($3A),y
+         cmp   .stagePC5+1
+         bcc   .skipjsr2
+         bne   .followjsr
+         inc   .curtrk+1
+         bne   .skipjsr2  ; always
+
+.followjsr
+         sta   $3A
+         bcs   .walkcode
+
+.trylda
+         lda   #8
+         ldy   #3
+         ldx   $3A
+         jsr   CompareMemory
+         !byte $38        ; SEC
+         !byte $66, $4A   ; ROR $4A
+         bcc   .foundpart
+
+.sizeinst
+         ldy   #0
+         lda   ($3A),y
+         jsr   $F88E      ; INSDS2
+         lda   $2F
+.skipinst
+         sec
+         adc   $3A
+         sta   $3A
+         bcc   .walkcode
+         jmp   .fatal
+
+         ; success!
+         ; found where the partial tracks start
+         ; read whole tracks to this point
+         ; then the partial tracks
+         ; and then the rest of the disk
+
+.foundpart
+         jsr   IncProgress
+         lda   #BASEPAGE
+         sta   gAddress+1
+
+.copytracks
+         ldx   #0
+         stx   gSector
+         ldy   #$10
+         jsr   .readwrite
+         lda   gTrack
+.curtrk
+         cmp   #00        ; SMC
+         bne   .notpartial
+         jsr   .setup2
+         ldx   #1
+         ldy   #6
+         jsr   .readsectors
+         sec
+         rol   gTrack
+         dec   dct+1      ; half-track stepping!
+         ldx   #6
+         ldy   #11
+         jsr   .readsectors
+         inc   gTrack
+         ldx   #11
+         ldy   #16
+         jsr   .readsectors
+         lsr   gTrack
+         dec   gTrack
+         inc   dct+1      ; back to normal
+         jsr   .writesectors
+         inc   gTrack
+
+.notpartial
+         jsr   .setup1
+         lda   gTrack
+         cmp   #$23
+         bcc   .copytracks
+         jsr   IncProgress
+         jsr   .cleanup
+         jmp   .exit
+
+.readwrite
+         jsr   .readsectors
+
+.writesectors
+         jsr   WriteTrackNA
+         jsr   IncProgress
+         lda   KEY
+         bmi   .cancel
+         ldx   gTrack
+         inx
+         txa
+         jmp   ChangeTrackNW
+
+.readsectors
+         sty   .endsector+1
+.readsector
+         txa
+         jsr   ChangeSector
+.retryread
+         jsr   ReadSector
+         bcs   .maybefatal
+         lda   gTrack
+         bne   .notpatch
+         lda   gSector
+.cmpsect
+         cmp   #$00       ; SMC
+         bne   .notpatch
+
+.stagePC6
+         ldy   #00        ; SMC
+         lda   $3A
+         adc   #$0E
+         sta   ($3E),y
+         sec
+         sbc   #3
+         tax
+         lda   $3F
+         sbc   #BASEPAGE
+         ldy   #15
+         jsr   modify
+.patch1
+         !byte $4C,$00,$04 ; JMP $04xx
+         !byte $48         ; PHA
+         !byte $A5,$FC     ; LDA $FC
+         !byte $4A         ; LSR
+         !byte $69,$01     ; ADC #$01
+         !byte $85,$41     ; STA $41
+         !byte $68         ; PLA
+.patch2
+         !byte $4C,$00,$04 ; JMP $04xx
+         txa
+         tay
+         dey
+         dey
+         dey
+         dey
+         lda   #$0F
+         sta   ($3E),y
+         tya
+         sec
+         sbc   #6
+         tay
+         lda   #$EA
+         sta   ($3E),y
+         dey
+         dey
+         dey
+         lda   ($3E),y
+         cmp   #$41
+         bne   .notpatch
+         lda   #$EA
+         sta   ($3E),y
+
+.notpatch
+         ldx   gSector
+         inx
+.endsector
+         cpx   #00        ; SMC
+         bne   .readsector
+         ldy   #12
+         jsr   SearchTrack
+         !byte $C9,$FF     ; CMP #$FF
+         !byte $D0,$0A     ; BNE *+$0C
+         !byte $EA         ; NOP
+         !byte $BD,$8C,$C0 ; LDA $C08C,X
+         !byte $10,$FB     ; BPL *-3
+         !byte $C9,$FF     ; CMP #$FF
+         bcc   .patchepi
+
+.ignore
+         rts
+
+.cancel
+         jsr   .cleanup
+         jmp   Cancel
+
+.maybefatal
+         lda   $BDF2
+         cmp   #$F0
+         jsr   .cleanup
+         bcc   .retryread
+         lda   gTrack
+         cmp   #$12
+         bcc   .fatal
+         lda   gSector
+         beq   .ignore
+.fatal
+         jmp   FatalError
+
+.patchepi
+         inx
+         ldy   #1
+         pha
+         jsr   modify
+         !byte $DE
+         txa
+         clc
+         adc   #10
+         tax
+         ldy   #1
+         pla
+         pha
+         jsr   modify
+         !byte $AA
+         txa
+         clc
+         adc   #$52
+         tax
+         ldy   #1
+         pla
+         pha
+         jsr   modify
+         !byte $DE
+         txa
+         clc
+         adc   #10
+         tax
+         ldy   #1
+         pla
+         jsr   modify
+         !byte $AA
+         rts
+
+.setup2
+         ldy   #$CD
+         bne   .patchDOS2
+
+.cleanup
+         lda   #1
+         sta   dct
+         ldx   #$F0
+         !byte $AD
+.setup1
+         ldx   #$90
+         ldy   #$B9
+
+.patchDOS1
+         stx   $BDF2
+.patchDOS2
+         sty   $BE2B
+         rts
+
+.exit
+         jmp   Pass
+
+.exit2
+}
