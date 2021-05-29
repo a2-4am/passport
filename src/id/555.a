@@ -9,7 +9,29 @@
 ;      all other flags clobbered
 ;
 ; tested with
-; - Bumble Games
+; - Addition Magician
+; - Adventure Double Feature Vol. II
+; - Agent USA
+; - Bumble Games v1.3
+; - Bumble Games v1.4
+; - Bumble Plot v1.1
+; - Con-Putation
+; - Crush, Crumble and Chomp v1981-06-22
+; - Gertrude's Puzzles v1.0
+; - Gertrude's Secrets v1.0
+; - Jumble Jet
+; - Jumpman
+; - Microzine 3
+; - Microzine 4
+; - Microzine 5
+; - Microzine 6
+; - Moptown Parade v1.0
+; - Number Stumper
+; - Reader Rabbit v1.0
+; - Rocky's Boots v1.0
+; - Tales of Discovery
+; - Temple of Apshai
+; - Trap-a-Zoid
 ;-------------------------------
 ID555
          lda   #8

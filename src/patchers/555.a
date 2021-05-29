@@ -6,121 +6,203 @@
 ; module by qkumba
 ;
 ; tested on
-; - Bumble Games
+; - Addition Magician
+; - Adventure Double Feature Vol. II
+; - Agent USA
+; - Bumble Games v1.3
+; - Bumble Games v1.4
+; - Bumble Plot v1.1
+; - Con-Putation
+; - Crush, Crumble and Chomp v1981-06-22
+; - Gertrude's Puzzles v1.0
+; - Gertrude's Secrets v1.0
+; - Jumble Jet
+; - Jumpman
+; - Microzine 3
+; - Microzine 4
+; - Microzine 5
+; - Microzine 6
+; - Moptown Parade v1.0
+; - Number Stumper
+; - Reader Rabbit v1.0
+; - Rocky's Boots v1.0 (not working yet)
+; - Tales of Discovery
+; - Temple of Apshai
+; - Trap-a-Zoid
 ;-------------------------------
 !zone {
          jmp   .exit2     ; reachable only via inspect
 
-.refindPC
-         inc   $3E
-         sec
-         !byte $A9
 Do555
-         clc
-         inc   $3E
-         php
+         ; find entrypoint for second stage
 
-.findPC
          lda   #8
          ldy   #3
-         ldx   $3E
-         jsr   CompareMemory
+         jsr   SearchSector
          !byte $A9,WILDCARD ; LDA #$xx
          !byte $48          ; PHA
-         bcc   .checkpha
-         ldy   #0
-         lda   ($3E),y
-         jsr   $F88E      ; INSDS2
-         lda   $2F
-         sec
-         adc   $3E
-         sta   $3E
-         bcc   .findPC
-         jmp   .fatal
-
-.checkpha
-         plp
-         bcc   .refindPC
-
+         lda   #4
+         bcs   .setpage
+         lda   $801,x
+.setpage
+         sta   .patch1+1
+         sta   .patch2+1
+         sta   .patch3+1
+         bcs   .findkey
+         txa
+         tay
+         iny
+         iny
+         iny
+         jsr   search
+         ldy   $801,x
+         iny
          lda   #0
-         sta   .curtrk+1
-         ldy   #1
-         adc   ($3E),y    ; add 1, carry is set by CMP
-         sta   .initPC+1
-         tya
+         bcc   .setPC
+.jmpexit
+         jmp   FatalError
+
+.findkey
+         lda   #8
+         ldy   #3
+         jsr   SearchSector
+         !byte $A0,WILDCARD ; LDY #$xx
+         !byte $A2          ; LDX #$xx
+         bcs   .jmpexit
+         lda   $801,x
+         ldy   #0
+
+.setPC
+         sta   .xorkey+1
+         sty   .initPC+1
+
 .loopsect
-         sta   gSector
+         inc   gSector
          jsr   ReadSector
          bcs   .jmpexit
-         lda   #8
-         sta   $3B
+         jsr   .decode
+
 .initPC
+         ; skip lightly variable init
+
          ldx   #0         ; SMC
-         ldy   #5
-         jsr   CompareMemory
-         !byte $46, $4A           ; LSR $4A
-         !byte $20, WILDCARD, $04 ; JSR $04xx
-         bcc   .foundstage
-         ldy   gSector
-         iny
-         tya
-         and   #$0F
+         lda   $800,x
+         cmp   #$46
+         bne   .nolsr
+         lda   $801,x
+         cmp   #$4A       ; LSR $4A
          bne   .loopsect
-.jmpexit
-         jmp   .fatal
+         inx
+         inx
+
+.nolsr
+         lda   $800,x
+         cmp   #$A0       ; LDY #$xx
+         bne   .noldy
+         inx
+         inx
+         lda   $800,x
+         cmp   #$98       ; TYA
+         bne   .isldy
+         inx
+
+.isldy
+         lda   #8
+         ldy   #6
+         jsr   CompareMemory
+	 !byte $99,$02,$08 ; STA $802,y
+	 !byte $88         ; DEY
+         !byte $D0,$FA     ; BNE *-4
+         bcs   .loopsect
+         inx
+         inx
+         inx
+
+.skipjsr
+         inx
+         inx
+         inx
+
+.noldy
+         lda   $800,x
+         cmp   #$A9       ; LDA #$xx
+         bne   .nolda
+         inx
+         inx
+
+.nolda
+         lda   $800,x
+         cmp   #$20       ; JSR $xxxx
+         bne   .loopsect
+         lda   $802,x
+.patch1
+         eor   #4         ; SMC
+         bne   .skipjsr
+         sta   .curtrk+1
 
          ;search for seek routine
+         ;in highly variable main
          ;so we can count calls to whole-track seek
+         ; static boot tracer!
 
-.foundstage
-         lda   gSector
-         sta   .cmpsect+1
-         ldy   $803,x
-.retrystage
-         sty   .stagePC1+1
-         sty   .stagePC5+1
-         sty   .patch1+1
-         iny
-         sty   .stagePC3+1
-         sty   .stagePC6+1
-         iny
-         sty   .stagePC2+1
-         iny
-         sty   .stagePC4+1
-         sty   .patch2+1
-
-.stagePC1
-         lda   $800       ; SMC
-         cmp   #$20
-         bne   .jmpexit
-.stagePC2
-         lda   $800       ; SMC
-         cmp   #4
-         bne   .jmpexit
-.stagePC3
-         ldy   $800       ; SMC
-.stagePC4
-         cpy   #$D1       ; SMC
+         ldy   $801,x
+         lda   $801,y
+         tay
+         lda   $800,y
+         cmp   #$48       ; PHA
          beq   .foundseek
-.stagePC5
-         ldx   #$D1       ; SMC
-         bne   .retrystage ; always
+         lda   $801,y
+         tay
+         lda   $800,y
+         cmp   #$48       ; PHA
+         beq   .foundseek2
+         inc   .curtrk+1
+         lda   $801,y
+         tay
+         lda   $800,y
+         cmp   #$48       ; PHA
+         beq   .foundseek
+
+.jmpexit2
+         jmp   FatalError
+
+.foundseek2
+         stx   $3A
+         lda   $801,x
+         tax
+         lda   $803,x
+         cmp   #$A2       ; LDX #$xx
+         bne   .foundseek
+         ldx   $3A
 
 .foundseek
+         dey
+         dey
+         sty   .hookseek+1
+         dey
+         sty   .cmpseek+1
+         sty   .patch3
+         inc   .curtrk+1
+
+         lda   #8
+         sta   $3B
+         inx
+         inx
+         inx
          stx   $3A
 
 .walkcode
          ldy   #0
          lda   ($3A),y
-         cmp   #$AA
+         cmp   #$AA       ; TAX
          beq   .isldx
-         cmp   #$A2
+         cmp   #$A2       ; LDX #$xx
          bne   .tryseek
          iny
 .isldx
          iny
          lda   ($3A),y
-         cmp   #$20
+         cmp   #$20       ; JSR $xxxx
          bne   .sizeinst
          iny
 .skipjsr2
@@ -130,16 +212,18 @@ Do555
          bne   .skipinst  ; always
 
 .tryseek
-         cmp   #$20
+         cmp   #$20       ; JSR $xxxx
          bne   .trylda
          iny
          iny
          lda   ($3A),y
-         cmp   #4
+.patch2
+         cmp   #4         ; SMC
          bne   .skipjsr1
          dey
          lda   ($3A),y
-         cmp   .stagePC5+1
+.cmpseek
+         cmp   #$D1       ; SMC
          bcc   .skipjsr2
          bne   .followjsr
          inc   .curtrk+1
@@ -150,13 +234,13 @@ Do555
          bcs   .walkcode
 
 .trylda
-         lda   #8
-         ldy   #3
          ldx   $3A
-         jsr   CompareMemory
-         !byte $38        ; SEC
-         !byte $66, $4A   ; ROR $4A
-         bcc   .foundpart
+         lda   $800,x
+         cmp   #$38       ; SEC
+         bne   .sizeinst
+         lda   $801,x
+         cmp   #$66       ; ROR $xx
+         beq   .foundpart
 
 .sizeinst
          ldy   #0
@@ -168,7 +252,7 @@ Do555
          adc   $3A
          sta   $3A
          bcc   .walkcode
-         jmp   .fatal
+         jmp   FatalError
 
          ; success!
          ; found where the partial tracks start
@@ -180,6 +264,8 @@ Do555
          jsr   IncProgress
          lda   #BASEPAGE
          sta   gAddress+1
+         lda   gSector
+         sta   .cmpsect+1
 
 .copytracks
          ldx   #0
@@ -187,10 +273,15 @@ Do555
          ldy   #$10
          jsr   .readwrite
          lda   gTrack
+         cmp   #1
+         bne   .curtrk
+         ldx   #$90
+         stx   $BDF2
 .curtrk
          cmp   #00        ; SMC
          bne   .notpartial
-         jsr   .setup2
+         ldy   #$CD
+         sty   $BE2B
          ldx   #1
          ldy   #6
          jsr   .readsectors
@@ -207,11 +298,13 @@ Do555
          lsr   gTrack
          dec   gTrack
          inc   dct+1      ; back to normal
+         jsr   ReorderLogicalToPhysical
          jsr   .writesectors
          inc   gTrack
+         ldy   #$B9
+         sty   $BE2B
 
 .notpartial
-         jsr   .setup1
          lda   gTrack
          cmp   #$23
          bcc   .copytracks
@@ -241,58 +334,49 @@ Do555
          jsr   ReadSector
          bcs   .maybefatal
          lda   gTrack
-         bne   .notpatch
+         bne   .notpatch2
          lda   gSector
 .cmpsect
-         cmp   #$00       ; SMC
-         bne   .notpatch
+         eor   #$00       ; SMC
+         bne   .notpatch2
+         jsr   .decode
 
-.stagePC6
+.hookseek
          ldy   #00        ; SMC
          lda   $3A
-         adc   #$0E
+         adc   #$11
          sta   ($3E),y
-         sec
          sbc   #3
          tax
          lda   $3F
          sbc   #BASEPAGE
-         ldy   #15
+         ldy   #8
          jsr   modify
-.patch1
-         !byte $4C,$00,$04 ; JMP $04xx
-         !byte $48         ; PHA
-         !byte $A5,$FC     ; LDA $FC
-         !byte $4A         ; LSR
-         !byte $69,$01     ; ADC #$01
-         !byte $85,$41     ; STA $41
-         !byte $68         ; PLA
-.patch2
-         !byte $4C,$00,$04 ; JMP $04xx
+.patch3
+         !byte $00,$04     ; [JSR] $04xx
+         !byte $B0,$0B     ; BCS *+$0D
+         !byte $E6,$41     ; STA $41
+         !byte $EA         ; NOP
+         !byte $4C         ; JMP $xxxx
+         sec
          txa
+         sbc   #5
          tay
-         dey
-         dey
-         dey
-         dey
          lda   #$0F
          sta   ($3E),y
          tya
-         sec
-         sbc   #6
+         sbc   #9
          tay
-         lda   #$EA
-         sta   ($3E),y
-         dey
-         dey
-         dey
          lda   ($3E),y
          cmp   #$41
-         bne   .notpatch
+         bne   .notpatch1
          lda   #$EA
          sta   ($3E),y
 
-.notpatch
+.notpatch1
+         jsr   .decode
+
+.notpatch2
          ldx   gSector
          inx
 .endsector
@@ -316,17 +400,28 @@ Do555
          jmp   Cancel
 
 .maybefatal
-         lda   $BDF2
-         cmp   #$F0
+         lda   $2E
+         beq   .likelyfatal
+         ldx   $BDF2
          jsr   .cleanup
-         bcc   .retryread
-         lda   gTrack
-         cmp   #$12
-         bcc   .fatal
-         lda   gSector
-         beq   .ignore
-.fatal
+         cpx   #$F0
+         bne   .retryread
+
+.likelyfatal
+         ldx   #$60
+         jsr   $B944
+         bcs   .ignore
          jmp   FatalError
+
+.decode
+         ldy   #0
+-        lda   ($3E),y
+.xorkey
+         eor   #$D1       ; SMC
+         sta   ($3E),y
+         iny
+         bne   -
+         rts
 
 .patchepi
          inx
@@ -360,25 +455,29 @@ Do555
          pla
          jsr   modify
          !byte $AA
+         ldy   #8
+         jsr   SearchTrack
+         !byte $A9,$20 ; LDA #$20
+         !byte $D0,$E1 ; BNE *-$1D
+         !byte $A0,$05 ; LDY #$05
+         !byte $B1,$48 ; LDA ($48),Y
+         bcs   .novol
+         inx
+         inx
+         inx
+         ldy   #1
+         jsr   modify
+         !byte $00
+.novol
          rts
-
-.setup2
-         ldy   #$CD
-         bne   .patchDOS2
 
 .cleanup
          lda   #1
-         sta   dct
-         ldx   #$F0
-         !byte $AD
-.setup1
-         ldx   #$90
-         ldy   #$B9
-
-.patchDOS1
-         stx   $BDF2
-.patchDOS2
-         sty   $BE2B
+         sta   dct+1
+         lda   #$F0
+         sta   $BDF2
+         lda   #$B9
+         sta   $BE2B
          rts
 
 .exit
