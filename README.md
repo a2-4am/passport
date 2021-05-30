@@ -409,6 +409,8 @@ Development (unreleased)
 - If the log scrolls off the screen,
   you can scroll back with arrows
   (by qkumba)
+- NEW: patchers/555.a (Agent USA,
+  Jumpman) (by qkumba)
 - NEW: patchers/earthware.a (Black
   Belt, Zoo Master)
 - NEW: patchers/tsr.a (Dawn Patrol,

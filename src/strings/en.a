@@ -346,7 +346,7 @@ StringTableHigh
 .passport
          !text "Passport ",$00
 .header
-         !text "@",s_passport,"by 4am@",s_space7,"@",s_space7," 2021-05-28",$00
+         !text "@",s_passport,"by 4am@",s_space7,"@",s_space7," 2021-05-29",$00
 .bar9
          !text "_________",$00
 .bar18
@@ -722,6 +722,5 @@ StringTableHigh
 .rw18
          !text "@",s_found,"RW18-sector format",$8D,$00
 .x555
-         !text "@",s_found,"555 @",s_bootloader,$8D
-         !text "Doing it the hard way.",$8D,$00
+         !text "@",s_found,"5-5-5 spiral @",s_bootloader,$8D,$00
 }
