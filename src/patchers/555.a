@@ -25,7 +25,7 @@
 ; - Moptown Parade v1.0
 ; - Number Stumper
 ; - Reader Rabbit v1.0
-; - Rocky's Boots v1.0 (not working yet)
+; - Rocky's Boots v1.0
 ; - Tales of Discovery
 ; - Temple of Apshai
 ; - Trap-a-Zoid
@@ -180,7 +180,8 @@ Do555
          dey
          sty   .hookseek+1
          dey
-         sty   .cmpseek+1
+         sty   .cmpseek1+1
+         sty   .cmpseek2+1
          sty   .patch3
          inc   .curtrk+1
 
@@ -189,9 +190,9 @@ Do555
          inx
          inx
          inx
-         stx   $3A
 
 .walkcode
+         stx   $3A
          ldy   #0
          lda   ($3A),y
          cmp   #$AA       ; TAX
@@ -222,16 +223,22 @@ Do555
          bne   .skipjsr1
          dey
          lda   ($3A),y
-.cmpseek
+         tax
+.cmpseek1
          cmp   #$D1       ; SMC
-         bcc   .skipjsr2
-         bne   .followjsr
+         beq   .inctrack
+         bcs   .walkcode
+         lda   $800,x
+         cmp   #$20       ; JSR
+         bne   .skipjsr2
+         lda   $801,x
+.cmpseek2
+         cmp   #$D1       ; SMC
+         bne   .skipjsr2
+
+.inctrack
          inc   .curtrk+1
          bne   .skipjsr2  ; always
-
-.followjsr
-         sta   $3A
-         bcs   .walkcode
 
 .trylda
          ldx   $3A
@@ -250,7 +257,7 @@ Do555
 .skipinst
          sec
          adc   $3A
-         sta   $3A
+         tax
          bcc   .walkcode
          jmp   FatalError
 
@@ -291,14 +298,15 @@ Do555
          ldx   #6
          ldy   #11
          jsr   .readsectors
+         jsr   IncProgress
          inc   gTrack
+         lsr   gTrack
+         inc   dct+1      ; back to normal
          ldx   #11
          ldy   #16
          jsr   .readsectors
-         lsr   gTrack
-         dec   gTrack
-         inc   dct+1      ; back to normal
          jsr   ReorderLogicalToPhysical
+         dec   gTrack
          jsr   .writesectors
          inc   gTrack
          ldy   #$B9
@@ -312,6 +320,10 @@ Do555
          jsr   .cleanup
          jmp   .exit
 
+.cancel
+         jsr   .cleanup
+         jmp   Cancel
+
 .readwrite
          jsr   .readsectors
 
@@ -324,6 +336,21 @@ Do555
          inx
          txa
          jmp   ChangeTrackNW
+
+.maybefatal
+         ldx   $BDF2
+         jsr   .cleanup
+         lda   $478
+         sta   $47E       ; restore track number replaced by DOS
+         cpx   #$F0
+         bne   .retryread
+         lda   gError
+         cmp   #$40       ; sector not found
+         bne   .reallyfatal
+         rts
+
+.reallyfatal
+         jmp   FatalError
 
 .readsectors
          sty   .endsector+1
@@ -391,36 +418,14 @@ Do555
          !byte $10,$FB     ; BPL *-3
          !byte $C9,$FF     ; CMP #$FF
          bcc   .patchepi
-
-.ignore
-         rts
-
-.cancel
-         jsr   .cleanup
-         jmp   Cancel
-
-.maybefatal
-         lda   $2E
-         beq   .likelyfatal
-         ldx   $BDF2
-         jsr   .cleanup
-         cpx   #$F0
-         bne   .retryread
-
-.likelyfatal
-         ldx   #$60
-         jsr   $B944
-         bcs   .ignore
-         jmp   FatalError
-
-.decode
-         ldy   #0
--        lda   ($3E),y
-.xorkey
-         eor   #$D1       ; SMC
-         sta   ($3E),y
-         iny
-         bne   -
+         ldy   #9
+         jsr   SearchTrack
+         !byte $AC,$9F,$05 ; LDY $059F
+         !byte $C8         ; INY
+         !byte $C8         ; INY
+         !byte $98         ; TYA
+         !byte $20,$19,$05 ; JSR $0519
+         bcc   .patchrocky
          rts
 
 .patchepi
@@ -469,6 +474,118 @@ Do555
          jsr   modify
          !byte $00
 .novol
+         rts
+
+.patchrocky
+         ldy   #8
+         pha
+         jsr   modify
+         !byte $E6,$41     ; INC $41
+         !byte $A5,$41     ; LDA $41
+         !byte $20,$18,$05 ; JSR $0518
+         !byte $A9         ; LDA #$xx
+         clc
+         txa
+         adc   #$38
+         tax
+         pla
+         pha
+         ldy   #1
+         jsr   modify
+         !byte $08
+         clc
+         txa
+         adc   #$4A
+         tax
+         pla
+         pha
+         ldy   #4
+         jsr   modify
+         !byte $85,$41     ; STA $41
+         !byte $D0,$08     ; BNE *+$0A
+         clc
+         txa
+         adc   #$0C
+         tax
+         pla
+         pha
+         ldy   #3
+         jsr   modify
+         !byte $4C,$18,$05 ; JMP $0518
+         clc
+         txa
+         adc   #$7B
+         tax
+         pla
+         adc   #$FE
+         pha
+         ldy   #1
+         jsr   modify
+         !byte $8D
+         clc
+         txa
+         adc   #$3B
+         tax
+         pla
+         pha
+         ldy   #1
+         jsr   modify
+         !byte $8D
+         clc
+         txa
+         adc   #$21
+         tax
+         pla
+         pha
+         ldy   #1
+         jsr   modify
+         !byte $8D
+         clc
+         txa
+         adc   #$22
+         tax
+         pla
+         pha
+         ldy   #1
+         jsr   modify
+         !byte $8D
+         clc
+         txa
+         adc   #$1C
+         tax
+         pla
+         pha
+         ldy   #1
+         jsr   modify
+         !byte $8D
+         clc
+         txa
+         adc   #$38
+         tax
+         pla
+         pha
+         ldy   #1
+         jsr   modify
+         !byte $8D
+         clc
+         txa
+         adc   #$2E
+         tax
+         pla
+         adc   #$FE
+         ldy   #1
+         jsr   modify
+         !byte $8D
+         rts
+
+.decode
+         ldy   #0
+-        lda   ($3E),y
+.xorkey
+         eor   #$D1       ; SMC
+         sta   ($3E),y
+         iny
+         bne   -
          rts
 
 .cleanup
