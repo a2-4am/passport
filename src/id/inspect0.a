@@ -482,9 +482,11 @@ VerifyInfocom18
          ldx   #$06       ; six sectors, three times the usual size
          stx   tmp        ; sector counter
          bne   +
----      jsr   ReadNib
+
+.retryrw18
+         jsr   ReadNib
 --       cmp   #$D5
-         bne   ---
+         bne   .retryrw18
          jsr   ReadNib
          cmp   #$9D
          bne   --
@@ -493,7 +495,9 @@ VerifyInfocom18
 +        ldy   #4
 -        dey
          beq   .badrw18
-         jsr   ReadNib6
+--       ldx   $C0EC
+         bpl   --
+         lda   $BA00,x
          eor   #$A5
          bne   -
          sta   $3A
@@ -541,22 +545,33 @@ VerifyInfocom18
          cmp   #$D4
          bne   .badrw18
          dec   tmp
-         bne   ---
+         bne   .jmpretryrw18
          jmp   .checkmode
+
+.jmpretryrw18
+         jmp   .retryrw18
 
 .badrw18
          jmp   .badsect
 
 .rw18pro
-         jsr   ReadNib6   ; region (half)
+--       ldx   $C0EC
+         bpl   --
+         lda   $BA00,x     ; region (half)
          sta   $2C
-         jsr   ReadNib6   ; region (half)
+--       ldx   $C0EC
+         bpl   --
+         lda   $BA00,x     ; region (half)
          sta   $2D
-         jsr   ReadNib6   ; checksum
+--       ldx   $C0EC
+         bpl   --
+         lda   $BA00,x     ; checksum
          eor   $2C
          eor   $2D
          bne   +
-         jsr   ReadNib6   ; epilogue
+--       ldx   $C0EC
+         bpl   --
+         lda   $BA00,x     ; epilogue
          eor   #$AA
 +        rts
 
