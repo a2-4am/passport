@@ -417,18 +417,32 @@ VerifyInfocom18
 
          lda   #$00
 --       ldy   #$56
+.x1
 -        ldx   $C0EC
          bpl   -
+  !if >.x1 != >* {
+    !serious "branch crosses a page"
+  }
          eor   $BA00,x    ; from universal RWTS
          dey
          bne   -
+.x2
+!warn "x1=",*
 -        ldx   $C0EC
          bpl   -
+!warn "x2=",*
+  !if >.x2 != >* {
+    !serious "branch crosses a page"
+  }
          eor   $BA00,x    ; from universal RWTS
          iny
          bne   -
+.x3
 -        ldx   $C0EC
          bpl   -
+  !if >.x3 != >* {
+    !serious "branch crosses a page"
+  }
          eor   $BA00,x    ; from universal RWTS
          bne   .badsect
          dec   tmp
@@ -495,15 +509,23 @@ VerifyInfocom18
 +        ldy   #4
 -        dey
          beq   .badrw18
+.x4
 --       ldx   $C0EC
          bpl   --
+  !if >.x4 != >* {
+    !serious "branch crosses a page"
+  }
          lda   $BA00,x
          eor   #$A5
          bne   -
          sta   $3A
          tay
+.x5
 --       ldx   $C0EC
          bpl   --
+  !if >.x5 != >* {
+    !serious "branch crosses a page"
+  }
          eor   $3A
          eor   $BA00,x
          sta   $2F
@@ -511,32 +533,48 @@ VerifyInfocom18
          asl
          asl
          sta   $30
+.x6
 -        ldx   $C0EC
          bpl   -
+  !if >.x6 != >* {
+    !serious "branch crosses a page"
+  }
          and   #$C0
          ora   $BA00,x
          sta   $3A
          lda   $30
          asl
          asl
+.x7
 -        ldx   $C0EC
          bpl   -
+  !if >.x7 != >* {
+    !serious "branch crosses a page"
+  }
          sta   $30
          and   #$C0
          ora   $BA00,x
          sta   $3B
          lda   $30
          asl
+.x8
 -        ldx   $C0EC
          bpl   -
+  !if >.x8 != >* {
+    !serious "branch crosses a page"
+  }
          asl
          ora   $BA00,x
          eor   $3B
          eor   $2F
          iny
          bne   --
+.x9
 -        ldx   $C0EC
          bpl   -
+  !if >.x9 != >* {
+    !serious "branch crosses a page"
+  }
          eor   $BA00,x
          eor   $3A
          and   #$3F
@@ -555,22 +593,38 @@ VerifyInfocom18
          jmp   .badsect
 
 .rw18pro
+.x10
 --       ldx   $C0EC
          bpl   --
+  !if >.x10 != >* {
+    !serious "branch crosses a page"
+  }
          lda   $BA00,x     ; region (half)
          sta   $2C
+.x11
 --       ldx   $C0EC
          bpl   --
+  !if >.x11 != >* {
+    !serious "branch crosses a page"
+  }
          lda   $BA00,x     ; region (half)
          sta   $2D
+.x12
 --       ldx   $C0EC
          bpl   --
+  !if >.x12 != >* {
+    !serious "branch crosses a page"
+  }
          lda   $BA00,x     ; checksum
          eor   $2C
          eor   $2D
          bne   +
+.x13
 --       ldx   $C0EC
          bpl   --
+  !if >.x13 != >* {
+    !serious "branch crosses a page"
+  }
          lda   $BA00,x     ; epilogue
          eor   #$AA
 +        rts
@@ -604,12 +658,20 @@ read13
          cmp   #$B5
          bne   +
          ldy   #$03
+.x14
 --       lda   $C0EC
          bpl   --
+  !if >.x14 != >* {
+    !serious "branch crosses a page"
+  }
          rol
          sta   $3C
+.x15
 -        lda   $C0EC
          bpl   -
+  !if >.x15 != >* {
+    !serious "branch crosses a page"
+  }
          and   $3C
          dey
          bne   --
@@ -622,18 +684,30 @@ read13
          eor   #$AD
          bne   .readaddr
 --       ldy   #$9A
+.x16
 -        ldx   $C0EC
          bpl   -
+  !if >.x16 != >* {
+    !serious "branch crosses a page"
+  }
          eor   $800,x
          dey
          bne   -
+.x17
 -        ldx   $C0EC
          bpl   -
+  !if >.x17 != >* {
+    !serious "branch crosses a page"
+  }
          eor   $800,x
          iny
          bne   -
+.x18
 -        ldx   $C0EC
          bpl   -
+  !if >.x18 != >* {
+    !serious "branch crosses a page"
+  }
          eor   $800,x
          cmp   #$01       ; set carry if non-zero
          !byte $2c

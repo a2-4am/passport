@@ -158,6 +158,9 @@ JustTheSameDamnThingOverAndOver
          sta   @cmp+1     ; 4
 @loop    lda   $C0EC      ; 4
          bpl   @loop      ; 2 when not taken
+  !if >@loop != >* {
+    !serious "branch crosses a page"
+  }
          dex              ; 2
          bne   @cmp       ; 2 when not taken
          dec   unform+1   ; 5
@@ -201,6 +204,9 @@ IsUnformatted
 @reset   ldy   #$00
 @loop    ldx   $C0EC      ; 4
          bpl   @loop      ; 2 when not taken
+  !if >@loop != >* {
+    !serious "branch crosses a page"
+  }
          dec   unform     ; 5
          bne   +          ; 2 when not taken
          dec   unform+1   ; 5
@@ -246,8 +252,12 @@ IsEATrack6
 ; out:   A contains nibble value
 ;-------------------------------
 ReadNib
+.x1
 -        lda   $C0EC
          bpl   -
+  !if >.x1 != >* {
+    !serious "branch crosses a page"
+  }
          rts
 
 ;-------------------------------
@@ -259,12 +269,20 @@ ReadNib
 ;        @tmp clobbered
 ;-------------------------------
 Read4x4
+.x2
 -        lda   $C0EC
          bpl   -
+  !if >.x2 != >* {
+    !serious "branch crosses a page"
+  }
          sec
          rol
          sta   tmp
+.x3
 -        lda   $C0EC
          bpl   -
+  !if >.x3 != >* {
+    !serious "branch crosses a page"
+  }
          and   tmp
          rts

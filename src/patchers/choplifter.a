@@ -247,8 +247,12 @@ ReadChoplifter
 .prolog3
          cmp   #$D1      ; SMC
          bne   -         ; this had the same bug
+.x1
 --       lda   $C0EC     ; timing issue requires unrolling part of this
          bpl   --
+  !if >.x1 != >* {
+    !serious "branch crosses a page"
+  }
          sec
          rol
          sta   tmp
@@ -263,8 +267,12 @@ ReadChoplifter
          sec
          rol
          sta   tmp
+.x2
 -        lda   $C0EC
          bpl   -
+  !if >.x2 != >* {
+    !serious "branch crosses a page"
+  }
          and   tmp
          sta   (BASEPAGE+8)<<8,y
          iny
