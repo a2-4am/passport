@@ -241,22 +241,23 @@ CheckLogKeys
          cpy   #$D4
          bne   .skipkey
          cpx   #0
-         beq   .nolog
+         bne   .skipkey
+
+.nolog
+         rts
 
 .checkkey
          jsr   WaitForKey
 
 .skipkey
-         cmp   #k_left
-         beq   .checkup
          cmp   #k_up
          beq   .checkup
          cmp   #k_right
          beq   .checkdown
          cmp   #k_down
          beq   .checkdown
-.nolog
-         rts
+         cmp   #k_left
+         bne   .nolog
 
 .checkup
          lda   .startline1+2
