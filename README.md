@@ -452,6 +452,8 @@ Development (unreleased)
   The Desecration, Depreciation Log)
 - "BB00 protection" renamed to its
   marketing name "Lock-It-Up"
+- Serial numbers will be erased while
+  cracking Lock-It-Up disks, if present
 - Update Passport disk to ProDOS 2.4.2
 - Matching updates to the
   [Passport test suite](https://github.com/a2-4am/passport-test-suite)

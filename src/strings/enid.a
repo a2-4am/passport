@@ -147,3 +147,5 @@ s_targetfile = $8D
 s_targetcffa = $8E
 s_rw18       = $8F
 s_555        = $90
+s_erasingserialnumber = $91
+s_lockitupserial = $92

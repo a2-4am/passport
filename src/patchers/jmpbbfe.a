@@ -1,4 +1,4 @@
-;-------------------------------
+
 ; #JMPBBFE
 ; marketed as 'Lock-It-Up'
 ; boot0 jumps to ($BBFE) instead of ($08FD)
@@ -134,6 +134,30 @@ _jmpbbfe
          ldy   #$01
          jsr   modify
 +        !byte $FD        ; SMC (byte offset of new entry point)
+
+         ldx   #$5E
+         ldy   #$02
+         jsr   compare    ; check for code that branches over serial number
+         !byte $D0,$05
+         bcs   .exit
+
+         inx
+         inx
+         ldy   #$05
+         jsr   compare    ; see if there is actually a non-zero serial number
+         !byte $00,$00,$00,$00,$00
+         bcc   .exit      ; passport-test-suite/Quadrilaterals.woz [C=1] here
+
+         sta   gDisplayBytes+5
+         ldy   #4
+-        lda   $1560, y
+         sta   gDisplayBytes, y
+         lda   #0
+         sta   $1560, y
+         dey
+         bpl   -
+         lda   #s_lockitupserial
+         jsr   PrintByID
 
 .exit
 }

@@ -164,6 +164,8 @@ StringTableLow
          !byte <.targetcffa
          !byte <.rw18
          !byte <.x555
+         !byte <.erasingserialnumber
+         !byte <.lockitupserial
 
 StringTableHigh
          !byte >.header
@@ -311,6 +313,8 @@ StringTableHigh
          !byte >.targetcffa
          !byte >.rw18
          !byte >.x555
+         !byte >.erasingserialnumber
+         !byte >.lockitupserial
 
 ;
 ; Text can contain substitution strings, which
@@ -416,6 +420,8 @@ StringTableHigh
          !text "accepts any value for the",$00
 .addressepilogue
          !text "address epilogue ",$00
+.erasingserialnumber
+         !text "Erasing serial number ",$00
 .lockitup
          !text "@",s_found,"Lock-It-Up protection",$8D
          !text "T00,S0A @",s_maybeunreadable,$8D,$00
@@ -582,7 +588,9 @@ StringTableHigh
 .decryptrwts
          !text "T00 Decrypting RWTS before writing",$8D,$00
 .protserial
-         !text "T%t,S%3 Erasing serial number %0%1%2",$8D,$00
+         !text "T%t,S%3 @",s_erasingserialnumber,"%0%1%2",$8D,$00
+.lockitupserial
+         !text "T%t,S%5 @",s_erasingserialnumber,"%0%1%2%3%4",$00
 .fbff
          !text "@",s_found,"FBFF @",s_protectioncheck,$8D,$00
 .encoded44
