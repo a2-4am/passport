@@ -13,9 +13,12 @@
 ; - Bumble Games v1.4
 ; - Bumble Plot v1.1
 ; - Con-Putation
+; - Cosmic Combat
+; - Crosscountry Rallye
 ; - Crush, Crumble and Chomp v1981-06-22
 ; - Gertrude's Puzzles v1.0
 ; - Gertrude's Secrets v1.0
+; - Guardian
 ; - Jumble Jet
 ; - Jumpman
 ; - Microzine 3
@@ -41,9 +44,17 @@ Do555
          jsr   SearchSector
          !byte $A9,WILDCARD ; LDA #$xx
          !byte $48          ; PHA
-         lda   #4
-         bcs   .setpage
          lda   $801,x
+         bcc   .setpage
+         lda   #8
+         ldy   #4
+         jsr   SearchSector
+         !byte $45,WILDCARD ; EOR $xx
+         !byte $99,$00      ; STA $xxxx,y
+         bcs   .jmpexit
+         lda   $804,x
+         sec
+
 .setpage
          sta   .patch1+1
          sta   .patch2+1
@@ -69,7 +80,7 @@ Do555
          !byte $A0,WILDCARD ; LDY #$xx
          !byte $A2          ; LDX #$xx
          bcs   .jmpexit
-         lda   $801,x
+         lda   $803,x
          ldy   #0
 
 .setPC
@@ -89,9 +100,6 @@ Do555
          lda   $800,x
          cmp   #$46
          bne   .nolsr
-         lda   $801,x
-         cmp   #$4A       ; LSR $4A
-         bne   .loopsect
          inx
          inx
 

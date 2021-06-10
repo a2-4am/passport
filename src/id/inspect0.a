@@ -427,10 +427,8 @@ VerifyInfocom18
          dey
          bne   -
 .x2
-!warn "x1=",*
 -        ldx   $C0EC
          bpl   -
-!warn "x2=",*
   !if >.x2 != >* {
     !serious "branch crosses a page"
   }
