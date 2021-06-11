@@ -70,7 +70,7 @@
 ++
          stx   .serial+2
          stx   .serialb+2
-         sta   gDisplayBytes+3
+         sta   gDisplayBytes
          lda   #$C5
          sta   .serial+1
          sta   .serialb+1
@@ -80,7 +80,7 @@
          tax
          jsr   .serial
          jsr   .XA2byte
-         sta   gDisplayBytes,y
+         sta   gDisplayBytes+1,y
          iny
          cpy   #$03
          bne   .serialloop

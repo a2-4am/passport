@@ -327,26 +327,6 @@ IDBootloader
 +        jmp   UseUniversal
 }
 
-!zone {
-PrereadT00
-         lda   #$0F
-PrereadT00Partial
-         sta   gSector
-         clc
-         adc   #BASEPAGE
-         sta   gAddress+1
-         lda   #$00
-         sta   gTrack
-         sta   gAddress
--        jsr   ReadSector
-         bcs   .exit
-         dec   gAddress+1
-         dec   gSector
-         bne   -
-.exit
-         rts
-}
-
 ;-------------------------------
 ; IDBootFailure
 ; main entry point to identify the bootloader
@@ -714,5 +694,25 @@ read13
 .badread2
          sec
          lda   $C0E8
+         rts
+}
+
+!zone {
+PrereadT00
+         lda   #$0F
+PrereadT00Partial
+         sta   gSector
+         clc
+         adc   #BASEPAGE
+         sta   gAddress+1
+         lda   #$00
+         sta   gTrack
+         sta   gAddress
+-        jsr   ReadSector
+         bcs   .exit
+         dec   gAddress+1
+         dec   gSector
+         bne   -
+.exit
          rts
 }

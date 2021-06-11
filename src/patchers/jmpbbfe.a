@@ -148,10 +148,10 @@ _jmpbbfe
          !byte $00,$00,$00,$00,$00
          bcc   .exit      ; passport-test-suite/Quadrilaterals.woz [C=1] here
 
-         sta   gDisplayBytes+5
+         sta   gDisplayBytes
          ldy   #4
 -        lda   $1560, y
-         sta   gDisplayBytes, y
+         sta   gDisplayBytes+1, y
          lda   #0
          sta   $1560, y
          dey

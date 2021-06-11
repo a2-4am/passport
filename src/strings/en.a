@@ -350,7 +350,7 @@ StringTableHigh
 .passport
          !text "Passport ",$00
 .header
-         !text "@",s_passport,"by 4am@",s_space7,"@",s_space7," 2021-06-10",$00
+         !text "@",s_passport,"by 4am@",s_space7,"@",s_space7," 2021-06-11",$00
 .bar9
          !text "_________",$00
 .bar18
@@ -421,7 +421,7 @@ StringTableHigh
 .addressepilogue
          !text "address epilogue ",$00
 .erasingserialnumber
-         !text "Erasing serial number ",$00
+         !text "T%t,S%0 Erasing serial number %1%2%3",$00
 .lockitup
          !text "@",s_found,"Lock-It-Up protection",$8D
          !text "T00,S0A @",s_maybeunreadable,$8D,$00
@@ -588,9 +588,9 @@ StringTableHigh
 .decryptrwts
          !text "T00 Decrypting RWTS before writing",$8D,$00
 .protserial
-         !text "T%t,S%3 @",s_erasingserialnumber,"%0%1%2",$8D,$00
+         !text "@",s_erasingserialnumber,$8D,$00
 .lockitupserial
-         !text "T%t,S%5 @",s_erasingserialnumber,"%0%1%2%3%4",$00
+         !text "@",s_erasingserialnumber,"%4%5",$00
 .fbff
          !text "@",s_found,"FBFF @",s_protectioncheck,$8D,$00
 .encoded44
