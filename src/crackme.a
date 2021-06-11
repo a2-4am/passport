@@ -156,8 +156,9 @@ Pass
          jsr   PrintByID
          jsr   SwapProDOS            ; ProDOS out -> in
          jsr   WriteRAMToDisk
-         jsr   SwapProDOS            ; ProDOS in -> out (preserves flags)
-         lda   KEY
+                                     ; C=1 if error, and A=MLI error code
+         jsr   SwapProDOS            ; ProDOS in -> out (preserves registers+flags)
+         bit   KEY                   ; preserves C
          bmi   Cancel
          bcc   @printFinalMessage
          jmp   FatalWriteError
