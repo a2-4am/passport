@@ -38,68 +38,11 @@ VERBOSE  = $00       ; set to $01 to display API label addresses
 }
 
 !to "../build/PASSPORT.TMP",plain
+!ct "lcase.ct"
+
+         !source "apidefs.a"         ; no code in here
 
 FirstMover
-         jmp    ResetVector
-
-         !source "apidefs.a"
-         !source "strings/en.a"
-         !source "id/inspect0.a"
-         !source "id/precheck.a"
-         !source "id/trace.a"
-         !source "id/trace33.a"
-         !source "id/trace32.a"
-         !source "id/trace8b3.a"
-         !source "id/trace33p.a"
-         !source "id/dos33.a"
-         !source "id/prodos.a"
-         !source "id/pascal.a"
-         !source "id/rdos.a"
-         !source "id/jsr8b3.a"
-         !source "id/mecc.a"
-         !source "id/datasoft.a"
-         !source "id/tsr.a"
-         !source "id/protecteddos.a"
-         !source "id/encode44.a"
-         !source "id/encode53.a"
-         !source "id/ea.a"
-         !source "id/milliken.a"
-         !source "id/daviddos.a"
-         !source "id/quickdos.a"
-         !source "id/diversidos.a"
-         !source "id/prontodos.a"
-         !source "id/d5d5f7.a"
-         !source "id/laureate.a"
-         !source "id/micrograms.a"
-         !source "id/volumename.a"
-         !source "id/dinkeydos.a"
-         !source "id/advent.a"
-         !source "id/panglosdos.a"
-         !source "id/davidson.a"
-         !source "id/holle.a"
-         !source "id/phoenix.a"
-         !source "id/555.a"
-         !source "print.a"
-         !source "compare.a"
-         !source "modify.a"
-         !source "memory.a"
-         !source "sectormap.a"
-         !source "mli.a"
-         !source "ramdisk.a"
-         !source "harddisk.a"
-         !source "slots.a"
-         !source "prefs.a"
-         !source "keys.a"
-         !source "cffa.a"
-         !source "progress.a"
-         !source "rwts.a"
-         !source "standarddelivery.a"
-         !source "wholetrack.a"
-         !source "adstyle.a"
-         !source "universalstyle.a"
-         !source "crackme.a"
-
-ResetVector
          ldx   #$FF
          txs
          lda   $C0E8
@@ -183,7 +126,7 @@ Reaction
          bpl   @printReading         ; don't create RAM disk or hard disk file in verify mode
          jsr   LookupUnitNumberOfSelectedHardDisk
          beq   @notHardDrive
-         jsr   SwapProDOS            ; ProDOS out -> in
+         jsr   SwapProDOS            ; ProDOS out -> in (preserves flags)
          jsr   CreateFileOnHardDisk
          jsr   SwapProDOS            ; ProDOS in -> out (preserves flags)
          bcc   @printReading
@@ -192,7 +135,7 @@ Reaction
 @notHardDrive
          lda   RAMDiskImagePath
          beq   @printReading         ; no RAM disk available
-         jsr   SwapProDOS            ; ProDOS out -> in
+         jsr   SwapProDOS            ; ProDOS out -> in (preserves flags)
          jsr   CreateFileOnRAMDisk
          jsr   SwapProDOS            ; ProDOS in -> out (preserves flags)
          bcc   @printReading
@@ -210,14 +153,14 @@ Reaction
          jsr   IgnoreAddressChecksum
          jsr   ReadSector
          bcc   +
-         jsr   IDBootFailure ; /src/id/inspect0
+         jsr   IDBootFailure         ; /src/id/bootfailure
          bcc   +
          lda   #s_fail
          jsr   PrintByID
          lda   #s_fatal0000
          jsr   PrintByID
          jmp   TheEnd
-+        jmp   IDBootloader ; /src/id/inspect0
++        jmp   IDBootloader          ; /src/id/inspect0
 
 TheEnd
          lda   $C0E8
@@ -436,6 +379,61 @@ _byte_hi = * + 2
 _byte_skip_hi:
          rts
 
+         !source "strings/en.a"
+         !source "id/inspect0.a"
+         !source "id/precheck.a"
+         !source "id/trace.a"
+         !source "id/trace33.a"
+         !source "id/trace32.a"
+         !source "id/trace8b3.a"
+         !source "id/trace33p.a"
+         !source "id/dos33.a"
+         !source "id/prodos.a"
+         !source "id/pascal.a"
+         !source "id/rdos.a"
+         !source "id/jsr8b3.a"
+         !source "id/mecc.a"
+         !source "id/datasoft.a"
+         !source "id/tsr.a"
+         !source "id/protecteddos.a"
+         !source "id/encode44.a"
+         !source "id/encode53.a"
+         !source "id/ea.a"
+         !source "id/milliken.a"
+         !source "id/daviddos.a"
+         !source "id/quickdos.a"
+         !source "id/diversidos.a"
+         !source "id/prontodos.a"
+         !source "id/d5d5f7.a"
+         !source "id/laureate.a"
+         !source "id/micrograms.a"
+         !source "id/volumename.a"
+         !source "id/dinkeydos.a"
+         !source "id/advent.a"
+         !source "id/panglosdos.a"
+         !source "id/davidson.a"
+         !source "id/holle.a"
+         !source "id/phoenix.a"
+         !source "id/555.a"
+         !source "print.a"
+         !source "compare.a"
+         !source "modify.a"
+         !source "memory.a"
+         !source "sectormap.a"
+         !source "mli.a"
+         !source "ramdisk.a"
+         !source "harddisk.a"
+         !source "slots.a"
+         !source "prefs.a"
+         !source "keys.a"
+         !source "cffa.a"
+         !source "progress.a"
+         !source "rwts.a"
+         !source "standarddelivery.a"
+         !source "wholetrack.a"
+         !source "adstyle.a"
+         !source "universalstyle.a"
+         !source "crackme.a"
          !source "id/bootfailure.a"
 
 AnalyzeT00                ; placeholder to identify stack of packed data

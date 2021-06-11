@@ -4,17 +4,6 @@
 ; (these are NOT case-sensitive)
 ;
 !ct "lcase.ct"
-k_verify =     "V"
-k_crack  =     "C"
-k_slot   =     "S"
-k_quit   =     "Q"
-k_redo   =     "2" ;for some side 'B'
-k_redo_with_ignore = $92; <Ctrl-R>
-k_left   =     $88
-k_right  =     $95
-k_up     =     $8B
-k_down   =     $8A
-; <Esc> will also quit
 
 !source "strings/enid.a"
 !zone {
