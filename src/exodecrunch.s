@@ -160,6 +160,13 @@ gb_get_hi:
 decrunch:
 
 !IF SHOW_PROGRESS_DURING_DECRUNCH = 1 {
+        lda $FBB3
+        cmp #$EA
+        bne +
+        lda #$A1 ; use ! instead of | for initial spinner animation
+        sta progress_char+1
+        sta progress_char+5
++
 ; -------------------------------------------------------------------
 ; show initial on-screen progress UI
 ;
