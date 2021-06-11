@@ -166,6 +166,8 @@ StringTableLow
          !byte <.x555
          !byte <.erasingserialnumber
          !byte <.lockitupserial
+         !byte <.protection
+         !byte <.nodiskin
 
 StringTableHigh
          !byte >.header
@@ -315,6 +317,8 @@ StringTableHigh
          !byte >.x555
          !byte >.erasingserialnumber
          !byte >.lockitupserial
+         !byte >.protection
+         !byte >.nodiskin
 
 ;
 ; Text can contain substitution strings, which
@@ -406,10 +410,12 @@ StringTableHigh
          !text "T%t,S%0 RWTS ",$00
 .reasons
          !text "Possible reasons:",$8D,$00
+.protection
+         !text "protection",$00
 .protectioncheck
-         !text "protection check",$00
+         !text "@",s_protection," check",$00
 .protectiontrack
-         !text "protection track",$00
+         !text "@",s_protection," track",$00
 .builtinrwts
          !text "built-in RWTS",$00
 .thedisk
@@ -420,10 +426,12 @@ StringTableHigh
          !text "accepts any value for the",$00
 .addressepilogue
          !text "address epilogue ",$00
+.nodiskin
+         !text "- There is no disk in ",$00
 .erasingserialnumber
          !text "T%t,S%0 Erasing serial number %1%2%3",$00
 .lockitup
-         !text "@",s_found,"Lock-It-Up protection",$8D
+         !text "@",s_found,"Lock-It-Up @",s_protection,$8D
          !text "T00,S0A @",s_maybeunreadable,$8D,$00
 .sunburst
          !text "@",s_found,"Sunburst disk",$8D
@@ -458,14 +466,14 @@ StringTableHigh
          !text "@",s_reasons
          !text "- The source disk is not copy protected."
          !text "- The target disk works without patches."
-         !text "- @",s_thedisk,"uses an unknown protection,",$8D
+         !text "- @",s_thedisk,"uses an unknown @",s_protection,",",$8D
          !text "  and @",s_passport,"can not help any further.",$8D,$00
 .fail
          !byte $8D
          !text "T%t,S%s Fatal read error",$8D,$8D,$00
 .fatal0000
          !text "@",s_reasons
-         !text "- There is no disk in S6,D1.",$8D
+         !text "@",s_nodiskin,"S6,D1.",$8D
          !text "- It is not an Apple ][ disk.",$8D
          !text "- @",s_thedisk,"is unformatted.",$8D,$8D,$00
 .fatal220f
@@ -490,7 +498,7 @@ StringTableHigh
 ;
 .writeioerr
          !text "@",s_reasons,$8D
-         !text "- There is no disk in S%S,D%D.",$8D
+         !text "@",s_nodiskin,"S%S,D%D.",$8D
          !text "- @",s_thedisk,"has bad sectors.",$8D
          !text "- @",s_thedisk,"is unformatted.",$8D,$8D,$00
 ;
@@ -619,7 +627,7 @@ StringTableHigh
 .eatrk6
          !text "@",s_tfound,"extra wide @",s_protectiontrack,$8D,$00
 .poke
-         !text "T%t,S%0 BASIC program POKEs protection",$8D
+         !text "T%t,S%0 BASIC program POKEs @",s_protection,$8D
          !text "check into memory and CALLs it",$8D,$00
 .bootcounter
          !text "T%t,S%0 Original disk destroys itself",$8D
@@ -714,7 +722,7 @@ StringTableHigh
 .diskvol0x
          !text "T%t,S%0 Disk requires volume number 0%1",$8D,$00
 .e7everywhere
-         !text "@",s_found,"E7 Everywhere protection",$8D,$00
+         !text "@",s_found,"E7 Everywhere @",s_protection,$8D,$00
 .choplifter
          !text "Roland was here, but he left...",$8D,$00
 .pdi

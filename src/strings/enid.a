@@ -149,3 +149,5 @@ s_rw18       = $8F
 s_555        = $90
 s_erasingserialnumber = $91
 s_lockitupserial = $92
+s_protection = $93
+s_nodiskin   = $94

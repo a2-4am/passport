@@ -436,6 +436,8 @@ _byte_hi = * + 2
 _byte_skip_hi:
          rts
 
+         !source "id/bootfailure.a"
+
 AnalyzeT00                ; placeholder to identify stack of packed data
          !bin "../build/t00only.pak"
          !source "apicode.a"
@@ -481,4 +483,5 @@ LastMover
   !warn "HardDiskArray=",HardDiskArray
   !warn "ThisSlot=",ThisSlot
   !warn "CheckCache=",CheckCache
+  !warn "IDBootFailure=",IDBootFailure
 }
