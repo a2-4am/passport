@@ -132,6 +132,10 @@ Reaction
          bcc   @printReading
          jmp   FatalWriteError       ; failed to create target file on hard disk
                                      ; this is fatal
+
+@idBootloader
+         jmp   IDBootloader          ; /src/id/inspect0
+
 @notHardDrive
          lda   RAMDiskImagePath
          beq   @printReading         ; no RAM disk available
@@ -152,15 +156,12 @@ Reaction
          jsr   CopyUniversal
          jsr   IgnoreAddressChecksum
          jsr   ReadSector
-         bcc   +
+         bcc   @idBootloader
          jsr   IDBootFailure         ; /src/id/bootfailure
-         bcc   +
-         lda   #s_fail
-         jsr   PrintByID
+         bcc   @idBootloader
          lda   #s_fatal0000
          jsr   PrintByID
-         jmp   TheEnd
-+        jmp   IDBootloader          ; /src/id/inspect0
+         ; /!\ execution falls through here
 
 TheEnd
          lda   $C0E8

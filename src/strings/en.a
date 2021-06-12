@@ -461,6 +461,7 @@ StringTableHigh
          !byte $8D
          !text "T%t,S%s Fatal read error",$8D,$8D,$00
 .fatal0000
+         !text "@",s_fail
          !text "@",s_reasons
          !text "@",s_nodiskin,"S6,D1.",$8D
          !text "- It is not an Apple ][ disk.",$8D
