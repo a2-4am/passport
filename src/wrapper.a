@@ -59,7 +59,7 @@ OneTimeSetup
          sta   $03F3
          eor   #$A5
          sta   $03F4
-         jmp   ($FE)                 ; jump to decompressed code (FirstMover)
+         jmp   ($FE)                 ; jump to decompressed code (MainMenu)
 
          !source "apidefs.a"
          !source "strings/enid.a"

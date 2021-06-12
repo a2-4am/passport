@@ -1,10 +1,3 @@
-!cpu 6502
-!ifdef RELBASE {
-*=RELBASE
-} else {
-*=$2000
-}
-
 ;-------------------------------
 ; Passport
 ; a 4am hack
@@ -33,6 +26,13 @@
 ;
 ;-------------------------------
 
+!cpu 6502
+!ifdef RELBASE {
+*=RELBASE
+} else {
+*=$2000
+}
+
 !ifndef VERBOSE {
 VERBOSE  = $00       ; set to $01 to display API label addresses
 }
@@ -42,13 +42,10 @@ VERBOSE  = $00       ; set to $01 to display API label addresses
 
          !source "apidefs.a"         ; no code in here
 
-FirstMover
+MainMenu
          ldx   #$FF
          txs
-         lda   $C0E8
-         jsr   CleanupFiles          ; RAM/HD files might be left open after Ctrl-Reset
-         ; /!\ execution falls through here
-MainMenu
+         jsr   Cleanup               ; RAM/HD files might be left open after Ctrl-Reset
          jsr   ClearScreen
          lda   #s_header
          jsr   PrintByID
@@ -164,8 +161,7 @@ Reaction
          ; /!\ execution falls through here
 
 TheEnd
-         lda   $C0E8
-         jsr   CleanupFiles
+         jsr   Cleanup
          lda   #s_done
          jsr   PrintByID
          jsr   WaitForKey
@@ -207,15 +203,17 @@ RestartScan
          jmp   ReadWithRWTS
 
 ;-------------------------------
-; CleanupFiles
+; Cleanup
 ;
 ; Cleans up open files (if any)
+; Also turns off slot 6 drive motor
 ;
 ; in:    ProDOS is NOT in memory
 ; out:   ProDOS is NOT in memory
 ;        all registers and flags clobbered
 ;-------------------------------
-CleanupFiles
+Cleanup
+         lda   $C0E8
          lda   gHardDiskRef
          ora   gRAMDiskRef
          beq   +
@@ -235,7 +233,7 @@ CleanupFiles
 ; out:   does not return
 ;-------------------------------
 CleanExit
-         jsr   CleanupFiles
+         jsr   Cleanup
          jsr   SwapProDOS            ; ProDOS out -> in
          lda   gChangedPrefs
          bne   +
@@ -440,19 +438,18 @@ _byte_skip_hi:
 AnalyzeT00                ; placeholder to identify stack of packed data
          !bin "../build/t00only.pak"
          !source "apicode.a"
-LastMover
 
 !if RELBASE = $2000 {
   !ifdef PASS2 {
   } else { ;PASS2
     !set PASS2=1
-    !warn "RELBASE = ", HIGHPOINT - (LastMover - FirstMover)
+    !warn "RELBASE = ", HIGHPOINT - (* - MainMenu)
   }
 } else {
-  !if (HIGHPOINT - (LastMover - FirstMover)) < LOWPOINT {
-    !serious "My spoon is too big (", HIGHPOINT - (LastMover - FirstMover), ") is below minimum (", LOWPOINT, ")!"
+  !if (HIGHPOINT - (* - MainMenu)) < LOWPOINT {
+    !serious "My spoon is too big (", HIGHPOINT - (* - MainMenu), ") is below minimum (", LOWPOINT, ")!"
   } else {
-    !warn "LowPoint=", HIGHPOINT - (LastMover - FirstMover)
+    !warn "LowPoint=", HIGHPOINT - (* - MainMenu)
   }
 
   !warn "CleanExit=",CleanExit
