@@ -24,7 +24,6 @@
 ;
 ; variant seen in Library Magic
 ;
-         ldy   #$0D
          jsr   compare    ; or T00,S02,$F4 ==
          !byte $4C,$CA,WILDCARD
          !byte $EA

@@ -33,7 +33,6 @@
          inx
          inx
          inx
-         ldy   #$01
          jsr   modify
          !byte $A9        ; LDA
 .exit

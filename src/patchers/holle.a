@@ -36,7 +36,6 @@
          jsr   compare
          !byte $DE
          bcc   +
-         ldy   #$01
          jsr   modify
          !byte $DE
 +
@@ -52,7 +51,6 @@
          jsr   compare
          !byte $DE
          bcc   +
-         ldy   #$01
          jsr   modify
          !byte $DE
 +
@@ -67,8 +65,6 @@
          jsr   compare    ; first data epilogue nibble (write)
          !byte $DE
          bcc   +
-         ldx   #$9E
-         ldy   #$01
          jsr   modify
          !byte $DE
 +

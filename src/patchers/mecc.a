@@ -35,7 +35,6 @@
          !byte $D1        ; SMC
          bcc   +
 
-         ldy   #$01
          jsr   modify
 .modbyte
          !byte $D1        ; SMC

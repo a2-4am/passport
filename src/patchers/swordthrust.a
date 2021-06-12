@@ -28,11 +28,10 @@
          jsr   PrintByID
          lda   #$01
          ldx   #$81
-         ldy   #$01
+         tay
          jsr   modify
          !byte $2C
          ldx   #$84
-         ldy   #$01
          jsr   modify
          !byte $2C
 .exit

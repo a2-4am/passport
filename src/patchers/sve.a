@@ -15,9 +15,6 @@
          jsr   compare
          !byte $4C,$71,$A9           ; JMP $A971
          bcs   .exit
-         lda   #$08
-         ldx   #$5A
-         ldy   #$03
          jsr   modify
          !byte $48,$A0,$01
          lda   #$06
@@ -33,7 +30,7 @@
          and   #$7f
          sta   .config
          lda   #$06
-         ldx   #$55
+         dex
          ldy   #$01
          jsr   modify
 .config

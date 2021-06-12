@@ -36,8 +36,6 @@
          jsr   compare    ; and T00,S01,$EB !=
          !byte $FE
          bcc   .exit
-
-         ldy   #$01
          jsr   compare    ; and T00,S01,$EB !=
          !byte $00
          bcc   .exit
@@ -52,8 +50,8 @@
          bcc   .veryyes   ; passport-test-suite/The Incredible Laboratory.woz [C=0] matches
 
          ldx   #$16       ; or T00,S08,$16 == the same thing
-         ldy   #$05       ; (variation used by PanglosDOS)
-         jsr   compare    ; preserves A/X
+                          ; (variation used by PanglosDOS)
+         jsr   compare    ; preserves A/X/Y
          !byte $A0,$03
          !byte $B1,$48
          !byte $48

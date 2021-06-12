@@ -46,12 +46,10 @@
          !byte $23,$2A,$28
          bcc   .variant1             ; passport-test-suite/Creative Contraptions.woz [C=0] matches
 
-         ldy   #$03
          jsr   compare
          !byte $70,$79,$77
          bcc   .variant2             ; passport-test-suite/Wortgefecht.woz [C=0] matches
 
-         ldy   #$03
          jsr   compare
          !byte $23,$2A,$24           ; passport-test-suite/Metric System Tutor.woz [C=0] matches
          bcc   .variant3
@@ -67,7 +65,7 @@
          !byte $EA                   ; NOP
          !byte $A9,$35               ; LDA #$35
          ldx   #$76
-         ldy   #$02
+         dey
          jsr   modify
          !byte $AA,$A2               ; new JMP entry point ($0900 when decrypted)
          bvc   .nextsector           ; always branches
@@ -79,7 +77,7 @@
          !byte $EA                   ; NOP
          !byte $A9,$27               ; LDA #$27
          ldx   #$76
-         ldy   #$02
+         dey
          jsr   modify                ; new JMP entry point ($0903 when decrypted)
          !byte $FA,$F2
          bvc   .nextsector           ; always branches
@@ -91,7 +89,7 @@
          !byte $EA                   ; NOP
          !byte $A9,$27               ; LDA #$27
          ldx   #$76
-         ldy   #$02
+         dey
          jsr   modify                ; new JMP entry point ($0903 when decrypted)
          !byte $A9,$A1
 

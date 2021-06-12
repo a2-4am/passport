@@ -40,14 +40,13 @@
          ldy   #$01
          jsr   modify     ; then set T00,S00,$BD =
          !byte $24        ; BIT
-         lda   #$01
+         tya
          ldx   #$47
          ldy   #$03
          jsr   compare    ; if T00,S01,$47 ==
          !byte $4C,$CE,$36; JMP $36CE
          bcs   .exit
-         lda   #$01
-         ldx   #$48
+         inx
          ldy   #$01
          jsr   modify     ; then set T00,S01,$48 =
          !byte $D8

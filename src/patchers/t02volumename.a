@@ -73,7 +73,6 @@
          !byte $D4,$C9,$C1,$C2,$D3,$D2,$C1,$C2
          rts
 
-
 .exitwithCR
          lda   #$8D
          jsr   PrintA

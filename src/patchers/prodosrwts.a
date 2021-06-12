@@ -26,7 +26,6 @@ _prodosrwts
          jsr   compare
          !byte $DE
          bcc   .exit
-         ldy   #$01
          jsr   modify
          !byte $DE
 .exit

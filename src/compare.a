@@ -182,8 +182,7 @@ all_done_set
 ; (like "." character in regular expressions)
 ; out: C clear if string matches
 ;        or set if not matched
-;      A,X unchanged
-;      Y clobbered
+;      A,X,Y preserved
 ;      $tmp zero page clobbered
 ;      $cmp1 zero page clobbered
 ;      $cmp2 zero page clobbered
@@ -195,6 +194,7 @@ compare
 CompareMemory
          sta   cmp1+1
          stx   cmp1
+         sty   compare_tmp_y
          pla
          sta   cmp2
          pla
@@ -226,5 +226,7 @@ CompareMemory
          sec
          sbc   #BASEPAGE
          ldx   cmp1
+compare_tmp_y=*+1
+         ldy   #$FD       ; SMC
          plp
          rts

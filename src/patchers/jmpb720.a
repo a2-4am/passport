@@ -24,8 +24,6 @@ _jmpb720
          !byte $10,$F1
          !byte $60
          bcs   .exit      ; passport-test-suite/Analogies Tutorial.woz [C=0] matches
-         lda   #$0B
-         ldx   #$08
          ldy   #$06
          jsr   modify     ; then set T00,S0B,$08 =
          !byte $BD,$8C,$C0

@@ -18,7 +18,6 @@
          jsr   compare    ; if T00,S0B,$84 ==
          !byte $4C,$F0,$BC
          bcs   .exit      ; passport-test-suite/Demolition Division.woz [C=0] matches
-         ldy   #$03
          jsr   modify     ; then set T00,S0B,$84 =
          !byte $AD,$E9,$B7
 .exit

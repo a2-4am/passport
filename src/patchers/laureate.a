@@ -28,7 +28,6 @@
          jsr   compare
 .valuea  !byte $d1
          bcc   +
-         ldy   #$01
          jsr   modify
 .valueb  !byte $d1
 +        dec   .loop+1
@@ -40,7 +39,6 @@
          jsr   compare
          !byte $B1,$48
          bcs   .exit
-         ldy   #$02
          jsr   modify
          !byte $A9,$00
 .exit

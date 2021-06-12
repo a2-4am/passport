@@ -37,7 +37,6 @@
          jsr   modify
          !byte $DE
          jsr   inx0A
-         ldy   #$01
          jsr   modify
          !byte $AA
 .exit

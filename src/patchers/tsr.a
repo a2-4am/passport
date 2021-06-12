@@ -35,7 +35,6 @@
          jsr   modify     ; then set T04,S0B,$A2 =
          !byte $2C
          ldx   #$A7
-         ldy   #$01
          jsr   modify     ; and set T04,S0B,$A7 =
          !byte $2C
 .exit

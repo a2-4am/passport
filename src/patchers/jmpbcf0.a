@@ -22,7 +22,6 @@ _jmpbcf0
          lda   #s_jmpbcf0
          jsr   PrintByID
          lda   #$03
-         ldx   #$94
          ldy   #$08
          jsr   modify     ; then set T00,S03,$94 =
          !byte $EA

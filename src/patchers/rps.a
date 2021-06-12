@@ -60,7 +60,7 @@
          ; /!\ execution falls through here
 
 .variant1
-         lda   #$01
+         ;A=#$01 here regardless of how we got here
          ldx   #$87
          ldy   #$03
          jsr   compare    ; if T00,S01,$87 ==
@@ -71,7 +71,6 @@
          jsr   modify     ; then set T00,S01,$8E =
          !byte $F8        ; change branch to unconditionally jump to success path
          ldx   #$92
-         ldy   #$01
          jsr   modify     ; and set T00,S01,$92 =
          !byte $F1        ; change branch to unconditionally jump to success path
          bvc   .exit      ; always branches
@@ -88,7 +87,6 @@
          jsr   modify     ; then set T00,S01,$8E =
          !byte $F9        ; change branch to unconditionally jump to success path
          ldx   #$92
-         ldy   #$01
          jsr   modify     ; and set T00,S01,$92 =
          !byte $F2        ; change branch to unconditionally jump to success path
 .exit

@@ -18,7 +18,7 @@ EARTHWARE
          ldy   #$03
          jsr   compare
          !byte $4C,$89,$B6
-         bcs   @exit
+         bcs   @exit                 ; passport-test-suite/Zoo Master.woz [C=0] here
          sta   gDisplayBytes
          pha
          lda   #s_bytrack

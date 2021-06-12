@@ -22,7 +22,6 @@
 
          lda   #$9
          ldx   #$89
-         ldy   #3
          jsr   modify
          !byte $04         ;sync delay
          !byte $48         ;PHA
@@ -50,7 +49,6 @@
          jsr   compare
          !byte $C9,$D5     ;CMP #$D5
          bcc   +
-         ldy   #2
          jsr   modify
          !byte $C9,$D5     ;CMP #$D5
 

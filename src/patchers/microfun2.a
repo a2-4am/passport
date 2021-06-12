@@ -14,8 +14,6 @@
          jsr   compare
          !byte $4C,$B8,$B6
          bcs   .exit      ; passort-test-suite/Crown Of Arthain.woz [C=0] matches
-         sta   gDisplayBytes
-         ldy   #$03
          jsr   modify
          !byte $20,$B8,$B8
 .exit

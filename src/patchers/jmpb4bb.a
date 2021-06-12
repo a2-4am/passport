@@ -54,7 +54,6 @@
          !byte $AD,$FF,$CF; LDA $CFFF
          bcc   .found     ; passport-test-suite/Kamikaze.woz [C=0] matches
          ldx   #$DD
-         ldy   #$04
          jsr   compare    ; or T02,S0x,$DD ==
          !byte $D8        ; CLD
          !byte $AD,$FF,$CF; LDA $CFFF

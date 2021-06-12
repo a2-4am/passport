@@ -33,7 +33,6 @@
          !byte $D0,$F1    ; BNE -$F1
          bcs   .exit
          ldx   #$A4
-         ldy   #$0F
          jsr   compare
          !byte $A9,$23    ; LDA #$23
          !byte $85,$02    ; STA $02

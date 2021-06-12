@@ -30,7 +30,6 @@
          jsr   compare    ; and T00,S0D,$51 !=
          !byte $AA
          bcc   +
-         ldy   #$01
          jsr   modify
          !byte $AA
 
@@ -52,7 +51,6 @@
          jsr   compare    ; and T00,S0F,$7B !=
          !byte $AA
          bcc   +
-         ldy   #$01
          jsr   modify
          !byte $AA
 +

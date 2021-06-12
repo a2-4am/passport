@@ -46,7 +46,6 @@
          jsr   compare    ; if T00,S01,$38 ==
          !byte $20,$03,$BB; JSR $BB03
          bcc   .variant1
-         ldy   #$03
          jsr   compare    ; if T00,S01,$38 ==
          !byte $4C,$03,$BB; JMP $BB03
          bcs   .no
@@ -63,7 +62,7 @@
          !byte $6B,$F6    ; encrypted, decrypts to 'BNE +$5C' which will unconditionally branch to success path at $BBC9
          lda   #$06
          ldx   #$0F
-         ldy   #$01
+         dey
          jsr   modify     ; and set T00,S06,$0F =
          !byte $89        ; encrypted, decrypts to $10 which is the expected nibble count value
                           ; unconditional branch (V is always 0 coming out of modify)

@@ -71,7 +71,6 @@ _jmpbeb1
          jsr   modify     ; and set T00,S02,$52 =
          !byte $A9,$D5
 _jsr     !byte $20,$B8,$d1; final byte set at runtime
-         lda   #$02
          ldx   #$5F
          ldy   #$01
          jsr   modify     ; and set T00,S02,$5F =

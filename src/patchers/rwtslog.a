@@ -109,8 +109,6 @@
 ; David-DOS variant
          lda   #$05
          sta   gDisplayBytes
-         ldx   #$8B
-         ldy   #$09
          jsr   compare    ; or T00,S05,$8B ==
          !byte $BD,$8C,$C0
          !byte $10,$FB

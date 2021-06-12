@@ -136,7 +136,7 @@ _jmpbbfe
 +        !byte $FD        ; SMC (byte offset of new entry point)
 
          ldx   #$5E
-         ldy   #$02
+         iny              ; Y=#$02
          jsr   compare    ; check for code that branches over serial number
          !byte $D0,$05
          bcs   .exit

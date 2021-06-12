@@ -10,12 +10,12 @@
 ;      $moddest zero page clobbered
 ;      stack set to return to
 ;        code after string
-;      A,X preserved
-;      Y clobbered
+;      A,X,Y preserved
 ;      oVerflow bit clear
 ;      all other flags clobbered
 ;-------------------------------
 modify
+         sty   mod_tmp_y
          sta   gDisplayBytes
          clc
          adc   #BASEPAGE
@@ -68,5 +68,7 @@ modify
 @exitnomod
          lda   gDisplayBytes
          ldx   moddest
+mod_tmp_y=*+1
+         ldy   #$FD                  ; SMC
          clv
          rts

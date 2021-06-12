@@ -40,9 +40,7 @@ _rwtsswap2
          ldy   #$01
          jsr   modify     ; then set T00,S04,$69 =
          !byte $60
-         lda   #$04
          ldx   #$7D
-         ldy   #$01
          jsr   modify     ; and set T00,S04,$7D =
          !byte $60
 .exit

@@ -35,7 +35,6 @@
          lda   #s_hoffman
          jsr   PrintByID
          lda   #$0C
-         ldx   #$00
          ldy   #$01
          jsr   modify     ; then set T00,S0C,$00 =
 ;

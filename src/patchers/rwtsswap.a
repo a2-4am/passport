@@ -21,7 +21,6 @@
          !byte $10,$F7
          bcs   .exit
          ldx   #$7F
-         ldy   #$0B
          jsr   compare    ; and T00,S04,$7F ==
          !byte $A0,$07
          !byte $B9,$E7,$BC
@@ -33,9 +32,7 @@
          ldy   #$01
          jsr   modify     ; then set T00,S04,$69 =
          !byte $60
-         lda   #$04
          ldx   #$7F
-         ldy   #$01
          jsr   modify     ; and set T00,S04,$7F =
          !byte $60
 .exit
