@@ -19,7 +19,6 @@ EARTHWARE
          jsr   compare
          !byte $4C,$89,$B6
          bcs   @exit                 ; passport-test-suite/Zoo Master.woz [C=0] here
-         sta   gDisplayBytes
          jsr   PrintByID
          !byte s_bytrack
          ldy   #$03

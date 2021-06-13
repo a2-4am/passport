@@ -25,7 +25,6 @@
          !byte $C9,$03
          !byte $90
          bcs   .exit
-         sta   gDisplayBytes
          jsr   PrintByID
          !byte s_bytrack
          ldx   #$B8

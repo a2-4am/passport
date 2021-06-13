@@ -8,26 +8,25 @@
 ;-------------------------------
 !zone {
          lda   #$0F
-         sta   gDisplayBytes
-.loop    lda   gDisplayBytes
+         sta   .sector+1
+.sector  lda   #$FD                  ; SMC
          ldx   #$04
          ldy   #$0E
          jsr   compare
-         !byte $CE,$07,$02; DEC $0207
-         !byte $EF,$07,$02; ??? $0207 (becomes INC)
-         !byte $A0,$27    ; LDY #$27
-         !byte $D0,$02    ; BNE *+4
-         !byte $00        ; BRK
-         !byte $6C,$B9,$00; JMP ($00B9)
-         bcs   +          ; passport-test-suite/Moebius.woz [C=0] matches
+         !byte $CE,$07,$02           ; DEC $0207
+         !byte $EF,$07,$02           ; ??? $0207 (becomes INC)
+         !byte $A0,$27               ; LDY #$27
+         !byte $D0,$02               ; BNE *+4
+         !byte $00                   ; BRK
+         !byte $6C,$B9,$00           ; JMP ($00B9)
+         bcs   +                     ; passport-test-suite/Moebius.woz [C=0] matches
          jsr   PrintByID
          !byte s_aacount
-         lda   gDisplayBytes
          ldy   #$01
          jsr   modify
-         !byte $60        ; RTS
+         !byte $60                   ; RTS
 +
-         dec   gDisplayBytes
-         bpl   .loop
+         dec   .sector+1
+         bpl   .sector
 .exit
 }

@@ -58,7 +58,6 @@
          bcs   .exit
 
 .veryyes
-         sta   gDisplayBytes
          jsr   PrintByID  ; preserves registers
          !byte s_diskvol
 

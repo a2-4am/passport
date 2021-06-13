@@ -21,7 +21,6 @@
          !byte $EA        ; NOP
          !byte $EA        ; NOP
          bcs   .exit
-         sta   gDisplayBytes
          jsr   PrintByID
          !byte s_bytrack
          ldy   #$0A

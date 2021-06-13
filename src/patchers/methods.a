@@ -32,7 +32,6 @@
          !byte $A0,$01    ; LDY #$01
          !byte $4C,$5D,$3E; JMP $3E5D
          bcs   .exit
-         sta   gDisplayBytes
          jsr   PrintByID
          !byte s_bytrack
          ldx   #$BD

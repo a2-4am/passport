@@ -16,7 +16,6 @@
 ;-------------------------------
 !zone {
          lda   #$0C
-         sta   gDisplayBytes
          ldx   #$00
          ldy   #$19
          jsr   compare    ; and T00,S0C,$00 ==

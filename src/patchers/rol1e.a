@@ -30,7 +30,6 @@ _rol1e
          jsr   compare    ; and T00,S03,$64 ==
          !byte $A5,$1E
          bcs   .exit      ; passport-test-suite/Crypto Cube.woz [C=0] matches
-         sta   gDisplayBytes
          jsr   PrintByID
          !byte s_rol1e
          jsr   modify     ; then set T00,S03,$64 =

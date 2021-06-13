@@ -27,7 +27,6 @@ _jmpb660
          !byte $A0,$56
          !byte $4C,$60,$B6
          bcs   .exit      ; passport-test-suite/Analogies Tutorial.woz [C=0] matches
-         sta   gDisplayBytes
          jsr   PrintByID
          !byte s_jmpb660
          ldx   #$F6

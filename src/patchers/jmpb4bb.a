@@ -46,25 +46,28 @@
          ldx   gIsDOS32
          bne   +
          lda   #$0A
-+        sta   gDisplayBytes+2       ; sector
++
          ldx   #$D7
          ldy   #$04
          jsr   compare    ; and T02,S0x,$D7 ==
          !byte $D8        ; CLD
          !byte $AD,$FF,$CF; LDA $CFFF
          bcc   .found     ; passport-test-suite/Kamikaze.woz [C=0] matches
+
          ldx   #$DD
          jsr   compare    ; or T02,S0x,$DD ==
          !byte $D8        ; CLD
          !byte $AD,$FF,$CF; LDA $CFFF
          bcs   .exit      ; passport-test-suite/Snooper Troops Case 2.woz [C=0] matches
+
 .found
          ldy   #$B4
-         sty   gDisplayBytes         ; address (hi)
+         sty   gDisplayBytes+1       ; address (hi)
          ldy   #$BB
-         sty   gDisplayBytes+1       ; address (lo)
+         sty   gDisplayBytes+2       ; address (lo)
          jsr   PrintByID
          !byte s_beforedos
+
          inx
          ldy   #$03
          jsr   modify     ; then set offset+1 to

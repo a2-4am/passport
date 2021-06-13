@@ -25,7 +25,6 @@
          !byte $8D,$8D,$BE
          bcs   .exit      ; passport-test-suite/Dawn Patrol.woz [C=0] here
 
-         sta   gDisplayBytes
          jsr   PrintByID
          !byte s_bytrack
 

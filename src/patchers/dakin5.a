@@ -34,7 +34,6 @@
          jsr   compare    ; and T00,S03,$9A ==
          JMP   $B6B3
          bcs   .exit      ; passport-test-suite/MIRV.woz [C=0] matches
-         sta   gDisplayBytes
          jsr   PrintByID
          !byte s_dakin5
          ldy   #$03

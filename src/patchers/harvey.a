@@ -20,17 +20,14 @@
          !byte $4C,$32,$A3
          bcs   .exit      ; passport-test-suite/Harvey by Primes.woz [C=0] here
 
-         lda   #$A2
-         sta   gDisplayBytes
-         lda   #$82
-         sta   gDisplayBytes+1
-         lda   #$01
-         sta   gDisplayBytes+2
+         ldy   #$A2
+         sty   gDisplayBytes+1       ; address (hi)
+         ldy   #$82
+         sty   gDisplayBytes+2       ; address (lo)
          jsr   PrintByID
          !byte s_beforedos
 
-         lda   #$01
-         inx              ; #$96 because both compare and PrintByID preserve X
+         inx
          tay
          jsr   modify     ; then set T01,S01,$96 =
          !byte $47

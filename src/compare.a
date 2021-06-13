@@ -150,8 +150,8 @@ match_size2
          lda   match_buffer2+2
          sec
          sbc   #BASEPAGE
-         clc
          sta   gDisplayBytes
+         clc
          rts
 
 ; cold path
@@ -181,8 +181,8 @@ all_done_set
 ;      stack = string to compare
 ; #WILDCARD in search string matches any 1 byte
 ; (like "." character in regular expressions)
-; out: C clear if string matches
-;        or set if not matched
+; out: C = 0 if string matches, and gDisplayBytes set to A
+;      C = 1 if not matched
 ;      A,X,Y preserved
 ;      $tmp zero page clobbered
 ;      $cmp1 zero page clobbered
@@ -230,4 +230,6 @@ CompareMemory
 compare_tmp_y=*+1
          ldy   #$FD       ; SMC
          plp
-         rts
+         bcs   +
+         sta   gDisplayBytes
++        rts

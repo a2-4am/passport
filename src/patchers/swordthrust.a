@@ -23,7 +23,6 @@
          JSR   $BD00
 @end_swordthrust
          bcs   .exit      ; passport-test-suite/Swordthrust 1 The King's Testing Ground.woz [C=0] matches
-         sta   gDisplayBytes
          jsr   PrintByID
          !byte s_bytrack
          ldx   #$81

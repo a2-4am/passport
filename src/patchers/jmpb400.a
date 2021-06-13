@@ -29,6 +29,7 @@
          !byte $49,$4C    ; EOR #$4C
          !byte $99,$12,$B4; STA $B412,Y
          bcs   .exit
+
          ldx   #$D5
          ldy   #$16
          jsr   compare    ; and T02,S03,$D5 ==
@@ -45,15 +46,14 @@
                           ; LDA   $C088,X
                           ; JMP   $9D84
          bcs   .exit      ; passport-test-suite/Binomial Multiplication.woz [C=0] matches
-         sta   gDisplayBytes+2       ; sector
-         lda   #$B4
-         sta   gDisplayBytes         ; address (hi)
-         lda   #$00
-         sta   gDisplayBytes+1       ; address (lo)
-         tax
+
+         ldx   #$B4
+         stx   gDisplayBytes+1       ; address (hi)
+         ldx   #$00
+         stx   gDisplayBytes+2       ; address (lo)
          jsr   PrintByID
          !byte s_beforedos
-         lda   #$03
+
          tay
          jsr   modify     ; then set T02,S03,$00 =
          !byte $4C,$84,$9D

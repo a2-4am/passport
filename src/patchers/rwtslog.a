@@ -26,7 +26,6 @@
 +
 ; DOS 3.3 variant
          lda   #$03
-         sta   gDisplayBytes
          ldx   #$4F       ; T00,S03,$4F
          jsr   -
          bcc   .yeslsr    ; passport-test-suite/The Seasons.woz [C=0] matches
@@ -36,7 +35,6 @@
          bcc   .yeslsr    ; passport-test-suite/Roadwar 2000.woz [C=0] matches
 ; Pascal variant
          lda   #$0D
-         sta   gDisplayBytes
          ldx   #$05       ; T00,S0D,$05
          jsr   -
          bcs   .endlsr    ; passport-test-suite/GATO v1.3.woz [C=0] matches
@@ -53,7 +51,6 @@
 ;-------------------------------
 ; DOS 3.3 variant
          lda   #$03
-         sta   gDisplayBytes
          ldx   #$8B
          ldy   #$15
          jsr   compare    ; if T00,S03,$8B ==
@@ -97,7 +94,6 @@
 ;-------------------------------
 ; DOS 3.3 variant
          lda   #$03
-         sta   gDisplayBytes
          ldx   #$8B
          ldy   #$09
          jsr   compare    ; if T00,S03,$8B ==
@@ -108,7 +104,6 @@
          bcc   .yesbne0   ; passport-test-suite/The Home Accountant.woz [C=0] matches
 ; David-DOS variant
          lda   #$05
-         sta   gDisplayBytes
          jsr   compare    ; or T00,S05,$8B ==
          !byte $BD,$8C,$C0
          !byte $10,$FB
@@ -127,7 +122,6 @@
 ; for the second address epilogue nibble
 ;-------------------------------
          lda   #$03
-         sta   gDisplayBytes
          ldx   #$95
          ldy   #$09
          jsr   compare    ; if T00,S03,$95 ==

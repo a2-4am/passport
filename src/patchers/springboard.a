@@ -21,7 +21,6 @@
          CMP   $C08C,X
          !byte $D0,$A9    ; BNE $B942
          bcs   .exit      ; passport-test-suite/Easy as ABC.woz [C=0] matches
-         sta   gDisplayBytes
          jsr   PrintByID
          !byte s_springboard
          ldx   #$98

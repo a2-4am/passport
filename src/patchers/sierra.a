@@ -87,7 +87,6 @@
          !byte $C9,$1D ;CMP #$1D
          !byte $B0     ;BCS *+xx
          bcs   +
-         sta   gDisplayBytes
          jsr   PrintByID
          !byte s_tamper
          inx
@@ -589,7 +588,6 @@
          bcs   .exit
 
 .yes
-         sta   gDisplayBytes
          bit   gMode                 ; don't print anything in verify mode
          bpl   +
          jsr   PrintByID

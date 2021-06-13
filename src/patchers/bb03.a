@@ -35,7 +35,6 @@
          jsr   compare    ; if T00,S0(5|7),$03 ==
          !byte $4E,$06,$BB
          bcs   .no
-         sta   gDisplayBytes
          jsr   PrintByID
          !byte s_bb03
          lda   gIsDavidDOS

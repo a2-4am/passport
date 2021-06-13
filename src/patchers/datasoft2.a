@@ -21,7 +21,6 @@
          !byte $AD,$E9,$C0
          !byte $AD,$EE,$C0
          bcs   .exit      ; passport-test-suite/Fathoms 40.woz [C=0] matches
-         sta   gDisplayBytes
          jsr   PrintByID
          !byte s_datasoft
          lda   #$01

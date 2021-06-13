@@ -21,7 +21,6 @@
          lda   #$0F
 .start   sta   .sector+1
 .sector  lda   #$FF                  ; modified above
-         sta   gDisplayBytes
          ldx   #$3A
          ldy   #$09
          jsr   compare

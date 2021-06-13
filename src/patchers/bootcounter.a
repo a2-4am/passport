@@ -17,7 +17,6 @@
          !byte WILDCARD,$CE,$17,$18,$D0,$05,$A9,$80
          !byte $8D,$18,$18
          bcs   .exit      ; passport-test-suite/Elementary Vol. 2 v3.2 limited backup.woz [C=0] matches
-         sta   gDisplayBytes
          jsr   PrintByID
          !byte s_bootcounter
          ldy   #$03

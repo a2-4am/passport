@@ -18,7 +18,7 @@
 ;
 ; We've found what looks like a DOS 3.3-ish disk volume name, so print it
 ;
-+        sta   gDisplayBytes
++
          adc   #BASEPAGE             ; carry is guaranteed to be clear here
          sta   .a+2
          jsr   PrintByID

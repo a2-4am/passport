@@ -16,7 +16,6 @@
          lda   gIsRWTS    ; if DOS 3.3 RWTS
          bne   .exit
          lda   #$03
-         sta   gDisplayBytes
          ldx   #$4F
          ldy   #$11
          jsr   compare    ; and T00,S03,$4F ==
