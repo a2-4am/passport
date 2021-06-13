@@ -84,8 +84,8 @@
          iny
          cpy   #$03
          bne   .serialloop
-         lda   #s_protserial
          jsr   PrintByID
+         !byte s_protserial
          lda   gTrack
          beq   .track0
 
@@ -124,8 +124,8 @@
 ;
          bit   gMode
          bpl   +
-         lda   #s_decryptrwts
          jsr   PrintByID
+         !byte s_decryptrwts
 +        ldx   #BASEPAGE
          inx
          stx   .a+2

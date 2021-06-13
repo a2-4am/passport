@@ -20,10 +20,8 @@ EARTHWARE
          !byte $4C,$89,$B6
          bcs   @exit                 ; passport-test-suite/Zoo Master.woz [C=0] here
          sta   gDisplayBytes
-         pha
-         lda   #s_bytrack
          jsr   PrintByID
-         pla
+         !byte s_bytrack
          ldy   #$03
          jsr   modify
          !byte $BD,$8C,$C0

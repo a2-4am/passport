@@ -22,8 +22,8 @@
          sta   gDisplayBytes         ; address (hi)
          lda   #$00
          sta   gDisplayBytes+1       ; address (lo)
-         lda   #s_beforedos
          jsr   PrintByID
+         !byte s_beforedos
          lda   #$0C
          ;X is preserved, still #$84
          ldy   #$03

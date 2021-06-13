@@ -41,8 +41,9 @@ SkipTrack
 ; if we're in 'crack' mode, restart the scan to find the protection code
          jmp   SetupF7F6SecondRound
 
-@print
+@print   sta   +
          jsr   PrintByID
++        !byte $FD                   ; SMC
 ;
 ; Skipping T22 on a ProDOS disk might indicate the presence of a
 ; Gamco Industries protection elsewhere on the disk. Different
@@ -129,8 +130,8 @@ SetupF7F6SecondRound
 +        dec   @a+1
          dey
          bpl   @a
-         lda   #s_f7      ; print that we found the protection track
-         jsr   PrintByID
+         jsr   PrintByID  ; print that we found the protection track
+         !byte s_f7
          lda   #TRUE
          sta   gIsF7F6    ; set global to activate expensive patcher
          jmp   RestartScan

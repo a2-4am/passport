@@ -39,17 +39,17 @@ modify
          pha
          sty   modtmp
          bit   gMode
-         bpl   @exitnomod ; verify mode -> no modify
-         lda   #s_modify
+         bpl   @exitnomod            ; verify mode -> no modify
          jsr   PrintByID
+         !byte s_modify
          ldy   #0
 -        lda   (moddest), y
          jsr   PrintByte
          iny
          cpy   modtmp
          bne   -
-         lda   #s_modifyto
          jsr   PrintByID
+         !byte s_modifyto
          ldy   #0
 -        iny
          lda   (modsrc), y

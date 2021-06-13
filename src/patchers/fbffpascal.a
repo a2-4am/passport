@@ -34,8 +34,8 @@
 .a       lda   $FDFD,y    ; set at runtime
          adc   #$0A       ; calculate new branch offset (note: carry still guaranteed to be clear here)
          sta   .branch    ; store offset in patch bytes below
-         lda   #s_fbff
          jsr   PrintByID
+         !byte s_fbff
          lda   gDisplayBytes
          ldy   #$03
          jsr   modify

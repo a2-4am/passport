@@ -41,8 +41,8 @@
          jsr   -
          bcs   .endlsr    ; passport-test-suite/GATO v1.3.woz [C=0] matches
 .yeslsr
-         lda   #s_lsr6a
          jsr   PrintByID
+         !byte s_lsr6a
          inc   gPatchCount
 .endlsr
 
@@ -85,8 +85,8 @@
          !byte $B0
          bcs   .endbcs    ; passport-test-suite/Roadwar 2000.woz [C=0] matches
 .yesbcs
-         lda   #s_bcs08
          jsr   PrintByID
+         !byte s_bcs08
          inc   gPatchCount
 .endbcs
 
@@ -116,8 +116,8 @@
          !byte $D0,$00
          bcs   .endbne0   ; passport-test-suite/Horses.woz [C=0] matches
 .yesbne0
-         lda   #s_cmpbne0
          jsr   PrintByID
+         !byte s_cmpbne0
          inc   gPatchCount
 .endbne0
 
@@ -136,8 +136,8 @@
          !byte $C9,$AA
          !byte $EA,$EA
          bcs   .endnopnop ; passport-test-suite/La Guillotine.woz [C=0] matches
-         lda   #s_cmpnopnop
          jsr   PrintByID
+         !byte s_cmpnopnop
          inc   gPatchCount
 .endnopnop
 .exit

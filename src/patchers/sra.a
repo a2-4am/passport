@@ -29,9 +29,8 @@
          !byte $8D,$6C,$7A           ; STA $7A6C
          !byte $AD,$B1,$78           ; LDA $78B1
          bcs   .nextsector           ; passport-test-suite/Computer Drill and Instruction - Multiplication B.woz [C=0] matches
-         lda   #s_sra
          jsr   PrintByID
-         lda   .sector+1
+         !byte s_sra
          inx
          ldy   #$02
          jsr   modify

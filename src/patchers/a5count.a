@@ -17,11 +17,9 @@
          !byte $C9,$A5    ; CMP #$A5
          bcs   .exit      ; passport-test-suite/Game Frame One.woz [C=0] matches
          sta   gDisplayBytes
-         pha
          jsr   inx8
-         lda   #s_a5count
          jsr   PrintByID
-         pla
+         !byte s_a5count
          ldy   #$02
          jsr   modify
          !byte $D0,$7B    ; BNE +$7B

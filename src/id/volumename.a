@@ -59,8 +59,8 @@ IDVolumeName
 
 .print
 ; X (now the volume name length) is preserved by the PrintByID call
-         lda   #s_volumename
          jsr   PrintByID
+         !byte s_volumename
 
 ; print the volume name
 .offset  ldy   #$d1       ; set at runtime

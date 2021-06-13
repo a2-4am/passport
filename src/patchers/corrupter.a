@@ -42,8 +42,8 @@
          !byte $85,$04    ; STA $04
          !byte $20,$28,$40; JSR $4028
          bcs   .exit      ; passport-test-suite/Squire.woz [C=0] matches
-         lda   #s_corrupter
          jsr   PrintByID
+         !byte s_corrupter
          lda   #$0E
          ldy   #$01
          jsr   modify

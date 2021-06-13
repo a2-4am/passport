@@ -23,13 +23,13 @@ Trace
          ldy   $B6FB
          cpy   #$4C
          bne   ++
-+        sta   $B6FA,x    ; hi byte of callback
++        sta   $B6FA,x               ; hi byte of callback
          pla
-         sta   $B6F9,x    ; lo byte of callback
+         sta   $B6F9,x               ; lo byte of callback
          jmp   $B600
 
 ++       pla
-         lda   #s_canttrace ; unknown disk controller
-         jsr   PrintByID
+         jsr   PrintByID             ; unknown disk controller
+         !byte s_canttrace
          jmp   UseUniversal
 }

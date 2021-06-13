@@ -34,8 +34,8 @@ ERRORD51
          pha
          jsr   inx6
          stx   @highBytePtr+1
-         lda   #s_badblock
          jsr   PrintByID
+         !byte s_badblock
          pla
          tax
          pla

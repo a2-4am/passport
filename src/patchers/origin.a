@@ -34,8 +34,8 @@
          !byte $E9,$11    ; SBC #$11
          !byte $85,$5D    ; STA $5D
          bcs   +          ; passport-test-suite/Ultima V.woz [C=0] matches
-         lda   #s_origin
          jsr   PrintByID
+         !byte s_origin
          inc   gPatchCount
 +        dec   .sector+1
          bpl   .sector

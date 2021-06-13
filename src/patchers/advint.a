@@ -26,10 +26,8 @@
          !byte $D9,$32               ;BPL -$FB
          bcs   .exit      ; passport-test-suite/S.A.G.A. 6.woz [C=0] matches
          sta   gDisplayBytes
-         pha
-         lda   #s_advint
          jsr   PrintByID
-         pla
+         !byte s_advint
          ldy   #$03
          jsr   modify
          !byte $D1                   ;CLC

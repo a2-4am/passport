@@ -3,26 +3,47 @@ kForceLower !byte $FF     ; AND mask for lowercase letters
 
 ;-------------------------------
 ; PrintByID
-; Print a string from the string table;
-; handles string substitutions and
+; Print a string from the string table
+; Handles string substitutions and
 ; auto-uppercases on older machines
-; in:  A = string ID
-; out: X register preserved, others clobbered
-;      all flags clobbered
+; in:    string ID (byte) on stack
+; out:   all registers preserved
+;        all flags clobbered
+;        stack set to after params
 ;-------------------------------
 PrintByID
-         stx   .x+1
-         ldy   #0         ; substitution mode flag
+         sta   @tmpa+1
+         sty   @tmpy+1
+         pla
+         sta   $00
+         clc
+         adc   #$01
+         tay
+         pla
+         sta   $01
+         adc   #$00
+         pha
+         tya
+         pha
+@tmpa    lda   #$FD       ; SMC
+         pha
+@tmpy    lda   #$FD       ; SMC
+         pha
+         txa
+         pha
+         ldy   #1
+         lda   ($00), y   ; get ID of string to print
          tax
-         lda   StringTableLow,x
+         lda   StringTableLow, x
          sta   @print+1
-         lda   StringTableHigh,x
+         lda   StringTableHigh, x
          sta   @print+2
+         dey              ; Y=0
 @print
          lda   $FFFF      ; modified at runtime
-         beq   .done
-         cpy   #0         ; are we in substitution mode or include mdoe?
-         bmi   .include   ; yes, include mode
+         beq   @done
+         cpy   #0         ; are we in substitution mode or include mode?
+         bmi   @include   ; yes, include mode
          beq   @nosub     ; no -> branch
          ldy   #0
          cmp   #"t"       ; "%t" = current track
@@ -46,7 +67,7 @@ PrintByID
 @printsd
          ora   #$80
          jsr   PrintA
-         bvc   .next      ; unconditional branch
+         bvc   @next      ; unconditional branch
 @sub4
          cmp   #"0"       ; "%0" through "%9"
          bcc   @nosub
@@ -55,48 +76,51 @@ PrintByID
          sec
          sbc   #"0"
          tax
-         lda   gDisplayBytes,x
+         lda   gDisplayBytes, x
 @printbyte
          jsr   PrintByte
-         bvc   .next      ; unconditional branch
+         bvc   @next      ; unconditional branch
 @nosub
          cmp   #"%"
-         bne   .stillnosub
+         bne   @stillnosub
          iny              ; Y=#$01 (substitution mode, next character will be interpreted)
-         bne   .next      ; unconditional branch
-.stillnosub
+         bne   @next      ; unconditional branch
+@stillnosub
          cmp   #"@"
          bne   +
          dey              ; Y=#$FF (include mode, next character will be interpreted)
-         bne   .next      ; unconditional branch
+         bne   @next      ; unconditional branch
 +        cmp   #$E1
          bcc   @noforce
          and   kForceLower
 @noforce
          jsr   COUT
-.next
+@next
          inc   @print+1
          bne   @print
          inc   @print+2
          bne   @print     ; unconditional branch
-.done
-.x       ldx   #$FD       ; SMC
+@done
+         pla
+         tax
+         pla
+         tay
+         pla
          rts
-.include
-         sta   .a+1
+@include
+         sta   @id
          lda   @print+1
          pha
          lda   @print+2
          pha
-         ldx   .x+1
-.a       lda   #$FD       ; SMC
          jsr   PrintByID
+@id      !byte $FD        ; SMC
          pla
          sta   @print+2
          pla
          sta   @print+1
          ldy   #0
-         beq   .next      ; unconditional branch
+         beq   @next      ; unconditional branch
 
 ;-------------------------------
 ; PrintByte

@@ -76,8 +76,8 @@
          !byte $D1
 
 .badread
-         lda   #s_optbad  ; say read failure
-         jsr   PrintByID
+         jsr   PrintByID  ; say read failure
+         !byte s_optbad
 
 .jmpexit1
          jmp   .exit
@@ -236,8 +236,8 @@
          jmp   .exit
 
 .dotrack0
-         lda   #s_construct
          jsr   PrintByID
+         !byte s_construct
          lda   .address+1
          bmi   .domerge
          cmp   #3

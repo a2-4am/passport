@@ -25,8 +25,8 @@ IDDavidson
          sta   $B92E
          bcs   .exit      ; passport-test-suite/Word Attack Plus Spanish.woz [C=0] matches
                           ; if the read didn't work, give up
-         lda   #s_davidson
          jsr   PrintByID
+         !byte s_davidson
          lda   #TRUE
          sta   gIsDavidson
          clc

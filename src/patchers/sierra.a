@@ -88,10 +88,8 @@
          !byte $B0     ;BCS *+xx
          bcs   +
          sta   gDisplayBytes
-         pha
-         lda   #s_tamper
          jsr   PrintByID
-         pla
+         !byte s_tamper
          inx
          inx
          inx
@@ -290,10 +288,8 @@
          jsr   inx4
          bcs   ++
 +        sta   gDisplayBytes
-         pha
-         lda   #s_sierra
          jsr   PrintByID
-         pla
+         !byte s_sierra
          ldy   #$01
          jsr   modify
 .patchstyle
@@ -313,8 +309,8 @@
          bcs   +
          sta   gDisplayBytes
          pha
-         lda   #s_tamper
          jsr   PrintByID
+         !byte s_tamper
          txa
          clc
          adc   #5
@@ -337,10 +333,8 @@
          !byte $D0,$30  ;BNE *+$32
          bcs   +
          sta   gDisplayBytes
-         pha
-         lda   #s_tamper
          jsr   PrintByID
-         pla
+         !byte s_tamper
          ldy   #$01
          jsr   modify
          !byte $60 ;just return
@@ -600,8 +594,8 @@
          sta   gDisplayBytes
          bit   gMode                 ; don't print anything in verify mode
          bpl   +
-         lda   #s_sierra
          jsr   PrintByID
+         !byte s_sierra
 +
 .page9
          lda   $D103,x

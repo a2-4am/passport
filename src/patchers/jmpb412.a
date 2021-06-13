@@ -28,8 +28,8 @@
          sta   gDisplayBytes         ; address (hi)
          lda   #$12
          sta   gDisplayBytes+1       ; address (lo)
-         lda   #s_beforedos
          jsr   PrintByID
+         !byte s_beforedos
          lda   #$00
          ldx   #$F6
          ldy   #$02

@@ -14,7 +14,6 @@
          lda   gIsRWTS    ; if DOS 3.3 RWTS
          bne   .exit
          lda   #$03
-         sta   gDisplayBytes
          ldx   #$92
          ldy   #$07
          jsr   compare    ; and T00,S03,$92 ==
@@ -22,9 +21,9 @@
          CMP   $C08C,X
          !byte $D0,$A9    ; BNE $B942
          bcs   .exit      ; passport-test-suite/Easy as ABC.woz [C=0] matches
-         lda   #s_springboard
+         sta   gDisplayBytes
          jsr   PrintByID
-         lda   #$03
+         !byte s_springboard
          ldx   #$98
          ldy   #$01
          jsr   modify     ; then set T00,S03,$98 =

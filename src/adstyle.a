@@ -2,8 +2,8 @@ ADStyle
 ; We are now fairly confident that the RWTS in memory
 ; is normal enough to call, Advanced Demuffin style.
          jsr   IncProgress
-         lda   #s_diskrwts
          jsr   PrintByID
+         !byte s_diskrwts
 ;
 ; Check for protections in early boot that
 ; might indicate intentional bad sectors
@@ -15,27 +15,27 @@ ADStyle
          bcs   +
          lda   #$05
          sta   gDisplayBytes
-         lda   #s_lockitup
          jsr   PrintByID
+         !byte s_lockitup
 +
          jsr   xSunburst
          bcs   +
          lda   #$04
          sta   gDisplayBytes
-         lda   #s_sunburst
          jsr   PrintByID
+         !byte s_sunburst
 +
          jsr   xOptimumRes
          bcs   +
          lda   #TRUE
          sta   gIsOptimum
-         lda   #s_optimum
          jsr   PrintByID
+         !byte s_optimum
 +
          jsr   xSVE
          bcs   +
-         lda   #s_sve
          jsr   PrintByID
+         !byte s_sve
          lda   #$CA
          sta   $BE5B
          lda   #$B6
@@ -52,8 +52,8 @@ ADStyle
          bcs   +
          lda   #$01
          sta   gDisplayBytes
-         lda   #s_rps
          jsr   PrintByID
+         !byte s_rps
 +
          jsr   xB660
          jsr   xB4BB

@@ -343,7 +343,7 @@ StringTableHigh
 .passport
          !text "Passport ",$00
 .header
-         !text "@",s_passport,"by 4am@",s_space7,"@",s_space7," 2021-06-11",$00
+         !text "@",s_passport,"by 4am@",s_space7,"@",s_space7," 2021-06-12",$00
 .bar9
          !text "_________",$00
 .bar18
@@ -561,7 +561,7 @@ StringTableHigh
 .jmpae8e
          !text "T00,S0D Disk calls a @",s_protectioncheck," at"
          !text "$AE8E after initializing DOS",$8D,$00
-.diskvol
+.diskvol
          !text "@",s_rwts,"requires a non-standard",$8D
          !text "disk volume number",$8D,$00
 .d5d5f7

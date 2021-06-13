@@ -34,10 +34,8 @@
          inx
          inx
          sta   gDisplayBytes
-         pha
-         lda   #s_fbff
          jsr   PrintByID
-         pla
+         !byte s_fbff
          ldy   #$01
          jsr   modify
          !byte $A2                   ; change encrypted BNE +4 to +5D so code exits with Death Counter > 0

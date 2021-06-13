@@ -28,9 +28,8 @@ _jmpb660
          !byte $4C,$60,$B6
          bcs   .exit      ; passport-test-suite/Analogies Tutorial.woz [C=0] matches
          sta   gDisplayBytes
-         lda   #s_jmpb660
          jsr   PrintByID
-         lda   #$02
+         !byte s_jmpb660
          ldx   #$F6
          ldy   #$03
          jsr   modify     ; then set T00,S02,$F6 =

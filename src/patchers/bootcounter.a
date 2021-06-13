@@ -18,10 +18,8 @@
          !byte $8D,$18,$18
          bcs   .exit      ; passport-test-suite/Elementary Vol. 2 v3.2 limited backup.woz [C=0] matches
          sta   gDisplayBytes
-         pha
-         lda   #s_bootcounter
          jsr   PrintByID
-         pla
+         !byte s_bootcounter
          ldy   #$03
          jsr   modify     ; then set T01,S00,$00 =
          !byte $4C,$03,$1B

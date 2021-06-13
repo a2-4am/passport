@@ -20,8 +20,8 @@
          !byte $00        ; BRK
          !byte $6C,$B9,$00; JMP ($00B9)
          bcs   +          ; passport-test-suite/Moebius.woz [C=0] matches
-         lda   #s_aacount
          jsr   PrintByID
+         !byte s_aacount
          lda   gDisplayBytes
          ldy   #$01
          jsr   modify

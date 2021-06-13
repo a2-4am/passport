@@ -108,8 +108,8 @@ checksector
          jmp   FatalError ; decided the read error is fatal
 
 .optional
-         lda   #s_optbad  ; say we're skipping this
-         jsr   PrintByID  ; optional sector
+         jsr   PrintByID  ; say we're skipping this optional sector
+         !byte s_optbad
          ; /!\ execution falls through here
 
 nextsector
@@ -150,10 +150,10 @@ Pass
 
          ; we've written the entire cracked disk as a file on the RAM disk,
          ; now a second pass to write that file out to the target disk drive
-         lda   #s_writingto
          jsr   PrintByID
-         lda   #s_slotanddrive
+         !byte s_writingto
          jsr   PrintByID
+         !byte s_slotanddrive
          jsr   SwapProDOS            ; ProDOS out -> in
          jsr   WriteRAMToDisk
                                      ; C=1 if error, and A=MLI error code
@@ -173,17 +173,19 @@ Pass
          !byte $2C
 @passVerify
          lda   #s_pass               ; 'verification complete'
+         sta   +
          jsr   PrintByID
++        !byte $FD                   ; SMC
          jmp   TheEnd
 
 Cancel
-         lda   #s_canceled
          jsr   PrintByID
+         !byte s_canceled
          jmp   TheEnd
 
 FatalError
-         lda   #s_fail
          jsr   PrintByID
+         !byte s_fail
          lda   gTrack
          cmp   #$22
          bne   @TheEnd
@@ -195,6 +197,6 @@ FatalError
          cmp   #$0C
          bne   @TheEnd
 @failont22s0f
-         lda   #s_fatal220f
          jsr   PrintByID
+         !byte s_fatal220f
 @TheEnd  jmp   TheEnd

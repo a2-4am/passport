@@ -16,9 +16,8 @@
          !byte $20,$B6,$B6
          bcs   .exit      ; passport-test-suite/The Function Game.woz [C=0] matches
          sta   gDisplayBytes
-         lda   #s_bytrack
          jsr   PrintByID
-         lda   #$06
+         !byte s_bytrack
          ldy   #$01
          jsr   modify     ; then set T00,S06,$F2 =
          !byte $2C

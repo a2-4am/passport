@@ -28,10 +28,8 @@
 @searchend
          bcs   .exit      ; passport-test-suite/Photar.woz [C=0] matches
          sta   gDisplayBytes
-         pha
-         lda   #s_bytrack
          jsr   PrintByID
-         pla
+         !byte s_bytrack
          ldy   #$01
          jsr   modify
          !byte $60

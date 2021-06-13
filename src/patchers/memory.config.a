@@ -27,9 +27,8 @@
          !byte $B5,$42                          ; LDA $42,X
          bcs   .exit      ; passport-test-suite/Rosie the Counting Rabbit.woz [C=0] matches
          sta   gDisplayBytes
-         lda   #s_runhello
          jsr   PrintByID
-         lda   gDisplayBytes
+         !byte s_runhello
          inx
          ldy   #$06
          jsr   modify

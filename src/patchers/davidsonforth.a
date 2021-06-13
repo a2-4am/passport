@@ -18,10 +18,8 @@
          !byte $08,$80,$00,$FD,$1C,$D1,$0D,$EC
          bcs   .exit      ; passport-test-suite/Read 'N Roll.woz [C=0] matches
          sta   gDisplayBytes
-         pha
-         lda   #s_badblock
          jsr   PrintByID
-         pla
+         !byte s_badblock
          inx
          ldy   #$01
          jsr   modify

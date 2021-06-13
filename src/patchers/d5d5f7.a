@@ -51,10 +51,8 @@
          !byte $6D        ; ADC
          bcs   .exit      ; passport-test-suite/RoboMath.woz [C=0] matches
          sta   gDisplayBytes ; passport-test-suite/Notecard Maker.woz [C=0] matches
-         pha
-         lda   #s_d5d5f7
          jsr   PrintByID
-         pla
+         !byte s_d5d5f7
          ldy   #$01
          jsr   modify
          !byte $60        ; RTS

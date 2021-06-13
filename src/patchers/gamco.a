@@ -18,10 +18,8 @@
          !byte $39,$36
          bcs   .exit      ; passport-test-suite/Essential Grammar.woz [C=0] matches
          sta   gDisplayBytes
-         pha
-         lda   #s_poke
          jsr   PrintByID
-         pla
+         !byte s_poke
          ldy   #$12
          jsr   modify
          !byte $34,$34,$01,$30,$02,$31,$30,$03

@@ -200,10 +200,10 @@ TraceDOS32LO
          !byte $A9,$EA     ;LDA #$EA
          !byte $20,$26,$03 ;JSR $0326
          bcs   .fail      ; passport-test-suite/Eggs-It.woz [C=0] matches
-         lda   #s_choplifter
          jsr   PrintByID
-         lda   #s_diskrwts
+         !byte s_choplifter
          jsr   PrintByID
+         !byte s_diskrwts
          jmp   Choplifter
 
 ; something did not match, not comfortable tracing,
@@ -221,8 +221,8 @@ TraceDOS32LO
          bcs   .fail
          lda   #TRUE
          sta   gIsRDOS13
-         lda   #s_rdos13
          jsr   PrintByID
+         !byte s_rdos13
 
          lda   #<.RDOS13Hook
          sta   jCallRWTS+1
@@ -323,8 +323,8 @@ TraceDOS32d
          bcs   +          ; passport-test-suite/Robotwar.woz [C=0] matches
          lda   #$08
          sta   gDisplayBytes
-         lda   #s_muse
          jsr   PrintByID
+         !byte s_muse
 
 ; read the rest of the disk with the original RWTS
 +

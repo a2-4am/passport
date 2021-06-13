@@ -21,10 +21,8 @@
          !byte $BD,$8C,$C0; LDA $C08C,X
          bcs   .exit      ; passport-test-suite/Miner 2049er.woz [C=0] matches
          sta   gDisplayBytes
-         pha
-         lda   #s_microfun
          jsr   PrintByID
-         pla
+         !byte s_microfun
          ldy   #$02
          jsr   modify
          !byte $18        ; CLC

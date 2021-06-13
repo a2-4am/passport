@@ -142,10 +142,8 @@
          !byte $A9,$20     ;LDA #$20
          !byte $85,$02     ;STA $02
          bcs   +
-         pha
-         lda   #s_sierra
          jsr   PrintByID
-         pla
+         !byte s_sierra
          inx
          inx
          inx ;patch the second JSR
@@ -175,10 +173,8 @@
          clc
 +        sta   .adjust+1
          adc   #BASEPAGE
-         pha
-         lda   #s_sierra
          jsr   PrintByID
-         pla
+         !byte s_sierra
          ldy   #8
          jsr   SearchSector
          !byte $85,WILDCARD ;encoded BNE *+xx

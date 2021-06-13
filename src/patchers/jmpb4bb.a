@@ -59,14 +59,12 @@
          !byte $AD,$FF,$CF; LDA $CFFF
          bcs   .exit      ; passport-test-suite/Snooper Troops Case 2.woz [C=0] matches
 .found
-         pha
-         lda   #$B4
-         sta   gDisplayBytes         ; address (hi)
-         lda   #$BB
-         sta   gDisplayBytes+1       ; address (lo)
-         lda   #s_beforedos
+         ldy   #$B4
+         sty   gDisplayBytes         ; address (hi)
+         ldy   #$BB
+         sty   gDisplayBytes+1       ; address (lo)
          jsr   PrintByID
-         pla
+         !byte s_beforedos
          inx
          ldy   #$03
          jsr   modify     ; then set offset+1 to

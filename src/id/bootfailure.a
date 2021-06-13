@@ -102,10 +102,10 @@ VerifyInfocom18
          bit   gMode      ; verify-mode already?
          bpl   +          ; yes, continue
 
-         lda   #%00000000 ; 
+         lda   #%00000000
          sta   gMode      ; no, switch to verify-mode
-         lda   #s_toverify
          jsr   PrintByID  ; and say so
+         !byte s_toverify
 
 +        clc              ; all clear
          lda   $C0E8

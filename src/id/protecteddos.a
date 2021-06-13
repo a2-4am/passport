@@ -21,8 +21,8 @@ ProtectedDOS
          lda   $B706      ; decryption key
          sta   .key+1
          sta   gDisplayBytes+1
-         lda   #s_protdos
          jsr   PrintByID
+         !byte s_protdos
 
 ;
 ; decrypt RWTS in memory

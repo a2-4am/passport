@@ -103,8 +103,8 @@ Choplifter
          iny
          bne   -
 
-         lda   #s_bootwrite
          jsr   PrintByID
+         !byte s_bootwrite
          lda   #$00
          sta   gTrack
          jsr   WriteTrackNA

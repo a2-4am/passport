@@ -171,8 +171,8 @@ SDsuccess
 
          bit   gMode                 ; don't say we're writing a bootloader in verify-only mode,
          bpl   +                     ; that's scary
-         lda   #s_bootwrite
          jsr   PrintByID
+         !byte s_bootwrite
 +
 ; now manually write out track 0 with Standard Delivery
 ; bootloader

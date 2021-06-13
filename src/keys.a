@@ -6,8 +6,8 @@ WaitForKey
          cmp   #"*"
          bne   +
          jsr   TEXT
-         lda   #s_reset
          jsr   PrintByID
+         !byte s_reset
          jmp   $FF59
 +        cmp   #$E1
          bcc   +

@@ -37,10 +37,8 @@
          bcs   .exit      ; passport-test-suite/Super Taxman II.woz [C=0] matches
 
          sta   gDisplayBytes
-         pha
-         lda   #s_hallabs
          jsr   PrintByID
-         pla
+         !byte s_hallabs
          ldy   #$01
          jsr   modify
          RTS

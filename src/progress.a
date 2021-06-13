@@ -9,10 +9,10 @@
 ;-------------------------------
 ShowInitialProgressScreen
          jsr   ClearScreen
-         lda   #s_header
          jsr   PrintByID
-         lda   #s_progbar
+         !byte s_header
          jsr   PrintByID
+         !byte s_progbar
          lda   VPOS
          sta   TEXTTOP
          bne   ResetProgress         ; always branches
@@ -22,8 +22,8 @@ RestartProgress
          pha
          lda   #1
          sta   VPOS
-         lda   #s_progbar
          jsr   PrintByID
+         !byte s_progbar
          pla
          sta   VPOS
          jsr   $FC22

@@ -21,10 +21,10 @@
 +        sta   gDisplayBytes
          adc   #BASEPAGE             ; carry is guaranteed to be clear here
          sta   .a+2
-         lda   #s_volumename
          jsr   PrintByID
+         !byte s_volumename
          ldy   #$0B
-.a       lda   $d1AF,Y    ; high byte set at runtime (low byte is constant)
+.a       lda   $d1AF,Y               ; high byte set at runtime (low byte is constant)
          ora   #$80
          jsr   PrintA
          dey

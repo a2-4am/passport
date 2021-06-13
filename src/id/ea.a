@@ -48,8 +48,8 @@ foundea
 ; original disk.
 ;
 !zone {
-         lda   #s_eab0
          jsr   PrintByID
+         !byte s_eab0
          jsr   CopyUniversal
 
 ; mark track $22 as "optional" in sector map

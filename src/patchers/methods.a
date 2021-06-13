@@ -33,9 +33,8 @@
          !byte $4C,$5D,$3E; JMP $3E5D
          bcs   .exit
          sta   gDisplayBytes
-         lda   #s_bytrack
          jsr   PrintByID
-         lda   #$00
+         !byte s_bytrack
          ldx   #$BD
          ldy   #$01
          jsr   modify     ; then set T00,S00,$BD =

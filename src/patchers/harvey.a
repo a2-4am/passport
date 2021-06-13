@@ -26,8 +26,8 @@
          sta   gDisplayBytes+1
          lda   #$01
          sta   gDisplayBytes+2
-         lda   #s_beforedos
          jsr   PrintByID
+         !byte s_beforedos
 
          lda   #$01
          inx              ; #$96 because both compare and PrintByID preserve X

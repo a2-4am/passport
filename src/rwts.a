@@ -180,8 +180,8 @@ WriteTrackNA                         ; entry point used by Special Delivery trac
 
          ; we haven't yet printed any 'writing to...' message in the log, so
          ; figure out what that should look like and do it now
-         lda   #s_writingto
          jsr   PrintByID
+         !byte s_writingto
 
          lda   gHardDiskRef
          beq   @maybeWritingToRAMDisk
@@ -197,7 +197,9 @@ WriteTrackNA                         ; entry point used by Special Delivery trac
          !byte $2C
 @notWritingToRAMDisk
          lda   #s_slotanddrive       ; writing to a slot and drive
+         sta   +
          jsr   PrintByID
++        !byte $FD                   ; SMC
 
 @doneSaidWriting
          lda   #TRUE
@@ -228,9 +230,9 @@ FatalWriteError
          cpx   #MLI_WRITEPROT
          beq   @print
          lda   #s_othermli
-@print   pha
-         lda   #s_writeerr
+@print   sta   +
          jsr   PrintByID
-         pla
+         !byte s_writeerr
          jsr   PrintByID
++        !byte $FD                   ; SMC
          jmp   TheEnd

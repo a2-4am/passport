@@ -47,10 +47,10 @@ MainMenu
          txs
          jsr   Cleanup               ; RAM/HD files might be left open after Ctrl-Reset
          jsr   ClearScreen
-         lda   #s_header
          jsr   PrintByID
-         lda   #s_mainmenu
+         !byte s_header
          jsr   PrintByID
+         !byte s_mainmenu
          bit   gTargetType
          bmi   @usingHardDisk
          bvs   @usingCFFA
@@ -61,7 +61,9 @@ MainMenu
          !byte $2C
 @usingHardDisk
          lda   #s_targetfile
+         sta   +
          jsr   PrintByID
++        !byte $FD                   ; SMC
 @getkey
          jsr   WaitForKey
          cmp   #$80
@@ -144,8 +146,8 @@ Reaction
          sta   RAMDiskImagePath      ; this is not fatal, but we'll mark the RAM
                                      ; disk as unavailable so we don't bother with it
 @printReading
-         lda   #s_reading
          jsr   PrintByID
+         !byte s_reading
          lda   #$B2
          ldx   #$00
          ldy   #$0D
@@ -156,14 +158,14 @@ Reaction
          bcc   @idBootloader
          jsr   IDBootFailure         ; /src/id/bootfailure
          bcc   @idBootloader
-         lda   #s_fatal0000
          jsr   PrintByID
+         !byte s_fatal0000
          ; /!\ execution falls through here
 
 TheEnd
          jsr   Cleanup
-         lda   #s_done
          jsr   PrintByID
+         !byte s_done
          jsr   WaitForKey
          cmp   #$9B
          beq   CleanExit
@@ -180,8 +182,8 @@ HandleRedoWithIgnore
 
 HandleRedo
          jsr   ShowInitialProgressScreen
-         lda   #s_reading
          jsr   PrintByID
+         !byte s_reading
          ; /!\ execution falls through here
 
 ;-------------------------------
@@ -194,8 +196,8 @@ HandleRedo
 ; Exits via ReadWithRWTS
 ;-------------------------------
 RestartScan
-         lda   #s_restart
          jsr   PrintByID
+         !byte s_restart
          jsr   RestartProgress
          jsr   IncProgress
          ldx   #$FF
@@ -414,6 +416,7 @@ _byte_skip_hi:
          !source "id/holle.a"
          !source "id/phoenix.a"
          !source "id/555.a"
+         !source "id/bootfailure.a"
          !source "print.a"
          !source "compare.a"
          !source "modify.a"
@@ -433,7 +436,6 @@ _byte_skip_hi:
          !source "adstyle.a"
          !source "universalstyle.a"
          !source "crackme.a"
-         !source "id/bootfailure.a"
 
 AnalyzeT00                ; placeholder to identify stack of packed data
          !bin "../build/t00only.pak"

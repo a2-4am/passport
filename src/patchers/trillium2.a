@@ -19,10 +19,8 @@
          !byte $C9,$00
          bcs   .exit      ; passport-test-suite/Nine Princes in Amber.woz [C=0] matches
          sta   gDisplayBytes
-         pha
-         lda   #s_trillium
          jsr   PrintByID
-         pla
+         !byte s_trillium
          inx
          inx
          inx

@@ -21,8 +21,8 @@
          !byte $4A
          !byte $C9,$6A
          bcs   +          ; passport-test-suite/Investigating Plant Growth.woz [C=0] matches
-         lda   #s_lsr6a
          jsr   PrintByID
+         !byte s_lsr6a
          inc   gPatchCount
 +
          lda   .sector+1
@@ -34,8 +34,8 @@
          !byte $BD,$8C,$C0
          !byte $C9,$08
          bcs   .nextsector ; passport-test-suite/Investigating Plant Growth.woz [C=0] matches
-         lda   #s_bcs08
          jsr   PrintByID
+         !byte s_bcs08
          inc   gPatchCount
 .nextsector
          dec   .sector+1

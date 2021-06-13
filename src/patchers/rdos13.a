@@ -59,8 +59,8 @@
          jsr   modify
          !byte $96
 
-         lda   #s_rwtswrite
          jsr   PrintByID
+         !byte s_rwtswrite
          lda   #<((BASEPAGE * $100) + $6B9 - $16)
          sta   modsrc
          lda   #>((BASEPAGE * $100) + $6B9 - $16)
@@ -88,8 +88,8 @@
          ldx   #ID_RDOS13
          jsr   ConstructStandardDelivery
 
-         lda   #s_bootwrite
          jsr   PrintByID
+         !byte s_bootwrite
 
          jmp   .exit
 

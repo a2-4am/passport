@@ -21,14 +21,11 @@
          !byte $60
          bcs   .exit      ; passport-test-suite/Clue Master Detective.woz [C=0] matches
          sta   gDisplayBytes
-         pha
-         lda   #$01
-         sta   gDisplayBytes+1
-         lda   #s_diskvol0x
-         jsr   PrintByID
-         pla
-         jsr   inx6
          ldy   #$01
+         sty   gDisplayBytes+1
+         jsr   PrintByID
+         !byte s_diskvol0x
+         jsr   inx6
          jsr   modify
          !byte $00
 .exit

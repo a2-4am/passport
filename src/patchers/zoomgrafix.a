@@ -15,14 +15,12 @@
          !byte $32,$30,$35,$38
          bcs   .exit      ; passport-test-suite/Zoom Grafix 26-JAN-82.woz [C=0] matches
          sta   gDisplayBytes
-         pha
-         lda   #$00
-         sta   gDisplayBytes+1
-         lda   #s_diskvol0x
+         ldy   #$00
+         sty   gDisplayBytes+1
          jsr   PrintByID
+         !byte s_diskvol0x
          jsr   inx0B
-         pla
-         ldy   #$01
+         iny
          jsr   modify
          !byte $35        ; 'LM = PEEK(KB - 2055)' instead
 .exit

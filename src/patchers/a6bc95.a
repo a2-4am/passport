@@ -32,10 +32,8 @@
          !byte $A9
          bcs   .exit
          sta   gDisplayBytes
-         pha
-         lda   #s_a6bc95
          jsr   PrintByID
-         pla
+         !byte s_a6bc95
          ldy   #$01
          jsr   modify
          !byte $60        ; RTS

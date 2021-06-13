@@ -42,9 +42,9 @@ PanglosDOS
          bcc   +          ; passport-test-suite/Stepwise Multiple Regression.woz [C=0] matches
 .jmpexit1
          jmp   .exit
-
-+        lda   #s_gathering
++
          jsr   PrintByID
+         !byte s_gathering
 
          ;$230 (560) bytes for address keys
          ;$230 (560) bytes for data keys

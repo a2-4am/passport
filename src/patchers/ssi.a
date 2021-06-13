@@ -22,10 +22,8 @@
          bcs   +          ; passport-test-suite/Epidemic.woz [C=0] matches
 
          sta   gDisplayBytes
-         pha
-         lda   #s_ssi
          jsr   PrintByID
-         pla
+         !byte s_ssi
          ldy   #$01
          jsr   modify
          !byte $A9        ; LDA #$..

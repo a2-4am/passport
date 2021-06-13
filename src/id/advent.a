@@ -44,8 +44,8 @@ foundadvent
 ; original disk.
 ;
 !zone {
-         lda   #s_advent
          jsr   PrintByID
+         !byte s_advent
          jsr   CopyUniversal
 
 ;hook read address prologue

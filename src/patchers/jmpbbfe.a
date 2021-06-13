@@ -156,8 +156,8 @@ _jmpbbfe
          sta   $1560, y
          dey
          bpl   -
-         lda   #s_lockitupserial
          jsr   PrintByID
+         !byte s_lockitupserial
 
 .exit
 }

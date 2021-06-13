@@ -14,11 +14,10 @@
          jsr   compare    ; and T00,S0D,$4D ==
          !byte $4C,$8E,$AE
          bcs   .exit
-         lda   #s_jmpae8e
          jsr   PrintByID
-         lda   #$0D
-         inx
-         ldy   #$02
+         !byte s_jmpae8e
+         inx              ; X=#$4E
+         dey              ; Y=#$01
          jsr   modify     ; then set T00,S0D,$4E =
          !byte $80,$A1
 .exit

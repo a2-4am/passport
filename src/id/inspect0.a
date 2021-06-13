@@ -50,7 +50,9 @@ IDBootloader
          lda   #s_13sector
 
 .printinfo
+         sta   +
          jsr   PrintByID
++        !byte $FD                   ; SMC
          jmp   UseUniversal
 
 .sanity
@@ -96,7 +98,9 @@ IDBootloader
          lda   #s_dosb0
 
 .printdos
+         sta   +
          jsr   PrintByID
++        !byte $FD                   ; SMC
          jmp   TraceDOS33
 ;
 ; Try to identify a variant bootloader that calls to $08B3
@@ -106,8 +110,8 @@ IDBootloader
 .notdos33
          jsr   ID8b3
          bcs   +
-         lda   #s_jsr8b3
          jsr   PrintByID
+         !byte s_jsr8b3
          lda   #TRUE
          sta   gIs8b3
          jmp   Trace8B3
@@ -119,8 +123,8 @@ IDBootloader
          bcs   .notmecc
          lda   #ID_MECC_UNK
          sta   gMECCFastloadType
-         lda   #s_mecc
          jsr   PrintByID
+         !byte s_mecc
          jsr   PrereadT00
          bcs   .notmecc
          jsr   IDMECC1
@@ -150,8 +154,8 @@ IDBootloader
 ;
          jsr   IDSpecDel
          bcs   +
-         lda   #s_specdel
          jsr   PrintByID
+         !byte s_specdel
          jmp   TraceSpecDel
 ;
 ; Try to identify Laureate Learning Systems bootloader.
@@ -159,8 +163,8 @@ IDBootloader
 ;
 +        jsr   IDLaureate
          bcs   +
-         lda   #s_laureate
          jsr   PrintByID
+         !byte s_laureate
          lda   #TRUE
          sta   gIsLaureate
          lda   #$0B
@@ -188,13 +192,13 @@ IDBootloader
 ;
 +        jsr   IDDOS32
          bcs   +
-         lda   #s_dos32b0
          jsr   PrintByID
+         !byte s_dos32b0
          jmp   TraceDOS32
 +        jsr   IDDOS32LO
          bcs   +
-         lda   #s_dos32b0
          jsr   PrintByID
+         !byte s_dos32b0
          jmp   TraceDOS32LO
 ;
 ; Try to detect whether there is code in the boot sector
@@ -203,8 +207,8 @@ IDBootloader
 ;
 +        jsr   IDEncoded44
          bcs   +
-         lda   #s_encoded44
          jsr   PrintByID
+         !byte s_encoded44
          jmp   TheEnd
 ;
 ; Try to detect whether there is code in the boot sector
@@ -216,16 +220,16 @@ IDBootloader
 ;
 +        jsr   IDEncoded53
          bcs   +
-         lda   #s_encoded53
          jsr   PrintByID
+         !byte s_encoded53
          jmp   TheEnd
 ;
 ; ProDOS (all versions)
 ;
 +        jsr   IDProDOS
          bcs   +
-         lda   #s_prodosb0
          jsr   PrintByID
+         !byte s_prodosb0
          lda   #TRUE
          sta   gIsProDOS
          jsr   IDVolumeName
@@ -239,8 +243,8 @@ IDBootloader
          bcs   +
          lda   #$0B
          sta   gDisplayBytes
-         lda   #s_dinkeydos
          jsr   PrintByID
+         !byte s_dinkeydos
          lda   #TRUE
          sta   gIsDinkeyDOS
 ;
@@ -248,8 +252,8 @@ IDBootloader
 ;
 +        jsr   IDPascal
          bcs   +
-         lda   #s_pascalb0
          jsr   PrintByID
+         !byte s_pascalb0
          lda   #TRUE
          sta   gIsPascal
          jsr   IDVolumeName
@@ -258,8 +262,8 @@ IDBootloader
 ;
 +        jsr   IDDavid
          bcs   +
-         lda   #s_daviddos
          jsr   PrintByID
+         !byte s_daviddos
          lda   #TRUE
          sta   gIsDavidDOS
 ;
@@ -267,8 +271,8 @@ IDBootloader
 ;
 +        jsr   IDDatasoft
          bcs   +
-         lda   #s_datasoftb0
          jsr   PrintByID
+         !byte s_datasoftb0
          lda   #TRUE
          sta   gIsDatasoft
 ;
@@ -276,8 +280,8 @@ IDBootloader
 ;
 +        jsr   IDTSR
          bcs   +
-         lda   #s_tsr
          jsr   PrintByID
+         !byte s_tsr
          lda   #TRUE
          sta   gIsTSR
 ;
@@ -286,24 +290,24 @@ IDBootloader
 ;
 +        jsr   IDMicrograms
          bcs   +
-         lda   #s_micrograms
          jsr   PrintByID
+         !byte s_micrograms
 ;
 ; Quick-DOS
 ; (just for display)
 ;
 +        jsr   IDQuickDOS
          bcs   +
-         lda   #s_quickdos
          jsr   PrintByID
+         !byte s_quickdos
 ;
 ; RDOS
 ; (just for display)
 ;
 +        jsr   IDRDOS
          bcs   +
-         lda   #s_rdos
          jsr   PrintByID
+         !byte s_rdos
 
 ;
 ; Dav Holle encrypted bootloader
@@ -311,8 +315,8 @@ IDBootloader
 ;
 +        jsr   IDHolle
          bcs   +
-         lda   #s_holle
          jsr   PrintByID
+         !byte s_holle
          lda   #TRUE
          sta   gIsHolle
 ;
@@ -320,8 +324,8 @@ IDBootloader
 ;
 +        jsr   ID555
          bcs   +
-         lda   #s_555
          jsr   PrintByID
+         !byte s_555
          jmp   Do555
 
 +        jmp   UseUniversal

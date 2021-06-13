@@ -67,7 +67,9 @@ SwitchToUniv
 
 StartWithUniv
          lda   #s_builtin
+         sta   +
          jsr   PrintByID
++        !byte $FD                   ; SMC
          lda   #TRUE
          sta   gTriedUniv
          lda   #FALSE

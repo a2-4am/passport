@@ -26,10 +26,9 @@
          bcs   .exit      ; passport-test-suite/Dawn Patrol.woz [C=0] here
 
          sta   gDisplayBytes
-         lda   #s_bytrack
          jsr   PrintByID
+         !byte s_bytrack
 
-         lda   #$0B
          ldx   #$A2
          ldy   #$01
          jsr   modify     ; then set T04,S0B,$A2 =

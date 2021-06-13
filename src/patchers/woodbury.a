@@ -24,10 +24,8 @@
          !byte $A9,$00
          bcs   .exit      ; passport-test-suite/PlayWriter.woz [C=0] matches
          sta   gDisplayBytes
-         pha
-         lda   #s_badblock
          jsr   PrintByID
-         pla
+         !byte s_badblock
          jsr   inx4
          ldy   #$02
          jsr   modify

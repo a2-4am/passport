@@ -32,10 +32,8 @@
          !byte $BD,$89,$C0
          bcs   .exit      ; passport-test-suite/Odd One Out 1990.woz [C=0] matches
          sta   gDisplayBytes
-         pha
-         lda   #s_bbf9
          jsr   PrintByID
-         pla
+         !byte s_bbf9
          ldy   #$02
          jsr   modify
          !byte $18,$60

@@ -103,10 +103,8 @@
          !byte $BC,$8C,$C0
          bcs   .exit      ; passport-test-suite/Maniac Mansion.woz [C=0] matches
          sta   gDisplayBytes
-         pha
-         lda   #s_fbff
          jsr   PrintByID
-         pla
+         !byte s_fbff
          ldy   #$05
          jsr   modify
          !byte $A9,$FF

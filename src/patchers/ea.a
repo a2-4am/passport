@@ -121,8 +121,8 @@
          bcs   +
          sta   gDisplayBytes
          pha
-         lda   #s_tamper
          jsr   PrintByID
+         !byte s_tamper
          txa
          clc
          adc   #7
@@ -153,8 +153,8 @@
          bcs   +
          sta   gDisplayBytes
          pha
-         lda   #s_tamper
          jsr   PrintByID
+         !byte s_tamper
          txa
          clc
          adc   #11
@@ -175,8 +175,8 @@
          bcs   +
          sta   gDisplayBytes
          pha
-         lda   #s_tamper
          jsr   PrintByID
+         !byte s_tamper
          txa
          clc
          adc   #11
@@ -197,8 +197,8 @@
          bcs   +
          sta   gDisplayBytes
          pha
-         lda   #s_tamper
          jsr   PrintByID
+         !byte s_tamper
          pla
          jsr   inx5
          ldy   #1
@@ -213,10 +213,8 @@
          !byte $F0,$03     ;BEQ +$03
          bcs   +
          sta   gDisplayBytes
-         pha
-         lda   #s_tamper
          jsr   PrintByID
-         pla
+         !byte s_tamper
          jsr   inx6
          ldy   #1
          jsr   modify
@@ -229,10 +227,8 @@
          !byte $D0,$DB     ;BNE -$DB
          bcs   +
          sta   gDisplayBytes
-         pha
-         lda   #s_tamper
          jsr   PrintByID
-         pla
+         !byte s_tamper
          jsr   inx4
          ldy   #1
          jsr   modify
@@ -369,10 +365,8 @@
          !byte $48         ;PHA
          bcs   +
          sta   gDisplayBytes
-         pha
-         lda   #s_tamper
          jsr   PrintByID
-         pla
+         !byte s_tamper
          inx
          ldy   #1
          jsr   modify
@@ -390,8 +384,8 @@
          bcs   +
          sta   gDisplayBytes
          pha
-         lda   #s_tamper
          jsr   PrintByID
+         !byte s_tamper
          txa
          clc
          adc   #12
@@ -415,8 +409,8 @@
          bcs   +
          sta   gDisplayBytes
          pha
-         lda   #s_tamper
          jsr   PrintByID
+         !byte s_tamper
          txa
          clc
          adc   #24
@@ -505,10 +499,8 @@
          !byte $5E,$0D
          bcs   +
          sta   gDisplayBytes
-         pha
-         lda   #s_tamper
          jsr   PrintByID
-         pla
+         !byte s_tamper
          inx
          inx
          ldy   #1
@@ -548,8 +540,8 @@
          bcs   +
          sta   gDisplayBytes
          pha
-         lda   #s_tamper
          jsr   PrintByID
+         !byte s_tamper
          txa
          clc
          adc   #25

@@ -130,8 +130,8 @@
          sta   .decrypt1_store+2
          sta   .decrypt2+2
 
-         lda   #s_decryptrwts
          jsr   PrintByID
+         !byte s_decryptrwts
          inc   gPatchCount
          lda   #$4C
 .decrypt1

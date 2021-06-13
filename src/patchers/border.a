@@ -22,10 +22,8 @@
          !byte $EA        ; NOP
          bcs   .exit
          sta   gDisplayBytes
-         pha
-         lda   #s_bytrack
          jsr   PrintByID
-         pla
+         !byte s_bytrack
          ldy   #$0A
          jsr   modify     ; then set T00,S08,$5A =
          !byte $48        ; PHA

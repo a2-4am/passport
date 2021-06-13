@@ -59,8 +59,8 @@
 
 .veryyes
          sta   gDisplayBytes
-         lda   #s_diskvol
-         jsr   PrintByID  ; preserves X
+         jsr   PrintByID  ; preserves registers
+         !byte s_diskvol
 
          lda   #$08
          inx

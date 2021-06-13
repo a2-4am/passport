@@ -25,8 +25,8 @@
          lda   #$38
          sta   $1656      ; #BASEPAGE+6
 
-         lda   #s_rwtswrite
          jsr   PrintByID
+         !byte s_rwtswrite
 
 ; If original disk loads boot1 into $B700, Standard Delivery only needs to
 ; load boot1+RWTS (into $B700..$BFFF) and transfer control to boot1 at $B700.
@@ -59,8 +59,8 @@
          ldx   #ID_DOS32
 +        jsr   ConstructStandardDelivery
 
-         lda   #s_bootwrite
          jsr   PrintByID
+         !byte s_bootwrite
          inc   gPatchCount
 .exit
 }

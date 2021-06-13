@@ -41,8 +41,8 @@ OneTimeSetup
          jsr   ScanForDiskII         ; scan slots for Disk II drives
          lda   DiskIIArray+5
          bne   +
-         lda   #s_noslot6            ; no Disk II in slot 6, this is fatal
-         jsr   PrintByID
+         jsr   PrintByID             ; no Disk II in slot 6, this is fatal
+         !byte s_noslot6
          jsr   WaitForKey
          jmp   CleanExit
 +

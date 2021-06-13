@@ -79,8 +79,8 @@
                           ; last-mod date
          !byte $02, $00   ; header pointer
          bcs   .noinfo
-         lda   #s_idinfo
          jsr   PrintByID
+         !byte s_idinfo
          ldy   #$00
          tya
 .erase   sta   (BASEPAGE << 8) + $100, y

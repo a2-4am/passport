@@ -51,8 +51,8 @@
          lda   #$00
          sta   gDisplayBytes+1       ; address (lo)
          tax
-         lda   #s_beforedos
          jsr   PrintByID
+         !byte s_beforedos
          lda   #$03
          tay
          jsr   modify     ; then set T02,S03,$00 =
