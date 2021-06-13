@@ -27,7 +27,6 @@
          STA   ($3C),Y
 @searchend
          bcs   .exit      ; passport-test-suite/Photar.woz [C=0] matches
-         sta   gDisplayBytes
          jsr   PrintByID
          !byte s_bytrack
          ldy   #$01

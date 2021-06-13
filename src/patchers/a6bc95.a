@@ -31,7 +31,6 @@
          !byte $AE,$F8,$01; LDX $01F8
          !byte $A9
          bcs   .exit
-         sta   gDisplayBytes
          jsr   PrintByID
          !byte s_a6bc95
          ldy   #$01

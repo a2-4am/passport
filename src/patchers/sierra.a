@@ -287,7 +287,7 @@
          !byte $BD,$89,$C0 ;LDA $C089,X
          jsr   inx4
          bcs   ++
-+        sta   gDisplayBytes
++
          jsr   PrintByID
          !byte s_sierra
          ldy   #$01
@@ -307,7 +307,6 @@
          !byte WILDCARD ;INX or DEX
          !byte $D0,$FB  ;BNE *-5
          bcs   +
-         sta   gDisplayBytes
          pha
          jsr   PrintByID
          !byte s_tamper
@@ -332,7 +331,6 @@
          !byte $CD,WILDCARD,WILDCARD ;CMP $xxxx
          !byte $D0,$30  ;BNE *+$32
          bcs   +
-         sta   gDisplayBytes
          jsr   PrintByID
          !byte s_tamper
          ldy   #$01

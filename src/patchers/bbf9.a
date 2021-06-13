@@ -31,7 +31,6 @@
          !byte $A6,WILDCARD
          !byte $BD,$89,$C0
          bcs   .exit      ; passport-test-suite/Odd One Out 1990.woz [C=0] matches
-         sta   gDisplayBytes
          jsr   PrintByID
          !byte s_bbf9
          ldy   #$02

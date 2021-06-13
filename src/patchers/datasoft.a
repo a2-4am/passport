@@ -11,7 +11,6 @@
          jsr   SearchTrack
          !byte $5D,$D4,$80,$49,00,$19
          bcs   .exit      ; passport-test-suite/Tomahawk.woz [C=0] matches
-         sta   gDisplayBytes
          jsr   PrintByID
          !byte s_datasoft
          ldy   #$01

@@ -19,7 +19,6 @@
          !byte $A9,$FF
          !byte $48
          bcs   .exit      ; passport-test-suite/Advanced Electricity.woz [C=0] matches
-         sta   gDisplayBytes
          jsr   inx8
          ldy   #$01
          jsr   modify

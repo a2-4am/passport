@@ -27,7 +27,6 @@
          !byte $AC,$EC,$C0; LDY $C0EC
          bcs   .exit      ; passport-test-suite/The Typewriter.woz [C=0] matches
          stx   .a+1
-         sta   gDisplayBytes
          adc   #BASEPAGE  ; carry is guaranteed to be clear here
          sta   .a+2
          ldy   #$10       ; get the branch offset from the WILDCARD above

@@ -12,7 +12,7 @@ WILDCARD =     $97
 ; out: C clear if string found
 ;        or set if not found
 ;      If C is clear, then
-;      A = sector where string was found
+;      A = @gDisplayBytes = sector where string was found
 ;      X = starting offset where string was found
 ;      all other registers and flags clobbered
 ;-------------------------------
@@ -151,6 +151,7 @@ match_size2
          sec
          sbc   #BASEPAGE
          clc
+         sta   gDisplayBytes
          rts
 
 ; cold path

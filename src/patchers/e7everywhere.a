@@ -36,7 +36,6 @@
          !byte $8D
 ;
          bcs   .exit      ; passport-test-suite/Garfield Trivia Game.woz [C=0] matches
-         sta   gDisplayBytes
          jsr   PrintByID
          !byte s_e7everywhere
          ldy   #$02

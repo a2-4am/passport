@@ -26,7 +26,6 @@
          inx                         ; passport-test-suite/The Crimson Crown.woz [C=0] reaches here
          inx
          inx
-         sta   gDisplayBytes
          jsr   PrintByID
          !byte s_fbff
          ldy   #$01
@@ -43,7 +42,6 @@
          !byte $F0,$09               ; BEQ +9
          !byte $AE                   ; LDX
          bcs   .exit      ; passport-test-suite/The Crimson Crown.woz [C=0] matches
-         sta   gDisplayBytes
          jsr   inx9
          jsr   PrintByID
          !byte s_tamper

@@ -26,7 +26,6 @@
          !byte $AD,$83,$C0; LDA $C083
          !byte $AD,$83,$C0; LDA $C083
          bcs   .exit      ; passport-test-suite/Rendezvous with Rama rev. 2.woz [C=0] matches
-         sta   gDisplayBytes
          jsr   PrintByID
          !byte s_trillium
          ldy   #$01

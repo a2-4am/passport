@@ -14,7 +14,6 @@
          !byte $4C,$4D,$D0,$E2,$28,$4B,$42,$C9 ; 'LM = PEEK(KB - 2058)' in BASIC
          !byte $32,$30,$35,$38
          bcs   .exit      ; passport-test-suite/Zoom Grafix 26-JAN-82.woz [C=0] matches
-         sta   gDisplayBytes
          ldy   #$00
          sty   gDisplayBytes+1
          jsr   PrintByID

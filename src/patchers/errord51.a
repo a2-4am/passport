@@ -25,7 +25,6 @@ ERRORD51
          !byte $8D,WILDCARD,WILDCARD
          !byte $20
          bcs   @exit
-         sta   gDisplayBytes
          pha
          clc
          adc   #BASEPAGE

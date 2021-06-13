@@ -22,7 +22,6 @@
          !byte $10,$F7     ; BPL *-9
          !byte $4C,$E3,$93 ; JMP $93E3
          bcs   .exit       ; passport-test-suite/Polywriter.woz [C=0] matches
-         sta   gDisplayBytes
          jsr   PrintByID
          !byte s_pdi
          jsr   inx0C

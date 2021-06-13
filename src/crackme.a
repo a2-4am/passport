@@ -154,9 +154,8 @@ Pass
          !byte s_writingto
          jsr   PrintByID
          !byte s_slotanddrive
-         jsr   SwapProDOS            ; ProDOS out -> in
-         jsr   WriteRAMToDisk
-                                     ; C=1 if error, and A=MLI error code
+         jsr   SwapProDOS            ; ProDOS out -> in (preserves registers+flags)
+         jsr   WriteRAMToDisk        ; C=1 if error, and A=MLI error code
          jsr   SwapProDOS            ; ProDOS in -> out (preserves registers+flags)
          bit   KEY                   ; preserves C
          bmi   Cancel
@@ -176,27 +175,27 @@ Pass
          sta   +
          jsr   PrintByID
 +        !byte $FD                   ; SMC
-         jmp   TheEnd
+         bvc   .TheEnd               ; always branches
 
 Cancel
          jsr   PrintByID
          !byte s_canceled
-         jmp   TheEnd
+         bvc   .TheEnd               ; always branches
 
 FatalError
          jsr   PrintByID
          !byte s_fail
          lda   gTrack
          cmp   #$22
-         bne   @TheEnd
+         bne   .TheEnd
          lda   gSector
          cmp   #$0F
          beq   @failont22s0f
          ldx   gIsDOS32
-         bne   @TheEnd
+         bne   .TheEnd
          cmp   #$0C
-         bne   @TheEnd
+         bne   .TheEnd
 @failont22s0f
          jsr   PrintByID
          !byte s_fatal220f
-@TheEnd  jmp   TheEnd
+.TheEnd  jmp   TheEnd

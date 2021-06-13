@@ -26,7 +26,6 @@
          !byte $8D,$08,$C0                      ; STA $C008
          !byte $B5,$42                          ; LDA $42,X
          bcs   .exit      ; passport-test-suite/Rosie the Counting Rabbit.woz [C=0] matches
-         sta   gDisplayBytes
          jsr   PrintByID
          !byte s_runhello
          inx

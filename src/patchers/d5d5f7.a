@@ -50,7 +50,7 @@
          !byte $18        ; CLC
          !byte $6D        ; ADC
          bcs   .exit      ; passport-test-suite/RoboMath.woz [C=0] matches
-         sta   gDisplayBytes ; passport-test-suite/Notecard Maker.woz [C=0] matches
+                          ; passport-test-suite/Notecard Maker.woz [C=0] matches
          jsr   PrintByID
          !byte s_d5d5f7
          ldy   #$01

@@ -13,7 +13,6 @@
          !byte $A9,$D5
          !byte $8D,$7A,$BC
          bcs   +          ; passport-test-suite/Word Wizards v1.0.woz [C=0] matches
-         sta   gDisplayBytes
          jsr   inx5
          ldy   #$01
          jsr   modify
@@ -28,7 +27,6 @@
          !byte $A2,$06
          !byte $BD
          bcs   +          ; passport-test-suite/Zoyon Patrol v1.0.woz [C=0] matches
-         sta   gDisplayBytes
          jsr   inx4
          ldy   #$01
          jsr   modify
@@ -41,7 +39,6 @@
          !byte $D0,$11
          !byte $B9
          bcs   +          ; passport-test-suite/MECC Dataquest Composer [C=0] matches
-         sta   gDisplayBytes
          jsr   inx5
          ldy   #$01
          jsr   modify
@@ -58,7 +55,6 @@
          !byte $B9,WILDCARD,WILDCARD
          !byte $8D,$AC,$D5
          bcs   +          ; passport-test-suite/MECC Dataquest - Europe and Soviet Union.woz [C=0] matches
-         sta   gDisplayBytes
          ldy   #$03
          jsr   modify
          !byte $A9,$00

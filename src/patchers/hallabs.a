@@ -35,8 +35,6 @@
          !byte $20
 @search2end
          bcs   .exit      ; passport-test-suite/Super Taxman II.woz [C=0] matches
-
-         sta   gDisplayBytes
          jsr   PrintByID
          !byte s_hallabs
          ldy   #$01

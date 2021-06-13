@@ -119,7 +119,6 @@
          !byte $07,$01     ;SUB  #$4d
          !byte $0F,$F5,$70 ;BNE  $a9f6
          bcs   +
-         sta   gDisplayBytes
          pha
          jsr   PrintByID
          !byte s_tamper
@@ -151,7 +150,6 @@
          !byte $D0,$7C     ;BNE +$7C
          !byte $60         ;RTS
          bcs   +
-         sta   gDisplayBytes
          pha
          jsr   PrintByID
          !byte s_tamper
@@ -173,7 +171,6 @@
          !byte $07,$1C     ;SUB #$50
          !byte $0F,$78,$60 ;BNE $B97B
          bcs   +
-         sta   gDisplayBytes
          pha
          jsr   PrintByID
          !byte s_tamper
@@ -195,7 +192,6 @@
          !byte $20,$67,$67 ;JSR $6767
          !byte $20,$AA,$BF ;JSR $BFAA
          bcs   +
-         sta   gDisplayBytes
          pha
          jsr   PrintByID
          !byte s_tamper
@@ -212,7 +208,6 @@
          !byte $C9,$52     ;CMP #$52
          !byte $F0,$03     ;BEQ +$03
          bcs   +
-         sta   gDisplayBytes
          jsr   PrintByID
          !byte s_tamper
          jsr   inx6
@@ -226,7 +221,6 @@
          !byte $C9,$52     ;CMP #$52
          !byte $D0,$DB     ;BNE -$DB
          bcs   +
-         sta   gDisplayBytes
          jsr   PrintByID
          !byte s_tamper
          jsr   inx4
@@ -364,7 +358,6 @@
          !byte $E9,$00     ;SBC #$00
          !byte $48         ;PHA
          bcs   +
-         sta   gDisplayBytes
          jsr   PrintByID
          !byte s_tamper
          inx
@@ -382,7 +375,6 @@
          !byte $C9,$A0     ;CMP #$A0
          !byte $F0         ;BEQ *+xx
          bcs   +
-         sta   gDisplayBytes
          pha
          jsr   PrintByID
          !byte s_tamper
@@ -407,7 +399,6 @@
          !byte $04,$F1,$70 ;LDA $a9f2
          !byte $07         ;CMP #$xx
          bcs   +
-         sta   gDisplayBytes
          pha
          jsr   PrintByID
          !byte s_tamper
@@ -498,7 +489,6 @@
          !byte $5E,$00
          !byte $5E,$0D
          bcs   +
-         sta   gDisplayBytes
          jsr   PrintByID
          !byte s_tamper
          inx
@@ -538,7 +528,6 @@
          !byte $D0,$F8     ;BNE $8111
          !byte $E6,$98     ;INC $98
          bcs   +
-         sta   gDisplayBytes
          pha
          jsr   PrintByID
          !byte s_tamper

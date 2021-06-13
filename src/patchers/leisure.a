@@ -20,7 +20,6 @@
          !byte $D0,$01
          !byte $60
          bcs   .exit      ; passport-test-suite/Clue Master Detective.woz [C=0] matches
-         sta   gDisplayBytes
          ldy   #$01
          sty   gDisplayBytes+1
          jsr   PrintByID

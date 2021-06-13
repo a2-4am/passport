@@ -29,11 +29,10 @@
          !byte $39,$FD               ; DEC $02
          !byte $2F,$FB               ; BNE +4
          !byte $39,$FC               ; DEC $03
-         bcs   .exit      ; passport-test-suite/Oo-Topos.woz [C=0] matches
+         bcs   .exit                 ; passport-test-suite/Oo-Topos.woz [C=0] matches
          inx
          inx
          inx
-         sta   gDisplayBytes
          jsr   PrintByID
          !byte s_fbff
          ldy   #$01

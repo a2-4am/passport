@@ -14,7 +14,6 @@
          !byte $50,$54,$58,$5C,$60,$64,$68,$00
          !byte $20,$10,$30,WILDCARD,$AA,$EB
          bcs   +          ; passport-test-suite/Mystery Objects v1.1.woz [C=0] matches
-         sta   gDisplayBytes
          jsr   inx0B
          ldy   #$01
          jsr   compare
@@ -40,7 +39,6 @@
          !byte $24,$38
          !byte $60
          bcs   +          ; passport-test-suite/Miner's Cave.woz [C=0] matches
-         sta   gDisplayBytes
          jsr   inx9
          ldy   #$01
          jsr   modify
@@ -55,7 +53,6 @@
          !byte $81,$C0,$28,$D0,$09,$8D,WILDCARD,WILDCARD
          !byte $C9,$DE,$F0,$02,$18,$24,$38,$60
          bcs   +          ; passport-test-suite/Spelling Press v1.1.woz [C=0] matches
-         sta   gDisplayBytes
          jsr   inx0B
          jsr   inx0B
          ldy   #$01

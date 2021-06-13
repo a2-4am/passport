@@ -23,7 +23,6 @@
          !byte $D0,$05
          !byte $A9,$00
          bcs   .exit      ; passport-test-suite/PlayWriter.woz [C=0] matches
-         sta   gDisplayBytes
          jsr   PrintByID
          !byte s_badblock
          jsr   inx4

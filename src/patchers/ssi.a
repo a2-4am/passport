@@ -21,7 +21,6 @@
          !byte $EA        ; NOP
          bcs   +          ; passport-test-suite/Epidemic.woz [C=0] matches
 
-         sta   gDisplayBytes
          jsr   PrintByID
          !byte s_ssi
          ldy   #$01
@@ -35,7 +34,6 @@
          !byte $A9,$44    ; LDA #$22
          !byte $20        ; JSR ...
          bcs   .exit      ; passport-test-suite/Sixgun Shootout.woz [C=0] matches
-         sta   gDisplayBytes
          ldy   #$01
          jsr   modify
          !byte $60        ; RTS

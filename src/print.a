@@ -8,7 +8,8 @@ kForceLower !byte $FF     ; AND mask for lowercase letters
 ; auto-uppercases on older machines
 ; in:    string ID (byte) on stack
 ; out:   all registers preserved
-;        all flags clobbered
+;        oVerflow bit clear
+;        all other flags clobbered
 ;        stack set to after params
 ;-------------------------------
 PrintByID
@@ -106,6 +107,7 @@ PrintByID
          pla
          tay
          pla
+         clv
          rts
 @include
          sta   @id
