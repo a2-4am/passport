@@ -26,8 +26,7 @@
 ; (This filter is subject to revision if we find
 ; additional samples.)
 ;
-         lda   gIsBoot0
-         ora   gPossibleD5D5F7
+         lda   gPossibleD5D5F7
          bne   .exit
 
 +        ldy   #$20

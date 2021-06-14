@@ -1,0 +1,33 @@
+;-------------------------------
+; #RWTSSWAPMICROFUN
+; RWTS swappers at $BC56 and $BC61
+;
+; Tested on
+; - Crown of Arthain
+;-------------------------------
+!zone {
+         ; gTrack = 0 here
+         ; Caller found DOS 3.3 RWTS
+
+         lda   #$06
+         ldx   #$56
+         ldy   #$05
+         jsr   compare
+         !byte $A9,$00
+         !byte $8D,$00,$B9
+         bcs   +
+         ldy   #$01
+         jsr   modify
+         !byte $60
++
+         ldx   #$61
+         ldy   #$05
+         jsr   compare
+         !byte $A9,$01
+         !byte $8D,$00,$B9
+         bcs   .exit      ; passport-test-suite/Crown Of Arthain.woz [C=0] matches
+         ldy   #$01
+         jsr   modify
+         !byte $60
+.exit
+}

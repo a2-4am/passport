@@ -1,0 +1,32 @@
+;-------------------------------
+; #SPRINGBOARD
+; RWTS checks for timing bit by
+; comparing the data latch after
+; the last address epilogue
+;
+; tested on
+; - The Newsroom (Springboard)
+; - Easy as ABC (Springboard)
+; - Early Games for Young Children (Springboard)
+; - The Chalice of Mostania (Coastal)
+;-------------------------------
+!zone {
+         ; gTrack = 0
+         ; Caller found DOS 3.3 RWTS
+
+         lda   #$03
+         ldx   #$92
+         ldy   #$07
+         jsr   compare    ; and T00,S03,$92 ==
+         !byte $D0,$AE    ; BNE $B942
+         CMP   $C08C,X
+         !byte $D0,$A9    ; BNE $B942
+         bcs   .exit      ; passport-test-suite/Easy as ABC.woz [C=0] matches
+         jsr   PrintByID
+         !byte s_springboard
+         ldx   #$98
+         ldy   #$01
+         jsr   modify     ; then set T00,S03,$98 =
+         !byte $00        ; branch to next instruction on failure
+.exit
+}

@@ -272,7 +272,7 @@ AnalyzeTrack
          ; /!\ execution falls through here
 @applyToAll
          ; run these modules in verify and crack mode
-         !source "patchers/t11diskvol.a"        ; T11 && gIsRWTS only
+         !source "patchers/t11diskvol.a"        ; T11 only
          !source "patchers/t02volumename.a"     ; T02 && gIsBoot0 only
          bit   gMode
          bmi   +
@@ -308,10 +308,10 @@ AnalyzeTrack
          !source "patchers/jmp2012.a"           ; T02 only
          !source "patchers/jmpb400.a"           ; T02 && gIsBoot0 only
          !source "patchers/advint.a"            ; gAdventureInternational only
-         !source "patchers/jsr8635.a"           ; gIsRWTS only
+         !source "patchers/jsr8635.a"           ; gIsBoot0 only
          !source "patchers/jmpb4bb.a"           ; T02 only
          !source "patchers/dos32muse.a"         ; T01 && gIsDOS32 only
-         !source "patchers/sra.a"               ; gIsDOS32 || gIsRWTS only
+         !source "patchers/sra.a"               ; gIsDOS32 || gIsBoot0 only
          !source "patchers/sierra13.a"          ; gIsDOS32 only
          !source "patchers/ssprot.a"            ; gIsF7F6 only
          !source "patchers/f7f6.a"              ; gIsF7F6 only
@@ -415,8 +415,8 @@ _byte_skip_hi:
          !source "id/davidson.a"
          !source "id/holle.a"
          !source "id/phoenix.a"
-         !source "id/bootfailure.a"
          !source "id/555.a"
+         !source "id/bootfailure.a"
          !source "print.a"
          !source "compare.a"
          !source "modify.a"

@@ -215,18 +215,6 @@ FIRSTFILTER
          !byte FALSE      ; 0=true, 1=false
                           ; reset before each operation
                           ; set in patchers/t11diskvol.a after reading T11,S00
-;gIsRWTS
-         !byte FALSE      ; 0=true, 1=false
-                          ; reset before each operation
-                          ; set in AnalyzeT00() after reading T00
-;gIsMaster
-         !byte FALSE      ; 0=true, 1=false
-                          ; reset before each operation
-                          ; set in AnalyzeT00() after reading T00
-;gIsBoot1
-         !byte FALSE      ; 0=true, 1=false
-                          ; reset before each operation
-                          ; set in AnalyzeT00() after reading T00
 ;gIsBoot0
          !byte FALSE      ; 0=true, 1=false
                           ; reset before each operation

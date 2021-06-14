@@ -1,0 +1,187 @@
+; #JMPBBFE
+; marketed as 'Lock-It-Up'
+; boot0 jumps to ($BBFE) instead of ($08FD)
+; for a weakbits check at $BB00
+;
+; tested on
+; - All About Purim
+; - American Government
+; - Aphasia I-IV
+; - Association Pictures
+; - Bible Baseball
+; - Bolo
+; - Building Compounds
+; - Building With Vowels
+; - Catch a Falling Star - Dolphin Math Games
+; - Challenge Sentence Combining
+; - Cloze Thinking
+; - Comparing Numbers
+; - Congo
+; - Correct Behavior - The Mexican Way
+; - Counting Patterns I
+; - Counting Patterns II
+; - Crisis Mountain
+; - Cubit
+; - Double Trouble
+; - Escape from Arcturus
+; - Essential Idioms
+; - Flockland Island Crisis
+; - Function Pictures
+; - Geography Adventure USA
+; - Guderian
+; - Hebrew Phrasebook
+; - Ice Demons
+; - Identifying Affixes
+; - Identifying Compound Words
+; - Identifying Matching Letters
+; - Identifying Vowel Sounds
+; - In Search of The Most Amazing Thing
+; - Kindercomp (first release)
+; - Knowledge Master (all disks)
+; - La Triviata
+; - Mask Parade
+; - MasterType and Training Ground 2.1
+; - MasterType's Figures and Formulas
+; - Mastering Consonants
+; - Mastering Vowels
+; - Matching Letters and Words
+; - Math Item Banks 1-13
+; - Max Dublin's Treasure
+; - Microbe (all known releases)
+; - Mind Over Matter
+; - Mind Prober demo
+; - Nightmare Gallery
+; - Number Concepts
+; - Number Patterns
+; - Oil Rig
+; - Ordering Letters and Words
+; - PSAT Word Attack Skills (all disks)
+; - Place Value Recognition I
+; - Pollywog
+; - Pop 'R Spell
+; - Prisoner 2 v1.0.1
+; - Quadrilaterals
+; - Read and Spell (all disks)
+; - Rhyming Pictures
+; - Rocky's Boots v1.0
+; - Search (Davka)
+; - Space Games - Appointment at Aldebaran and Procyon Warrior
+; - Spanish Classroom Words
+; - Spelling Bee Games
+; - Spelling and Sound Relationships
+; - Stoichiometry
+; - Super Sunday 1.0
+; - Syllabication
+; - Syllable Stress
+; - Syllable Stress, Affixes, and Compounds
+; - Tactical Armour Command
+; - The Caves of Olympus
+; - The Human Fly
+; - The Newsroom self-running demo
+; - The Philistine Ploy
+; - The Planetary Guide
+; - The Reading Machine (some releases)
+; - The Visible Computer
+; - The Vocabulary Machine v1.1
+; - Tsushima
+; - Verbal Item Banks 1-13
+; - Viewmax-80 Pre-Boot
+; - Vocabulary Flashcards v3.1E
+; - Whole Number Practice
+; - Word Unscramble
+; - World War II
+;-------------------------------
+!zone {
+_jmpbbfe
+         ; gTrack = 0 here
+         ; Caller found DOS 3.3 RWTS
+
+         lda   #$00
+         ldx   #$4B
+         ldy   #$02
+         jsr   compare    ; if T00,S00,$4B ==
+         !byte $FE,$BB
+         bcs   .exit
+
+; variation 1 (common)
+
+         lda   #$05
+         ldx   #$20
+         tay
+         jsr   compare
+         !byte $A9,WILDCARD
+         !byte $8D,$00,$02
+         bcc   .yes      ; passport-test-suite/Quadrilaterals.woz [C=0] matches
+
+; variation 2 (earlier, less common)
+
+         ldx   #$19
+         tay
+         jsr   compare
+         !byte $A9,WILDCARD
+         !byte $8D,$00,$02
+         bcs   .exit
+
+.yes     stx   @offset    ; byte offset (varies)
+         inx
+         inx
+         inx
+         inx
+         inx
+         ldy   #$03
+         jsr   modify
+         !byte $6C,$FD,$08
+
+         ldx   #$FE
+         ldy   #$01
+         jsr   modify
+@offset  !byte $FD        ; SMC (byte offset of new entry point)
+
+         ; check for code that branches over a serial number
+
+         ldx   #$5E
+         iny              ; Y=#$02
+         jsr   compare
+         !byte $D0,$05
+         bcs   .checkSwapper
+
+         ; see if there is actually a non-zero serial number
+
+         inx
+         inx
+         ldy   #$05
+         jsr   compare
+         !byte $00,$00,$00,$00,$00
+         bcc   .checkSwapper         ; passport-test-suite/Quadrilaterals.woz [C=1] here
+
+         ldy   #4
+-        lda   $1560, y
+         sta   gDisplayBytes+1, y
+         lda   #0
+         sta   $1560, y
+         dey
+         bpl   -
+         jsr   PrintByID
+         !byte s_lockitupserial
+
+.checkSwapper
+         ; check for RWTS swappers
+
+         lda   #$04
+         ldx   #$69
+         ldy   #$01
+         jsr   compare    ; if T00,S04,$69 ==
+         !byte $A9
+         bcs   +          ; passport-test-suite/Mask Parade.woz [C=0] matches
+         jsr   modify     ; then set T00,S04,$69 =
+         !byte $60
++
+         ldx   #$7D
+         jsr   compare    ; if T00,S04,$7D ==
+         !byte $A9
+         bcs   +          ; passport-test-suite/Mask Parade.woz [C=0] matches
+         jsr   modify     ; then set T00,S04,$7D =
+         !byte $60
++
+.exit
+}

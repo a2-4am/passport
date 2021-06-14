@@ -1,0 +1,146 @@
+;-------------------------------
+; #MECC
+; MECC fastloader with custom
+; address and data prologues
+; e.g. 1: Word Munchers v1.3, v1.4
+; e.g. 2: Phonics Prime Time series
+; e.g. 3: Word Munchers v1.1
+; e.g. 4: A-201 Conquering Whole Numbers
+;-------------------------------
+!zone {
+         ; gTrack = 0 here
+
+         lda   gMECCFastloadType
+         cmp   #ID_MECC1
+         bcc   .scaninfo
+         cmp   #ID_MECC4+1
+         bcs   .jmpexit
+         asl              ; passport-test-suite/Coordinate Math v1.0 (MECC variant 1).woz [C=0] reaches here
+         asl              ; passport-test-suite/Clock Works v1.0 (MECC variant 2).woz [C=0] reaches here
+         asl              ; passport-test-suite/Number Munchers v1.0 (MECC variant 3).woz [C=0] reaches here
+         sta   tmp        ; passport-test-suite/Conquering Whole Numbers v1.1 (MECC variant 4).woz [C=0] reaches here
+         asl
+         adc   tmp
+         ldx   #8
+-        pha
+         tay
+         txa
+         pha
+         lda   .table+2-24,y
+         sta   .cmpbyte
+         sta   .modbyte
+         lda   .table-24,y
+         ldx   .table+1-24,y
+         ldy   #$01
+         jsr   compare
+.cmpbyte
+         !byte $D1        ; SMC
+         bcc   +
+
+         jsr   modify
+.modbyte
+         !byte $D1        ; SMC
+
++        pla
+         tax
+         pla
+         tay
+         iny
+         iny
+         iny
+         tya
+         dex
+         bne   -
+
+.jmpexit
+         jmp   .exit
+
+.scaninfo
+         lda   gIsProDOS
+         bne   .noinfo
+         lda   #$0B
+         ldx   #$2B
+         ldy   #$27
+         jsr   compare
+         !byte $16        ; storage type (seedling) and name length
+         !text "IDINFO"   ; filename
+         !byte $00,$00,$00,$00,$00,$00,$00,$00,$00
+                          ; pad
+         !byte $06        ; filetype (binary)
+         !byte $07, $00   ; key pointer
+         !byte $01, $00   ; blocks used
+         !byte $00, $02, $00
+                          ; filesize
+         !byte WILDCARD, WILDCARD, WILDCARD, WILDCARD
+                          ; creation date
+         !byte $08        ; creator ProDOS version (might need -> WILDCARD)
+         !byte $00        ; minimum ProDOS version
+         !byte $E3        ; access rights
+         !byte $00, $00   ; auxtype
+         !byte WILDCARD, WILDCARD, WILDCARD, WILDCARD
+                          ; last-mod date
+         !byte $02, $00   ; header pointer
+         bcs   .noinfo
+         jsr   PrintByID
+         !byte s_idinfo
+         ldy   #$00
+         tya
+.erase   sta   (BASEPAGE << 8) + $100, y
+         sta   (BASEPAGE << 8) + $F00, y
+         iny
+         bne   .erase
+         lda   #$BD
+         sta   (BASEPAGE << 8) + $FFE
+         sta   (BASEPAGE << 8) + $FFF
+         inc   gPatchCount
+
+.noinfo
+         jmp   .exit
+
+.table
+         ; MECC1
+
+         !byte $0B,$08,$D5
+         !byte $0B,$12,$AA
+         !byte $0B,$1D,$96
+         !byte $0B,$8F,$D5
+         !byte $0B,$99,$AA
+         !byte $0B,$A3,$AD
+         !byte $0C,$82,$AA
+         !byte $0C,$87,$AD
+
+         ; MECC2
+
+         !byte $06,$86,$AA
+         !byte $06,$8B,$AD
+         !byte $07,$83,$D5
+         !byte $07,$8D,$AA
+         !byte $07,$98,$96
+         !byte $07,$15,$D5
+         !byte $07,$1F,$AA
+         !byte $07,$2A,$AD
+
+         ; MECC3
+
+         !byte $0A,$E8,$D5
+         !byte $0A,$F2,$AA
+         !byte $0A,$FD,$96
+         !byte $0B,$6F,$D5
+         !byte $0B,$79,$AA
+         !byte $0B,$83,$AD
+         !byte $0C,$62,$AA
+         !byte $0C,$67,$AD
+
+         ; MECC4
+
+         !byte $07,$86,$AA
+         !byte $07,$8B,$AD
+         !byte $08,$83,$D5
+         !byte $08,$8D,$AA
+         !byte $08,$98,$96
+         !byte $08,$15,$D5
+         !byte $08,$1F,$AA
+         !byte $08,$2A,$AD
+
+.exit
+}

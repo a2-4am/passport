@@ -1,0 +1,31 @@
+;-------------------------------
+; #MICROFUN
+; RWTS jumps to nibble check after
+; reading certain sectors
+;
+; tested on
+; - Station 5
+; - The Heist
+; - Miner 2049er (re-release)
+; - Miner 2049er II
+; - Short Circuit
+;-------------------------------
+!zone {
+         ; gTrack = 0
+         ; Caller found DOS 3.3 RWTS
+
+         ldy   #$09
+         jsr   SearchTrack
+         !byte $A0,$00    ; LDY #$00
+         !byte $84,$26    ; STY $26
+         !byte $84,$27    ; STY $27
+         !byte $BD,$8C,$C0; LDA $C08C,X
+         bcs   .exit      ; passport-test-suite/Miner 2049er.woz [C=0] matches
+         jsr   PrintByID
+         !byte s_microfun
+         ldy   #$02
+         jsr   modify
+         !byte $18        ; CLC
+         !byte $60        ; RTS
+.exit
+}

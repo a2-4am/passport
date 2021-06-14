@@ -1,0 +1,150 @@
+;-------------------------------
+; #RWTSLOG
+; Print log messages for RWTS variants
+; that indicate structural copy protection
+; but don't require any patches
+;-------------------------------
+_rwtslog_start
+         ; gTrack = 0 here
+
+         bit   gMode                 ; nothing to do here in verify mode
+         bmi   @lsr6a_start
+         jmp   _rwtslog_end
+;
+; Some purely local utility functions here (out of execution path)
+; to reduce duplicated code
+;
+@compare_lsr6a
+         ldy   #$0A
+         jsr   compare
+         !byte $BD,$8C,$C0
+         !byte $10,$FB
+         !byte $4A
+         !byte WILDCARD,$6A
+         !byte $D0,$EF
+         rts
+
+@compare_bne0
+         ldy   #$09
+         jsr   compare
+         !byte $BD,$8C,$C0
+         !byte $10,$FB
+         !byte $C9,WILDCARD
+         !byte $D0,$00
+         rts
+
+;-------------------------------
+; RWTS "LSR $6A" identification
+; disk allows either $D4 or $D5 for the
+; first address prologue nibble
+;-------------------------------
+@lsr6a_start
+; DOS 3.3 variant
+         lda   #$03                  ; if T00,S03,$4F ==
+         ldx   #$4F
+         jsr   @compare_lsr6a
+         bcc   @print_lsr6a          ; passport-test-suite/The Seasons.woz [C=0] matches
+
+; RDOS variant
+         ldx   #$4D                  ; or T00,S03,$4D ==
+         jsr   @compare_lsr6a
+         bcc   @print_lsr6a          ; passport-test-suite/Roadwar 2000.woz [C=0] matches
+
+; Pascal variant
+         lda   #$0D
+         ldx   #$05                  ; oro T00,S0D,$05 ==
+         jsr   @compare_lsr6a
+         bcs   @lsr6a_end            ; passport-test-suite/GATO v1.3.woz [C=0] matches
+
+@print_lsr6a
+         jsr   PrintByID
+         !byte s_lsr6a
+         inc   gPatchCount
+@lsr6a_end
+
+;-------------------------------
+; RWTS "CMP #$08 / BCS" identification
+; disk allows either $DE or a timing bit
+; for the first address epilogue nibble
+;-------------------------------
+; DOS 3.3 variant
+         lda   #$03
+         ldx   #$8B
+         ldy   #$15
+         jsr   compare               ; if T00,S03,$8B ==
+         !byte $BD,$8C,$C0
+         !byte $10,$FB
+         !byte $C9,$DE
+         !byte $F0,$0A
+         !byte $48
+         !byte $68
+         !byte $BD,$8C,$C0
+         !byte $C9,$08
+         !byte $B0,$A5
+         !byte $EA
+         !byte $18
+         !byte $60
+         bcc   @print_bcs08          ; passport-test-suite/The Seasons.woz [C=0] matches
+
+; RDOS variant
+         ldx   #$89
+         ldy   #$11
+         jsr   compare               ; or T00,S03,$89 ==
+         !byte $BD,$8C,$C0
+         !byte $10,$FB
+         !byte $C9,$DE
+         !byte $F0,$09
+         !byte $48
+         !byte $68
+         !byte $BD,$8C,$C0
+         !byte $C9,$80
+         !byte $B0
+         bcs   @bcs08_end            ; passport-test-suite/Roadwar 2000.woz [C=0] matches
+
+@print_bcs08
+         jsr   PrintByID
+         !byte s_bcs08
+         inc   gPatchCount
+@bcs08_end
+
+;-------------------------------
+; RWTS "CMP / BNE 0" identification
+; disk allows any value for
+; for the first address epilogue nibble
+;-------------------------------
+; DOS 3.3 variant
+         lda   #$03                  ; if T00,S03,$8B ==
+         ldx   #$8B
+         jsr   @compare_bne0
+         bcc   @print_bne0           ; passport-test-suite/The Home Accountant.woz [C=0] matches
+
+; David-DOS variant
+         lda   #$05                  ; or T00,S05,$8B ==
+         jsr   @compare_bne0
+         bcs   @bne0_end             ; passport-test-suite/Horses.woz [C=0] matches
+
+@print_bne0
+         jsr   PrintByID
+         !byte s_cmpbne0
+         inc   gPatchCount
+@bne0_end
+
+;-------------------------------
+; RWTS "CMP / NOP NOP" identification
+; disk allows any value for
+; for the second address epilogue nibble
+;-------------------------------
+         lda   #$03
+         ldx   #$95
+         ldy   #$09
+         jsr   compare               ; if T00,S03,$95 ==
+         !byte $BD,$8C,$C0
+         !byte $10,$FB
+         !byte $C9,$AA
+         !byte $EA,$EA
+         bcs   _rwtslog_end          ; passport-test-suite/La Guillotine.woz [C=0] matches
+         jsr   PrintByID
+         !byte s_cmpnopnop
+         inc   gPatchCount
+
+_rwtslog_end

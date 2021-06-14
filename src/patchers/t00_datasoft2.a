@@ -1,0 +1,32 @@
+;-------------------------------
+; #DATASOFT2
+; protection check at $9B00
+; e.g. Canyon Climber, Fathom's 40
+;-------------------------------
+!zone {
+         ; gTrack = 0
+         ; Caller found DOS 3.3 RWTS
+
+         lda   #$01
+         ldx   #$48
+         ldy   #$02
+         jsr   compare
+         !byte $00,$9B
+         bcs   .exit
+
+         lda   #$0A
+         ldx   #$3A
+         ldy   #$06
+         jsr   compare
+         !byte $AD,$E9,$C0
+         !byte $AD,$EE,$C0
+         bcs   .exit      ; passport-test-suite/Fathoms 40.woz [C=0] matches
+         jsr   PrintByID
+         !byte s_datasoft
+         lda   #$01
+         ldx   #$48
+         ldy   #$02
+         jsr   modify
+         !byte $76,$9C
+.exit
+}

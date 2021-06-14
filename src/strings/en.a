@@ -56,7 +56,7 @@ StringTableLow
          !byte <.jmpbeca
          !byte <.bb03
          !byte <.rps
-         !byte <.jmpae8e
+         !byte <.nodiskin
          !byte <.diskvol
          !byte <.d5d5f7
          !byte <.construct
@@ -156,7 +156,6 @@ StringTableLow
          !byte <.erasingserialnumber
          !byte <.lockitupserial
          !byte <.protection
-         !byte <.nodiskin
 
 StringTableHigh
          !byte >.header
@@ -207,7 +206,7 @@ StringTableHigh
          !byte >.jmpbeca
          !byte >.bb03
          !byte >.rps
-         !byte >.jmpae8e
+         !byte >.nodiskin
          !byte >.diskvol
          !byte >.d5d5f7
          !byte >.construct
@@ -307,7 +306,6 @@ StringTableHigh
          !byte >.erasingserialnumber
          !byte >.lockitupserial
          !byte >.protection
-         !byte >.nodiskin
 
 ;
 ; Text can contain substitution strings, which
@@ -343,7 +341,7 @@ StringTableHigh
 .passport
          !text "Passport ",$00
 .header
-         !text "@",s_passport,"by 4am@",s_space7,"@",s_space7," 2021-06-13",$00
+         !text "@",s_passport,"by 4am@",s_space7,"@",s_space7," 2021-06-14",$00
 .bar9
          !text "_________",$00
 .bar18
@@ -558,10 +556,7 @@ StringTableHigh
 .rps
          !text "@",s_found,"RPS @",s_protectioncheck,$8D
          !text "Some sectors on T02 @",s_maybeunreadable,$8D,$00
-.jmpae8e
-         !text "T00,S0D Disk calls a @",s_protectioncheck," at"
-         !text "$AE8E after initializing DOS",$8D,$00
-.diskvol
+.diskvol
          !text "@",s_rwts,"requires a non-standard",$8D
          !text "disk volume number",$8D,$00
 .d5d5f7

@@ -1,0 +1,41 @@
+;-------------------------------
+; #SVE
+; track 1 identifies itself as #$FF
+;
+; tested on
+; - Decimals & Percent
+; - The Fourth R - Reasoning
+;-------------------------------
+!zone {
+         ; gTrack = 0
+         ; Caller found DOS 3.3 RWTS
+
+         lda   #$08
+         ldx   #$5A
+         ldy   #$03
+         jsr   compare
+         !byte $4C,$71,$A9           ; JMP $A971
+         bcs   .exit
+         jsr   modify
+         !byte $48,$A0,$01
+         lda   #$06
+         ldx   #$56
+         ldy   #$07
+         jsr   compare
+         !byte $38                   ; SEC
+         !byte $BD,$8D,$C0           ; LDA $C08D,X
+         !byte $BD,$8E,$C0           ; LDA $C08E,X
+         bcs   .exit
+         lda   (BASEPAGE*256)+$655
+         bpl   .noconfig
+         and   #$7f
+         sta   .config
+         lda   #$06
+         dex
+         ldy   #$01
+         jsr   modify
+.config
+         !byte $64
+.noconfig
+.exit
+}

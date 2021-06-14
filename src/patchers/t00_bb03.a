@@ -1,0 +1,96 @@
+;-------------------------------
+; #BB03
+; boot1 calls $BB03 for a self-decrypting nibble check
+;
+; variant 1a (JSR $BB03, push $B518)
+; - Classifying Animals with Backbones
+; - EduCalc
+;
+; variant 1b (JSR $BB03, push $B519)
+; - Spanish for Mastery
+;
+; variant 2 (JSR $BB03 but David-DOS)
+; - Case of the Great Train Robbery
+; - Case of the Missing Chick
+; - Mrs. Wigglesworth's Secret
+; - Mystery of the Witch's Shoes
+;
+; variant 3 (JMP $BB03)
+; - Alice in Wonderland (some versions)
+; - Sum Ducks
+; - Trivia Fever
+;-------------------------------
+!zone {
+         sec
+         lda   #$07       ; sector to check for David-DOS variant
+         ldx   gIsDavidDOS
+         beq   .maybe
+         lda   gIsBoot0   ; if DOS 3.3 boot0 loader
+         bne   .noButInYellow
+         lda   #$05       ; sector to check for DOS 3.3 variant
+.maybe
+         ldx   #$03
+         ldy   #$03
+         jsr   compare    ; if T00,S0(5|7),$03 ==
+         !byte $4E,$06,$BB
+         bcs   .no
+         jsr   PrintByID
+         !byte s_bb03
+         lda   gIsDavidDOS
+         beq   .variant2
+         lda   #$01
+         ldx   #$38
+         ldy   #$03
+         jsr   compare    ; if T00,S01,$38 ==
+         !byte $20,$03,$BB; JSR $BB03
+         bcc   .variant1
+         jsr   compare    ; if T00,S01,$38 ==
+         !byte $4C,$03,$BB; JMP $BB03
+         bcs   .no
+         lda   #$05
+         ldx   #$6B
+         ldy   #$05
+         jsr   compare    ; if T00,S05,$6B ==
+         !byte $06,$26,$7D,$39,$41; encrypted, decrypts to 'LDA $C08C,X / BPL -'
+.noButInYellow
+         bcs   .no
+.variant3
+         ldy   #$02
+         jsr   modify     ; then set T00,S05,$6B =
+         !byte $6B,$F6    ; encrypted, decrypts to 'BNE +$5C' which will unconditionally branch to success path at $BBC9
+         lda   #$06
+         ldx   #$0F
+         dey
+         jsr   modify     ; and set T00,S06,$0F =
+         !byte $89        ; encrypted, decrypts to $10 which is the expected nibble count value
+                          ; unconditional branch (V is always 0 coming out of modify)
+         bvc   .no        ; passport-test-suite/Trivia Fever.woz [V=0] reaches here
+.variant1
+         lda   $1243
+         eor   $1543
+         sta   +          ; calculate entry point of success path (usually #$18 but sometimes #$19)
+         lda   #$05
+         ldx   #$03
+         ldy   #$09
+         jsr   modify     ; then set T00,S05,$03 =
+         !byte $A9,$B5
+         !byte $48
+         !byte $A9
++        !byte $FD        ; SMC
+         !byte $48
+         !byte $4C,$93,$B7
+                          ; unconditional branch (V is always 0 coming out of modify)
+         bvc   .no        ; passport-test-suite/Classifying Animals with Backbones.woz [V=0] reaches here
+.variant2
+         lda   #$07
+         ldx   #$03       ; passport-test-suite/Case of the Great Train Robbery.woz [Z=0] reaches here
+         ldy   #$0B
+         jsr   modify     ; then set T00,S07,$03 =
+         !byte $A9,$B5
+         !byte $48
+         !byte $A9,$18
+         !byte $48
+         !byte $A0,$04
+         !byte $4C,$A9,$B7
+.no
+}

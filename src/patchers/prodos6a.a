@@ -24,9 +24,8 @@
          !byte s_lsr6a
          inc   gPatchCount
 +
-         lda   .sector+1
          ldx   #$EF
-         ldy   #$07
+         dey
          jsr   compare
          !byte $48
          !byte $68

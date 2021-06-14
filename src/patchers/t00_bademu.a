@@ -1,0 +1,39 @@
+;-------------------------------
+; #BADEMU
+; RWTS checks for timing bit by
+; checking if data latch is still
+; $D5 after waiting "too long"
+; but this confuses legacy emulators
+; (AppleWin, older versions of MAME)
+; so we patch it for compatibility
+;
+; tested on
+; - Dino Dig (Troll Associates)
+; - Make A Face (Troll Associates)
+; - Let's Go There: Beginning Map and Geography Skills (Troll Associates)
+;-------------------------------
+!zone {
+         ; gTrack = 0
+         ; Caller found DOS 3.3 RWTS
+
+         lda   #$03
+         ldx   #$4F
+         ldy   #$11
+         jsr   compare    ; and T00,S03,$4F ==
+         !byte $BD,$8C,$C0; LDA $C08C,X
+         !byte $10,$FB    ; BPL -$FB
+         !byte $C9,$D5    ; CMP #$D5
+         !byte $D0,$F0    ; BNE -$F0
+         !byte $EA        ; NOP
+         !byte $BD,$8C,$C0; LDA $C08C,X
+         !byte $C9,$D5    ; CMP #$D5
+         !byte $F0,$12    ; BEQ +$12
+         bcs   .exit      ; passport-test-suite/Beginning Map and Geography Skills.woz [C=0] matches
+         jsr   PrintByID
+         !byte s_d5timing
+         ldx   #$58
+         ldy   #$02
+         jsr   modify     ; then set T00,S03,$58 =
+         !byte $F0,06     ; BEQ +$06
+.exit
+}

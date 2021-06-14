@@ -1,0 +1,39 @@
+;-------------------------------
+; #RWTSSWAP
+; after DOS loads, program calls
+; subroutines at $BA69 and $BA7F
+; to swap RWTS parameters on the
+; fly
+; e.g. Puzzle Master
+;-------------------------------
+!zone {
+         ; gTrack = 0
+         ; Caller found DOS 3.3 RWTS
+
+         lda   #$04
+         ldx   #$69
+         ldy   #$0B
+         jsr   compare    ; and T00,S04,$69 ==
+         !byte $A0,$07
+         !byte $B9,$DF,$BC
+         !byte $99,$94,$B9
+         !byte $88
+         !byte $10,$F7
+         bcs   .exit
+         ldx   #$7F
+         jsr   compare    ; and T00,S04,$7F ==
+         !byte $A0,$07
+         !byte $B9,$E7,$BC
+         !byte $99,$94,$B9
+         !byte $88
+         !byte $10,$F7
+         bcs   .exit      ; passport-test-suite/Easy as ABC.woz [C=0] matches
+         ldx   #$69
+         ldy   #$01
+         jsr   modify     ; then set T00,S04,$69 =
+         !byte $60
+         ldx   #$7F
+         jsr   modify     ; and set T00,S04,$7F =
+         !byte $60
+.exit
+}

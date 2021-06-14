@@ -1,0 +1,68 @@
+;-------------------------------
+; #PanglosDOS
+; RWTS with per-file encryption keys
+;
+; module by qkumba
+;
+; tested on
+; - Agenda Files (Apple)
+; - Apple How To (Apple)
+; - Apple Music Theory: Music Fundamentals v1.0 (MECC)
+; - Bridge Tutor (Compu-Bridge)
+; - Diet Analysis Program (Tess)
+; - Geometry and Measurement Volume 1 & 2 (Charles Lund)
+; - L.A. Land Monopoly (Continental)
+; - MusiComp (Apple)
+; - Personal Finance Manager (Apple)
+; - Stepwise Multiple Regression (Belanger & Boyle)
+;-------------------------------
+!zone {
+         lda   gIsPanglosDOS  ; only if PanglossianDOS
+         bne   .exit
+         ldy   #$06
+         jsr   SearchTrack
+         !byte $C9,$AD ;CMP #$AD
+         !byte $D0,$E7 ;BNE *-$17
+         !byte $A5,$46 ;LDA $46
+         bcs   .exit      ; passport-test-suite/Stepwise Multiple Regression.woz [C=0] matches
+         inx
+         inx
+         inx
+         inx
+         ldy   #$02
+         jsr   modify
+         !byte $A9,$00 ;LDA #$00
+         ldy   #$06
+         jsr   SearchTrack
+         !byte $C9,$96 ;CMP #$96
+         !byte $D0,$E7 ;BNE *-$17
+         !byte $A5,$46 ;LDA $46
+         bcs   .exit
+         inx
+         inx
+         inx
+         inx
+         ldy   #$02
+         jsr   modify
+         !byte $A9,$00 ;LDA #$00
+
+         ;Monopoly
+         ldy   #$06
+         jsr   SearchTrack
+         !byte $C9,$AB ;CMP #$AB
+         !byte $D0,$A4 ;BNE *-$5A
+         !byte $18     ;CLC
+         !byte $60     ;RTS
+         bcs   .exit
+         inx
+         ldy   #$01
+         jsr   modify
+         !byte $AA
+         ldy   #$03
+         jsr   SearchTrack
+         !byte $4C,$56,$BB ;JMP $BB56
+         bcs   .exit
+         jsr   modify
+         !byte $AD,$00,$E0 ;LDA $E000
+.exit
+}

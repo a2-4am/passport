@@ -10,7 +10,7 @@
 ; - Xyphus
 ;-------------------------------
 !zone {
-         ldx   gTrack     ; and track 1
+         ldx   gTrack     ; if track = 1
          dex
          bne   .exit
          lda   #$04

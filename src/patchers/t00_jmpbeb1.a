@@ -1,0 +1,80 @@
+;-------------------------------
+; #JMPBEB1
+; RWTS calls $3EB1 or $BEB1 after writing data prologue
+;
+; NOTE: must be run before RWTS patchers due to overlapping bytes
+;
+; tested on
+; - A Puff of Air - The Respiratory System
+; - Air Nav Workshop
+; - Alien Munchies
+; - Basic Drafting - Review and Testmaker v3.0
+; - EasySearch - Sixty Countries Around The World
+; - Empire II - Interstellar Sharks v1.2
+; - Flights Into Fiction - Modern Stories
+; - Food Group Puzzles
+; - Formula 1 Racer
+; - Go To The Head Of The Class 1989
+; - Handy Dandy
+; - Jenny of the Prairie
+; - Krell's College Board SAT Preparation Series (all disks)
+; - Let's Eat
+; - Micro-Typewriter v3.1
+; - Monster Mash
+; - Rendezvous (1.1 and 1.2 only)
+; - Spelling Rules (Micro Power and Light)
+; - TellStar II
+; - Terrapin Logo (v2.00 only)
+; - The Disappearing Dinner - The Digestive System
+; - The Science Professor (all disks)
+; - Word Puzzles for Creative Teaching
+;-------------------------------
+!zone {
+_jmpbeb1
+         ; gTrack = 0
+         ; Caller found DOS 3.3 RWTS
+
+         lda   #$02
+         ldx   #$48
+         ldy   #$10
+         jsr   compare    ; and T00,S02,$48 ==
+         !byte $A0,$03
+         !byte $48
+         !byte $68
+         !byte $20,$B9,WILDCARD
+         !byte $88
+         !byte $D0,$F8
+         !byte $4C,$B1,WILDCARD
+         !byte $EA
+         !byte $EA
+         !byte $A9
+         bcs   .exit
+         ldx   #$59
+         ldy   #$04
+         jsr   compare    ; and T00,S02,$59 ==
+         !byte $20,$B8,WILDCARD
+         !byte $A9
+         bcs   .exit
+         ldx   #$5E
+         ldy   #$03
+         jsr   compare    ; and T00,S02,$5E ==
+         !byte $20,$BB,WILDCARD
+         bcs   .exit      ; passport-test-suite/Easy as ABC.woz [C=0] matches
+         ldx   #$49       ; passport-test-suite/Spelling Rules.woz [C=0] matches
+         ldy   #$01
+         jsr   modify     ; then set T00,S02,$49 =
+         !byte $04
+         lda   $124E
+         sta   _jsr+2
+         lda   #$02
+         ldx   #$52
+         ldy   #$05
+         jsr   modify     ; and set T00,S02,$52 =
+         !byte $A9,$D5
+_jsr     !byte $20,$B8,$d1; final byte set at runtime
+         ldx   #$5F
+         ldy   #$01
+         jsr   modify     ; and set T00,S02,$5F =
+         !byte $B8
+.exit
+}
