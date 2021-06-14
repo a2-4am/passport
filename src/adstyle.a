@@ -29,11 +29,14 @@ ADStyle
          bcs   +
          lda   #TRUE
          sta   gIsOptimum
+         sta   gDisplayBytes
          jsr   PrintByID
          !byte s_optimum
 +
          jsr   xSVE
          bcs   +
+         lda   #$00
+         sta   gDisplayBytes
          jsr   PrintByID
          !byte s_sve
          lda   #$CA
