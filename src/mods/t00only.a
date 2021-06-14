@@ -80,6 +80,8 @@ AnalyzeT00
 
 T00_IsNotRWTS
          ; patchers that run on every disk
+         !source "../patchers/t00_rwtslog.a"
+         ; ----- add new patchers below this line -----
          !source "../patchers/t00_bb03.a"
          !source "../patchers/t00_datasoft.a"
          !source "../patchers/t00_dos32.a"
@@ -92,7 +94,6 @@ T00_IsNotRWTS
          !source "../patchers/t00_pascalrwts.a"
          !source "../patchers/t00_rdos13.a"
          !source "../patchers/t00_rol1e.a"
-         !source "../patchers/t00_rwtslog.a"
          rts
 
 !if * > $4000 {
