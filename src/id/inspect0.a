@@ -324,6 +324,8 @@ IDBootloader
 ;
 +        jsr   ID555
          bcs   +
+         lda   #0
+         sta   gDisplayBytes
          jsr   PrintByID
          !byte s_555
          jmp   Do555
