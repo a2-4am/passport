@@ -25,9 +25,9 @@
          bcs   .exit      ; passport-test-suite/America Coast to Coast.woz [C=0] matches
 
          ldy   #$B4
-         sty   gDisplayBytes         ; address (hi)
+         sty   gDisplayBytes+1       ; address (hi)
          ldy   #$12
-         sty   gDisplayBytes+1       ; address (lo)
+         sty   gDisplayBytes+2       ; address (lo)
          jsr   PrintByID
          !byte s_beforedos
 
