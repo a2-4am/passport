@@ -221,6 +221,7 @@ TraceDOS32LO
          bcs   .fail
          lda   #TRUE
          sta   gIsRDOS13
+         sta   gDisplayBytes
          jsr   PrintByID
          !byte s_rdos13
 
