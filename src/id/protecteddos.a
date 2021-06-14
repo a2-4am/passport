@@ -18,6 +18,7 @@ ProtectedDOS
          !byte $D0,$E8
          bcs   .exit      ; passport-test-suite/Ultima IV.woz [C=0] matches
 
+         stx   gDisplayBytes
          lda   $B706      ; decryption key
          sta   .key+1
          sta   gDisplayBytes+1
