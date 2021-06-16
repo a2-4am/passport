@@ -18,8 +18,8 @@
 ; GeoWhiz (1990, Silver Burdett and Ginn)
 ;-------------------------------
 !zone {
-         lda   gIsProDOS  ; only if ProDOS
-         bne   .exit
+         ; gIsProDOS is TRUE here
+
          ldy   #$0C
          jsr   SearchTrack
          !byte $AE,$C3,$CF,$CE,$C6,$C9,$C7      ; ".CONFIG"

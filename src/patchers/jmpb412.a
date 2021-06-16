@@ -11,6 +11,8 @@
 ; America Coast to Coast (Mindscape release)
 ;-------------------------------
 !zone {
+         ; gIsBoot0 is TRUE here
+
          lda   gTrack
          cmp   #$02
          bne   .exit

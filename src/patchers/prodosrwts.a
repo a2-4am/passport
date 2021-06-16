@@ -5,8 +5,8 @@
 ;-------------------------------
 !zone {
 _prodosrwts
-         lda   gIsProDOS
-         bne   .exit
+         ; gIsProDOS is TRUE here
+
          ldy   #$14
          jsr   SearchTrack
          !byte $29,$FC

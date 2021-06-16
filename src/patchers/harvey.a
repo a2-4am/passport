@@ -7,8 +7,6 @@
 ; Harvey by Primes (Queue)
 ;-------------------------------
 !zone {
-         lda   gIsBoot0
-         bne   .exit
          ldx   gTrack
          dex
          bne   .exit

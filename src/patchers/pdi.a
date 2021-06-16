@@ -11,8 +11,9 @@
 ; - Leadsheeter Utilities
 ;-------------------------------
 !zone {
-         lda   gIsDiversi  ; only seen this protection on Diversi-DOS disks
-         bne   .exit
+         ; gIsDiversi is TRUE here
+         ; (only ever seen this protection on Diversi-DOS disks)
+
          ldy   #14
          jsr   SearchTrack
          !byte $A0,$0F     ; LDY #$0F

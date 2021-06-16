@@ -4,8 +4,8 @@
 ; e.g. The Secrets of Science Island
 ;-------------------------------
 !zone {
-         lda   gIsPascal  ; only ever seen this protection
-         bne   .exit      ; on Pascal disks
+         ; gIsPascal is TRUE here
+         ; (only ever seen this protection on Pascal disks)
 
          ldy   #$09
          jsr   SearchTrack

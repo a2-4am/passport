@@ -15,8 +15,8 @@
 ;
 ;-------------------------------
 !zone {
-         lda   gIsProDOS             ; only seen this protection on ProDOS disks
-         bne   .exit
+         ; gIsProDOS is TRUE here
+
          ldy   #$06
          jsr   SearchTrack           ; (all bytes are XOR #$EF)
          !byte $29,$6D               ; DEC $82

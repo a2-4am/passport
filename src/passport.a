@@ -283,34 +283,19 @@ AnalyzeTrack
          ; only run these modules in crack mode
          !source "patchers/universale7.a"
          !source "patchers/c9ff.a"
-         !source "patchers/a6bc95.a"            ; gIsPascal only
-         !source "patchers/a5count.a"           ; gIsPascal only
          !source "patchers/d5d5f7.a"            ; gIsPascal || (gIsBoot0 && gPossibleD5D5F7) only
-         !source "patchers/prodosrwts.a"        ; gIsProDOS only
-         !source "patchers/prodos6a.a"          ; gIsProDOS only
-         !source "patchers/prodosmecc.a"        ; gIsProDOS only
-         !source "patchers/bbf9.a"              ; gIsProDOS only
-         !source "patchers/memory.config.a"     ; gIsProDOS only
-         !source "patchers/origin.a"            ; gIsProDOS only
          !source "patchers/rwtsswapmecc.a"      ; gMECCFastloadType || gPossibleMECCSwapper only
          !source "patchers/meccdqc.a"           ; gMECCFastloadType==1 && gT07 only
          !source "patchers/rwtsswappenguin.a"   ; T01 only
          !source "patchers/protecteddos.a"      ; gIsProtDOS only
          !source "patchers/fbff.a"
-         !source "patchers/fbffencrypted.a"     ; gIsProDOS only
-         !source "patchers/fbffpascal.a"        ; gIsPascal only
-         !source "patchers/polarware.a"         ; gIsProDOS only
-         !source "patchers/sierra.a"            ; gIsBoot0 only
          !source "patchers/corrupter.a"         ; T13 only
          !source "patchers/ea.a"                ; gIsEA || gIsBoot0 only
          !source "patchers/gamco.a"             ; gPossibleGamco only
          !source "patchers/optimum.a"           ; gIsOptimum only
          !source "patchers/bootcounter.a"       ; T01 only
-         !source "patchers/jmpb412.a"           ; T02 only
          !source "patchers/jmp2012.a"           ; T02 only
-         !source "patchers/jmpb400.a"           ; T02 && gIsBoot0 only
          !source "patchers/advint.a"            ; gAdventureInternational only
-         !source "patchers/jsr8635.a"           ; gIsBoot0 only
          !source "patchers/jmpb4bb.a"           ; T02 only
          !source "patchers/dos32muse.a"         ; T01 && gIsDOS32 only
          !source "patchers/sra.a"               ; gIsDOS32 || gIsBoot0 only
@@ -325,20 +310,65 @@ AnalyzeTrack
          !source "patchers/ssi.a"               ; gIsRDOS13 only
          !source "patchers/rdosfmt.a"           ; gIsRDOS13 only
          !source "patchers/aacount.a"
-         !source "patchers/hallabs.a"           ; T01 only
          !source "patchers/holle.a"             ; gIsHolle only
          !source "patchers/zoomgrafix.a"        ; gIsPhoenix only
          !source "patchers/e7everywhere.a"      ; gIsBoot0 || gIsProDOS only
          !source "patchers/choplifter.a"        ; gIsChoplifter only
-         !source "patchers/pdi.a"               ; gIsDiversi only
-         !source "patchers/harvey.a"            ; T01 only
          !source "patchers/tsr.a"               ; T04 && gIsTSR only
          !source "patchers/woodbury.a"          ; gPossibleWoodbury only
-         !source "patchers/leisure.a"           ; gIsProDOS && T22 only
          !source "patchers/b4bbbasic.a"         ; gPossibleB4BBBasic only
          !source "patchers/errord51.a"          ; gIsLowDOS only
-         !source "patchers/sigcheck.a"          ; gIsDiversi only
          !source "patchers/555.a"               ; gIs555 only
+         ;
+         ; DOS 3.3-specific patchers
+         ;
+         lda   gIsBoot0
+         beq   +
+         jmp   _endDOS33Patchers
++
+         !source "patchers/hallabs.a"           ; gIsBoot0 && T01 only
+         !source "patchers/harvey.a"            ; gIsBoot0 && T01 only
+         !source "patchers/jmpb400.a"           ; gIsBoot0 && T02 only
+         !source "patchers/jmpb412.a"           ; gIsBoot0 && T02 only
+         !source "patchers/jsr8635.a"           ; gIsBoot0 only
+         !source "patchers/sierra.a"            ; gIsBoot0 only
+_endDOS33Patchers
+         ;
+         ; Diversi-DOS-specific patchers
+         ;
+         lda   gIsDiversi
+         bne   _endDiversiPatchers
+         !source "patchers/pdi.a"               ; gIsDiversi only
+         !source "patchers/sigcheck.a"          ; gIsDiversi only
+_endDiversiPatchers
+         ;
+         ; ProDOS-specific patchers
+         ;
+         lda   gIsProDOS
+         beq   +
+         jmp   _endProDOSPatchers
++
+         !source "patchers/bbf9.a"              ; gIsProDOS only
+         !source "patchers/fbffencrypted.a"     ; gIsProDOS only
+         !source "patchers/leisure.a"           ; gIsProDOS && T22 only
+         !source "patchers/memory.config.a"     ; gIsProDOS only
+         !source "patchers/origin.a"            ; gIsProDOS only
+         !source "patchers/polarware.a"         ; gIsProDOS only
+         !source "patchers/prodos6a.a"          ; gIsProDOS only
+         !source "patchers/prodosmecc.a"        ; gIsProDOS only
+         !source "patchers/prodosrwts.a"        ; gIsProDOS only
+_endProDOSPatchers
+         ;
+         ; Pascal-specific patchers
+         ;
+         lda   gIsPascal
+         beq   +
+         jmp   _endPascalPatchers
++
+         !source "patchers/a5count.a"           ; gIsPascal only
+         !source "patchers/a6bc95.a"            ; gIsPascal only
+         !source "patchers/fbffpascal.a"        ; gIsPascal only
+_endPascalPatchers
 
 _checkPatchCount
          lda   gPatchCount

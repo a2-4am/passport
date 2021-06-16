@@ -7,8 +7,8 @@
 ; - Risk v1.4 (Leisure Genius)
 ;-------------------------------
 !zone {
-         lda   gIsProDOS
-         bne   .exit
+         ; gIsProDOS is TRUE here
+
          lda   gTrack
          cmp   #$22
          bne   .exit

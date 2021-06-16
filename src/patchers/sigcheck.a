@@ -8,8 +8,8 @@
 ; - Projectile and Circular Motion
 ;-------------------------------
 !zone {
-         lda   gIsDiversi ; only ever seen this protection
-         bne   .exit      ; on Diversi-DOS disks
+         ; gIsDiversi is TRUE here
+         ; (only ever seen this protection on Diversi-DOS disks)
 
          ldy   #$0A
          jsr   SearchTrack

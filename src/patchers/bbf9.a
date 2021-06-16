@@ -16,8 +16,8 @@
 ; 1-2-3 Sequence Me (1991)
 ;-------------------------------
 !zone {
-         lda   gIsProDOS
-         bne   .exit
+         ; gIsProDOS is TRUE here
+
          ldy   #$08
          jsr   SearchTrack
          !byte $8E,$C0

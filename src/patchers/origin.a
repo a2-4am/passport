@@ -12,8 +12,8 @@
 ; - Ultima V
 ;-------------------------------
 !zone {
-         lda   gIsProDOS  ; only if ProDOS
-         bne   .exit
+         ; gIsProDOS is TRUE here
+
          lda   #$0F
          sta   .sector+1
 .sector  lda   #$FF       ; modified at runtime

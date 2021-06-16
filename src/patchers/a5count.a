@@ -5,8 +5,8 @@
 ; e.g. Game Frame One, Game Frame Two
 ;-------------------------------
 !zone {
-         lda   gIsPascal  ; only ever seen this protection
-         bne   .exit      ; on Pascal disks
+         ; gIsPascal is TRUE here
+         ; (only ever seen this protection on Pascal disks)
 
          ldy   #$0A
          jsr   SearchTrack

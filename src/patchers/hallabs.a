@@ -7,8 +7,8 @@
 ; Super Taxman II (HAL Labs)
 ;-------------------------------
 !zone {
-         lda   gIsBoot0
-         bne   .exit
+         ; gIsBoot0 is TRUE here
+
          ldx   gTrack
          dex
          bne   .exit

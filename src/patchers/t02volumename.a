@@ -3,10 +3,10 @@
 ; print disk volume name and number after reading track 2
 ;-------------------------------
 !zone {
+         ; gIsBoot0 is TRUE here
+
          lda   gTrack
          cmp   #$02
-         bne   .exit
-         lda   gIsBoot0
          bne   .exit
          lda   #$00                  ; look for volume name on T02,S00 (Pronto-DOS)
          jsr   .findVolumeName

@@ -377,8 +377,8 @@
          jmp   .exit
 
 .dosearch
-         lda   gIsBoot0
-         bne   .jmpexit
+         ; gIsBoot0 is TRUE here
+
          ldy   #15
          jsr   SearchTrack
          !byte $CE,WILDCARD,WILDCARD ;DEC $xxxx

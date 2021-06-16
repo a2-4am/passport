@@ -5,10 +5,8 @@
 ; [thanks LoGo]
 ;-------------------------------
 !zone {
-         lda   gIsProDOS
-         beq   +
-         jmp   .exit
-+
+         ; gIsProDOS is TRUE here
+
          ldy   #$0E
          jsr   SearchTrack
          !byte $50,$54,$58,$5C,$60,$64,$68,$00
