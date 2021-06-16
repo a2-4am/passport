@@ -263,6 +263,8 @@ AnalyzeTrack
          bne   @applyToAll
          ; Track 0 patchers are stored compressed in memory
          ; then decompressed into $2000 when needed
+         bit   gMode
+         bpl   @applyToAll                      ; only run track 0 modules in crack mode
          lda   #>AnalyzeT00
          sta   _byte_hi
          lda   #<AnalyzeT00

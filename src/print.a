@@ -15,6 +15,7 @@ kForceLower !byte $FF     ; AND mask for lowercase letters
 PrintByID
          sta   @tmpa+1
          sty   @tmpy+1
+         ; get pointer to stack-based params then move the stack beyond them
          pla
          sta   $00
          clc
@@ -26,11 +27,17 @@ PrintByID
          pha
          tya
          pha
+         ; save all registers and this routine's internal pointers
+         ; (can't use SaveAXY because this routine needs to be re-entrant)
 @tmpa    lda   #$FD       ; SMC
          pha
 @tmpy    lda   #$FD       ; SMC
          pha
          txa
+         pha
+         lda   @print+1
+         pha
+         lda   @print+2
          pha
          ldy   #1
          lda   ($00), y   ; get ID of string to print
@@ -103,6 +110,10 @@ PrintByID
          bne   @print     ; unconditional branch
 @done
          pla
+         sta   @print+2
+         pla
+         sta   @print+1
+         pla
          tax
          pla
          tay
@@ -111,16 +122,8 @@ PrintByID
          rts
 @include
          sta   @id
-         lda   @print+1
-         pha
-         lda   @print+2
-         pha
          jsr   PrintByID
 @id      !byte $FD        ; SMC
-         pla
-         sta   @print+2
-         pla
-         sta   @print+1
          ldy   #0
          beq   @next      ; unconditional branch
 

@@ -73,8 +73,8 @@ AnalyzeT00
          !source "../patchers/t00_sve.a"
          !source "../patchers/t00_swordthrust.a"
          ; ----- add new DOS 3.3 patchers above this line -----
-         !source "../patchers/t00_nibtable.a"
-         !source "../patchers/t00_rwts.a"
+         !source "../patchers/t00_nibtable.a"   ; clobbers $2000..$2095 (AnalyzeT00 is decompressed into $2000)
+         !source "../patchers/t00_rwts.a"       ; must run after all other patchers that might modify RWTS code
          !source "../patchers/t00_diskvol.a"
          ; /!\ execution falls through here
 

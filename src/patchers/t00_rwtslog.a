@@ -7,9 +7,8 @@
 _rwtslog_start
          ; gTrack = 0 here
 
-         bit   gMode                 ; nothing to do here in verify mode
-         bmi   @lsr6a_start
-         jmp   _rwtslog_end
+         clc
+         bcc   @lsr6a_start          ; always branches
 ;
 ; Some purely local utility functions here (out of execution path)
 ; to reduce duplicated code
