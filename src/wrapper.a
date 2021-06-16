@@ -2,18 +2,18 @@
 *=$2000
 !to "../build/PASSPORT.SYSTEM",plain
 
-         !source "../build/vars.a"
+         !source "../build/vars.a"   ; no code in here
 
-         bit   $C082
-         sta   $C00E
-         sta   $C00C
-         sta   $C000
-         sta   $C002
-         jsr   $FB2F
-         jsr   $FC58
-         jsr   $FE84
-         jsr   $FE93
-         jsr   $FE89
+         bit   $C082                 ; read ROM, no write
+         sta   $C00E                 ; primary character set
+         sta   $C00C                 ; 40 columns
+         sta   $C000                 ; 80STORE off
+         sta   $C002                 ; read main memory
+         jsr   $FB2F                 ; TEXT
+         jsr   $FC58                 ; HOME
+         jsr   $FE84                 ; NORMAL
+         jsr   $FE93                 ; PR#0
+         jsr   $FE89                 ; IN#0
          lda   $BF98                 ; ProDOS MachineID
          and   #$20                  ; at least 64K?
          bne   OneTimeSetup
@@ -48,12 +48,12 @@ OneTimeSetup
 +
          jsr   ScanForRAMAndHardDisks; scan for things that look like RAM disks or hard disks
          jsr   LoadPrefs             ; load preferences (if available)
-         jsr   ThisSlot
-         lda   #<CheckCache
+         jsr   ThisSlot              ; get information about selected drive and set gTargetType for main menu
+         lda   #<CheckCache          ; set up output hook used to store log messages before they scroll off
          sta   $36
          lda   #>CheckCache
          sta   $37
-         lda   $FE
+         lda   $FE                   ; set reset vector
          sta   $03F2
          lda   $FF
          sta   $03F3
