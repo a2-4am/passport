@@ -1,7 +1,5 @@
-DiskIIArray
-         !fill 7
-HardDiskArray
-         !fill 15
+DiskIIArray = $038E
+HardDiskArray = $0395
 
 ;-------------------------------
 ; NextSlot
@@ -11,26 +9,22 @@ HardDiskArray
 ;        @gTargetType set based on type of target (see apidefs.a for values)
 ;-------------------------------
 NextSlot
-         lda   DRIVE
-         cmp   #$31
+         ldy   #$31
+         cpy   DRIVE
          bne   NextSlotLoop
-         lda   #$32                  ; cycle from drive 1 to drive 2 of the same slot
-         sta   DRIVE
+         inc   DRIVE                 ; cycle from drive 1 to drive 2 of the same slot
          bne   ThisSlot              ; always branches
 NextSlotLoop
-         lda   #$31                  ; cycle to drive 1 of the next slot
-         sta   DRIVE
+         sty   DRIVE                 ; cycle to drive 1 of the next slot
          inc   SLOT
 ThisSlot
          lda   SLOT
          cmp   #$38
          bne   +
-         lda   #$31                  ; cycle from slot 7 back to slot 1
-         sta   SLOT
-+        sec
-         sbc   #$30
-         tax
-         lda   DiskIIArray-1, x
+         sty   SLOT                  ; cycle from slot 7 back to slot 1
+         tya
++        tax
+         lda   DiskIIArray-$31, x
          beq   @maybeHardDisk
 
          lda   SLOT
@@ -71,6 +65,7 @@ LookupUnitNumberOfSelectedHardDisk
 ;          then A=ProDOS unit number, Z=0
 ;        otherwise A=0, Z=1
 ;        X clobbered
+;        Y preserved
          lda   SLOT
          sec
          sbc   #$30
