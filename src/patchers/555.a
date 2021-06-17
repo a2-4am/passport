@@ -16,6 +16,7 @@
 ; - Cosmic Combat
 ; - Crosscountry Rallye
 ; - Crush, Crumble and Chomp v1981-06-22
+; - Game of the U.S.
 ; - Gertrude's Puzzles v1.0
 ; - Gertrude's Secrets v1.0
 ; - Guardian
@@ -50,15 +51,22 @@ Do555
          ldy   #4
          jsr   SearchSector
          !byte $45,WILDCARD ; EOR $xx
+         !byte $91,$26      ; STA ($26),y
+         lda   #4
+         bcc   .setenc
+         tay
+         asl
+         jsr   SearchSector
+         !byte $45,WILDCARD ; EOR $xx
          !byte $99,$00      ; STA $xxxx,y
          bcs   .jmpexit
          lda   $804,x
+
+.setenc
          sec
 
 .setpage
-         sta   .patch1+1
-         sta   .patch2+1
-         sta   .patch3+1
+         sta   .patch+1
          bcs   .findkey
          txa
          tay
@@ -143,8 +151,7 @@ Do555
          cmp   #$20       ; JSR $xxxx
          bne   .loopsect
          lda   $802,x
-.patch1
-         eor   #4         ; SMC
+         eor   .patch+1
          bne   .skipjsr
          sta   .curtrk+1
 
@@ -188,9 +195,7 @@ Do555
          dey
          sty   .hookseek+1
          dey
-         sty   .cmpseek1+1
-         sty   .cmpseek2+1
-         sty   .patch3
+         sty   .patch
          inc   .curtrk+1
 
          lda   #8
@@ -226,22 +231,19 @@ Do555
          iny
          iny
          lda   ($3A),y
-.patch2
-         cmp   #4         ; SMC
+         cmp   .patch+1
          bne   .skipjsr1
          dey
          lda   ($3A),y
          tax
-.cmpseek1
-         cmp   #$D1       ; SMC
+         cmp   .patch
          beq   .inctrack
          bcs   .walkcode
          lda   $800,x
          cmp   #$20       ; JSR
          bne   .skipjsr2
          lda   $801,x
-.cmpseek2
-         cmp   #$D1       ; SMC
+         cmp   .patch+1
          bne   .skipjsr2
 
 .inctrack
@@ -251,10 +253,18 @@ Do555
 .trylda
          ldx   $3A
          lda   $800,x
-         cmp   #$38       ; SEC
-         bne   .sizeinst
-         lda   $801,x
          cmp   #$66       ; ROR $xx
+         bne   .sizeinst
+         lda   #$A9       ; LDA #$xx
+         inx
+         inx
+         cmp   $800,x
+         beq   .foundpart
+         inc   .curtrk+1
+         inx
+         inx
+         inx
+         cmp   $800,x
          beq   .foundpart
 
 .sizeinst
@@ -276,6 +286,7 @@ Do555
          ; and then the rest of the disk
 
 .foundpart
+         stx   $3A
          jsr   IncProgress
          lda   #BASEPAGE
          sta   gAddress+1
@@ -379,7 +390,7 @@ Do555
 .hookseek
          ldy   #00        ; SMC
          lda   $3A
-         adc   #$11
+         adc   #$0E
          sta   ($3E),y
          sbc   #3
          tax
@@ -387,7 +398,7 @@ Do555
          sbc   #BASEPAGE
          ldy   #8
          jsr   modify
-.patch3
+.patch
          !byte $00,$04     ; [JSR] $04xx
          !byte $B0,$0B     ; BCS *+$0D
          !byte $E6,$41     ; STA $41
