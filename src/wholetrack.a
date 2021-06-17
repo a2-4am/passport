@@ -88,23 +88,19 @@ IsF7F6
          bne   -
          sec
          beq   @driveoff
-+        jsr   ReadNib
-         cmp   #$F6
++        ldx   #3
+-        jsr   ReadNib
+         cmp   @f7f6_sequence,x
          bne   @restart
-         jsr   ReadNib
-         cmp   #$EF
-         bne   @restart
-         jsr   ReadNib
-         cmp   #$EE
-         bne   @restart
-         jsr   ReadNib
-         cmp   #$AB
-         bne   @restart
+         dex
+         bpl   -
          clc
 @driveoff
          lda   $C0E8
          rts
 
+@f7f6_sequence
+         !byte $AB,$E,$EF,$F6
 ;-------------------------------
 ; SetupF7F6SecondRound
 ;
@@ -202,6 +198,7 @@ IsUnformatted
 ;
 ; Timing-sensitive code! Cycle counts in margin for worst case path
 ;
+         clc
 @reset   ldy   #$00
 @loop    ldx   $C0EC      ; 4
          bpl   @loop      ; 2 when not taken
@@ -217,9 +214,7 @@ IsUnformatted
          iny              ; 2
          bne   @loop      ; 3 when taken
          sec
-         !byte $24
 @unformatted
-         clc
          lda   $C0E8
 
          lda   #$3F

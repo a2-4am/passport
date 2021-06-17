@@ -391,11 +391,6 @@
          bcc   +
          jmp   .trybox
 +        sta   .cmp1+1
-         sta   .cmp2+1
-         sta   .cmp3+1
-         sta   .cmp4+1
-         sta   .cmp5+1
-         sta   .cmp6+1
          pha
          adc   #BASEPAGE
          sta   .page1+2
@@ -464,8 +459,7 @@
          txa
          adc   #9
          tax
-.cmp2
-         lda   #$D1
+         lda   .cmp1+1
          pha
          ldy   #5
          jsr   compare
@@ -505,8 +499,7 @@
          sec
          bne   .bcsexit4
 +        inx
-.cmp3
-         lda   #$D1
+         lda   .cmp1+1
          ldy   #11
          jsr   compare
          !byte $8C,$F4,$B7      ;STY $B7F4
@@ -519,8 +512,7 @@
          txa
          adc   #11
          tax
-.cmp4
-         lda   #$D1
+         lda   .cmp1+1
          pha
          ldy   #2
          jsr   compare
@@ -540,8 +532,7 @@
          bcs   .bcsexit6
 +        inx
          inx
-.cmp5
-         lda   #$D1
+         lda   .cmp1+1
          pha
          ldy   #3
          jsr   compare
@@ -568,8 +559,7 @@
          pla
          adc   #4
          sta   .tryalt+1
-.cmp6
-         lda   #$D1
+         lda   .cmp1+1
          pha
          ldy   #3
          jsr   compare
