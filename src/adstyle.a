@@ -1,40 +1,101 @@
-ADStyle
-; We are now fairly confident that the RWTS in memory
+;-------------------------------
+; ADStyle
+; Caller has determined that the RWTS in memory
 ; is normal enough to call, Advanced Demuffin style.
+; Now we check for protections in early boot that
+; indicate intentional bad sectors elsewhere that we
+; should skip, or changes we need to make to the RWTS
+; before we start.
+;
+; in:    $0800..$08FF contains boot0
+;        $B600..$BFFF contains boot1
+; out:   all registers clobbered
+;        exits via ReadWithRWTS
+;-------------------------------
+ADStyle
          jsr   IncProgress
          jsr   PrintByID
          !byte s_diskrwts
 ;
-; Check for protections in early boot that
-; might indicate intentional bad sectors
-; elsewhere in the disk that we should skip,
-; or changes we need to make to the RWTS
-; before we start.
+; Check for Lock-It-Up protection (variant 1, most common),
+; which implies an unreadable T00,S0A
 ;
-         jsr   xHeredityDog
-         bcs   +
+         lda   $08FE
+         clc
+         adc   #$04
+         ldx   #$1D
+         ldy   #$0B
+         jsr   CompareMemory
+         !byte $BD,$8C,$C0
+         !byte $A9,WILDCARD
+         !byte $8D,$00,$02
+         !byte $BD,$8C,$C0
+         bcs   +                     ; passport-test-suite/Quadrilaterals.woz [C=0] matches
+         lda   #kSectorOptional
+         sta   T00S0A
          lda   #$05
          sta   gDisplayBytes
          jsr   PrintByID
          !byte s_lockitup
+;
+; Check for Sunburst RWTS,
+; which implies an unreadable T11,S0F
+;
 +
-         jsr   xSunburst
-         bcs   +
+         lda   $08FE
+         clc
+         adc   #$03
+         ldx   #$69
+         ldy   #$0B
+         jsr   CompareMemory
+         !byte $48
+         !byte $A5,$2A
+         !byte $4A
+         !byte $A8
+         !byte $B9,$29,$BA
+         !byte $8D,$6A,$B9
+         bcs   +                     ; passport-test-suite/Green Globs and Graphing Equations.woz [C=0] matches
+         lda   #kSectorOptional
+         sta   T11S0F
          lda   #$04
          sta   gDisplayBytes
          jsr   PrintByID
          !byte s_sunburst
+;
+; Check for Optimum Resource bootloader,
+; which implies an unreadable T01,S0F
+;
 +
-         jsr   xOptimumRes
-         bcs   +
+         lda   #$08
+         ldx   #$5D
+         ldy   #$0C
+         jsr   CompareMemory
+         !byte $68
+         !byte $85,WILDCARD
+         !byte $68
+         !byte $85,WILDCARD
+         !byte $A0,$01
+         !byte $B1,WILDCARD
+         !byte $85,$54
+         bcs   +                     ; passport-test-suite/Stickybear Math.woz [C=0] matches
+         lda   #kSectorOptional
+         sta   T01S0F
          lda   #TRUE
          sta   gIsOptimum
          sta   gDisplayBytes
          jsr   PrintByID
          !byte s_optimum
+;
+; Check for SVE bootloader,
+; which has a hook in the RWTS that must be patched
+;
 +
-         jsr   xSVE
-         bcs   +
+         lda   #$BE
+         ldx   #$5A
+         ldy   #$03
+         jsr   CompareMemory
+         !byte $4C,$71,$A9
+         bcs   +                     ; passport-test-suite/Decimals and Percent.woz [C=0] matches
          lda   #$00
          sta   gDisplayBytes
          jsr   PrintByID
@@ -50,188 +111,46 @@ ADStyle
          sta   $B6CD
          lda   #$B6
          sta   $B6CE
+;
+; Check for RPS protection
+; (boot1 jumps to $B3C1 to change RWTS,
+; epilogue checker jumps to $B6B3 to
+; check timing bits, late DOS routes
+; through nibble check at $B74B)
+; implies multiple unreadable sectors on T02,
+; corrupted nibble translate tables,
+; and a forced switch to the built-in RWTS
+;
 +
-         jsr   xRPS
-         bcs   +
+         lda   #$B7
+         ldx   #$47
+         ldy   #$07
+         jsr   CompareMemory
+         !byte $4C,$C1,$B3
+         !byte $60
+         !byte $48
+         !byte $A9,$02
+         bcs   +                     ; passport-test-suite/Math Skills Elementary Level.woz [C=0] matches
+         lda   #kSectorOptional
+         sta   T02S05
+         sta   T02S0A
+         ; some variants auto-switch earlier,
+         ; others need to be forced
+         lda   #kSectorSwitchToBuiltinRWTS
+         sta   T02S04
+         ; fix corrupted nibble translate tables
+         ldy   #$FF
+         sty   $BA29
+         iny
+         sty   $BAFF
+         ldy   #$3F
+         sty   $BA96
          lda   #$01
          sta   gDisplayBytes
          jsr   PrintByID
          !byte s_rps
 +
-         jsr   xB660
-         jsr   xB4BB
-         jsr   xHarvey
-         jmp   ReadWithRWTS
-
-;-------------------------------
-; xHeredityDog
-; check for a protection check at $BB00
-; which implies an unreadable T00,S0A
 ;
-; in:  $0800..$08FF contains boot0
-;      $B600..$BFFF contains boot1
-; out: C clear if protection code was found
-;      C set if protection code was not found
-;-------------------------------
-xHeredityDog
-         lda   $08FE
-         clc
-         adc   #$04
-         ldx   #$16
-         ldy   #$4A
-         jsr   CompareMemory
-         !byte $F0,$05,$A2,$B2,$4C,$F0,$BB,$BD,$8C,$C0,$A9,WILDCARD
-         !byte $8D,$00,$02,$BD,$8C,$C0,$10,$FB,$C9,$EB,$D0,$F7,$BD,$8C
-         !byte $C0,$10,$FB,$C9,$D5,$D0,$EE,$BD,$8C,$C0,$10,$FB,$C9,$AA,$D0,$E5
-         !byte $A9,$4C,$A0,$00,$99,$00,$95,$88,$D0,$FA,$CE,$46,$BB,$AD,$46,$BB
-         !byte $C9,$07,$D0,$EC,$A9,$18,$8D,$42,$B9,$A9,$0A,$8D,$ED,$B7,$D0,$05
-         bcs   @exit
-         lda   #kSectorOptional
-         sta   T00S0A
-@exit    rts
-
-;-------------------------------
-; xSunburst
-; check for a Sunburst RWTS
-; which implies an unreadable T11,S0F
-;
-; in:  $0800..$08FF contains boot0
-;      $B600..$BFFF contains boot1
-; out: C clear if Sunburst RWTS was found
-;      C set otherwise
-;-------------------------------
-xSunburst
-         lda   $08FE
-         clc
-         adc   #$03
-         ldx   #$69
-         ldy   #$2C
-         jsr   CompareMemory
-         !byte $48,$A5,$2A,$4A,$A8,$B9,$29,$BA
-         !byte $8D,$6A,$B9,$8D,$84,$BC,$B9,$34
-         !byte $BA,$8D,$FC,$B8,$8D,$5D,$B8,$C0
-         !byte $11,$D0,$03,$A9,$02,$AC,$A9,$0E
-         !byte $8D,$C0,$BF,$68,$69,$00,$48,$AD
-         !byte $78,$04,$90,$2B
-         bcs   @exit
-         lda   #kSectorOptional
-         sta   T11S0F
-@exit    rts
-
-;-------------------------------
-; xOptimumRes
-; check if disk has Optimum Resource bootloader
-; which implies an unreadable T01,S0F
-;
-; in:  $0800..$08FF contains boot0
-;      $B600..$BFFF contains boot1
-; out: C clear if OptimumRes bootloader was found
-;      C set otherwise
-;-------------------------------
-xOptimumRes
-         lda   #$08
-         ldx   #$5D
-         ldy   #$0C
-         jsr   CompareMemory
-         !byte $68,$85,WILDCARD,$68,$85,WILDCARD,$A0,$01
-         !byte $B1,WILDCARD,$85,$54
-         bcs   @exit
-         lda   #kSectorOptional
-         sta   T01S0F
-@exit    rts
-
-;-------------------------------
-; xB4BB
-; check if disk changes RWTS in late boot after a nibble check
-; (very messy because it needs to handle DOS 3.2 and 3.3 variants
-; in either low or high memory)
-;
-; in:  $0800..$08FF contains boot0
-;      either $3600..$3FFF or $B600..$BFFF contains boot1
-; out: C clear if RWTS was modified in this routine
-;      C set otherwise
-;-------------------------------
-xB4BB
-         lda   gTrack
-         pha
-         lda   gSector
-         pha
-b4bbcompare
-         lda   #$FF       ; modified at runtime (in Inspect1)
-         ldx   #$00
-         ldy   #$20
-         jsr   CompareMemory
-         !byte $D8,$A9,$DF,$48,$A9,$FF,$48,$A9
-         !byte $08,$85,$3D,$85,$43,$A9,$BF,$85
-         !byte $3F,$A9,$00,$85,$3C,$85,$42,$E6
-         !byte $42,$A9,$FE,$85,$3E,$A0,$00,$AD
-         bcs   _b4bbexit
-         ldy   gIsDOS32
-         beq   @dos32
-         lda   #$55       ; low byte of address that checks address prologue 1
-         sta   b4bbmodify+1
-         lda   #$91       ; low byte of address that checks address epilogue 1
-         sta   b4bbmodify2+1
-         ldx   #$00       ; track
-         ldy   #$0C       ; sector
-         bne   @all       ; always branches
-@dos32
-         lda   #$76       ; low byte of address that checks address prologue 1
-         sta   b4bbmodify+1
-         lda   #$B2       ; low byte of address that checks address epilogue 1
-         sta   b4bbmodify2+1
-         ldx   #$01       ; track
-         ;;ldy   #$00       ; sector
-@all
-         lda   #$00
-         sta   gAddress
-         lda   #$0C
-         adc   #BASEPAGE
-         sta   gAddress+1
-         jsr   ReadSectorXY ; read sector so we can look for 'JMP $B4BB' marker
-         bcs   _b4bbexit
-         lda   #$0C
-         ldx   #$84
-         ldy   #$03
-         jsr   compare
-         !byte $4C,$BB,$B4
-         bcs   _b4bbexit
-         ldx   #$02       ; track
-         ldy   #$02       ; sector
-         lda   gIsDOS32
-         bne   @allb
-@dos32b
-         ldy   #$09       ; sector
-@allb
-         jsr   ReadSectorXY ; read sector to get address prologue 1 for rest of disk
-         bcs   _b4bbexit
-         lda   #$0C
-         adc   #BASEPAGE
-         sta   x0+2
-x0       lda   $FFC2      ; high byte modified at runtime (above)
-         cmp   #$D5       ; some disks lie and manually set the prologue later
-         bne   b4bbmodify ; passport-test-suite/SocMate Analogies Games.woz [Z=1] here
-         lda   #TRUE
-         sta   gPossibleB4BBBasic
-         lda   #$BB
-b4bbmodify
-         sta   $FFFF      ; modified at runtime (high byte in Inspect1, low byte above)
-         lda   #$DE
-b4bbmodify2
-         sta   $FFFF      ; modified at runtime (high byte in Inspect1, low byte above)
-         lda   gIsDOS32
-         bne   _b4bbexit
-         lda   #kSectorCustomDOS32B4BB
-         sta   T02S0C
-_b4bbexit
-         pla
-         sta   gSector
-         pla
-         sta   gTrack
-         rts
-
-;-------------------------------
-; xB660
 ; Check if RWTS calls an extra routine at $B660
 ; after matching the first two data prologue
 ; nibbles. This routine can hang in an infinite
@@ -241,11 +160,6 @@ _b4bbexit
 ; (T00,S00-S09 are unprotected because they are
 ; read by the drive firmware.)
 ;
-; in:  $0800..$08FF contains boot0
-; out: C clear if $B660 routine was found
-;      C set otherwise
-;-------------------------------
-xB660
          lda   #$08
          ldx   #$60
          ldy   #$1A
@@ -254,46 +168,103 @@ xB660
          !byte $F4,$A9,$F8,$3D,$8C,$C0,$D0,$02
          !byte $EA,$EA,$EA,$EA,$BD,$8C,$C0,$2A
          !byte $30,$02
-         bcs   @exit
+         bcs   +                     ; passport-test-suite/Analogies Tutorial.woz [C=0] matches
          lda   #kSectorSwitchToBuiltinRWTS
          sta   T00S09
-@exit    rts
-
-;-------------------------------
-; xSVE
-; check if disk has SVE bootloader
-; which has a hook in the RWTS
 ;
-; in:  $0800..$08FF contains boot0
-;      $B600..$BFFF contains boot1
-; out: C clear if SVE bootloader was found
-;      C set otherwise
-;-------------------------------
-xSVE
-         lda   #$BE
-         ldx   #$5A
-         ldy   #$03
+; Check if disk changes RWTS in late boot
+; after a nibble check at $B4BB
+; (very messy because it needs to handle
+; DOS 3.2 and 3.3 variants in both low and
+; high memory)
+;
++
+         lda   gTrack
+         pha
+         lda   gSector
+         pha
+b4bbcompare
+         lda   #$FD                  ; modified at runtime (in Inspect1)
+         ldx   #$00
+         ldy   #$20
          jsr   CompareMemory
-         !byte $4C,$71,$A9
-         rts
-
-;-------------------------------
-; xHarvey
-; check if disk has Harvey protection
+         !byte $D8,$A9,$DF,$48,$A9,$FF,$48,$A9
+         !byte $08,$85,$3D,$85,$43,$A9,$BF,$85
+         !byte $3F,$A9,$00,$85,$3C,$85,$42,$E6
+         !byte $42,$A9,$FE,$85,$3E,$A0,$00,$AD
+         bcs   _b4bbexit             ; passport-test-suite/Kamikaze.woz [C=0] matches
+         ldy   gIsDOS32
+         beq   @dos32
+         lda   #$55                  ; low byte of address that checks address prologue 1
+         sta   b4bbmodify+1
+         lda   #$91                  ; low byte of address that checks address epilogue 1
+         sta   b4bbmodify2+1
+         ldx   #$00                  ; track
+         ldy   #$0C                  ; sector
+         bne   @all                  ; always branches
+@dos32
+         lda   #$76                  ; low byte of address that checks address prologue 1
+         sta   b4bbmodify+1
+         lda   #$B2                  ; low byte of address that checks address epilogue 1
+         sta   b4bbmodify2+1
+         ldx   #$01                  ; track
+@all
+         lda   #$00
+         sta   gAddress
+         lda   #$0C
+         adc   #BASEPAGE
+         sta   gAddress+1
+         jsr   ReadSectorXY          ; read sector so we can look for 'JMP $B4BB' marker
+         bcs   _b4bbexit
+         lda   #$0C
+         ldx   #$84
+         ldy   #$03
+         jsr   compare
+         !byte $4C,$BB,$B4
+         bcs   _b4bbexit
+         ldx   #$02                  ; track
+         ldy   #$02                  ; sector
+         lda   gIsDOS32
+         bne   @allb
+@dos32b
+         ldy   #$09                  ; sector
+@allb
+         jsr   ReadSectorXY          ; read sector to get address prologue 1 for rest of disk
+         bcs   _b4bbexit
+         lda   #$0C
+         adc   #BASEPAGE
+         sta   x0+2
+x0       lda   $FFC2                 ; high byte modified at runtime (above)
+         cmp   #$D5                  ; some disks lie and manually set the prologue later
+         bne   b4bbmodify            ; passport-test-suite/SocMate Analogies Games.woz [Z=1] here
+         lda   #TRUE
+         sta   gPossibleB4BBBasic
+         lda   #$BB
+b4bbmodify
+         sta   $FFFF                 ; modified at runtime (high byte in Inspect1, low byte above)
+         lda   #$DE
+b4bbmodify2
+         sta   $FFFF                 ; modified at runtime (high byte in Inspect1, low byte above)
+         lda   gIsDOS32
+         bne   _b4bbexit
+         lda   #kSectorCustomDOS32B4BB
+         sta   T02S0C
+_b4bbexit
+         pla
+         sta   gSector
+         pla
+         sta   gTrack
+;
+; Check for Harvey protection
 ; which has a one-time RWTS swap
 ; after loading DOS
 ;
-; in:  $B600..$BFFF contains boot1
-; out: RWTS may have been patched in memory
-;      all flags and registers clobbered
-;-------------------------------
-xHarvey
          lda   #$B7
          ldx   #$47
          ldy   #$03
          jsr   CompareMemory
          !byte $4C,$82,$A2
-         bcs   @exit
+         bcs   +                     ; passport-test-suite/Harvey by Primes.woz [C=0] here
          ldx   #$00
          stx   gAddress
          inx
@@ -301,7 +272,7 @@ xHarvey
          lda   #$09
          sta   gAddress+1
          jsr   ReadSectorXY          ; read T01,S02 into $0900
-         bcs   @exit
+         bcs   +
          lda   #$09
          ldx   #$32
          ldy   #$18
@@ -315,45 +286,11 @@ xHarvey
          !byte $A9,WILDCARD
          !byte $8D,$60,$BC
          !byte $4C,$84,$9D
-         bcs   @exit
+         bcs   +
          lda   #$60
          sta   $0947                 ; RTS instead of JMP
          jsr   $0932                 ; call to apply RWTS patches
          lda   #kSectorSwitchToBuiltinRWTS
          sta   T02S0F
-@exit    rts
-
-;-------------------------------
-; xRPS
-; check if disk has RPS protection
-; (boot1 jumps to $B3C1 to change RWTS,
-; epilogue checker jumps to $B6B3 to
-; check timing bits, late DOS routes
-; through nibble check at $B74B)
-;
-; in:  $B600..$BFFF contains boot1
-; out: C clear if protection found
-;      C set if protection was not found
-;-------------------------------
-xRPS
-         lda   #$B7
-         ldx   #$47
-         ldy   #$07
-         jsr   CompareMemory
-         !byte $4C,$C1,$B3
-         !byte $60
-         !byte $48
-         !byte $A9,$02
-         bcs   @exit
-         lda   #kSectorOptional
-         sta   T02S05
-         sta   T02S0A
-         lda   #kSectorSwitchToBuiltinRWTS
-         sta   T02S04                ; some variants might auto-switch earlier, some need to be told
-         ldy   #$FF
-         sty   $BA29
-         iny
-         sty   $BAFF
-         ldy   #$3F
-         sty   $BA96
-@exit    rts
++
+         jmp   ReadWithRWTS
