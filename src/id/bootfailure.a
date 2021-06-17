@@ -287,7 +287,7 @@ read13
          dec   tmp
          bmi   .badread2
          clc
-         ldx   #$02       ; 512 nibbles
+         ldx   #$03       ; 768 nibbles
          ldy   #0
 
 .readdata

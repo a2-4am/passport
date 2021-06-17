@@ -100,7 +100,7 @@ IsF7F6
          rts
 
 @f7f6_sequence
-         !byte $AB,$E,$EF,$F6
+         !byte $AB,$EE,$EF,$F6
 ;-------------------------------
 ; SetupF7F6SecondRound
 ;

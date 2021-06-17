@@ -243,7 +243,7 @@ Do555
          cmp   #$20       ; JSR
          bne   .skipjsr2
          lda   $801,x
-         cmp   .patch+1
+         cmp   .patch
          bne   .skipjsr2
 
 .inctrack

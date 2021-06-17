@@ -101,6 +101,7 @@ Choplifter
 -        lda   .stage2,y
          sta   $1D00,y
          iny
+         cpy   #.exit2-.stage2
          bne   -
 
          jsr   PrintByID
