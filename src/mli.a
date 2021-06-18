@@ -542,12 +542,12 @@ GetVolumeInfo
          sta   mliparam+1
          lda   #>OnlineReturn
          sta   mliparam+2
+         ; /!\ execution falls through here
 
 GetFileInfo
          lda   #CMD_GETFILEINFO
          ldy   #PC_GETFILEINFO
-         jsr   mli
-         rts
+         ; /!\ execution falls through here
 
 ;-------------------------------
 ; low-level MLI wrapper
