@@ -13,7 +13,6 @@
 ;        exits via ReadWithRWTS
 ;-------------------------------
 ADStyle
-         jsr   IncProgress
          jsr   PrintByID
          !byte s_diskrwts
 ;

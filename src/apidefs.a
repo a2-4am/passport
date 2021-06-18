@@ -48,6 +48,7 @@ ID_FILE_ON_HARD_DISK = %10000000     ; BIT + BMI ->       target is a file on a 
 
 ; Standard zero-page addresses
 TEXTTOP  =     $22
+HPOS     =     $24
 VPOS     =     $25
 
 ; Standard addresses

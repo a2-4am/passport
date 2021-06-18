@@ -47,6 +47,7 @@ MainMenu
          txs
          jsr   Cleanup               ; RAM/HD files might be left open after Ctrl-Reset
          jsr   ClearScreen
+@refreshMainMenu
          jsr   PrintByID
          !byte s_header
          jsr   PrintByID
@@ -84,9 +85,13 @@ MainMenu
 +        cmp   #k_slot
          bne   +
          jsr   NextSlot
+         lda   #0
+         sta   HPOS
+         sta   VPOS
+         jsr   $FBC1
          lda   #TRUE
          sta   gChangedPrefs
-         beq   MainMenu              ; always branches
+         beq   @refreshMainMenu      ; always branches
 
 +        cmp   #k_verify
          bne   +
@@ -447,8 +452,8 @@ _byte_skip_hi:
          !source "id/davidson.a"
          !source "id/holle.a"
          !source "id/phoenix.a"
-         !source "id/555.a"
          !source "id/bootfailure.a"
+         !source "id/555.a"
          !source "print.a"
          !source "compare.a"
          !source "modify.a"

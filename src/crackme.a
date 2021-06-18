@@ -1,4 +1,5 @@
 ReadWithRWTS
+         jsr   IncProgress
          lda   #$22
          jsr   ChangeTrackNW
          lda   #$0F
