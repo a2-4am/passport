@@ -58,6 +58,7 @@ ScanForRAMAndHardDisks
 -        sta   HardDiskArray, y
          dey
          bpl   -
+         sta   RAMDiskImagePath
          sta   iunit
 @nextunit
          lda   iunit

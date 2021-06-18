@@ -4,15 +4,6 @@ HardDirName_e
 HardDiskName    !raw "/IMG0000.DSK"
 HardDiskName_e
 
-HardDiskImagePath
-         !byte 0                                ; length byte
-         !fill 1                                ; / character
-         !fill 15                               ; longest possible volume name
-         !fill 1                                ; / character
-         !fill HardDirName_e-HardDirName        ; directory name (constant, see above)
-         !fill HardDiskName_e-HardDiskName      ; filename with leading slash
-                                                ; (modified at runtime but always the same length)
-
 ;-------------------------------
 ; CreateFileOnHardDisk
 ; create a new autonumbered image file on the user's selected target,

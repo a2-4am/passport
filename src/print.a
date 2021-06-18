@@ -1,6 +1,3 @@
-kForceLower !byte $FF     ; AND mask for lowercase letters
-                          ; (set at program startup)
-
 ;-------------------------------
 ; PrintByID
 ; Print a string from the string table

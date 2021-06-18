@@ -60,7 +60,7 @@ WAIT     =     $FCA8
 PRBYTE   =     $FDDA
 COUT     =     $FDED
 
-; Zero-page addresses we use for variables
+; Zero-page addresses we use for temporary variables
 nibsrcindex =  $EC        ; byte
 nibdestindex = $ED        ; byte
 prbuf    =     $EE        ; word
@@ -79,7 +79,47 @@ tmpx     =     $FD        ; byte
 tmpy     =     $FE        ; byte
 flag     =     $FF        ; byte
 
-; Other application-specific addresses
+; Other addresses we use for global variables
+gTrack   = $0210
+gSector  = gTrack+1
+mliparam = gSector+1
+access   = mliparam+3     ; access privileges (set by MLI get_file_info)
+filetype = access+1       ; file type (set by MLI get_file_info)
+auxtype  = filetype+1     ; auxiliary file type (2 bytes, set by MLI get_file_info)
+refnum   = auxtype        ; file refnum (set by MLI open)
+mlilen   = refnum+1       ; file length (set by MLI read)
+blocks   = mlilen+2       ; blocks used (set by getvolumeinfo)
+                          ; member is also used by createfile
+;        !fill 8          ; used by get_file_info
+OnlineReturn = blocks + 10
+VolumeName = OnlineReturn + 1
+;        !byte $FF,$FF,$FF,$FF,$FF,$FF,$FF
+;        !byte $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
+
+
+DiskIIArray = $038E
+;        !fill 7
+HardDiskArray = DiskIIArray+7
+;        !fill 15
+RAMDiskImagePath = HardDiskArray+15
+;        !byte 0          ; length byte (0 means no suitable RAM disk is available)
+;        !fill 1          ; / character
+;        !fill 4          ; longest possible volume name for supported RAM disks
+;                         ; (code only matches 'RAM' or 'RAMn' where n is usually a slot number)
+;        !fill 1          ; / character
+;        !fill 15         ; filename without leading slash (constant, see initscan.a)
+HardDiskImagePath = RAMDiskImagePath+21
+;        !byte 0          ; length byte
+;        !fill 1          ; / character
+;        !fill 15         ; longest possible volume name
+;        !fill 1          ; / character
+;        !fill 8          ; directory name (constant)
+;        !fill 12         ; filename with leading slash
+;                         ; (modified at runtime but always the same length)
+kForceLower = HardDiskImagePath+37 ; AND mask for lowercase letters (set at program startup)
+
+
+; Other application-specific constants and assembler magic
 !ifdef RELBASE {
 !set VERBOSE = $00        ; override for make script
 } else {

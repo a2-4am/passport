@@ -1,6 +1,3 @@
-DiskIIArray = $038E
-HardDiskArray = $0395
-
 ;-------------------------------
 ; NextSlot
 ; in:    DiskIIArray populated by calling ScanForDiskII

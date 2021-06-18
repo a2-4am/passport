@@ -508,12 +508,7 @@ GetVolumeName
          sta   mliparam+2
          lda   #>OnlineReturn
          sta   mliparam+3
-         bne   Online
-OnlineReturn
-         !byte $FF
-VolumeName
-         !byte $FF,$FF,$FF,$FF,$FF,$FF,$FF
-         !byte $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
+         ; /!\ execution falls through here
 
 ;-------------------------------
 ; check if volume is online
@@ -580,13 +575,3 @@ mli      sta   mlicmd     ; store command code
 mlicmd   !byte 00         ; command number
          !word mliparam   ; address of parameter table
          rts
-mliparam !byte $FE,$FE,$FE
-access   !byte $FE        ; access privileges (set by MLI get_file_info)
-filetype !byte $FE        ; file type (set by MLI get_file_info)
-auxtype                   ; auxiliary file type (2 bytes, set by MLI get_file_info)
-refnum   !byte $FE        ; file refnum (set by MLI open)
-mlilen   !byte $FE,$FE    ; file length (set by MLI read)
-blocks   !byte $FE,$FE    ; blocks used (set by getvolumeinfo)
-                          ; member is also used by createfile
-         !byte $FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE
-                          ; used by get_file_info

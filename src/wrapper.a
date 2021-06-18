@@ -32,12 +32,13 @@ OneTimeSetup
          sta   $0F00, y
          iny
          bne   -
+         ldx   #$FF
          lda   $FBB3                 ; ROM MachineID
          cmp   #$EA                  ; ][+?
          bne   +
-         lda   #$DF                  ; AND mask to force characters to uppercase on ][+
-         sta   kForceLower
+         ldx   #$DF                  ; AND mask to force characters to uppercase on ][+
 +
+         stx   kForceLower
          jsr   ScanForDiskII         ; scan slots for Disk II drives
          lda   DiskIIArray+5
          bne   +

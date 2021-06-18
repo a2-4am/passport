@@ -1,11 +1,3 @@
-RAMDiskImagePath
-         !byte 0                     ; length byte (0 means no suitable RAM disk is available)
-         !fill 1                     ; / character
-         !fill 4                     ; longest possible volume name for supported RAM disks
-                                     ; (code only matches 'RAM' or 'RAMn' where n is usually a slot number)
-         !fill 1                     ; / character
-         !fill 15                    ; filename without leading slash (constant, see initscan.a)
-
 ;-------------------------------
 ; CreateFileOnRAMDisk
 ; create 140KB file on RAM disk (filename is hardcoded)

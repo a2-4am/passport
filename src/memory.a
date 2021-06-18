@@ -1,10 +1,11 @@
 ;-------------------------------
 ; YE OLDE GRAND UNIFIED MEMORY MAP
 ;
+; 0210..02D7 - globals (see apidefs.a)
 ; 02D8..038D - clobbered by Optimum reader
-; 038E..0394 - DiskIIArray
-; 0395..03A3 - HardDiskArray
+; 038E..03EF - globals (see apidefs.a)
 ; 0800..08FF - clobbered by all boot tracers and RAM disk
+; 0800..08CB - clobbered by exodecrunch
 ; 0900..09FF - clobbered by Special Delivery tracer and RAM disk
 ; 0A00..0AFF - backup of zero page during Special Delivery tracer, used by RAM disk
 ; 0B00..0BFF - used by RAM disk
