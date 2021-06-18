@@ -28,14 +28,35 @@ PREFSWRITELEN = *-PREFSVER
 ;-------------------------------
 SavePrefs
          jsr   ValidatePrefs
-         jsr   SaveFile1Shot
-         !word PREFSFILE
-         !byte $04        ; text file
-         !byte $00,$00    ; no aux file type
-         !word PREFSVER
-         !word PREFSWRITELEN
-         !word PREFSBUFFER
-         rts
+         lda   #<PREFSFILE
+         sta   mliparam+1
+         lda   #>PREFSFILE
+         sta   mliparam+2
+         jsr   DeleteFile ; don't care if this fails
+         lda   #$04       ; text file type
+         sta   mliparam+4
+         lda   #$00
+         sta   mliparam+5 ; no aux file type
+         sta   mliparam+6
+         jsr   CreateFile
+         bcs   +
+         lda   #<PREFSBUFFER
+         sta   mliparam+3
+         lda   #>PREFSBUFFER
+         sta   mliparam+4
+         jsr   OpenFile
+         bcs   +
+         ldy   #<PREFSVER
+         sty   mliparam+2
+         ldy   #>PREFSVER
+         sty   mliparam+3
+         ldy   #<PREFSWRITELEN
+         sty   mliparam+4
+         ldy   #>PREFSWRITELEN
+         sty   mliparam+5
+         jsr   WriteFile
+         jsr   CloseFile
++        rts
 
 ;-------------------------------
 ; ValidatePrefs
