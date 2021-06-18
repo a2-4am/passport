@@ -454,6 +454,7 @@ _byte_skip_hi:
          !source "modify.a"
          !source "memory.a"
          !source "sectormap.a"
+         !source "write.a"
          !source "mli.a"
          !source "ramdisk.a"
          !source "harddisk.a"

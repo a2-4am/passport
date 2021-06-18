@@ -1,0 +1,208 @@
+;-------------------------------
+; WriteTrackFirstPass
+;
+; write the contents of BASEPAGE data buffer to the selected target
+; (or possibly an intermediate target, such as a RAM disk)
+;
+; in:    @SLOT contains (slot x 16) + $30
+;        @DRIVE contains drive + $30
+;        @gTrack contains track number
+;        @BASEPAGE contains data to write ($1000 bytes)
+;        ProDOS is in memory
+; out:   if C set, write failed (A contains MLI error code)
+;        if C clear, write succeeded (A is clobbered)
+;        all other registers and flags clobbered
+;        ProDOS is in memory
+;-------------------------------
+WriteTrackFirstPass
+         lda   gHardDiskRef
+         ora   gRAMDiskRef
+         bne   +
+         ; we're writing directly to a disk drive, so we
+         ; reorder the data buffer so we can write the
+         ; logical sectors as ProDOS blocks
+         jsr   ReorderBuffer
++
+         ; ProDOS 'unit number' is DSSS0000, where
+         ; D is the drive number (0=drive 1, 1=drive 2) and
+         ; SSS is the slot number (1-7)
+         ; c.f. 'Beneath Apple ProDOS' page 6-19
+         lda   DRIVE
+         sec
+         sbc   #$31                  ; drive number is stored as ASCII text
+         lsr
+         lda   #0
+         ror
+         sta   mliparam+1
+         lda   SLOT
+         asl
+         asl
+         asl
+         asl
+         ora   mliparam+1
+         sta   mliparam+1            ; ProDOS unit number
+         lda   #$00
+         sta   mliparam+2            ; lo byte of data buffer
+         lda   #$08
+         sta   @blockcount           ; 8 blocks = 16 sectors
+         lda   gTrack
+         asl
+         asl
+         asl
+         sta   mliparam+4            ; lo byte of block number
+         rol
+         and   #$01
+         sta   mliparam+5            ; hi byte of block number
+         lda   #BASEPAGE             ; hi byte of data buffer
+         sta   mliparam+3
+@writeloop
+         lda   gHardDiskRef
+         ora   gRAMDiskRef
+         bne   +
+         lda   #$81                  ; 'write block' command
+         ldy   #$03                  ; parameter count
+         jsr   mli
+         bcs   @writeerr
+-        inc   mliparam+3            ; 2 pages per block
+         inc   mliparam+3
+         inc   mliparam+4
+         dec   @blockcount
+         bne   @writeloop
+         clc
+         bcc   @writedone            ; always branches
+
++        jsr   WriteToFile
+         bcc   -
+
+@writeerr
+@writedone
+         php
+         pha
+         lda   gHardDiskRef
+         ora   gRAMDiskRef
+         bne   +
+         jsr   ReorderBuffer
++        pla
+         plp
+         rts
+
+@blockcount !byte $FF
+
+;-------------------------------
+; WriteTrackSecondPass
+;
+; write the contents of BASEPAGE data buffer
+; from a file on a RAM disk
+; to the final destination drive
+;
+; in:    gRAMDiskRef contains file reference number of open file on RAM disk
+;        ProDOS is in memory
+; out:   if C set, write failed (A contains MLI error code)
+;        if C clear, write succeeded (A is clobbered)
+;        all other registers and flags clobbered
+;        ProDOS is in memory
+;-------------------------------
+WriteTrackSecondPass
+         lda   gRAMDiskRef
+         pha
+         lda   #0
+         sta   gRAMDiskRef
+         jsr   WriteTrackFirstPass
+         tax
+         pla
+         sta   gRAMDiskRef
+         txa
+         rts
+
+;-------------------------------
+; Create140KFile
+;
+; in:    @mliparam+1 points to pathname
+; out:   C clear if file create+open succeeded, and A = file reference number
+;        C set on error, and A = MLI error code
+;-------------------------------
+Create140KFile
+         jsr   CreateFile
+         bcs   @exit
+         lda   #$00
+         sta   mliparam+3            ; io_buffer at address $0800
+         lda   #$08
+         sta   mliparam+4
+         jsr   OpenFile
+         bcs   @deleteAndReturn
+
+         ldx   #$00
+         stx   mliparam+2
+         ldx   #$30
+         stx   mliparam+3
+         ldx   #$02
+         stx   mliparam+4            ; set file size (140KB)
+         jsr   SetEOF
+         bcc   @exit
+
+         pha
+         jsr   CloseFile
+         pla
+
+@deleteAndReturn
+         pha                         ; save error code
+         jsr   DeleteFile            ; delete file
+         pla                         ; restore error code
+         sec
+@exit    rts
+
+;-------------------------------
+; WriteToFile - write memory to image file on RAM or hard disk
+;   if RAM or hard disk is in use
+; in:  called has filled @mliparam
+;        with block number and write address
+; out: if error, C set and A contains error code
+;      if success, C clear
+;      all other flags clobbered
+;      all registers clobbered
+;-------------------------------
+WriteToFile
+         lda   mliparam+2
+         pha
+         lda   mliparam+3
+         pha
+
+         lda   mliparam+4
+         sta   @tmpparm4
+         asl
+         sta   mliparam+3
+         lda   mliparam+5
+         sta   @tmpparm5
+         rol
+         sta   mliparam+4
+         lda   #0
+         sta   mliparam+2
+         lda   gHardDiskRef
+         bne   +
+         lda   gRAMDiskRef
++        jsr   SetMark
+         tax
+         pla
+         sta   mliparam+3
+         pla
+         sta   mliparam+2
+         txa
+         bcs   @done
+         lda   #0
+         sta   mliparam+4
+         lda   #2
+         sta   mliparam+5
+         lda   gHardDiskRef
+         bne   +
+         lda   gRAMDiskRef
++        jsr   WriteFile
+
+@done
+         ldx   @tmpparm4
+         stx   mliparam+4
+         ldx   @tmpparm5
+         stx   mliparam+5
+         rts
+
+@tmpparm4 !byte 0
+@tmpparm5 !byte 0
