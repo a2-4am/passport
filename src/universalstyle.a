@@ -36,6 +36,7 @@ UseUniversal
 ; read unprotected disks. A separate patcher finds the actual code that
 ; alters the sector number to print it to the log.
 ;
++
          lda   gIsDinkeyDOS
          bne   +
          ldy   #$0F
