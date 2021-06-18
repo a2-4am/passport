@@ -331,20 +331,6 @@ SetEOF
          bne   JsrMLIAndReturnPlus1
 
 ;-------------------------------
-; close an open file
-; in:    ProDOS is in memory
-;        A = file reference number
-; out:   if error, C set and A contains error code
-;        if success, C clear
-;        ProDOS is in memory
-;-------------------------------
-CloseFile
-         sta   mliparam+1            ; store file reference number
-         lda   #CMD_CLOSE            ; MLI close command
-         ldy   #PC_CLOSE             ; number of parameters for 'close' command
-         jmp   mli
-
-;-------------------------------
 ; Create140KFile
 ;
 ; in:    @mliparam+1 points to pathname
@@ -380,55 +366,6 @@ Create140KFile
          pla                         ; restore error code
          sec
 @exit    rts
-
-;-------------------------------
-; CreateDir/CreateFile
-;
-; create a directory or file via ProDOS MLI
-; always sets access bits to $C3 (full access)
-; always sets creation to 0 (current date/time)
-; always sets storage type to $0D (directory) or 1 (file)
-; always sets file type to $0F (directory) or 6 (BIN file)
-; in:    caller has filled @mliparam+1 with address of pathname
-; out:   if error, C set and A contains error code
-;        if success, C clear and A clobbered
-;-------------------------------
-CreateDir
-         lda   #$0D
-         ldy   #$0F
-         bne   +
-CreateFile
-         lda   #1
-         ldy   #6
-+        sta   mliparam+7            ; storage type (directory or file)
-         sty   mliparam+4            ; file type (directory or binary)
-         lda   #FULL_ACCESS
-         sta   mliparam+3            ; access bits (full access)
-         lda   #0
-         sta   mliparam+8            ; creation date (current)
-         sta   mliparam+9
-         sta   mliparam+10           ; creation time (current)
-         sta   mliparam+11
-         lda   #CMD_CREATE           ; MLI create command
-         ldy   #PC_CREATE            ; number of parameters for 'create' command
-         jsr   mli
-         rts
-
-;-------------------------------
-; DeleteFile
-; delete a file using ProDOS MLI
-;
-; in:    ProDOS is in memory
-;        caller has filled @mliparam+1 with address of pathname
-; out:   if error, C set and A contains error code
-;        if success, C clear
-;        ProDOS is in memory
-;-------------------------------
-DeleteFile
-         lda   #CMD_DESTROY ; MLI destroy command
-         ldy   #PC_DESTROY ; number of parameters for 'destroy' command
-         jsr   mli
-         rts
 
 ;-------------------------------
 ; WriteToFile - write memory to image file on RAM or hard disk
@@ -513,8 +450,7 @@ GetVolumeName
 Online
          lda   #CMD_ONLINE
          ldy   #PC_ONLINE
-         jsr   mli
-         rts
+         bne   mli
 
 ;-------------------------------
 ; query volume information
@@ -567,3 +503,64 @@ mli      sta   mlicmd     ; store command code
 mlicmd   !byte 00         ; command number
          !word mliparam   ; address of parameter table
          rts
+
+;-------------------------------
+; close an open file
+; in:    ProDOS is in memory
+;        A = file reference number
+; out:   if error, C set and A contains error code
+;        if success, C clear
+;        ProDOS is in memory
+;-------------------------------
+CloseFile
+         sta   mliparam+1            ; store file reference number
+         lda   #CMD_CLOSE            ; MLI close command
+         ldy   #PC_CLOSE             ; number of parameters for 'close' command
+         bne   mli                   ; always branches
+
+;-------------------------------
+; DeleteFile
+; delete a file using ProDOS MLI
+;
+; in:    ProDOS is in memory
+;        caller has filled @mliparam+1 with address of pathname
+; out:   if error, C set and A contains error code
+;        if success, C clear
+;        ProDOS is in memory
+;-------------------------------
+DeleteFile
+         lda   #CMD_DESTROY          ; MLI destroy command
+         ldy   #PC_DESTROY           ; number of parameters for 'destroy' command
+         bne   mli                   ; always branches
+
+;-------------------------------
+; CreateDir/CreateFile
+;
+; create a directory or file via ProDOS MLI
+; always sets access bits to $C3 (full access)
+; always sets creation to 0 (current date/time)
+; always sets storage type to $0D (directory) or 1 (file)
+; always sets file type to $0F (directory) or 6 (BIN file)
+; in:    caller has filled @mliparam+1 with address of pathname
+; out:   if error, C set and A contains error code
+;        if success, C clear and A clobbered
+;-------------------------------
+CreateDir
+         lda   #$0D
+         ldy   #$0F
+         bne   +
+CreateFile
+         lda   #1
+         ldy   #6
++        sta   mliparam+7            ; storage type (directory or file)
+         sty   mliparam+4            ; file type (directory or binary)
+         lda   #FULL_ACCESS
+         sta   mliparam+3            ; access bits (full access)
+         lda   #0
+         sta   mliparam+8            ; creation date (current)
+         sta   mliparam+9
+         sta   mliparam+10           ; creation time (current)
+         sta   mliparam+11
+         lda   #CMD_CREATE           ; MLI create command
+         ldy   #PC_CREATE            ; number of parameters for 'create' command
+         bne   mli                   ; always branches
