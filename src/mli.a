@@ -276,6 +276,7 @@ ReadFile
          sta   mliparam+1 ; store file reference number
          lda   #CMD_READ  ; MLI read command
          ldy   #PC_READ   ; number of parameters for 'read' command
+JsrMLIAndReturnPlus1
          jsr   mli
          bcs   +
          lda   mliparam+1 ; if no error, return file reference number
@@ -295,10 +296,7 @@ SetMark
          sta   mliparam+1 ; store file reference number
          lda   #CMD_SETMARK ; MLI set_mark command
          ldy   #PC_SETMARK ; number of params for 'set_mark' cmd
-         jsr   mli
-         bcs   +
-         lda   mliparam+1 ; if no error, return file refnum
-+        rts
+         bne   JsrMLIAndReturnPlus1
 
 ;-------------------------------
 ; write to an open file via ProDOS MLI
@@ -314,10 +312,7 @@ WriteFile
          sta   mliparam+1 ; store file reference number
          lda   #CMD_WRITE ; MLI write command
          ldy   #PC_WRITE  ; number of parameters for 'write' command
-         jsr   mli
-         bcs   +
-         lda   mliparam+1 ; if no error, return file reference number
-+        rts
+         bne   JsrMLIAndReturnPlus1
 
 ;-------------------------------
 ; set file size in an open file via ProDOS MLI
@@ -333,10 +328,7 @@ SetEOF
          sta   mliparam+1 ; store file reference number
          lda   #CMD_SETEOF ; MLI set_eof command
          ldy   #PC_SETEOF ; number of params for 'set_eof' cmd
-         jsr   mli
-         bcs   +
-         lda   mliparam+1 ; if no error, return file refnum
-+        rts
+         bne   JsrMLIAndReturnPlus1
 
 ;-------------------------------
 ; close an open file
