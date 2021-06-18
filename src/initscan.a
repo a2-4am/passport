@@ -13,11 +13,7 @@ RAMFileName_e
 ;        all registers and flags clobbered
 ;-------------------------------
 ScanForDiskII
-         ldx   #$06
          lda   #$00
--        sta   DiskIIArray, x
-         dex
-         bpl   -
          sta   cmp1
          ldx   #$07
 -        txa
@@ -53,12 +49,7 @@ ScanForDiskII
 ;        all registers and flags clobbered
 ;-------------------------------
 ScanForRAMAndHardDisks
-         ldy   #14
          lda   #$00
--        sta   HardDiskArray, y
-         dey
-         bpl   -
-         sta   RAMDiskImagePath
          sta   iunit
 @nextunit
          lda   iunit

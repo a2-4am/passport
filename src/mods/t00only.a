@@ -96,6 +96,6 @@ T00_IsNotRWTS
          !source "../patchers/t00_rol1e.a"
          rts
 
-!if * > $4000 {
+!if * > $3200 {
   !serious "code is too large to fit in available space!"
 }

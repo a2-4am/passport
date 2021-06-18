@@ -1,9 +1,9 @@
 ;-------------------------------
 ; YE OLDE GRAND UNIFIED MEMORY MAP
 ;
-; 0210..02D7 - globals (see apidefs.a)
+; 0200..03FF - clobbered by DOS 3.2 tracer (and other supported 13-sector disks like Choplifter)
 ; 02D8..038D - clobbered by Optimum reader
-; 038E..03EF - globals (see apidefs.a)
+; 0300..0395 - clobbered by DOS 3.3 tracer
 ; 0800..08FF - clobbered by all boot tracers and RAM disk
 ; 0800..08CB - clobbered by exodecrunch
 ; 0900..09FF - clobbered by Special Delivery tracer and RAM disk
@@ -14,7 +14,8 @@
 ; 0F00..0FFF - backup of page $BF (SwapProDOS)
 ; 1000..1FFF - data buffer for current track
 ; 2000..35FF - clobbered by Special Delivery tracer
-; 3600..3FFF - clobbered by lomem DOS 3.3 / Special Delivery tracers
+; 2600..26FF - clobbered by all boot tracers (copy of C600)
+; 3600..3FFF - clobbered by lomem DOS 3.2/3.3 tracers, Special Delivery tracer
 ; 4000..B1FF - program code
 ; B200..BFFF - clobbered by DOS boot tracer (RDOS is B200+, DOS 3.x is B600+)
 ;-------------------------------
@@ -22,10 +23,9 @@
 
 ;-------------------------------
 ; SwapProDOS
-; saves/restores memory pages used by ProDOS
-; pages $BF
-; in:  none
-; out: all flags and registers preserved
+; saves/restores memory used by ProDOS ($BF00..$BFFF)
+; in:    none
+; out:   all flags and registers preserved
 ;-------------------------------
 SwapProDOS
          php
@@ -37,14 +37,32 @@ SwapProDOS
          jsr   SwapMemory
          pla
          plp
-         rts
+-        rts
+
+MoveT00PakLow
+         bit   T00PakPtr+1
+         bpl   -          ; already low
+         lda   #$B2
+         ldx   #$32
+         bne   +          ; always branches
+MoveT00PakHigh
+         bit   T00PakPtr+1
+         bmi   -          ; already high
+         lda   #$32
+         ldx   #$B2
++        stx   T00PakPtr+1
+         ldy   #$0D
+         ; /!\ execution falls through here
 
 ;-------------------------------
 ; CopyMemory
-; in:  A = source address (high)
-;      X = destination address (high)
-;      Y = number of pages to copy
-; out: all flags and registers clobbered
+; in:    A = source address (high)
+;        X = destination address (high)
+;        Y = number of pages to copy
+; out:   Z = 1
+;        X = 0
+;        Y = 0
+;        all other flags and registers clobbered
 ;-------------------------------
 CopyMemory
          sta   @source+2
@@ -64,8 +82,11 @@ CopyMemory
 ; ClearTSBuffer
 ; clear the $1000 byte memory buffer
 ; used to store the current track's data
-; in:  none
-; out: all flags and registers clobbered
+; in:    none
+; out:   Z = 1
+;        X preserved
+;        Y = 0
+;        all other flags and registers clobbered
 ;-------------------------------
 ClearTSBuffer
          lda   #BASEPAGE
@@ -75,10 +96,13 @@ ClearTSBuffer
 
 ;-------------------------------
 ; ClearMemory
-; in:  A = source address (high)
-;      X = value to set
-;      Y = number of pages
-; out: all flags and registers clobbered
+; in:    A = source address (high)
+;        X = value to set
+;        Y = number of pages
+; out:   Z = 1
+;        X preserved
+;        Y = 0
+;        all other flags and registers clobbered
 ;-------------------------------
 ClearMemory
          sta   @dest+2

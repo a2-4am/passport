@@ -5,10 +5,12 @@
 ;-------------------------------
 !zone {
 TraceDOS33
-         jsr   PreCheckT00
-;
-; pre-check passed, do the trace
-;
+         jsr   PreCheckT00           ; does not return on failure
+
+         lda   $08FE
+         bmi   +                     ; if we're about to trace a DOS that loads at $3600,
+         jsr   MoveT00PakHigh        ; move our packed T00 modules out of the way first
++
          lda   #<TraceDOS33b
          ldx   #>TraceDOS33b
          jmp   Trace

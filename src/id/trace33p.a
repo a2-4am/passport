@@ -50,6 +50,8 @@ TraceSpecDel
          ldy   #$01
          jsr   CopyMemory
 
+         jsr   MoveT00PakHigh
+
          lda   #<TraceSpecDel2
          ldx   #>TraceSpecDel2
          jmp   Trace

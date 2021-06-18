@@ -80,46 +80,6 @@ tmpx     =     $FD        ; byte
 tmpy     =     $FE        ; byte
 flag     =     $FF        ; byte
 
-; Other addresses we use for global variables
-gTrack   = $0210
-gSector  = gTrack+1
-mliparam = gSector+1
-access   = mliparam+3     ; access privileges (set by MLI get_file_info)
-filetype = access+1       ; file type (set by MLI get_file_info)
-auxtype  = filetype+1     ; auxiliary file type (2 bytes, set by MLI get_file_info)
-refnum   = auxtype        ; file refnum (set by MLI open)
-mlilen   = refnum+1       ; file length (set by MLI read)
-blocks   = mlilen+2       ; blocks used (set by getvolumeinfo)
-                          ; member is also used by createfile
-;        !fill 8          ; used by get_file_info
-OnlineReturn = blocks + 10
-VolumeName = OnlineReturn + 1
-;        !byte $FF,$FF,$FF,$FF,$FF,$FF,$FF
-;        !byte $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
-
-
-DiskIIArray = $038E
-;        !fill 7
-HardDiskArray = DiskIIArray+7
-;        !fill 15
-RAMDiskImagePath = HardDiskArray+15
-;        !byte 0          ; length byte (0 means no suitable RAM disk is available)
-;        !fill 1          ; / character
-;        !fill 4          ; longest possible volume name for supported RAM disks
-;                         ; (code only matches 'RAM' or 'RAMn' where n is usually a slot number)
-;        !fill 1          ; / character
-;        !fill 15         ; filename without leading slash (constant, see initscan.a)
-HardDiskImagePath = RAMDiskImagePath+21
-;        !byte 0          ; length byte
-;        !fill 1          ; / character
-;        !fill 15         ; longest possible volume name
-;        !fill 1          ; / character
-;        !fill 8          ; directory name (constant)
-;        !fill 12         ; filename with leading slash
-;                         ; (modified at runtime but always the same length)
-kForceLower = HardDiskImagePath+37 ; AND mask for lowercase letters (set at program startup)
-
-
 ; Other application-specific constants and assembler magic
 !ifdef RELBASE {
 !set VERBOSE = $00        ; override for make script
@@ -149,76 +109,95 @@ UNIV_D3 = $B8FC
 ;-------------------------------
 
 APIEND                        = HIGHPOINT
-gMode                         = APIEND-$01                        ; byte
-gPatchCount                   = gMode-$01                         ; byte
-gTriedUniv                    = gPatchCount-$01                   ; byte
-gSaidWriting                  = gTriedUniv-$01                    ; byte
-gChangedPrefs                 = gSaidWriting-$01                  ; byte
-gLastTrack                    = gChangedPrefs-$01                 ; byte
-gDiskVolumeNumber             = gLastTrack-$01                    ; byte
+gTrack                        = APIEND-$01                            ; byte
+gSector                       = gTrack-$01                            ; byte
+mliparam                      = gSector-26                            ; 26 bytes
+access   = mliparam + 3   ; access privileges (set by MLI get_file_info)
+filetype = access + 1     ; file type (set by MLI get_file_info)
+auxtype  = filetype + 1   ; auxiliary file type (2 bytes, set by MLI get_file_info)
+refnum   = auxtype        ; file refnum (set by MLI open)
+mlilen   = refnum + 1     ; file length (set by MLI read)
+blocks   = mlilen + 2     ; blocks used (set by getvolumeinfo)
+                          ; member is also used by createfile
+;        !fill 8          ; used by get_file_info
+VolumeName                    = mliparam-15                           ; 15 bytes
+OnlineReturn                  = VolumeName-1                          ; byte
+kForceLower                   = OnlineReturn-1                        ; byte
+T00PakPtr                     = kForceLower-2                         ; 2 bytes
+DiskIIArray                   = T00PakPtr-7                           ; 7 bytes
+HardDiskArray                 = DiskIIArray-15                        ; 15 bytes
+RAMDiskImagePath              = HardDiskArray-21                      ; 21 bytes
+HardDiskImagePath             = RAMDiskImagePath-37                   ; 37 bytes
+gMode                         = HardDiskImagePath-$01                 ; byte
+gPatchCount                   = gMode-$01                             ; byte
+gTriedUniv                    = gPatchCount-$01                       ; byte
+gSaidWriting                  = gTriedUniv-$01                        ; byte
+gChangedPrefs                 = gSaidWriting-$01                      ; byte
+gLastTrack                    = gChangedPrefs-$01                     ; byte
+gDiskVolumeNumber             = gLastTrack-$01                        ; byte
 ;FIRSTFILTER ; add new gIs* below this line
-gIsDOS32                      = gDiskVolumeNumber-$01             ; byte
-gIsBoot0                      = gIsDOS32-$01                      ; byte
-gCapturedDiskVolumeNumber     = gIsBoot0-$01                      ; byte
-gIsProDOS                     = gCapturedDiskVolumeNumber-$01     ; byte
-gIsDinkeyDOS                  = gIsProDOS-$01                     ; byte
-gIsPascal                     = gIsDinkeyDOS-$01                  ; byte
-gIsProtDOS                    = gIsPascal-$01                     ; byte
-gIsDavidDOS                   = gIsProtDOS-$01                    ; byte
-gIsEA                         = gIsDavidDOS-$01                   ; byte
-gPossibleGamco                = gIsEA-$01                         ; byte
-gIsOptimum                    = gPossibleGamco-$01                ; byte
-gPossibleD5D5F7               = gIsOptimum-$01                    ; byte
-gIs8b3                        = gPossibleD5D5F7-$01               ; byte
-gIsMilliken1                  = gIs8b3-$01                        ; byte
-gAdventureInternational       = gIsMilliken1-$01                  ; byte
-gIsLaureate                   = gAdventureInternational-$01       ; byte
-gIsDatasoft                   = gIsLaureate-$01                   ; byte
-gIsSierra                     = gIsDatasoft-$01                   ; byte
-gIsSierra13                   = gIsSierra-$01                     ; byte
-gIsF7F6                       = gIsSierra13-$01                   ; byte
-gIsTrillium                   = gIsF7F6-$01                       ; byte
-gPolarwareTamperCheck         = gIsTrillium-$01                   ; byte
-gForceDiskVol                 = gPolarwareTamperCheck-$01         ; byte
-gIsAdvent                     = gForceDiskVol-$01                 ; byte
-gIsPanglosDOS                 = gIsAdvent-$01                     ; byte
-gIsDavidson                   = gIsPanglosDOS-$01                 ; byte
-gIsRDOS13                     = gIsDavidson-$01                   ; byte
-gIsMUSERWTS                   = gIsRDOS13-$01                     ; byte
-gIsHolle                      = gIsMUSERWTS-$01                   ; byte
-gIsPhoenix                    = gIsHolle-$01                      ; byte
-gIsDiversi                    = gIsPhoenix-$01                    ; byte
-gIsTSR                        = gIsDiversi-$01                    ; byte
-gPossibleMECCSwapper          = gIsTSR-$01                        ; byte
-gPossibleWoodbury             = gPossibleMECCSwapper-$01          ; byte
-gPossibleB4BBBasic            = gPossibleWoodbury-$01             ; byte
-gIsLowDOS                     = gPossibleB4BBBasic-$01            ; byte
+gIsDOS32                      = gDiskVolumeNumber-$01                 ; byte
+gIsBoot0                      = gIsDOS32-$01                          ; byte
+gCapturedDiskVolumeNumber     = gIsBoot0-$01                          ; byte
+gIsProDOS                     = gCapturedDiskVolumeNumber-$01         ; byte
+gIsDinkeyDOS                  = gIsProDOS-$01                         ; byte
+gIsPascal                     = gIsDinkeyDOS-$01                      ; byte
+gIsProtDOS                    = gIsPascal-$01                         ; byte
+gIsDavidDOS                   = gIsProtDOS-$01                        ; byte
+gIsEA                         = gIsDavidDOS-$01                       ; byte
+gPossibleGamco                = gIsEA-$01                             ; byte
+gIsOptimum                    = gPossibleGamco-$01                    ; byte
+gPossibleD5D5F7               = gIsOptimum-$01                        ; byte
+gIs8b3                        = gPossibleD5D5F7-$01                   ; byte
+gIsMilliken1                  = gIs8b3-$01                            ; byte
+gAdventureInternational       = gIsMilliken1-$01                      ; byte
+gIsLaureate                   = gAdventureInternational-$01           ; byte
+gIsDatasoft                   = gIsLaureate-$01                       ; byte
+gIsSierra                     = gIsDatasoft-$01                       ; byte
+gIsSierra13                   = gIsSierra-$01                         ; byte
+gIsF7F6                       = gIsSierra13-$01                       ; byte
+gIsTrillium                   = gIsF7F6-$01                           ; byte
+gPolarwareTamperCheck         = gIsTrillium-$01                       ; byte
+gForceDiskVol                 = gPolarwareTamperCheck-$01             ; byte
+gIsAdvent                     = gForceDiskVol-$01                     ; byte
+gIsPanglosDOS                 = gIsAdvent-$01                         ; byte
+gIsDavidson                   = gIsPanglosDOS-$01                     ; byte
+gIsRDOS13                     = gIsDavidson-$01                       ; byte
+gIsMUSERWTS                   = gIsRDOS13-$01                         ; byte
+gIsHolle                      = gIsMUSERWTS-$01                       ; byte
+gIsPhoenix                    = gIsHolle-$01                          ; byte
+gIsDiversi                    = gIsPhoenix-$01                        ; byte
+gIsTSR                        = gIsDiversi-$01                        ; byte
+gPossibleMECCSwapper          = gIsTSR-$01                            ; byte
+gPossibleWoodbury             = gPossibleMECCSwapper-$01              ; byte
+gPossibleB4BBBasic            = gPossibleWoodbury-$01                 ; byte
+gIsLowDOS                     = gPossibleB4BBBasic-$01                ; byte
 ;LASTFILTER ; add new gIs* above this line
 ;gIsInfocom18 is a special case whose ID is not in the regular inspection path
-gIsInfocom18                  = gIsLowDOS-$01                     ; byte
+gIsInfocom18                  = gIsLowDOS-$01                         ; byte
 ;gIs13Sector is a special case whose ID is not in the regular inspection path
-gIs13Sector                   = gIsInfocom18-$01                  ; byte
+gIs13Sector                   = gIsInfocom18-$01                      ; byte
 ;gMECCFastloadType is a special case integer whose default value cannot be #FALSE
-gMECCFastloadType             = gIs13Sector-$01                   ; byte
+gMECCFastloadType             = gIs13Sector-$01                       ; byte
 ;gIsRW18 is a special case whose ID is not in the regular inspection path
-gIsRW18                       = gMECCFastloadType-$01             ; byte
+gIsRW18                       = gMECCFastloadType-$01                 ; byte
 
-gOnAClearDayYouCanReadForever = gIsRW18-$01                       ; byte
-gTargetType                   = gOnAClearDayYouCanReadForever-$01 ; byte
-gRAMDiskRef                   = gTargetType-$01                   ; byte
-gHardDiskRef                  = gRAMDiskRef-$01                   ; byte
-gDisplayBytes                 = gHardDiskRef-$0A                  ; 10 bytes
-jcompare                      = gDisplayBytes-$03                 ; 3-byte
-jmodify                       = jcompare-$03                      ; 3-byte
-jPrintByID                    = jmodify-$03                       ; 3-byte
-jSearchTrack                  = jPrintByID-$03                    ; 3-byte
-jCallRWTS                     = jSearchTrack-$03                  ; 3-byte
-jCopyMemory                   = jCallRWTS-$03                     ; 3-byte
-jCopyUniversalAnywhere        = jCopyMemory-$03                   ; 3-byte
-jConstructStandardDelivery    = jCopyUniversalAnywhere-$03        ; 3-byte
-gNIBTableFF                   = jConstructStandardDelivery-1      ; 1 byte
-gNIBTable                     = gNIBTableFF-$FF                   ; accessed by +$80
-gNIBTableBase                 = gNIBTableFF-$7F                   ; 127 bytes
+gOnAClearDayYouCanReadForever = gIsRW18-$01                           ; byte
+gTargetType                   = gOnAClearDayYouCanReadForever-$01     ; byte
+gRAMDiskRef                   = gTargetType-$01                       ; byte
+gHardDiskRef                  = gRAMDiskRef-$01                       ; byte
+gDisplayBytes                 = gHardDiskRef-$0A                      ; 10 bytes
+jcompare                      = gDisplayBytes-$03                     ; 3-byte
+jmodify                       = jcompare-$03                          ; 3-byte
+jPrintByID                    = jmodify-$03                           ; 3-byte
+jSearchTrack                  = jPrintByID-$03                        ; 3-byte
+jCallRWTS                     = jSearchTrack-$03                      ; 3-byte
+jCopyMemory                   = jCallRWTS-$03                         ; 3-byte
+jCopyUniversalAnywhere        = jCopyMemory-$03                       ; 3-byte
+jConstructStandardDelivery    = jCopyUniversalAnywhere-$03            ; 3-byte
+gNIBTableFF                   = jConstructStandardDelivery-1          ; 1 byte
+gNIBTable                     = gNIBTableFF-$FF                       ; accessed by +$80
+gNIBTableBase                 = gNIBTableFF-$7F                       ; 127 bytes
 
 !ifdef MODULE {
 compare                   = jcompare
@@ -233,6 +212,23 @@ ConstructStandardDelivery = jConstructStandardDelivery
 
 !ifdef VERBOSE {
   !if VERBOSE=1 {
+!warn "gTrack=",gTrack
+!warn "gSector=",gSector
+!warn "mliparam=",mliparam
+!warn "access=",access
+!warn "filetype=",filetype
+!warn "auxtype=",auxtype
+!warn "refnum=",refnum
+!warn "mlilen=",mlilen
+!warn "blocks=",blocks
+!warn "OnlineReturn=",OnlineReturn
+!warn "VolumeName=",VolumeName
+!warn "kForceLower=",kForceLower
+!warn "T00PakPtr=",T00PakPtr
+!warn "DiskIIArray=",DiskIIArray
+!warn "HardDiskArray=",HardDiskArray
+!warn "RAMDiskImagePath=",RAMDiskImagePath
+!warn "HardDiskImagePath=",HardDiskImagePath
 !warn "gMode=",gMode
 !warn "gPatchCount=",gPatchCount
 !warn "gTriedUniv=",gTriedUniv

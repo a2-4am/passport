@@ -148,8 +148,7 @@ ChangeTrack
 
 ChangeTrackNW             ; "N"o "W"rite
          sta   gTrack
-         jsr   ClearTSBuffer
-         rts
+         jmp   ClearTSBuffer
 
 ;-------------------------------
 ; ChangeSector

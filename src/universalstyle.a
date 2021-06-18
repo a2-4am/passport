@@ -117,6 +117,9 @@ StartWithUniv
 
 CopyUniversal
          lda   #$B8
+         pha
+         jsr   MoveT00PakLow         ; move T00 modules out of the way if necessary
+         pla
          ; /!\ execution falls through here
 
 CopyUniversalAnywhere

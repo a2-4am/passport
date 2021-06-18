@@ -90,7 +90,7 @@ IDDOS32LO
 TraceDOS32
          lda   #<.TraceDOS32b
          ldx   #>.TraceDOS32b
-         bne   .linktrace
+         bne   .linktrace            ; always branches
 TraceDOS32LO
          lda   #<.TraceDOS32LOb
          ldx   #>.TraceDOS32LOb
@@ -152,14 +152,18 @@ TraceDOS32LO
          !byte $6C,$3E,$00
          bcs   .tryChoplifter
          lda   $03CC
-         cmp   #$B6
-         beq   +
-         cmp   #$36
-         beq   +
-         cmp   #$B2 ;RDOS
-         bne   .fail      ; passport-test-suite/Epidemic.woz [Z=1] matches
+         cmp   #$B2                  ; RDOS
          clc
-+        php
+         beq   ++                    ; passport-test-suite/Epidemic.woz [Z=1] matches
+         cmp   #$B6                  ; DOS 3.2 loaded high
+         beq   +
+         cmp   #$36                  ; DOS 3.2 loaded low
+         bne   .fail
+         pha
+         jsr   MoveT00PakHigh        ; move our packed T00 modules out of the way first
+         pla
++        sec
+++       php                         ; pulled later to distinguish RDOS from DOS 3.2
 ;
 ; set up RWTS entry point and other self-modified vectors
 ; that depend on where the RWTS is in memory

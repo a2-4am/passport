@@ -262,3 +262,25 @@ LASTFILTER
          !byte %00000000  ; bit 7 0=verify, 1=see bit 6
                           ; bit 6 0=demuffin, 1=crack
                           ; set based on main menu choice
+;HardDiskImagePath
+         !fill 37
+;RAMDiskImagePath
+         !fill 21
+;HardDiskArray
+         !fill 15
+;DiskIIArray
+         !fill 7
+;T00PakPtr
+         !word $3200
+;kForceLower
+         !byte $FF
+;OnlineReturn
+         !byte 0
+;VolumeName
+         !fill 15
+;mliparam
+         !fill 26
+;gSector
+         !byte 0
+;gTrack
+         !byte 0
