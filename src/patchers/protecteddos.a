@@ -39,7 +39,6 @@
          tax
 .swapper2
          lda   #$FF       ; modified at runtime
-         ;Y=#$01
          jsr   modify     ; offset $08. $D5 -> 9B
          !byte $9B
 
@@ -104,14 +103,11 @@
          !byte $A2,$D5
          !byte $8E,$2C,$BF
          bcs   .exitt1
-         lda   #$02
-         ldx   #$B0
+         inx
          ldy   #$01
          jsr   modify     ; then set T01,S02,$B0 =
          !byte $AD
-         lda   #$02
          ldx   #$B7
-         ;Y=#$01
          jsr   modify     ; and set T01,S02,$B7 =
          !byte $9B
 
@@ -157,7 +153,6 @@
 ;
 ; bypass check for duplicate T00,S00
 ;
-         lda   #$01
          ldx   #$93
          ldy   #$03
          jsr   compare    ; if T00,S01,$93 ==
@@ -174,7 +169,7 @@
 ;
          lda   #$05
          ldx   #$15
-         ldy   #$02
+         dey
          jsr   compare    ; if T00,S05,$15 ==
          !byte $A5,$2F
          bcs   .exit      ; passport-test-suite/Math Blaster v080584.woz [C=0] matches
@@ -185,27 +180,14 @@
 ; re-enable write mode if it was disabled
 ;
          lda   #$07
-         ldx   #$48
-         ldy   #$19
-         jsr   compare    ; if T00,S07,$48 ==
-         !byte $A0,$04
-         !byte $48
-         !byte $68
-         !byte $A0,$B9,$BD
-         !byte $88
-         !byte $D0,$F8
-         !byte $A9,WILDCARD
-         !byte $20,$B8,$BD
-         !byte $A9,WILDCARD
-         !byte $20,$B8,$BD
-         !byte $A9,WILDCARD
-         !byte $20,$B8,$BD
-         bcs   .writeIsOK
          ldx   #$4C
          ldy   #$01
+         jsr   compare    ; if T00,S07,$4C ==
+         !byte $A0
+         bcs   +          ; passport-test-suite/Bingo Bugglebee Presents Outdoor Safety.woz [C=0] matches
          jsr   modify     ; then set T00,S07,$4C =
          !byte $20
-.writeIsOK
++
          jmp   .exit
 
 ; subroutines for getting (and erasing) the embedded
