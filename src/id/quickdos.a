@@ -9,8 +9,7 @@
 ;      all registers clobbered
 ;      all other flags clobbered
 ;-------------------------------
-!zone {
-IDQuickDOS
+!macro IDQuickDOS {
          lda   #$00
          ldx   #$01
          ldy   #$0A
@@ -20,5 +19,5 @@ IDQuickDOS
          !byte $D0,$27    ; BNE +$27
          !byte $78        ; SEI
          !byte $AD,$83,$C0; LDA $C083
-         rts              ; passport-test-suite/Kid Niki.woz [C=0] matches
+                          ; passport-test-suite/Kid Niki.woz [C=0] matches
 }

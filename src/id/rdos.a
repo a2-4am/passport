@@ -9,8 +9,7 @@
 ;      all registers clobbered
 ;      all other flags clobbered
 ;-------------------------------
-!zone {
-IDRDOS
+!macro IDRDOS {
          lda   #$00
          tax
          ldy   #$0E
@@ -22,5 +21,5 @@ IDRDOS
          !byte $A0,$1F    ; LDY #$1F
          !byte $B9,$00,$08; LDA $0800,Y
          !byte $49        ; EOR
-         rts              ; passport-test-suite/Roadwar 2000.woz [C=0] matches
+                          ; passport-test-suite/Roadwar 2000.woz [C=0] matches
 }

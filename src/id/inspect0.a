@@ -236,7 +236,8 @@ IDBootloader
 ; detectable now because IDVolumeName just read the first sector of the
 ; volume directory into memory so we can look for a unique filename
 ;
-+        jsr   IDDinkeyDOS
++
+         +IDDinkeyDOS
          bcs   +
          lda   #$0B
          sta   gDisplayBytes
@@ -247,7 +248,8 @@ IDBootloader
 ;
 ; Apple Pascal (all versions)
 ;
-+        jsr   IDPascal
++
+         +IDPascal
          bcs   +
          jsr   PrintByID
          !byte s_pascalb0
@@ -277,7 +279,8 @@ IDBootloader
 ;
 ; TSR bootloader
 ;
-+        jsr   IDTSR
++
+         +IDTSR
          bcs   +
          jsr   PrintByID
          !byte s_tsr
@@ -287,7 +290,8 @@ IDBootloader
 ; Micrograms bootloader
 ; (just for display)
 ;
-+        jsr   IDMicrograms
++
+         +IDMicrograms
          bcs   +
          jsr   PrintByID
          !byte s_micrograms
@@ -295,7 +299,8 @@ IDBootloader
 ; Quick-DOS
 ; (just for display)
 ;
-+        jsr   IDQuickDOS
++
+         +IDQuickDOS
          bcs   +
          jsr   PrintByID
          !byte s_quickdos
@@ -303,7 +308,8 @@ IDBootloader
 ; RDOS
 ; (just for display)
 ;
-+        jsr   IDRDOS
++
+         +IDRDOS
          bcs   +
          jsr   PrintByID
          !byte s_rdos

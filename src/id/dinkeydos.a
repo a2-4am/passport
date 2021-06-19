@@ -8,12 +8,11 @@
 ;      all registers clobbered
 ;      all other flags clobbered
 ;-------------------------------
-!zone {
-IDDinkeyDOS
+!macro IDDinkeyDOS {
          lda   #$0B
          ldx   #$2B
          tay
          jsr   compare    ; if T00,S0B,$2B ==
          !byte $29,$44,$49,$4E,$4B,$45,$59,$44,$4F,$53,$00
-         rts              ; passport-test-suite/Ultima V.woz [C=0] matches
+                          ; passport-test-suite/Ultima V.woz [C=0] matches
 }

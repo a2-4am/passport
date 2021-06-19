@@ -13,20 +13,21 @@
 ; - Dungeon
 ; - Theseus and the Minotaur
 ;-------------------------------
-IDTSR
+!macro IDTSR {
          lda   #$00
          ldx   #$FE
          ldy   #$02
          jsr   compare
          !byte $B0,$0F
-         bcs   +
+         bcs   @notTSR
          ldx   #$1C
          ldy   #$03
          jsr   compare
          !byte $20,$B3,$08
-         bcs   +
+         bcs   @notTSR
          ldx   #$01
          ldy   #$04
          jsr   compare
          !byte $A5,$27,$C9,$09
-+        rts              ; passport-test-suite/Dawn Patrol.woz [C=0] matches
+@notTSR                   ; passport-test-suite/Dawn Patrol.woz [C=0] matches
+}
