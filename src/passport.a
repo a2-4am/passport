@@ -78,8 +78,8 @@ NonRelocatable
          !source "id/davidson.a"
          !source "id/holle.a"
          !source "id/phoenix.a"
-         !source "id/bootfailure.a"
          !source "id/555.a"
+         !source "id/bootfailure.a"
          !source "id/inspect0.a"
          !source "print.a"
          !source "compare.a"
@@ -310,9 +310,7 @@ CleanExit
 ; Makes modifications in memory only.
 ; in:    @BASEPAGE contains one track worth of data ($1000 bytes)
 ;        gTrack contains track number
-; out:   if C set, no known protections were found and
-;          no modifications were made
-;        if C clear, at least one modification was made
+; out:   everything clobbered
 ;-------------------------------
 AnalyzeTrack
          lda   gTrack
@@ -334,7 +332,7 @@ AnalyzeTrack
          !source "patchers/t02volumename.a"     ; T02 && gIsBoot0 only
          bit   gMode
          bmi   +
-         jmp   _checkPatchCount
+         rts
 +
          ; only run these modules in crack mode
          !source "patchers/universale7.a"
@@ -425,15 +423,7 @@ _endProDOSPatchers
          !source "patchers/a6bc95.a"            ; gIsPascal only
          !source "patchers/fbffpascal.a"        ; gIsPascal only
 _endPascalPatchers
-
-_checkPatchCount
-         lda   gPatchCount
-         beq   @noPatches
-         clc
-         !byte $24        ; hide next SEC
-@noPatches
-         sec              ; set carry if nothing happened
-         rts
+         ; /!\ execution falls through here because why not
 
 ; utility functions used by several patchers
 inx0F    inx
