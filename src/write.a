@@ -124,15 +124,14 @@ WriteTrackSecondPass
 Create140KFile
          jsr   CreateBinFile
          bcs   @exit
-         lda   #$00
-         sta   mliparam+3            ; io_buffer at address $0800
+         ldx   #$00
+         stx   mliparam+3            ; io_buffer at address $0800
          lda   #$08
          sta   mliparam+4
          jsr   OpenFile
          bcs   @deleteAndReturn
 
-         ldx   #$00
-         stx   mliparam+2
+         stx   mliparam+2            ; X=0 here
          ldx   #$30
          stx   mliparam+3
          ldx   #$02

@@ -42,11 +42,12 @@ ERR_EXIST =    $47
 ;
 ; in:    ProDOS is in memory
 ;        caller has filled @mliparam with address of
-;          pathname, address of data buffer, and maximum
-;          data length
+;        pathname, address of data buffer, and maximum
+;        data length
 ; out:   if C set, open failed and A contains error code
 ;        if C clear, open succeeded and A contains
-;          file reference number
+;        file reference number
+;        preserves X
 ;        ProDOS is in memory
 ;-------------------------------
 OpenFile
@@ -62,12 +63,15 @@ OpenFile
 ;-------------------------------
 ; read an open file via ProDOS MLI
 ;
-; in:  A = file reference number
-;      caller has filled @mliparam with address of
+; in:    ProDOS is in memory
+;        A = file reference number
+;        caller has filled @mliparam with address of
 ;        data buffer and maximum data length
-; out: if C set, read failed and A contains error code
-;      if C clear, read succeeded and A contains the same
+; out:   if C set, read failed and A contains error code
+;        if C clear, read succeeded and A contains the same
 ;        file reference number that was passed in
+;        preserves X
+;        ProDOS is in memory
 ;-------------------------------
 ReadFile
          sta   mliparam+1 ; store file reference number
@@ -82,12 +86,13 @@ JsrMLIAndReturnPlus1
 ;-------------------------------
 ; change file position in an open file via ProDOS MLI
 ;
-; in:  A = file reference number
-;      caller has filled @mliparam+2/+3/+4 with
+; in:    A = file reference number
+;        caller has filled @mliparam+2/+3/+4 with
 ;        new file position
-; out: if C set, set_mark call failed and A contains error code
-;      if C clear, set_mark call succeeded and A contains
+; out:   if C set, set_mark call failed and A contains error code
+;        if C clear, set_mark call succeeded and A contains
 ;        the same file reference number that was passed in
+;        preserves X
 ;-------------------------------
 SetMark
          sta   mliparam+1 ; store file reference number
@@ -98,12 +103,13 @@ SetMark
 ;-------------------------------
 ; write to an open file via ProDOS MLI
 ;
-; in:  A = file reference number
-;      caller has filled @mliparam with address of
+; in:    A = file reference number
+;        caller has filled @mliparam with address of
 ;        data buffer and data length
-; out: if C set, write failed and A contains error code
-;      if C clear, write succeeded and A contains the same
+; out:   if C set, write failed and A contains error code
+;        if C clear, write succeeded and A contains the same
 ;        file reference number that was passed in
+;        preserves X
 ;-------------------------------
 WriteFile
          sta   mliparam+1 ; store file reference number
@@ -114,12 +120,13 @@ WriteFile
 ;-------------------------------
 ; set file size in an open file via ProDOS MLI
 ;
-; in:  A = file reference number
-;      caller has filled @mliparam+2/+3/+4 with
+; in:    A = file reference number
+;        caller has filled @mliparam+2/+3/+4 with
 ;        new file size
-; out: if C set, set_eof call failed and A contains error code
-;      if C clear, set_eof call succeeded and A contains
+; out:   if C set, set_eof call failed and A contains error code
+;        if C clear, set_eof call succeeded and A contains
 ;        the same file reference number that was passed in
+;        preserves X
 ;-------------------------------
 SetEOF
          sta   mliparam+1 ; store file reference number
@@ -129,11 +136,13 @@ SetEOF
 
 ;-------------------------------
 ; get volume name of disk in specific slot+drive
-; in:  A = unit number (DSSS0000)
-; out: if no disk in drive or any MLI error, C set and A contains error code
-;      if disk found, C clear and @VolumeName contains volume name
-;      (up to 15 character name, no leading slash)
-;      note: lower 4 bits of @OnlineReturn contain length of @VolumeName
+;
+; in:    A = unit number (DSSS0000)
+; out:   if no disk in drive or any MLI error, C set and A contains error code
+;        if disk found, C clear and @VolumeName contains volume name
+;        (up to 15 character name, no leading slash)
+;        note: lower 4 bits of @OnlineReturn contain length of @VolumeName
+;        preserves X
 ;-------------------------------
 GetVolumeName
          sta   mliparam+1
@@ -145,11 +154,11 @@ GetVolumeName
 
 ;-------------------------------
 ; check if volume is online
-; using ProDOS MLI
-; in:  caller has filled @mliparam
-;        with unit number
-; out: if error, C set and A contains error code
-;      if success, C clear
+;
+; in:    caller has filled @mliparam with unit number
+; out:   if error, C set and A contains error code
+;        if success, C clear
+;        preserves X
 ;-------------------------------
 Online
          lda   #CMD_ONLINE
@@ -158,12 +167,13 @@ Online
 
 ;-------------------------------
 ; query volume information
-; using ProDOS MLI
+;
 ; in:    @OnlineReturn+@VolumeName contain the length+name of the volume to query
 ;        (this will be true if you just called GetVolumeName)
 ; out:   if error, C set and A contains error code
 ;        if success, C clear and MLI buffer is filled
 ;        (access, file type, block count, dates and times)
+;        clobbers X/Y
 ;-------------------------------
 GetVolumeInfo
          lda   OnlineReturn
@@ -214,6 +224,7 @@ mlicmd   !byte 00         ; command number
 ;        A = file reference number
 ; out:   if error, C set and A contains error code
 ;        if success, C clear
+;        preserves X
 ;        ProDOS is in memory
 ;-------------------------------
 CloseFile
@@ -230,6 +241,7 @@ CloseFile
 ;        caller has filled @mliparam+1 with address of pathname
 ; out:   if error, C set and A contains error code
 ;        if success, C clear
+;        preserves X
 ;        ProDOS is in memory
 ;-------------------------------
 DeleteFile
@@ -246,6 +258,7 @@ DeleteFile
 ; in:    caller has filled @mliparam+1 with address of pathname
 ; out:   if error, C set and A contains error code
 ;        if success, C clear and A clobbered
+;        preserves X
 ;-------------------------------
 CreateDir
          lda   #$0D
