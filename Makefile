@@ -44,6 +44,8 @@ asm:
 	grep "PREFSFILE=" build/vars.log | cut -d":" -f3 | cut -d"(" -f1 >> build/vars.a
 	grep "SLOT=" build/vars.log | cut -d":" -f3 | cut -d"(" -f1 >> build/vars.a
 	grep "DRIVE=" build/vars.log | cut -d":" -f3 | cut -d"(" -f1 >> build/vars.a
+	grep "MainMenu=" build/vars.log | cut -d":" -f3 | cut -d"(" -f1 >> build/vars.a
+	grep "CheckCache=" build/vars.log | cut -d":" -f3 | cut -d"(" -f1 >> build/vars.a
 	$(EXOMIZER) -b build/passport.tmp -o build/passport.pak
 	cd src && $(ACME) -DFORWARD_DECRUNCHING=0 wrapper.a
 	cp res/work.po "$(BUILDDISK)".po

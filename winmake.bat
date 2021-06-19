@@ -37,6 +37,8 @@ for /f "tokens=4,* delims=:(" %%q in ('find "PREFSVER=" ..\build\out.txt') do ec
 for /f "tokens=4,* delims=:(" %%q in ('find "PREFSFILE=" ..\build\out.txt') do echo %%q >> ..\build\vars.a
 for /f "tokens=4,* delims=:(" %%q in ('find "SLOT=" ..\build\out.txt') do echo %%q >> ..\build\vars.a
 for /f "tokens=4,* delims=:(" %%q in ('find "DRIVE=" ..\build\out.txt') do echo %%q >> ..\build\vars.a
+for /f "tokens=4,* delims=:(" %%q in ('find "MainMenu=" ..\build\out.txt') do echo %%q >> ..\build\vars.a
+for /f "tokens=4,* delims=:(" %%q in ('find "CheckCache=" ..\build\out.txt') do echo %%q >> ..\build\vars.a
 cd ..\build
 %EXOMIZER% raw -q -P23 -T4 -b passport.tmp -o passport.pak
 cd ..\src

@@ -41,8 +41,6 @@ VERBOSE  = $00       ; set to $01 to display API label addresses
 !ct "lcase.ct"
 
 Relocatable
-         jmp   MainMenu
-
          !bin "../build/t00only.pak"
 
 NonRelocatable
@@ -100,25 +98,13 @@ NonRelocatable
          !source "cffa.a"
          !source "progress.a"
          !source "rwts.a"
-         !source "wholetrack.a"
          !source "standarddelivery.a"
+         !source "wholetrack.a"
          !source "adstyle.a"
          !source "universalstyle.a"
          !source "crackme.a"
 
 MainMenu
-         ldx   #$FF
-         txs
-         lda   #<MainMenu            ; set reset vector
-         sta   $03F2
-         lda   #>MainMenu
-         sta   $03F3
-         eor   #$A5
-         sta   $03F4
-         lda   #<CheckCache          ; set up output hook used to store log messages before they scroll off
-         sta   $36
-         lda   #>CheckCache
-         sta   $37
          jsr   Cleanup               ; RAM/HD files might be left open after Ctrl-Reset
          jsr   ClearScreen
          jsr   MoveT00PakLow
@@ -519,4 +505,6 @@ _byte_skip_hi:
   !warn "PREFSFILE=",PREFSFILE
   !warn "SLOT=",SLOT
   !warn "DRIVE=",DRIVE
+  !warn "MainMenu=",MainMenu
+  !warn "CheckCache=",CheckCache
 }

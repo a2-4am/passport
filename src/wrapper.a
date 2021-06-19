@@ -52,25 +52,30 @@ OneTimeSetup
          jsr   ScanForRAMAndHardDisks; scan for things that look like RAM disks or hard disks
          +LoadPrefs                  ; load preferences (if available)
          jsr   ThisSlot              ; get information about selected drive and set gTargetType for main menu
-         lda   $FE
-         sta   $F0
-         lda   $FF
-         sta   $F1
-         lda   #$FD
-         sta   $F2
-         lda   #$31
-         sta   $F3
          ldx   #$0D
+         ldy   #$32
+         sty   $F1
          ldy   #$00
--        lda   ($F0), y
-         sta   ($F2), y
+         sty   $F0
+-        lda   ($FE), y
+         sta   ($F0), y
          iny
          bne   -
+         inc   $FF
          inc   $F1
-         inc   $F3
          dex
          bne   -
-         jmp   ($FE)
+         lda   #<MainMenu            ; set reset vector
+         sta   $03F2
+         lda   #>MainMenu
+         sta   $03F3
+         eor   #$A5
+         sta   $03F4
+         lda   #<CheckCache          ; set up output hook used to store log messages before they scroll off
+         sta   $36
+         lda   #>CheckCache
+         sta   $37
+         jmp   MainMenu
 
          !source "initscan.a"
 
