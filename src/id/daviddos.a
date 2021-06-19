@@ -19,7 +19,6 @@ IDDavid
          !byte $C9,$09    ; CMP #$09
          !byte $D0,$17    ; BNE +$17
          bcs   .exit
-         lda   #$00
          ldx   #$4A
          ldy   #$0B
          jsr   compare    ; and T00,S00,$4A ==
