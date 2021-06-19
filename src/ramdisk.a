@@ -2,15 +2,16 @@
 ; CreateFileOnRAMDisk
 ; create 140KB file on RAM disk (filename is hardcoded)
 ;
-; in:    ProDOS is in memory
+; in:    ProDOS is not in memory
 ;        RAMDiskImagePath populated
 ; out:   if C set, creation failed (A contains MLI error code)
 ;        if C clear, creation succeeded (A clobbered, gRAMDiskRef contains file refnum)
 ;        all other flags clobbered
 ;        all registers clobbered
-;        ProDOS is in memory
+;        ProDOS is not in memory
 ;-------------------------------
 CreateFileOnRAMDisk
+         jsr   SwapProDOS            ; ProDOS out -> in (preserves flags)
          jsr   DeleteFileOnRAMDisk   ; always safe to call
          lda   #<RAMDiskImagePath
          sta   mliparam+1
@@ -19,7 +20,7 @@ CreateFileOnRAMDisk
          jsr   Create140KFile
          bcs   +
          sta   gRAMDiskRef
-+        rts
++        jmp   SwapProDOS            ; ProDOS in -> out (preserves flags)
 
 ;-------------------------------
 ; DeleteFileOnRAMDisk

@@ -11,13 +11,14 @@ HardDiskName_e
 ;
 ; in:    HardDiskArray populated
 ;        user's select target is a hard disk
-;        ProDOS is in memory
+;        ProDOS is not in memory
 ; out:   if C set, create or open failed (A contains MLI error code)
 ;        if C clear, everything succeeded (A is clobbered)
 ;        all other registers and flags clobbered
-;        ProDOS is in memory
+;        ProDOS is not in memory
 ;-------------------------------
 CreateFileOnHardDisk
+         jsr   SwapProDOS            ; ProDOS out -> in (preserves flags)
          jsr   LookupUnitNumberOfSelectedHardDisk
          jsr   GetVolumeName
          lda   OnlineReturn
@@ -94,7 +95,7 @@ CreateFileOnHardDisk
          jsr   Create140KFile
          bcs   +
          sta   gHardDiskRef
-+        rts
++        jmp   SwapProDOS            ; ProDOS in -> out (preserves flags)
 
 ;-------------------------------
 ; CloseFileOnHardDisk

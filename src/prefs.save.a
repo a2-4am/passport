@@ -2,16 +2,17 @@
 ; SavePrefs
 ; save preferences to file
 ;
-; in:  ProDOS must be in memory
+; in:  ProDOS in not in memory
 ;-------------------------------
 !macro SavePrefs {
+         jsr   SwapProDOS            ; ProDOS out -> in
          lda   gChangedPrefs
          bne   +
          lda   #<PREFSFILE
          sta   mliparam+1
          lda   #>PREFSFILE
          sta   mliparam+2
-         jsr   DeleteFile ; don't care if this fails
+         jsr   DeleteFile            ; don't care if this fails
          jsr   CreateTxtFile
          bcs   +
          lda   #<PREFSBUFFER

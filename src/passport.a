@@ -77,8 +77,8 @@ NonRelocatable
          !source "id/panglosdos.a"
          !source "id/davidson.a"
          !source "id/holle.a"
-         !source "id/bootfailure.a"
          !source "id/phoenix.a"
+         !source "id/bootfailure.a"
          !source "id/555.a"
          !source "id/inspect0.a"
          !source "print.a"
@@ -190,9 +190,7 @@ Reaction
          bpl   @printReading         ; don't create RAM disk or hard disk file in verify mode
          jsr   LookupUnitNumberOfSelectedHardDisk
          beq   @notHardDrive
-         jsr   SwapProDOS            ; ProDOS out -> in (preserves flags)
          jsr   CreateFileOnHardDisk
-         jsr   SwapProDOS            ; ProDOS in -> out (preserves flags)
          bcc   @printReading
          jmp   FatalWriteError       ; failed to create target file on hard disk
                                      ; this is fatal
@@ -203,9 +201,7 @@ Reaction
 @notHardDrive
          lda   RAMDiskImagePath
          beq   @printReading         ; no RAM disk available
-         jsr   SwapProDOS            ; ProDOS out -> in (preserves flags)
          jsr   CreateFileOnRAMDisk
-         jsr   SwapProDOS            ; ProDOS in -> out (preserves flags)
          bcc   @printReading
          lda   #0                    ; failed to create temporary file on RAM disk
          sta   RAMDiskImagePath      ; this is not fatal, but we'll mark the RAM
@@ -301,7 +297,6 @@ Cleanup
 ;-------------------------------
 CleanExit
          jsr   Cleanup
-         jsr   SwapProDOS            ; ProDOS out -> in
          +SavePrefs
          jsr   PRODOSMLI             ; does not return
          !byte $65
