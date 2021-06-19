@@ -211,7 +211,7 @@ Reaction
          !byte s_reading
          lda   #$B2
          ldx   #$00
-         ldy   #$0D
+         ldy   #$06
          jsr   ClearMemory
          jsr   CopyUniversal
          jsr   IgnoreAddressChecksum
