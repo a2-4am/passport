@@ -11,25 +11,25 @@
 !zone {
 IDDavidson
          lda   gIsProDOS  ; ProDOS?
-         bne   .exit      ; no, give up
+         bne   .fail      ; no, give up
          lda   gTrack     ; track $22?
          cmp   #$22
-         sec
-         bne   .exit      ; no, give up
+         bne   .fail      ; no, give up
          lda   gSector    ; sector $00?
-         bne   .exit      ; no, give up
+         bne   .fail      ; no, give up
          ;;lda   #$00       ; try re-reading the sector but
          sta   $B92E      ; ignore data field checksum failure
          jsr   ReadSector
          lda   #$13
          sta   $B92E
-         bcs   .exit      ; passport-test-suite/Word Attack Plus Spanish.woz [C=0] matches
+         bcs   .fail      ; passport-test-suite/Word Attack Plus Spanish.woz [C=0] matches
                           ; if the read didn't work, give up
          jsr   PrintByID
          !byte s_davidson
          lda   #TRUE
          sta   gIsDavidson
          clc
-.exit
-         rts
+         !byte $24
+.fail    sec
+.exit    rts
 }
