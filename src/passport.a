@@ -261,8 +261,6 @@ RestartScan
          !byte s_restart
          jsr   RestartProgress
          jsr   IncProgress
-         ldx   #$FF
-         txs
          jmp   ReadWithRWTS
 
 ;-------------------------------
