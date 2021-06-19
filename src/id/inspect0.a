@@ -85,14 +85,11 @@ IDBootloader
          bcs   .notdos33
          lda   #TRUE
          sta   gIsBoot0
-         jsr   IDD5D5F7
-         bcs   +
-         lda   #TRUE
-         sta   gPossibleD5D5F7
-+        jsr   IDDiversi
+         +IDD5D5F7
+         +IDDiversi
          lda   #s_diversidos
          bcc   .printdos
-         jsr   IDPronto
+         +IDPronto
          lda   #s_prontodos
          bcc   .printdos
          lda   #s_dosb0

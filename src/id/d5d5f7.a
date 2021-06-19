@@ -16,21 +16,19 @@
 ;      X,Y preserved
 ;      all other flags and registers clobbered
 ;-------------------------------
-!zone {
-IDD5D5F7
+!macro IDD5D5F7 {
          lda   #$08
          cmp   $08F2
-         beq   .yes       ; passport-test-suite/Trivia Fever (BB03 variant 3).woz [Z=1] matches
+         beq   @d5yes     ; passport-test-suite/Trivia Fever (BB03 variant 3).woz [Z=1] matches
          cmp   $084C
-         bne   .no
+         bne   @d5no
          lda   $08B0
          cmp   #$B6
-         bne   .no
+         bne   @d5no
          lda   $08D0
          cmp   #$20
-         bne   .no
-.yes     clc
-         !byte $24
-.no      sec
-         rts              ; passport-test-suite/RoboMath.woz [C=0] matches
+         bne   @d5no
+@d5yes   lda   #TRUE
+         sta   gPossibleD5D5F7 ; passport-test-suite/RoboMath.woz [Z=1] matches
+@d5no
 }

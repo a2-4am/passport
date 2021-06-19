@@ -10,8 +10,7 @@
 ;      all registers clobbered
 ;      all other flags clobbered
 ;-------------------------------
-!zone {
-IDPronto
+!macro IDPronto {
          lda   #$00
          ldx   #$5E
          ldy   #$07
@@ -19,5 +18,5 @@ IDPronto
          !byte $B0,$50    ; BCS +$50
          !byte $AD,$CB,$B5; LDA $B5CB
          !byte $85,$42    ; STA $42
-         rts              ; passport-test-suite/America Coast to Coast.woz [C=0] matches
+                          ; passport-test-suite/America Coast to Coast.woz [C=0] matches
 }
