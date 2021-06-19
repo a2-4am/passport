@@ -190,12 +190,15 @@ all_done_set
 ;      stack set to first instruction after string
 ;-------------------------------
 compare
+         sta   tmpa
          clc
          adc   #BASEPAGE
+         !byte $2C
 CompareMemory
+         sta   tmpa
          sta   cmp1+1
          stx   cmp1
-         sty   compare_tmp_y
+         sty   tmpy
          pla
          sta   cmp2
          pla
@@ -206,10 +209,10 @@ CompareMemory
          adc   cmp2
          bcc   +
          inx
-+        sta   tmp
++        sta   modtmp
          txa
          pha
-         lda   tmp
+         lda   modtmp
          pha
 @cmp
          lda   (cmp2),y
@@ -222,14 +225,9 @@ CompareMemory
          sec
          !byte $24        ; hide CLC
 @success clc
-         php
-         lda   cmp1+1
-         sec
-         sbc   #BASEPAGE
+         lda   tmpa
          ldx   cmp1
-compare_tmp_y=*+1
-         ldy   #$FD       ; SMC
-         plp
+         ldy   tmpy
          bcs   +
          sta   gDisplayBytes
 +        rts
