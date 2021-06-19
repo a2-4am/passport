@@ -12,10 +12,11 @@
 ; - Tomahawk
 ; - Video Title Shop
 ;-------------------------------
-IDDatasoft
+!macro IDDatasoft {
          lda   #$00
          tax
          ldy   #$08
          jsr   compare
          !byte $01,$4C,$7E,$08,$04,$8A,$0C,$B8
-         rts              ; passport-test-suite/Tomahawk.woz [C=0] matches
+                          ; passport-test-suite/Tomahawk.woz [C=0] matches
+}

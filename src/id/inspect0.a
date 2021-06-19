@@ -257,7 +257,8 @@ IDBootloader
 ;
 ; David-DOS II
 ;
-+        jsr   IDDavid
++
+         +IDDavid
          bcs   +
          jsr   PrintByID
          !byte s_daviddos
@@ -266,7 +267,8 @@ IDBootloader
 ;
 ; Encrypted Datasoft bootloader
 ;
-+        jsr   IDDatasoft
++
+         +IDDatasoft
          bcs   +
          jsr   PrintByID
          !byte s_datasoftb0
