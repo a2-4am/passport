@@ -112,13 +112,9 @@ IDDOS33
 ;
 ; Check for MUSE sector order map
 ;
-         ;A=0 here
-         ;lda   #$00
-         ldx   #$55
-         ldy   #$01
-         jsr   compare    ; if T00,S00,$55 ==
-         !byte $02
-         bcs   +
+         ldy   $0855
+         cpy   #$02
+         bne   +
          ldy   #TRUE      ; passport-test-suite/The Function Game.woz [C=0] matches previous compare
          sty   gIsMUSERWTS
          ldy   #$0E
