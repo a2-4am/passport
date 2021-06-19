@@ -286,7 +286,7 @@ Cleanup
          ora   gRAMDiskRef
          bne   +
          rts
-         jsr   SwapProDOS            ; ProDOS out -> in
++        jsr   SwapProDOS            ; ProDOS out -> in
          jsr   DeleteFileOnRAMDisk
          +CloseFileOnHardDisk
          jmp   SwapProDOS            ; ProDOS in -> out
