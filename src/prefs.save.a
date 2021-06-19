@@ -12,14 +12,7 @@
          lda   #>PREFSFILE
          sta   mliparam+2
          jsr   DeleteFile ; don't care if this fails
-         lda   #FULL_ACCESS
-         sta   mliparam+3
-         lda   #$04       ; text file type
-         sta   mliparam+4
-         lda   #$00
-         sta   mliparam+5 ; no aux file type
-         sta   mliparam+6
-         jsr   CreateFile
+         jsr   CreateTxtFile
          bcs   +
          lda   #<PREFSBUFFER
          sta   mliparam+3

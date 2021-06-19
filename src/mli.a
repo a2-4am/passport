@@ -238,13 +238,11 @@ DeleteFile
          bne   mli                   ; always branches
 
 ;-------------------------------
-; CreateDir/CreateFile
+; CreateDir/CreateBinFile/CreateTxtFile
 ;
 ; create a directory or file via ProDOS MLI
 ; always sets access bits to $C3 (full access)
 ; always sets creation to 0 (current date/time)
-; always sets storage type to $0D (directory) or 1 (file)
-; always sets file type to $0F (directory) or 6 (BIN file)
 ; in:    caller has filled @mliparam+1 with address of pathname
 ; out:   if error, C set and A contains error code
 ;        if success, C clear and A clobbered
@@ -252,15 +250,20 @@ DeleteFile
 CreateDir
          lda   #$0D
          ldy   #$0F
-         bne   +
-CreateFile
-         lda   #1
-         ldy   #6
+         bne   +                     ; always branches
+CreateBinFile
+         ldy   #$06
+         !byte $2C
+CreateTxtFile
+         ldy   #$04
+         lda   #$01
 +        sta   mliparam+7            ; storage type (directory or file)
          sty   mliparam+4            ; file type (directory or binary)
          lda   #FULL_ACCESS
          sta   mliparam+3            ; access bits (full access)
          lda   #0
+         sta   mliparam+5            ; aux type (none)
+         sta   mliparam+6
          sta   mliparam+8            ; creation date (current)
          sta   mliparam+9
          sta   mliparam+10           ; creation time (current)

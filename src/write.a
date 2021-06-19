@@ -122,7 +122,7 @@ WriteTrackSecondPass
 ;        C set on error, and A = MLI error code
 ;-------------------------------
 Create140KFile
-         jsr   CreateFile
+         jsr   CreateBinFile
          bcs   @exit
          lda   #$00
          sta   mliparam+3            ; io_buffer at address $0800
