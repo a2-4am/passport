@@ -77,12 +77,10 @@ _Inspect1a
          !byte $85,$49
          bcc   .x1
 
-         lda   jCallRWTS+2
          ldy   #$03
          jsr   CompareMemory
          !byte $20,$AF,$BE
          bcs   .notmastery ; passport-test-suite/Mastery Arithmetic Games.woz [C=0] here
-         lda   jCallRWTS+2
          adc   #$01
          ldx   #$AF
          ldy   #$08
@@ -93,7 +91,6 @@ _Inspect1a
          !byte $B1,$48
          bcc   .x1        ; passport-test-suite/Mastery Arithmetic Games.woz [C=0] here
 .notmastery
-         lda   jCallRWTS+2
          cmp   #$BD
          bne   .notkidwriter
          ldy   #$03
@@ -116,21 +113,21 @@ _Inspect1a
          bne   .x1        ; always branches
 .notkidwriter
 .useuniv jmp   UseUniversal
-.x1      lda   #$B9       ; check for "SEC;RTS" at $B942
+.x1      lda   #$B9       ; [SMC] check for "SEC;RTS" at $B942
          ldx   #$42
          ldy   #$02
          jsr   CompareMemory
          !byte $38,$60
          bcc   .x2
          jmp   UseUniversal
-.x2      lda   #$B9       ; check for "LDA $C08C,X" at $B94F
+.x2      lda   #$B9       ; [SMC} check for "LDA $C08C,X" at $B94F
          ldx   #$4F
          ldy   #$03
          jsr   CompareMemory
          !byte $BD,$8C,$C0
          bcc   .x3
          jmp   UseUniversal
-.x3      lda   #$BD       ; check for "JSR $xx00" at $BDB9
+.x3      lda   #$BD       ; [SMC] check for "JSR $xx00" at $BDB9
          ldx   #$B9
          ldy   #$02
          jsr   CompareMemory
@@ -140,7 +137,7 @@ _Inspect1a
 ; Check for RWTS variant that has extra code before
 ; JSR $B800 e.g. Verb Viper (DLM), Advanced Analogies (Hartley)
 ;
-.x4      lda   #$BD       ; check for "JSR $xx00" at $BDC5
+.x4      lda   #$BD       ; [SMC] check for "JSR $xx00" at $BDC5
          ldx   #$C5
          ldy   #$02
          jsr   CompareMemory
@@ -152,7 +149,7 @@ _Inspect1a
 ; LDX $1FE8 e.g. Pinball Construction Set (1983)
 ; we don't like that one
 ;
-.x5      lda   #$BE       ; check for "LDX $1FE8" at $BE43
+.x5      lda   #$BE       ; [SMC] check for "LDX $1FE8" at $BE43
          ldx   #$43
          ldy   #$03
          jsr   CompareMemory
@@ -163,7 +160,7 @@ _Inspect1a
 ; Check for Milliken protection routine in late-stage boot
 ; (affects readable/ignoreable sector map, so must ID now)
 ;
-.x6      lda   #$B7       ; check for "JMP $9B03" at $B747
+.x6      lda   #$B7       ; [SMC] check for "JMP $9B03" at $B747
          ldx   #$47
          ldy   #$03
          jsr   CompareMemory
@@ -182,7 +179,7 @@ _Inspect1a
 ; required for some disks that use a strange location for this variable
 ; e.g. Super Taxman II
 ;
-.x6b     lda   #$B7       ; check for "LDA #$00 / STA $....,X / STA $....,X / JSR $..93" at $B730
+.x6b     lda   #$B7       ; [SMC] check for "LDA #$00 / STA $....,X / STA $....,X / JSR $..93" at $B730
          ldx   #$30
          ldy   #$0A
          jsr   CompareMemory
@@ -192,7 +189,7 @@ _Inspect1a
          !byte $20,$93
          bcs   .x7        ; passport-test-suite/Super Taxman II.woz [C=0] matches
          ldy   #$07
-.x6c     lda   $B730,y
+.x6c     lda   $B730,y    ; SMC
          sta   .trackpointer,y
          dey
          bpl   .x6c
@@ -204,7 +201,7 @@ _Inspect1a
 ;
 ; Check for Adventure International RWTS (sets flag for patcher)
 ;
-.x7      lda   #$B9       ; check for code at $B936
+.x7      lda   #$B9       ; [SMC] check for code at $B936
          ldx   #$36
          ldy   #$0A
          jsr   CompareMemory
@@ -262,9 +259,9 @@ _Inspect1a
          !byte $CE        ; DEC $xxxx
          bcs   +
          lda   #$B0
-.x8      sta   $BDD2
+.x8      sta   $BDD2      ; SMC
          lda   #$30
-.x9      sta   $BDD3
+.x9      sta   $BDD3      ; SMC
 ;
 ; Check for Infocom disk (need to massage RWTS a little)
 ;

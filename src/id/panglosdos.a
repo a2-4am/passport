@@ -13,26 +13,20 @@ PanglosDOS
          lda   jCallRWTS+2
          ldx   #$00       ; check for "STY $48;STA $49"
          ldy   #$04       ; at RWTS entry point
-         pha
          jsr   CompareMemory
          !byte $84,$48,$85,$49
-         pla
          bcs   .jmpexit1
          sec
          sbc   #5
          ldx   #$C3       ; check for "SEC;RTS" at $x8C3
          ldy   #$02
-         pha
          jsr   CompareMemory
          !byte $38,$60
-         pla
          bcs   .jmpexit1
          ldx   #$62       ; check for "LDA $C08C,X" at $x862
          ldy   #$03
-         pha
          jsr   CompareMemory
          !byte $BD,$8C,$C0
-         pla
          bcs   .jmpexit1
          lda   jCallRWTS+2
          ldx   #$B9       ; check for "JSR $xxF9" at $xDB9
