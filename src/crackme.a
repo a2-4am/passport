@@ -183,6 +183,42 @@ Cancel
          !byte s_canceled
          bvc   .TheEnd               ; always branches
 
+;-------------------------------
+; PreCheckT00
+;
+; Before we trace through the drive firmware (which --
+; at least on some machines -- will loop forever looking
+; for each sector), we do a pre-check to ensure that all
+; the sectors we're about to trace are actually readable.
+;
+; Before calling this function, you need to set all 16
+; bytes of the precheck_sectors array (see above for format).
+;
+; If all required sectors are readable by Passport's own
+; sector read routine, this exits gracefully with all
+; flags and registered clobbered.
+;
+; If any required sector fails to read, this exits via
+; FatalError, which does not return.
+;-------------------------------
+PreCheckT00
+         ldy   #$00
+         sty   gTrack
+-        lda   precheck_sectors, y
+         bmi   +
+         sta   gSector
+         jsr   IgnoreAddressChecksum
+         tya
+         pha
+         jsr   ReadSector
+         pla
+         tay
+         bcs   FatalError
++        iny
+         cpy   #$10
+         bne   -
+         rts
+
 FatalError
          jsr   PrintByID
          !byte s_fail
@@ -200,3 +236,15 @@ FatalError
          jsr   PrintByID
          !byte s_fatal220f
 .TheEnd  jmp   TheEnd
+
+precheck_sectors
+         ; This list is (re)initialized in IDBootloader,
+         ; then potentially altered in IDDOS33 and elsewhere.
+         ; Values are logical sector numbers.
+         ; There are always 16 (0x10) values in this list.
+         ; Negative values are ignored.
+         ; Positive values are treated as logical
+         ; sector numbers and read from track $00.
+         ; Sectors are read in the order listed here.
+         !byte $09,$08,$07,$06,$05,$04,$03,$02,$01
+         !byte $00,$FF,$FE,$FD,$FC,$FB,$FA,$F9,$F8
