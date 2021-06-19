@@ -77,7 +77,8 @@ IDBootloader
          lda   #$08
          ldx   #BASEPAGE
          ldy   #$01
-         jsr   CopyMemory
+         jsr   CopyMemory            ; exits with X=0
+         txa                         ; A=0
 ;
 ; Try to identify DOS 3.3-shaped bootloader.
 ; Exit via custom trace function if found.
@@ -88,15 +89,15 @@ IDBootloader
          sta   gIsBoot0
          +IDD5D5F7
          +IDDiversi
-         lda   #s_diversidos
+         ldx   #s_diversidos
          bcc   .printdos
          +IDPronto
-         lda   #s_prontodos
+         ldx   #s_prontodos
          bcc   .printdos
-         lda   #s_dosb0
+         ldx   #s_dosb0
 
 .printdos
-         sta   +
+         stx   +
          jsr   PrintByID
 +        !byte $FD                   ; SMC
          jmp   TraceDOS33
@@ -106,19 +107,33 @@ IDBootloader
 ; early to munge the nibble tables used by the drive firmware.
 ; Exit via custom trace function if found.
 ;
-         jsr   ID8b3
+         +ID8b3
          bcs   .not8b3
          jsr   PrintByID
          !byte s_jsr8b3
-         lda   #TRUE
          sta   gIs8b3
          jmp   Trace8B3
 .not8b3
 ;
+; Try to identify Laureate Learning Systems bootloader.
+; Exit via custom trace function if found.
+;
+         +IDLaureate
+         bcs   .notLaureate
+         jsr   PrintByID
+         !byte s_laureate
+         lda   #TRUE
+         sta   gIsLaureate
+         lda   #$0B
+         jsr   PrereadT00Partial
+         bcs   .notLaureate
+         jmp   TraceLaureate
+.notLaureate
+;
 ; Try to identify all the different MECC fastloader variants.
 ; Exit via custom trace function if found.
 ;
-         jsr   IDMECC
+         +IDMECC
          bcs   .notmecc
          lda   #ID_MECC_UNK
          sta   gMECCFastloadType
@@ -158,21 +173,6 @@ IDBootloader
          jmp   TraceSpecDel
 .notSpecialDelivery
 ;
-; Try to identify Laureate Learning Systems bootloader.
-; Exit via custom trace function if found.
-;
-         +IDLaureate
-         bcs   .notLaureate
-         jsr   PrintByID
-         !byte s_laureate
-         lda   #TRUE
-         sta   gIsLaureate
-         lda   #$0B
-         jsr   PrereadT00Partial
-         bcs   .notLaureate
-         jmp   TraceLaureate
-.notLaureate
-;
 ; Try to identify Electronic Arts bootloader.
 ; Exit via custom trace function if found.
 ;
@@ -180,14 +180,6 @@ IDBootloader
          bcs   .notEA
          jmp   foundea
 .notEA
-;
-; Try to identify Interplay bootloader.
-; Exit via custom trace function if found.
-;
-         +IDAdvent
-         bcs   .notInterplay
-         jmp   foundadvent
-.notInterplay
 ;
 ; Try to identify hybrid 16-/13-sector bootloader on
 ; DOS 3.2 disks.
@@ -205,6 +197,14 @@ IDBootloader
          !byte s_dos32b0
          jmp   TraceDOS32LO
 .notDOS32LO
+;
+; Try to identify Interplay bootloader.
+; Exit via custom trace function if found.
+;
+         +IDAdvent
+         bcs   .notInterplay
+         jmp   foundadvent
+.notInterplay
 ;
 ; Try to detect whether there is code in the boot sector
 ; that loads 4-and-4-encoded data. This is an early escape

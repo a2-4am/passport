@@ -4,20 +4,19 @@
 ; to alter the nibble translate table used
 ; by the drive firmware at $C600
 ;
-; in:  track buffer contains T00,S00
-; out: C clear if this bootloader was found
-;      C set otherwise
-;      all other flags clobbered
-;      all registers clobbered
+; in:    track buffer contains T00,S00
+;        A = 0
+; out:   C clear if this bootloader was found
+;        C set otherwise
+;        A = 0
+;        all other registers & flags clobbered
 ;-------------------------------
-!zone {
-ID8b3
-         lda   #$00
+!macro ID8b3 {
          tax
          ldy   #$08
          jsr   compare
          !byte $01,$20,$B3,$08,$D0,$19,$EA,$A5
-         bcs   .exit
+         bcs   +
 
          ldx   #$B3
          ldy   #$14
@@ -26,6 +25,6 @@ ID8b3
          !byte $A9,$1C,$8D,$CC,$03
          !byte $A9,$00,$8D,$D5,$03
          !byte $A9,$37,$8D,$A3,$03
-.exit
-         rts              ; passport-test-suite/Ardy The Aardvark.woz [C=0] matches
+                          ; passport-test-suite/Ardy The Aardvark.woz [C=0] matches
++
 }

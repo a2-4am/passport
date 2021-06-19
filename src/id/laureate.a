@@ -4,15 +4,14 @@
 ; Laureate Learning Systems
 ; loads RWTS directly into language card
 ;
-; in:  track buffer contains T00,S00
-; out: C clear if Laureate bootloader was found
-;        (and track buffer now contains all of track 0)
-;      C set if not found
-;      all other flags clobbered
-;      all registers clobbered
+; in:    track buffer contains T00,S00
+;        A = 0
+; out:   C clear if Laureate bootloader was found
+;        C set if not found
+;        A = 0
+;        all other registers & flags clobbered
 ;-------------------------------
 !macro IDLaureate {
-         lda   #$00
          ldx   #$2E
          ldy   #$08
          jsr   compare    ; if T00,S00,$2E ==

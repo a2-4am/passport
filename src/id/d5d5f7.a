@@ -9,26 +9,24 @@
 ; D5D5F7 protection check, so we can save time by
 ; not doing full-track searches on those disks.
 ;
-; in:  $0800..$08FF contains T00,S00
-;      IDDOS33 returned success
-; out: C clear if specific version of DOS 3.3 bootloader found
-;      C set otherwise
-;      X,Y preserved
-;      all other flags and registers clobbered
+; in:    $0800..$08FF contains T00,S00
+;        IDDOS33 returned success
+;        A = 0
+; out:   A,Y preserved
+;        all other flags and registers clobbered
 ;-------------------------------
 !macro IDD5D5F7 {
-         lda   #$08
-         cmp   $08F2
+         ldx   #$08
+         cpx   $08F2
          beq   @d5yes     ; passport-test-suite/Trivia Fever (BB03 variant 3).woz [Z=1] matches
-         cmp   $084C
+         cpx   $084C
          bne   @d5no
-         lda   $08B0
-         cmp   #$B6
+         ldx   $08B0
+         cpx   #$B6
          bne   @d5no
-         lda   $08D0
-         cmp   #$20
+         ldx   $08D0
+         cpx   #$20
          bne   @d5no
-@d5yes   lda   #TRUE
-         sta   gPossibleD5D5F7 ; passport-test-suite/RoboMath.woz [Z=1] matches
+@d5yes   sta   gPossibleD5D5F7 ; passport-test-suite/RoboMath.woz [Z=1] matches
 @d5no
 }

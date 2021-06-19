@@ -2,22 +2,21 @@
 ; IDDiversi
 ; identify Diversi-DOS bootloader
 ;
-; in:  $0800..$08FF contains T00,S00
-;      first page of track buffer also contains T00,S00
-;      bootloader was identified as DOS 3.3-shaped (IDDOS33 returned success)
-; out: C clear if Diversi-DOS bootloader found
-;      C set otherwise
-;      all registers clobbered
-;      all other flags clobbered
+; in:    $0800..$08FF contains T00,S00
+;        first page of track buffer also contains T00,S00
+;        bootloader was identified as DOS 3.3-shaped (IDDOS33 returned success)
+;        A = 0
+; out:   C clear if Diversi-DOS bootloader found
+;        C set otherwise
+;        A = 0
+;        all other registers & flags clobbered
 ;-------------------------------
 !macro IDDiversi {
-         lda   #$00
          ldx   #$F1
          ldy   #$0B
          jsr   compare    ; if T00,S00,$F1 ==
          !byte $B3,$A3,$A0,$D2,$CF,$D2,$D2,$C5,$8D,$87,$8D
          bcs   +          ; passport-test-suite/Moon Bingo.woz [C=0] matches
-         ;lda   #TRUE
          sta   gIsDiversi
 +
 }

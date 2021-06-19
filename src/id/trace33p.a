@@ -4,11 +4,17 @@
 
 ;-------------------------------
 ; IDSpecDel
-; returns C clear if "Special Delivery" bootloader
-; detected in T00,S00
+;
+; in:    $0800..$08FF contains T00,S00
+;        first page of track buffer also contains T00,S00
+;        A = 0
+; out:   C clear if Special Delivery bootloader found
+;        C set otherwise
+;        A = 0
+;        X = 0
+;        all other registers & flags clobbered
 ;-------------------------------
 !macro IDSpecDel {
-         lda   #$00
          tax
          ldy   #$08
          jsr   compare

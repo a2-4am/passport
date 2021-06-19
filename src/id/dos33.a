@@ -3,14 +3,15 @@
 ; identify DOS 3.3 bootloader or some variation
 ; that can be safely boot traced
 ;
-; in:  $0800..$08FF contains T00,S00
-;      first page of track buffer also contains T00,S00
-; out: C clear if traceable DOS 3.3-style bootloader found
-;      C set otherwise
-;      all registers clobbered
-;      all other flags clobbered
+; in:    $0800..$08FF contains T00,S00
+;        first page of track buffer also contains T00,S00
+;        A = 0
+;        X = 0
+; out:   C clear if traceable DOS 3.3-style bootloader found
+;        C set otherwise
+;        A = 0
+;        all other registers & flags clobbered
 ;-------------------------------
-!zone {
 IDDOS33
 ;
 ; $08FE must be either $B6 (standard) or $20..$36
@@ -19,20 +20,19 @@ IDDOS33
 ; Must weed out some Infocom and TLC disks that would
 ; load over program space and crash.
 ;
-         lda   $08FE
-         cmp   #$B6
-         beq   ++         ; passport-test-suite/Binomial Multiplication.woz [Z=1] here, loads at $B600
-         cmp   #$37
+         ldy   $08FE
+         cpy   #$B6
+         beq   @ok08FE    ; passport-test-suite/Binomial Multiplication.woz [Z=1] here, loads at $B600
+         cpy   #$37
          bcc   +          ; passport-test-suite/Beach-Head.woz [C=0] here, loads at $3F00
--        sec
+@fail    sec
          rts
-+        cmp   #$20
-         bcc   -          ; passport-test-suite/Alf.woz [C=0] here, loads at $1300
++        cpy   #$20
+         bcc   @fail      ; passport-test-suite/Alf.woz [C=0] here, loads at $1300
+@ok08FE
 ;
-; Code at $0801 must be standard (with one exception)
+; Code at $0800 must be standard (with one exception)
 ;
-++       lda   #$00
-         tax
          ldy   #$3F
          jsr   compare    ; if T00,S00,$00 ==
          !byte $01
@@ -66,14 +66,10 @@ IDDOS33
          !byte $6C,$3E,$00
          !byte $EE,$FE,$08
          !byte $EE,$FE,$08
-         bcc   +          ; passport-test-suite/Binomial Multiplication.woz [C=0] matches
-         jmp   .exit
-+
+         bcs   @fail      ; passport-test-suite/Binomial Multiplication.woz [C=0] matches
 ;
-; DOS 3.3 has JSR $FE89 / JSR $FE93 / JSR $FB2F
+; DOS 3.3 and most derivatives have JSR $FE89 / JSR $FE93 / JSR $FB2F at $083F
 ;
-         ;A=0 here
-         ;lda   #$00
          ldx   #$3F
          ldy   #$0B
          jsr   compare    ; if T00,S00,$3F ==
@@ -81,78 +77,61 @@ IDDOS33
          !byte $20,$93,$FE
          !byte $20,$2F,$FB
          !byte $A6,$2B
-         bcc   +          ; passport-test-suite/Binomial Multiplication.woz [C=0] matches
+         bcc   @ok083F    ; passport-test-suite/Binomial Multiplication.woz [C=0] matches
 ;
-; some Sierra have STA $C050 / STA $C057 / STA $C055 instead
+; Sierra variants have STA $C050 / STA $C057 / STA $C055 at $083F
 ;
-         ;A=0 here
-         ;lda   #$00
-         ldx   #$3F
-         ldy   #$0B
          jsr   compare    ; if T00,S00,$3F ==
          !byte $8D,$50,$C0
          !byte $8D,$57,$C0
          !byte $8D,$55,$C0
          !byte $A6,$2B
-         bcs   .exit
-+
-
+         bcs   @exit      ; passport-test-suite/Leisure Suit Larry.woz [C=0] matches
+                          ; other variations -> failure
+@ok083F
 ;
-; Check sector order map
+; Filter out unsupported sector order map
 ;
-         ;A=0 here
-         ;lda   #$00
-         ldx   #$4D       ; passport-test-suite/Leisure Suit Larry.woz [C=0] matches previous compare
+         ldx   #$4D
          ldy   #$10
          jsr   compare    ; if T00,S00,$4D ==
          !byte $00,$0D,$0B,$09,$07,$05,$03,$01
          !byte WILDCARD,$0C,$0A,$08,$06,$04,$02,$0F
-         bcs   .exit      ; passport-test-suite/Pitfall II.woz [C=1] because of non-standard sector map
-
+         bcs   @exit      ; passport-test-suite/Pitfall II.woz [C=1] here
 ;
-; Check for MUSE sector order map
+; Check for MUSE sector order map (nonstandard but supported)
 ;
          ldy   $0855
          cpy   #$02
-         bne   +
-         ldy   #TRUE      ; passport-test-suite/The Function Game.woz [C=0] matches previous compare
-         sty   gIsMUSERWTS
+         bne   @notMUSE   ; passport-test-suite/The Function Game.woz [Z=0] matches
+         sta   gIsMUSERWTS
          ldy   #$0E
          sty   precheck_sectors+1
          ldy   #kSectorIgnore
          sty   T00S08
          sty   T00S0F
-+
+@notMUSE
 ;
-; Minor variant jumps to $08F0 and back but is still safe to trace.
-; Check for this jump and match the code at $08F0 exactly.
+; DOS 3.3 and most derivatives have STA $08FE at $081C
 ;
-         ;A=0 here
-         ;lda   #$00
          ldx   #$1C
          ldy   #$03
          jsr   compare    ; if T00,S00,$1C ==
          !byte $8D,$FE,$08
-                          ; standard code at $081C -> success
-         bcc   .exit      ; passport-test-suite/Binomial Multiplication.woz [C=0] matches
-
-         ;A=0 here
-         ;lda   #$00
-         ldx   #$1C
-         ldy   #$03
+         bcc   @exit      ; passport-test-suite/Binomial Multiplication.woz [C=0] matches
+;
+; Variant jumps to $08F0 and back but is still safe to trace.
+; Check for this jump and also match the code at $08F0 exactly.
+;
          jsr   compare    ; if T00,S00,$1C ==
          !byte $4C,$F0,$08; JMP $08F0
-         bcs   .exit      ; unknown code at $081C -> failure
-
-         ;A=0 here
-         ;lda   #$00
+         bcs   @exit      ; unknown code at $081C -> failure
          ldx   #$F0
          ldy   #$09
          jsr   compare    ; if T00,S00,$F0 ==
          !byte $8D,$FE,$08
          !byte $EE,$F3,$03
          !byte $4C,$1F,$08
+                          ; passport-test-suite/Library Magic.woz [C=0] matches acceptable code at $08F0
                           ; unknown code at $08F0 -> failure
-.exit
-         rts              ; passport-test-suite/Library Magic.woz [C=0] matches acceptable code at $08F0
-}
+@exit    rts

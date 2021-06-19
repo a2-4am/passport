@@ -2,17 +2,18 @@
 ; IDEA
 ; identify Electronic Arts custom bootloader
 ;
-; in:  track buffer contains T00,S00
-; out: C clear if EA bootloader was found
-;      C set if not found
-;      all other flags clobbered
-;      all registers clobbered
+; in:    track buffer contains T00,S00
+;        A = 0
+;        X = 0
+; out:   C clear if EA bootloader was found
+;        C set if not found
+;        A = 0
+;        X = 0
+;        all other registers & flags clobbered
 ;
 ; module by qkumba
 ;-------------------------------
 !macro IDEA {
-         lda   #$00
-         tax
          ldy   #16
          jsr   compare
          !byte $05,$4C,$04,$08,$A9,$00,$8D,$F2

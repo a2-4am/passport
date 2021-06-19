@@ -5,13 +5,18 @@
 
 ;-------------------------------
 ; IDDOS32
-; returns C clear if 3.2/3.3 bootloader detected in T00,S00
+;
+; in:    $0800..$08FF contains T00,S00
+;        first page of track buffer also contains T00,S00
+;        A = 0
+;        X = 0
+; out:   C clear if hybrid DOS 3.2/3.3 bootloader found
+;        C set otherwise
+;        all other registers & flags clobbered
 ;-------------------------------
 !macro IDDOS32 {
-         lda   #$00
-         tax
          ldy   #$0F
-         jsr   compare
+         jsr   compare    ; if T00,S00,$00 =
          !byte $01
          !byte $A0,$0F    ; LDY #$0F
          !byte $B9,$00,$08; LDA $0800,Y
@@ -22,21 +27,21 @@
          bcs   +
          ldx   #$33
          ldy   #$08
-         jsr   compare
+         jsr   compare    ; and T00,S00,$33 =
          !byte $A6,$2B    ; LDX $2B
          !byte $20,$5D,$02; JSR $025D
          !byte $4C,$D1,$02; JMP $02D1
          bcs   +
          ldx   #$F4
          ldy   #$08
-         jsr   compare
+         jsr   compare    ; and T00,S00,$F4 =
          !byte $CC,$00,$03; CPY $0300
          !byte $D0,$03    ; BNE +
          !byte $4C,$3B,$02; JMP $023B
          bcs   +
          ldx   #$45
          ldy   #$03
-         jsr   compare
+         jsr   compare    ; and T00,S00,$45 =
          !byte $4C,$01,$03; JMP $0301
 +
 }
@@ -46,7 +51,12 @@
 ; detect earlier variant of hybrid bootloader that loads into
 ; low memory ($3600) then relocates to the top of main memory
 ; after loading DOS
-; returns C clear if 3.2lo/3.3 bootloader detected in T00,S00
+
+; in:    $0800..$08FF contains T00,S00
+;        first page of track buffer also contains T00,S00
+; out:   C clear if low DOS 3.2/3.3 bootloader found
+;        C set otherwise
+;        all other registers & flags clobbered
 ;-------------------------------
 !macro IDDOS32LO {
          lda   #$00
