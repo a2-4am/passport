@@ -32,33 +32,19 @@ asm:
 	cd src && $(ACME) -r ../build/passport.lst -DFORWARD_DECRUNCHING=1 passport.a 2> ../build/relbase.log
 	cd src && $(ACME) -DRELBASE=`cat ../build/relbase.log | grep "RELBASE =" | cut -d"=" -f2 | cut -d"(" -f2 | cut -d")" -f1` -DFORWARD_DECRUNCHING=1 passport.a 2> ../build/vars.log
 	grep "SaveProDOS=" build/vars.log | cut -d":" -f3 | cut -d"(" -f1 > build/vars.a
-	grep "kForceLower=" build/vars.log | cut -d":" -f3 | cut -d"(" -f1 >> build/vars.a
-	grep "DiskIIArray=" build/vars.log | cut -d":" -f3 | cut -d"(" -f1 >> build/vars.a
-	grep "HardDiskArray=" build/vars.log | cut -d":" -f3 | cut -d"(" -f1 >> build/vars.a
 	grep "ThisSlot=" build/vars.log | cut -d":" -f3 | cut -d"(" -f1 >> build/vars.a
 	grep "PrintByID=" build/vars.log | cut -d":" -f3 | cut -d"(" -f1 >> build/vars.a
 	grep "WaitForKey=" build/vars.log | cut -d":" -f3 | cut -d"(" -f1 >> build/vars.a
 	grep "CleanExit=" build/vars.log | cut -d":" -f3 | cut -d"(" -f1 >> build/vars.a
 	grep "GetVolumeName=" build/vars.log | cut -d":" -f3 | cut -d"(" -f1 >> build/vars.a
-	grep "OnlineReturn=" build/vars.log | cut -d":" -f3 | cut -d"(" -f1 >> build/vars.a
 	grep "GetVolumeInfo=" build/vars.log | cut -d":" -f3 | cut -d"(" -f1 >> build/vars.a
-	grep "filetype=" build/vars.log | cut -d":" -f3 | cut -d"(" -f1 >> build/vars.a
-	grep "access=" build/vars.log | cut -d":" -f3 | cut -d"(" -f1 >> build/vars.a
-	grep "VolumeName=" build/vars.log | cut -d":" -f3 | cut -d"(" -f1 >> build/vars.a
-	grep "RAMDiskImagePath=" build/vars.log | cut -d":" -f3 | cut -d"(" -f1 >> build/vars.a
-	grep "auxtype=" build/vars.log | cut -d":" -f3 | cut -d"(" -f1 >> build/vars.a
-	grep "blocks=" build/vars.log | cut -d":" -f3 | cut -d"(" -f1 >> build/vars.a
 	grep "PREFSVER=" build/vars.log | cut -d":" -f3 | cut -d"(" -f1 >> build/vars.a
 	grep "PREFSFILE=" build/vars.log | cut -d":" -f3 | cut -d"(" -f1 >> build/vars.a
-	grep "PREFSREADLEN=" build/vars.log | cut -d":" -f3 | cut -d"(" -f1 >> build/vars.a
-	grep "PREFSBUFFER=" build/vars.log | cut -d":" -f3 | cut -d"(" -f1 >> build/vars.a
-	grep "ValidatePrefs=" build/vars.log | cut -d":" -f3 | cut -d"(" -f1 >> build/vars.a
-	grep "SavePrefs=" build/vars.log | cut -d":" -f3 | cut -d"(" -f1 >> build/vars.a
-	grep "mliparam=" build/vars.log | cut -d":" -f3 | cut -d"(" -f1 >> build/vars.a
 	grep "OpenFile=" build/vars.log | cut -d":" -f3 | cut -d"(" -f1 >> build/vars.a
 	grep "ReadFile=" build/vars.log | cut -d":" -f3 | cut -d"(" -f1 >> build/vars.a
 	grep "CloseFile=" build/vars.log | cut -d":" -f3 | cut -d"(" -f1 >> build/vars.a
-	grep "CheckCache=" build/vars.log | cut -d":" -f3 | cut -d"(" -f1 >> build/vars.a
+	grep "SLOT=" build/vars.log | cut -d":" -f3 | cut -d"(" -f1 >> build/vars.a
+	grep "DRIVE=" build/vars.log | cut -d":" -f3 | cut -d"(" -f1 >> build/vars.a
 	$(EXOMIZER) -b build/passport.tmp -o build/passport.pak
 	cd src && $(ACME) -DFORWARD_DECRUNCHING=0 wrapper.a
 	cp res/work.po "$(BUILDDISK)".po

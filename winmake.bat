@@ -25,33 +25,19 @@ cd ..\src
 for /f "tokens=2,3 delims=)" %%q in ('find "RELBASE =" ..\build\out.txt') do set _make=%%q
 2>..\build\out.txt %ACME% -r ..\build\passport.lst -DRELBASE=$%_make:~-4% -DFORWARD_DECRUNCHING=1 passport.a
 for /f "tokens=4,* delims=:(" %%q in ('find "SaveProDOS=" ..\build\out.txt') do echo %%q > ..\build\vars.a
-for /f "tokens=4,* delims=:(" %%q in ('find "kForceLower=" ..\build\out.txt') do echo %%q >> ..\build\vars.a
-for /f "tokens=4,* delims=:(" %%q in ('find "DiskIIArray=" ..\build\out.txt') do echo %%q >> ..\build\vars.a
-for /f "tokens=4,* delims=:(" %%q in ('find "HardDiskArray=" ..\build\out.txt') do echo %%q >> ..\build\vars.a
 for /f "tokens=4,* delims=:(" %%q in ('find "ThisSlot=" ..\build\out.txt') do echo %%q >> ..\build\vars.a
 for /f "tokens=4,* delims=:(" %%q in ('find "PrintByID=" ..\build\out.txt') do echo %%q >> ..\build\vars.a
 for /f "tokens=4,* delims=:(" %%q in ('find "WaitForKey=" ..\build\out.txt') do echo %%q >> ..\build\vars.a
 for /f "tokens=4,* delims=:(" %%q in ('find "CleanExit=" ..\build\out.txt') do echo %%q >> ..\build\vars.a
 for /f "tokens=4,* delims=:(" %%q in ('find "GetVolumeName=" ..\build\out.txt') do echo %%q >> ..\build\vars.a
-for /f "tokens=4,* delims=:(" %%q in ('find "OnlineReturn=" ..\build\out.txt') do echo %%q >> ..\build\vars.a
 for /f "tokens=4,* delims=:(" %%q in ('find "GetVolumeInfo=" ..\build\out.txt') do echo %%q >> ..\build\vars.a
-for /f "tokens=4,* delims=:(" %%q in ('find "filetype=" ..\build\out.txt') do echo %%q >> ..\build\vars.a
-for /f "tokens=4,* delims=:(" %%q in ('find "access=" ..\build\out.txt') do echo %%q >> ..\build\vars.a
-for /f "tokens=4,* delims=:(" %%q in ('find "VolumeName=" ..\build\out.txt') do echo %%q >> ..\build\vars.a
-for /f "tokens=4,* delims=:(" %%q in ('find "RAMDiskImagePath=" ..\build\out.txt') do echo %%q >> ..\build\vars.a
-for /f "tokens=4,* delims=:(" %%q in ('find "auxtype=" ..\build\out.txt') do echo %%q >> ..\build\vars.a
-for /f "tokens=4,* delims=:(" %%q in ('find "blocks=" ..\build\out.txt') do echo %%q >> ..\build\vars.a
 for /f "tokens=4,* delims=:(" %%q in ('find "PREFSVER=" ..\build\out.txt') do echo %%q >> ..\build\vars.a
 for /f "tokens=4,* delims=:(" %%q in ('find "PREFSFILE=" ..\build\out.txt') do echo %%q >> ..\build\vars.a
-for /f "tokens=4,* delims=:(" %%q in ('find "PREFSREADLEN=" ..\build\out.txt') do echo %%q >> ..\build\vars.a
-for /f "tokens=4,* delims=:(" %%q in ('find "PREFSBUFFER=" ..\build\out.txt') do echo %%q >> ..\build\vars.a
-for /f "tokens=4,* delims=:(" %%q in ('find "ValidatePrefs=" ..\build\out.txt') do echo %%q >> ..\build\vars.a
-for /f "tokens=4,* delims=:(" %%q in ('find "SavePrefs=" ..\build\out.txt') do echo %%q >> ..\build\vars.a
-for /f "tokens=4,* delims=:(" %%q in ('find "mliparam=" ..\build\out.txt') do echo %%q >> ..\build\vars.a
 for /f "tokens=4,* delims=:(" %%q in ('find "OpenFile=" ..\build\out.txt') do echo %%q >> ..\build\vars.a
 for /f "tokens=4,* delims=:(" %%q in ('find "ReadFile=" ..\build\out.txt') do echo %%q >> ..\build\vars.a
 for /f "tokens=4,* delims=:(" %%q in ('find "CloseFile=" ..\build\out.txt') do echo %%q >> ..\build\vars.a
-for /f "tokens=4,* delims=:(" %%q in ('find "CheckCache=" ..\build\out.txt') do echo %%q >> ..\build\vars.a
+for /f "tokens=4,* delims=:(" %%q in ('find "SLOT=" ..\build\out.txt') do echo %%q >> ..\build\vars.a
+for /f "tokens=4,* delims=:(" %%q in ('find "DRIVE=" ..\build\out.txt') do echo %%q >> ..\build\vars.a
 cd ..\build
 %EXOMIZER% raw -q -P23 -T4 -b passport.tmp -o passport.pak
 cd ..\src

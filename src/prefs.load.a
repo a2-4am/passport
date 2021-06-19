@@ -1,0 +1,79 @@
+CURRENTVER =   $30        ; ASCII "0"
+DEFSLOT  =     $36        ; ASCII "6"
+DEFDRIVE =     $32        ; ASCII "2"
+
+;-------------------------------
+; LoadPrefs
+; load preferences from file
+;
+; in:  ProDOS must be in memory
+;-------------------------------
+!macro LoadPrefs {
+         lda   #<PREFSFILE
+         sta   mliparam+1
+         lda   #>PREFSFILE
+         sta   mliparam+2
+         lda   #<PREFSBUFFER
+         sta   mliparam+3
+         lda   #>PREFSBUFFER
+         sta   mliparam+4
+         jsr   OpenFile
+         bcs   +
+         ldy   #<PREFSVER
+         sty   mliparam+2
+         ldy   #>PREFSVER
+         sty   mliparam+3
+         ldy   #<PREFSREADLEN
+         sty   mliparam+4
+         ldy   #>PREFSREADLEN
+         sty   mliparam+5
+         jsr   ReadFile
+         jsr   CloseFile             ; always close whether read worked or not
+;
+; Sanity-check preferences and reset to
+; default values for any variables that
+; are out of range.
+; If the first value (PREFSVER) is
+; not recognized, all other values are
+; reset to defaults.
+;
++
+         lda   PREFSVER
+         cmp   #CURRENTVER
+         beq   +
+         lda   #CURRENTVER
+         sta   PREFSVER
+         lda   #$FF
+         sta   SLOT
+         sta   DRIVE
++
+         lda   SLOT
+         sec
+         sbc   #$30
+         beq   @badslot
+         cmp   #$08
+         bcc   @checkdrive
+@badslot
+         lda   #DEFSLOT
+         sta   SLOT
+@checkdrive
+         lda   DRIVE
+         sec
+         sbc   #$30
+         beq   @baddrive
+         cmp   #$03
+         bcc   @checks6d1
+@baddrive
+         lda   #DEFDRIVE
+         sta   DRIVE
+@checks6d1
+         lda   SLOT
+         cmp   #$36
+         bne   +
+         lda   DRIVE
+         cmp   #$31
+         bne   +
+         lda   #$32
+         sta   DRIVE
++
+}

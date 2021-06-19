@@ -89,6 +89,8 @@ RELBASE  =     $2000      ; dummy assignment for first build
 }
 LOWPOINT =     $4000      ; lowest available address for code
 HIGHPOINT =    $B200      ; highest available address+1 for code
+PREFSBUFFER =  $B600
+PREFSREADLEN = $0003
 BASEPAGE =     $10        ; high byte of $1000-byte buffer that
                           ; holds sector data for current track
                           ; Special Delivery tracer assumes this

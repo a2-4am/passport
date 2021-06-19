@@ -2,7 +2,11 @@
 *=$2000
 !to "../build/PASSPORT.SYSTEM",plain
 
-         !source "../build/vars.a"   ; no code in here
+         ; no code in these
+         !source "apidefs.a"
+         !source "strings/enid.a"
+         !source "prefs.load.a"
+         !source "../build/vars.a"
 
          bit   $C082                 ; read ROM, no write
          sta   $C00E                 ; primary character set
@@ -46,7 +50,7 @@ OneTimeSetup
          jmp   CleanExit
 +
          jsr   ScanForRAMAndHardDisks; scan for things that look like RAM disks or hard disks
-         jsr   LoadPrefs             ; load preferences (if available)
+         +LoadPrefs                  ; load preferences (if available)
          jsr   ThisSlot              ; get information about selected drive and set gTargetType for main menu
          lda   $FE
          sta   $F0
@@ -68,8 +72,6 @@ OneTimeSetup
          bne   -
          jmp   ($FE)
 
-         !source "apidefs.a"
-         !source "strings/enid.a"
          !source "initscan.a"
 
 SHOW_PROGRESS_DURING_DECRUNCH = 1    ; activates optional UI code in exodecrunch

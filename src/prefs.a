@@ -1,13 +1,7 @@
-CURRENTVER =   $30        ; ASCII "0"
-DEFSLOT  =     $36        ; ASCII "6"
-DEFDRIVE =     $32        ; ASCII "2"
-
 PREFSFILE !byte prefs_e-prefs_b
 prefs_b
           !text "PASSPORT.CONF"
 prefs_e
-PREFSBUFFER =  $B600
-PREFSREADLEN = $0003
 
 PREFSVER !byte $FF
 SLOT     !byte $FF
@@ -19,101 +13,3 @@ DRIVE    !byte $FF
          !text "|+---WRITE SLOT (1-7)",$8D
          !text "+---PREFS VERSION (DO NOT CHANGE)",$8D
 PREFSWRITELEN = *-PREFSVER
-
-;-------------------------------
-; SavePrefs
-; save preferences to file
-;
-; in:  ProDOS must be in memory
-;-------------------------------
-SavePrefs
-         jsr   ValidatePrefs
-         lda   #<PREFSFILE
-         sta   mliparam+1
-         lda   #>PREFSFILE
-         sta   mliparam+2
-         jsr   DeleteFile ; don't care if this fails
-         lda   #$04       ; text file type
-         sta   mliparam+4
-         lda   #$00
-         sta   mliparam+5 ; no aux file type
-         sta   mliparam+6
-         jsr   CreateFile
-         bcs   +
-         lda   #<PREFSBUFFER
-         sta   mliparam+3
-         lda   #>PREFSBUFFER
-         sta   mliparam+4
-         jsr   OpenFile
-         bcs   +
-         ldy   #<PREFSVER
-         sty   mliparam+2
-         ldy   #>PREFSVER
-         sty   mliparam+3
-         ldy   #<PREFSWRITELEN
-         sty   mliparam+4
-         ldy   #>PREFSWRITELEN
-         sty   mliparam+5
-         jsr   WriteFile
-         jsr   CloseFile
-+        rts
-
-;-------------------------------
-; ValidatePrefs
-; Sanity-check preferences and reset to
-; default values for any variables that
-; are out of range.
-; If the first value (PREFSVER) is
-; not recognized, all other values are
-; reset to defaults.
-;
-; in:  none
-; out: C set if any prefs were changed
-;      C clear if all prefs were valid
-;      A,X clobbered
-;-------------------------------
-ValidatePrefs
-         ldx   #$00
-         lda   PREFSVER
-         cmp   #CURRENTVER
-         beq   @checkslot
-         lda   #CURRENTVER
-         sta   PREFSVER
-         lda   #$FF
-         sta   SLOT
-         sta   DRIVE
-         inx
-@checkslot
-         lda   SLOT
-         sec
-         sbc   #$30
-         beq   @badslot
-         cmp   #$08
-         bcc   @checkdrive
-@badslot
-         lda   #DEFSLOT
-         sta   SLOT
-         inx
-@checkdrive
-         lda   DRIVE
-         sec
-         sbc   #$30
-         beq   @baddrive
-         cmp   #$03
-         bcc   @checks6d1
-@baddrive
-         lda   #DEFDRIVE
-         sta   DRIVE
-         inx
-@checks6d1
-         lda   SLOT
-         cmp   #$36
-         bne   @done
-         lda   DRIVE
-         cmp   #$31
-         bne   @done
-         lda   #$32
-         sta   DRIVE
-         inx
-@done    cpx   #$01       ; set carry if anything changed
-         rts

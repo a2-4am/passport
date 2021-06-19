@@ -40,7 +40,9 @@ VERBOSE  = $00       ; set to $01 to display API label addresses
 !to "../build/PASSPORT.TMP",plain
 !ct "lcase.ct"
 
-         !source "apidefs.a"         ; no code in here
+         ; no code in these
+         !source "apidefs.a"
+         !source "prefs.save.a"
 
 FirstMover
          jmp   MainMenu
@@ -258,10 +260,8 @@ Cleanup
 CleanExit
          jsr   Cleanup
          jsr   SwapProDOS            ; ProDOS out -> in
-         lda   gChangedPrefs
-         bne   +
-         jsr   SavePrefs
-+        jsr   PRODOSMLI             ; does not return
+         +SavePrefs
+         jsr   PRODOSMLI             ; does not return
          !byte $65
          !word +
 +        !byte $04
@@ -465,8 +465,8 @@ _byte_skip_hi:
          !source "id/dinkeydos.a"
          !source "id/advent.a"
          !source "id/panglosdos.a"
-         !source "id/bootfailure.a"
          !source "id/davidson.a"
+         !source "id/bootfailure.a"
          !source "id/holle.a"
          !source "id/phoenix.a"
          !source "id/555.a"
@@ -526,8 +526,6 @@ _byte_skip_hi:
   !warn "PREFSBUFFER=",PREFSBUFFER
   !warn "PREFSREADLEN=",PREFSREADLEN
   !warn "PREFSVER=",PREFSVER
-  !warn "SavePrefs=",SavePrefs
-  !warn "ValidatePrefs=",ValidatePrefs
   !warn "kForceLower=",kForceLower
   !warn "PrintByID=",PrintByID
   !warn "DiskIIArray=",DiskIIArray
@@ -535,4 +533,7 @@ _byte_skip_hi:
   !warn "ThisSlot=",ThisSlot
   !warn "CheckCache=",CheckCache
   !warn "IDBootFailure=",IDBootFailure
+  !warn "PREFSVER=",PREFSVER
+  !warn "SLOT=",SLOT
+  !warn "DRIVE=",DRIVE
 }
