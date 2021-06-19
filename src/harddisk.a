@@ -107,13 +107,14 @@ CreateFileOnHardDisk
 ; out:   all registers and flags clobbered
 ;        ProDOS is in memory
 ;-------------------------------
-CloseFileOnHardDisk
+!macro CloseFileOnHardDisk {
          lda   gHardDiskRef
          beq   +
          jsr   CloseFile
          lda   #0
          sta   gHardDiskRef
-+        rts
++
+}
 
 ;-------------------------------
 ; PrintHardDiskImagePath

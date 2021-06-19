@@ -44,10 +44,69 @@ VERBOSE  = $00       ; set to $01 to display API label addresses
          !source "apidefs.a"
          !source "prefs.save.a"
 
-FirstMover
+Relocatable
          jmp   MainMenu
 
          !bin "../build/t00only.pak"
+
+NonRelocatable
+         !source "strings/en.a"
+         !source "id/inspect0.a"
+         !source "id/precheck.a"
+         !source "id/trace.a"
+         !source "id/trace33.a"
+         !source "id/trace32.a"
+         !source "id/trace8b3.a"
+         !source "id/trace33p.a"
+         !source "id/dos33.a"
+         !source "id/prodos.a"
+         !source "id/pascal.a"
+         !source "id/rdos.a"
+         !source "id/jsr8b3.a"
+         !source "id/mecc.a"
+         !source "id/datasoft.a"
+         !source "id/tsr.a"
+         !source "id/protecteddos.a"
+         !source "id/encode44.a"
+         !source "id/encode53.a"
+         !source "id/ea.a"
+         !source "id/milliken.a"
+         !source "id/daviddos.a"
+         !source "id/quickdos.a"
+         !source "id/diversidos.a"
+         !source "id/prontodos.a"
+         !source "id/d5d5f7.a"
+         !source "id/laureate.a"
+         !source "id/micrograms.a"
+         !source "id/volumename.a"
+         !source "id/dinkeydos.a"
+         !source "id/advent.a"
+         !source "id/panglosdos.a"
+         !source "id/davidson.a"
+         !source "id/holle.a"
+         !source "id/phoenix.a"
+         !source "id/555.a"
+         !source "id/bootfailure.a"
+         !source "print.a"
+         !source "compare.a"
+         !source "modify.a"
+         !source "memory.a"
+         !source "sectormap.a"
+         !source "write.a"
+         !source "mli.a"
+         !source "ramdisk.a"
+         !source "harddisk.a"
+         !source "slots.a"
+         !source "prefs.a"
+         !source "keys.a"
+         !source "cffa.a"
+         !source "progress.a"
+         !source "rwts.a"
+         !source "wholetrack.a"
+         !source "standarddelivery.a"
+         !source "adstyle.a"
+         !source "universalstyle.a"
+         !source "crackme.a"
 
 MainMenu
          ldx   #$FF
@@ -241,12 +300,12 @@ Cleanup
          lda   $C0E8
          lda   gHardDiskRef
          ora   gRAMDiskRef
-         beq   +
+         bne   +
+         rts
          jsr   SwapProDOS            ; ProDOS out -> in
          jsr   DeleteFileOnRAMDisk
-         jsr   CloseFileOnHardDisk
-         jsr   SwapProDOS            ; ProDOS in -> out
-+        rts
+         +CloseFileOnHardDisk
+         jmp   SwapProDOS            ; ProDOS in -> out
 
 ;-------------------------------
 ; CleanExit
@@ -433,107 +492,33 @@ _byte_hi = * + 2
 _byte_skip_hi:
          rts
 
-         !source "strings/en.a"
-         !source "id/inspect0.a"
-         !source "id/precheck.a"
-         !source "id/trace.a"
-         !source "id/trace33.a"
-         !source "id/trace32.a"
-         !source "id/trace8b3.a"
-         !source "id/trace33p.a"
-         !source "id/dos33.a"
-         !source "id/prodos.a"
-         !source "id/pascal.a"
-         !source "id/rdos.a"
-         !source "id/jsr8b3.a"
-         !source "id/mecc.a"
-         !source "id/datasoft.a"
-         !source "id/tsr.a"
-         !source "id/protecteddos.a"
-         !source "id/encode44.a"
-         !source "id/encode53.a"
-         !source "id/ea.a"
-         !source "id/milliken.a"
-         !source "id/daviddos.a"
-         !source "id/quickdos.a"
-         !source "id/diversidos.a"
-         !source "id/prontodos.a"
-         !source "id/d5d5f7.a"
-         !source "id/laureate.a"
-         !source "id/micrograms.a"
-         !source "id/volumename.a"
-         !source "id/dinkeydos.a"
-         !source "id/advent.a"
-         !source "id/panglosdos.a"
-         !source "id/davidson.a"
-         !source "id/bootfailure.a"
-         !source "id/holle.a"
-         !source "id/phoenix.a"
-         !source "id/555.a"
-         !source "print.a"
-         !source "compare.a"
-         !source "modify.a"
-         !source "memory.a"
-         !source "sectormap.a"
-         !source "write.a"
-         !source "mli.a"
-         !source "ramdisk.a"
-         !source "harddisk.a"
-         !source "slots.a"
-         !source "prefs.a"
-         !source "keys.a"
-         !source "cffa.a"
-         !source "progress.a"
-         !source "rwts.a"
-         !source "wholetrack.a"
-         !source "standarddelivery.a"
-         !source "adstyle.a"
-         !source "universalstyle.a"
-         !source "crackme.a"
          !source "apicode.a"                    ; /!\ must be last
 
 !if RELBASE = $2000 {
   !ifdef PASS2 {
   } else { ;PASS2
     !set PASS2=1
-    !warn "RELBASE = ", HIGHPOINT - (* - FirstMover)
+    !warn "RELBASE = ", HIGHPOINT - (* - Relocatable)
   }
 } else {
-  !if (HIGHPOINT - (* - MainMenu)) < LOWPOINT {
-    ; code between FirstMover and MainMenu is moved and tracked, so it can be below LOWPOINT
-    !serious "My spoon is too big (", HIGHPOINT - (* - MainMenu), ") is below minimum (", LOWPOINT, ")!"
+  !if (HIGHPOINT - (* - NonRelocatable)) < LOWPOINT {
+    ; code before NonRelocatable is moved and tracked, so it can be below LOWPOINT
+    !serious "My spoon is too big (", HIGHPOINT - (* - NonRelocatable), ") is below minimum (", LOWPOINT, ")!"
   } else {
-    !warn "LowPoint=", HIGHPOINT - (* - FirstMover)
+    !warn "LowPoint=", NonRelocatable
   }
 
-  !warn "MainMenu=",MainMenu
-  !warn "CleanExit=",CleanExit
+  !warn "ThisSlot=",ThisSlot
+  !warn "PrintByID=",PrintByID
   !warn "WaitForKey=",WaitForKey
+  !warn "CleanExit=",CleanExit
   !warn "OpenFile=",OpenFile
   !warn "ReadFile=",ReadFile
   !warn "CloseFile=",CloseFile
   !warn "GetVolumeName=",GetVolumeName
-  !warn "OnlineReturn=",OnlineReturn
-  !warn "VolumeName=",VolumeName
-  !warn "RAMDiskImagePath=",RAMDiskImagePath
   !warn "GetVolumeInfo=",GetVolumeInfo
-  !warn "mliparam=",mliparam
-  !warn "access=",access
-  !warn "filetype=",filetype
-  !warn "auxtype=",auxtype
-  !warn "blocks=",blocks
+  !warn "PREFSVER=",PREFSVER
   !warn "PREFSFILE=",PREFSFILE
-  !warn "PREFSBUFFER=",PREFSBUFFER
-  !warn "PREFSREADLEN=",PREFSREADLEN
-  !warn "PREFSVER=",PREFSVER
-  !warn "kForceLower=",kForceLower
-  !warn "PrintByID=",PrintByID
-  !warn "DiskIIArray=",DiskIIArray
-  !warn "HardDiskArray=",HardDiskArray
-  !warn "ThisSlot=",ThisSlot
-  !warn "CheckCache=",CheckCache
-  !warn "IDBootFailure=",IDBootFailure
-  !warn "PREFSVER=",PREFSVER
   !warn "SLOT=",SLOT
   !warn "DRIVE=",DRIVE
 }

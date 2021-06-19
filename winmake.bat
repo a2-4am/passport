@@ -24,18 +24,17 @@ cd ..\src
 2>..\build\out.txt %ACME% -DFORWARD_DECRUNCHING=1 passport.a
 for /f "tokens=2,3 delims=)" %%q in ('find "RELBASE =" ..\build\out.txt') do set _make=%%q
 2>..\build\out.txt %ACME% -r ..\build\passport.lst -DRELBASE=$%_make:~-4% -DFORWARD_DECRUNCHING=1 passport.a
-for /f "tokens=4,* delims=:(" %%q in ('find "SaveProDOS=" ..\build\out.txt') do echo %%q > ..\build\vars.a
 for /f "tokens=4,* delims=:(" %%q in ('find "ThisSlot=" ..\build\out.txt') do echo %%q >> ..\build\vars.a
 for /f "tokens=4,* delims=:(" %%q in ('find "PrintByID=" ..\build\out.txt') do echo %%q >> ..\build\vars.a
 for /f "tokens=4,* delims=:(" %%q in ('find "WaitForKey=" ..\build\out.txt') do echo %%q >> ..\build\vars.a
 for /f "tokens=4,* delims=:(" %%q in ('find "CleanExit=" ..\build\out.txt') do echo %%q >> ..\build\vars.a
+for /f "tokens=4,* delims=:(" %%q in ('find "OpenFile=" ..\build\out.txt') do echo %%q >> ..\build\vars.a
+for /f "tokens=4,* delims=:(" %%q in ('find "ReadFile=" ..\build\out.txt') do echo %%q >> ..\build\vars.a
+for /f "tokens=4,* delims=:(" %%q in ('find "CloseFile=" ..\build\out.txt') do echo %%q >> ..\build\vars.a
 for /f "tokens=4,* delims=:(" %%q in ('find "GetVolumeName=" ..\build\out.txt') do echo %%q >> ..\build\vars.a
 for /f "tokens=4,* delims=:(" %%q in ('find "GetVolumeInfo=" ..\build\out.txt') do echo %%q >> ..\build\vars.a
 for /f "tokens=4,* delims=:(" %%q in ('find "PREFSVER=" ..\build\out.txt') do echo %%q >> ..\build\vars.a
 for /f "tokens=4,* delims=:(" %%q in ('find "PREFSFILE=" ..\build\out.txt') do echo %%q >> ..\build\vars.a
-for /f "tokens=4,* delims=:(" %%q in ('find "OpenFile=" ..\build\out.txt') do echo %%q >> ..\build\vars.a
-for /f "tokens=4,* delims=:(" %%q in ('find "ReadFile=" ..\build\out.txt') do echo %%q >> ..\build\vars.a
-for /f "tokens=4,* delims=:(" %%q in ('find "CloseFile=" ..\build\out.txt') do echo %%q >> ..\build\vars.a
 for /f "tokens=4,* delims=:(" %%q in ('find "SLOT=" ..\build\out.txt') do echo %%q >> ..\build\vars.a
 for /f "tokens=4,* delims=:(" %%q in ('find "DRIVE=" ..\build\out.txt') do echo %%q >> ..\build\vars.a
 cd ..\build
