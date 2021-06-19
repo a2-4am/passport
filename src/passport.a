@@ -40,16 +40,13 @@ VERBOSE  = $00       ; set to $01 to display API label addresses
 !to "../build/PASSPORT.TMP",plain
 !ct "lcase.ct"
 
-         ; no code in these
-         !source "apidefs.a"
-         !source "prefs.save.a"
-
 Relocatable
          jmp   MainMenu
 
          !bin "../build/t00only.pak"
 
 NonRelocatable
+         !source "apidefs.a"
          !source "strings/en.a"
          !source "id/inspect0.a"
          !source "id/precheck.a"
@@ -98,6 +95,7 @@ NonRelocatable
          !source "harddisk.a"
          !source "slots.a"
          !source "prefs.a"
+         !source "prefs.save.a"
          !source "keys.a"
          !source "cffa.a"
          !source "progress.a"

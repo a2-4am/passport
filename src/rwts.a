@@ -183,7 +183,7 @@ WriteTrackNA                         ; entry point used by Special Delivery trac
          beq   @maybeWritingToRAMDisk
          ; we are writing to a file on a hard disk, so print the
          ; full pathname of that file
-         jsr   PrintHardDiskImagePath
+         +PrintHardDiskImagePath
          bvc   @doneSaidWriting      ; always branches
 
 @maybeWritingToRAMDisk

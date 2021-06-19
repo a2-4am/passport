@@ -123,7 +123,7 @@ CreateFileOnHardDisk
 ; in:    @HardDiskImagePath is populated and has non-zero length
 ; out:   all registers and flags clobbered
 ;-------------------------------
-PrintHardDiskImagePath
+!macro PrintHardDiskImagePath {
          lda   HardDiskImagePath
          sta   @volumelen
          ldx   #0
@@ -135,4 +135,5 @@ PrintHardDiskImagePath
          cpx   #$FD       ; SMC
          bcc   -
          lda   #$8D
-         jmp   PrintA
+         jsr   PrintA
+}
