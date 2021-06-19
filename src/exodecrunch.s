@@ -504,7 +504,7 @@ progress_STA:
 ; this 156 (204) byte table area may be relocated. It may also be
 ; clobbered by other data between decrunches.
 ; -------------------------------------------------------------------
-decrunch_table=$800;;:
+decrunch_table=$200;;:
 ;;        .byte 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 ;;        .byte 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 ;;        .byte 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
