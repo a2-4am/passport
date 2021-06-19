@@ -10,13 +10,12 @@
 ;      all registers clobbered
 ;      all other flags clobbered
 ;-------------------------------
-!zone {
-IDEncoded44
+!macro IDEncoded44 {
          ldy   #$07
          jsr   SearchTrack
          !byte $BD,$8C,$C0
          !byte $10,$FB
          !byte $38
          !byte $2A
-         rts              ; passport-test-suite/Sneakers.woz [C=0] matches
+                          ; passport-test-suite/Sneakers.woz [C=0] matches
 }

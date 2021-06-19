@@ -7,8 +7,7 @@
 ; IDDOS32
 ; returns C clear if 3.2/3.3 bootloader detected in T00,S00
 ;-------------------------------
-!zone {
-IDDOS32
+!macro IDDOS32 {
          lda   #$00
          tax
          ldy   #$0F
@@ -20,26 +19,26 @@ IDDOS32
          !byte $C8        ; INY
          !byte $D0,$F7    ; BNE -
          !byte $4C,$0F,$02; JMP $020F
-         bcs   .exit
+         bcs   +
          ldx   #$33
          ldy   #$08
          jsr   compare
          !byte $A6,$2B    ; LDX $2B
          !byte $20,$5D,$02; JSR $025D
          !byte $4C,$D1,$02; JMP $02D1
-         bcs   .exit
+         bcs   +
          ldx   #$F4
          ldy   #$08
          jsr   compare
          !byte $CC,$00,$03; CPY $0300
          !byte $D0,$03    ; BNE +
          !byte $4C,$3B,$02; JMP $023B
-         bcs   .exit
+         bcs   +
          ldx   #$45
          ldy   #$03
          jsr   compare
          !byte $4C,$01,$03; JMP $0301
-.exit    rts
++
 }
 
 ;-------------------------------
@@ -49,8 +48,7 @@ IDDOS32
 ; after loading DOS
 ; returns C clear if 3.2lo/3.3 bootloader detected in T00,S00
 ;-------------------------------
-!zone {
-IDDOS32LO
+!macro IDDOS32LO {
          lda   #$00
          tax
          ldy   #$0F
@@ -62,24 +60,24 @@ IDDOS32LO
          !byte $E8        ; INX
          !byte $D0,$F7    ; BNE -
          !byte $4C,$0F,$02; JMP $020F
-         bcs   .exit
+         bcs   +
          ldx   #$2F
          ldy   #$08
          jsr   compare
          !byte $A6,$2B    ; LDX $2B
          !byte $20,$5D,$02; JSR $025D
          !byte $20,$D1,$02; JSR $02D1
-         bcs   .exit
+         bcs   +
          ldx   #$41
          ldy   #$03
          jsr   compare
          !byte $4C,$01,$03; JMP $0301
-         bcc   .exit
+         bcc   +
          ldx   #$37
          ldy   #$03
          jsr   compare
          !byte $4C,$01,$03; JMP $0301
-.exit    rts
++
 }
 
 ;-------------------------------

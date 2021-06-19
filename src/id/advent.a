@@ -15,7 +15,7 @@
 ; - Mindshadow
 ; - The Tracer Sanction
 ;-------------------------------
-IDAdvent
+!macro IDAdvent {
          lda   #BASEPAGE
          ldy   #33
          jsr   SearchSector
@@ -33,7 +33,8 @@ IDAdvent
          !byte $D0,$F5          ;BNE $-8
          !byte $A6,$2B          ;LDX $2B
          !byte $4C,$00          ;JMP $xx00
-         rts              ; passport-test-suite/Borrowed Time.woz [C=0] matches
+                          ; passport-test-suite/Borrowed Time.woz [C=0] matches
+}
 
 foundadvent
 ;

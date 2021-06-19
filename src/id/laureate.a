@@ -11,27 +11,23 @@
 ;      all other flags clobbered
 ;      all registers clobbered
 ;-------------------------------
-!zone {
-IDLaureate
+!macro IDLaureate {
          lda   #$00
          ldx   #$2E
-         ldy   #$0E
+         ldy   #$08
          jsr   compare    ; if T00,S00,$2E ==
          !byte $AE,$FF,$08; LDX $08FF
          !byte $30,$1E    ; BMI +$1E
          !byte $E0,$02    ; CPX #$02
-         !byte $D0,$05    ; BNE +$05
-         !byte $A9,$BF    ; LDA #$BF
-         !byte $8D,$FE,$08; STA $08FE
-         bcs   .exit
+         !byte $D0        ; BNE
+         bcs   +
          ldx   #$F8
-         ldy   #$08
          jsr   compare    ; and T00,S00,$F8 ==
          !byte $4C,$00,$B7; JMP $B700
          !byte $00,$00,$00
          !byte $FF,$0B
-.exit
-         rts              ; passport-test-suite/Sound Ideas- Word Attack - Disk 1 - Ending Consonants.woz [C=0] matches
+                          ; passport-test-suite/Sound Ideas- Word Attack - Disk 1 - Ending Consonants.woz [C=0] matches
++
 }
 
 ;-------------------------------

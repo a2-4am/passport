@@ -1,5 +1,5 @@
 ;-------------------------------
-; IDRDOS
+; IDRDOS16
 ; identify RDOS 16-sector bootloader
 ;
 ; in:  $0800..$08FF contains T00,S00
@@ -9,7 +9,7 @@
 ;      all registers clobbered
 ;      all other flags clobbered
 ;-------------------------------
-!macro IDRDOS {
+!macro IDRDOS16 {
          lda   #$00
          tax
          ldy   #$0E

@@ -9,8 +9,7 @@
 ;      all registers clobbered
 ;      all other flags clobbered
 ;-------------------------------
-!zone {
-IDProDOS
+!macro IDProDOS {
 ; Some disks jump to $08FF at $0804 (SOS entry point).
 ; Others have a modified T00,S00 but eventually load
 ; ProDOS (e.g. 1-2-3 Sequence Me, Alge-Blaster Plus,
@@ -24,5 +23,5 @@ IDProDOS
          !byte $38        ; SEC
          !byte $B0,$03    ; BCS +3
          !byte $4C        ; JMP
-         rts              ; passport-test-suite/Investigating Plant Growth.woz [C=0] matches
+                          ; passport-test-suite/Investigating Plant Growth.woz [C=0] matches
 }

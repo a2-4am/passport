@@ -7,23 +7,17 @@
 ; returns C clear if "Special Delivery" bootloader
 ; detected in T00,S00
 ;-------------------------------
-IDSpecDel
+!macro IDSpecDel {
          lda   #$00
          tax
-         ldy   #$58
+         ldy   #$08
          jsr   compare
-         !byte $02,$90,$4A,$C6,$27,$BD,$31,$09
-         !byte $49,$B0,$48,$C6,$3D,$98,$C8,$48
-         !byte $CE,$00,$08,$A9,$20,$C6,$27,$48
-         !byte $51,$26,$91,$26,$AA,$A5,$27,$85
-         !byte $32,$CE,$00,$08,$A8,$B5,$33,$84
-         !byte $29,$84,$21,$8A,$A2,$17,$86,$31
-         !byte $D5,$33,$A6,$2B,$5D,$31,$09,$85
-         !byte $29,$5D,$32,$09,$C6,$3D,$85,$28
-         !byte $5D,$33,$09,$85,$48,$A0,$2B,$84
-         !byte $20,$C6,$40,$30,$3E,$24,$40,$30
-         !byte $33,$24,$24,$24,$24,$40,$40,$40
-         rts
+         !byte $02
+         !byte $90,$4A
+         !byte $C6,$27
+         !byte $BD,$31,$09
+                          ; passport-test-suite/Ernie's Quiz.woz [C=0] matches
+}
 
 ;-------------------------------
 ; TraceSpecDel
