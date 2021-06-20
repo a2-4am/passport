@@ -2,18 +2,20 @@
 ; IDQuickDOS
 ; identify Quick-DOS bootloader
 ;
-; in:  $0800..$08FF contains T00,S00
-;      first page of track buffer also contains T00,S00
-; out: C clear if Quick-DOS bootloader found
-;      C set otherwise
-;      all registers clobbered
-;      all other flags clobbered
+; in:    $0800..$08FF contains T00,S00
+;        first page of track buffer also contains T00,S00
+;        A = 0
+;        X = 0
+; out:   C clear if Quick-DOS bootloader found
+;        C set otherwise
+;        A = 0
+;        X = 0
+;        all other registers & flags clobbered
 ;-------------------------------
 !macro IDQuickDOS {
-         lda   #$00
-         ldx   #$01
-         ldy   #$0A
+         ldy   #$0B
          jsr   compare    ; if T00,S00,$01 ==
+         !byte $01
          !byte $A5,$27    ; LDA $27
          !byte $C9,$09    ; CMP #$09
          !byte $D0,$27    ; BNE +$27

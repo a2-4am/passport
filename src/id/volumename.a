@@ -3,16 +3,11 @@
 ; identify and print volume name if found
 ; (ProDOS and Pascal supported)
 ;
-; in:  $0800..$08FF contains T00,S00
-;      first page of track buffer also contains T00,S00
-;      gIsProDOS or gIsPascal is true
-; out: C clear if disk volume name was found and printed
-;      C set otherwise
-;      oVerflow always clear
-;      all registers clobbered
-;      all other flags clobbered
+; in:    $0800..$08FF contains T00,S00
+;        first page of track buffer also contains T00,S00
+;        gIsProDOS or gIsPascal is true
+; out:   all registers & flags clobbered
 ;-------------------------------
-!zone {
 IDVolumeName
 ; read T00,S0B (volume key block)
          ldx   #$00
@@ -25,7 +20,7 @@ IDVolumeName
          sta   gAddress+1
          sta   cmp1+1
          jsr   ReadSectorXY
-         bcs   .error
+         bcs   .exit
 
          lda   gIsPascal
          beq   .pascal
@@ -34,7 +29,7 @@ IDVolumeName
          ldy   #$04
          lda   (cmp1), y
          cmp   #$F1
-         bcc   .error
+         bcc   .exit
          and   #$0F
          tax
          lda   #$05
@@ -45,12 +40,12 @@ IDVolumeName
          ldy   #$02
          lda   (cmp1), y
          cmp   #$06
-         bne   .error
+         bne   .exit
          ldy   #$06
          lda   (cmp1), y
-         beq   .error
+         beq   .exit
          cmp   #$08
-         bcs   .error     ; passport-test-suite/Notecard Maker.woz [C=0] reaches here
+         bcs   .exit      ; passport-test-suite/Notecard Maker.woz [C=0] reaches here
          tax
          lda   #$07
          sta   .offset+1
@@ -81,16 +76,9 @@ IDVolumeName
          ldy   #$06
          jsr   compare
          !byte $4C,$4F,$57,$44,$4F,$53
-         bcs   +
+         bcs   .exit
          lda   #TRUE
          sta   gIsLowDOS
          lda   #kSectorOptional
          sta   T00S0C
-+
-         clc
-         !byte $24        ; hide next SEC
-.error
-         sec
-         clv
-         rts
-}
+.exit    rts

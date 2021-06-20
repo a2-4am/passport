@@ -78,24 +78,35 @@ IDBootloader
          ldx   #BASEPAGE
          ldy   #$01
          jsr   CopyMemory            ; exits with X=0
-         txa                         ; A=0
 ;
 ; Try to identify DOS 3.3-shaped bootloader.
 ; Exit via custom trace function if found.
+; (in X=0; out A=0)
 ;
          jsr   IDDOS33
          bcs   .notdos33
-         lda   #TRUE
-         sta   gIsBoot0
+         sta   gIsBoot0              ; A = 0 (TRUE)
+;
+; Try to identify specific DOS 3.3-shaped bootloader
+; that may imply a D5D5F7 whole-track protection.
+; (in A=0; out A=0)
+;
          +IDD5D5F7
+;
+; Try to identify Diversi-DOS
+; (in A=0; out A=0)
+;
          +IDDiversi
          ldx   #s_diversidos
          bcc   .printdos
+;
+; Try to identify Pronto-DOS
+; (in A=0; out A=0)
+;
          +IDPronto
          ldx   #s_prontodos
          bcc   .printdos
          ldx   #s_dosb0
-
 .printdos
          stx   +
          jsr   PrintByID
@@ -103,35 +114,37 @@ IDBootloader
          jmp   TraceDOS33
 .notdos33
 ;
-; Try to identify a variant bootloader that calls to $08B3
-; early to munge the nibble tables used by the drive firmware.
-; Exit via custom trace function if found.
-;
-         +ID8b3
-         bcs   .not8b3
-         jsr   PrintByID
-         !byte s_jsr8b3
-         sta   gIs8b3
-         jmp   Trace8B3
-.not8b3
-;
 ; Try to identify Laureate Learning Systems bootloader.
 ; Exit via custom trace function if found.
+; (in A=0; out A=0)
 ;
          +IDLaureate
          bcs   .notLaureate
          jsr   PrintByID
          !byte s_laureate
-         lda   #TRUE
-         sta   gIsLaureate
+         sta   gIsLaureate           ; A = 0 (TRUE)
          lda   #$0B
          jsr   PrereadT00Partial
          bcs   .notLaureate
          jmp   TraceLaureate
 .notLaureate
 ;
+; Try to identify a variant bootloader that calls to $08B3
+; early to munge the nibble tables used by the drive firmware.
+; Exit via custom trace function if found.
+; (in A=0; out A=0,X=0)
+;
+         +ID8b3
+         bcs   .not8b3
+         jsr   PrintByID
+         !byte s_jsr8b3
+         sta   gIs8b3                ; A = 0 (TRUE)
+         jmp   Trace8B3
+.not8b3
+;
 ; Try to identify all the different MECC fastloader variants.
 ; Exit via custom trace function if found.
+; (in A=0,X=0; out A=0,X=0)
 ;
          +IDMECC
          bcs   .notmecc
@@ -163,8 +176,103 @@ IDBootloader
          jmp   foundmecc4
 .notmecc
 ;
+; Try to identify encrypted Datasoft bootloader
+; (in A=0,X=0; out A=0,X=0)
+;
+         +IDDatasoft
+         bcs   .notDatasoft
+         jsr   PrintByID
+         !byte s_datasoftb0
+         sta   gIsDatasoft           ; A = 0 (TRUE)
+         ; /!\ execution falls through here
+.notDatasoft
+;
+; Try to identify RDOS 16-sector bootloader
+; (in A=0,X=0; out A=0,X=0)
+;
+         +IDRDOS16
+         bcs   .notRDOS16
+         jsr   PrintByID
+         !byte s_rdos
+         ; /!\ execution falls through here
+.notRDOS16
+;
+; David-DOS II
+; (in A=0,X=0; out A=0,X=0)
+;
+         +IDDavid
+         bcs   .notDavid
+         jsr   PrintByID
+         !byte s_daviddos
+         sta   gIsDavidDOS           ; A = 0 (TRUE)
+         ; /!\ execution falls through here
+.notDavid
+;
+; TSR bootloader
+; (in A=0,X=0; out A=0,X=0)
+;
+         +IDTSR
+         bcs   .notTSR
+         jsr   PrintByID
+         !byte s_tsr
+         sta   gIsTSR                ; A = 0 (TRUE)
+         ; /!\ execution falls through here
+.notTSR
+;
+; Micrograms bootloader
+; (in A=0,X=0; out A=0,X=0)
+;
+         +IDMicrograms
+         bcs   .notMicrograms
+         jsr   PrintByID
+         !byte s_micrograms
+         ; /!\ execution falls through here
+.notMicrograms
+;
+; Quick-DOS
+; (in A=0,X=0; out A=0,X=0)
+;
+         +IDQuickDOS
+         bcs   .notQuickDOS
+         jsr   PrintByID
+         !byte s_quickdos
+         ; /!\ execution falls through here
+.notQuickDOS
+;
+; Dav Holle encrypted bootloader
+; (in A=0,X=0; out A=0,X=0)
+;
+         +IDHolle
+         bcs   .notHolle
+         jsr   PrintByID
+         !byte s_holle
+         sta   gIsHolle              ; A = 0 (TRUE)
+         ; /!\ execution falls through here
+.notHolle
+;
+; Try to identify Electronic Arts bootloader.
+; Exit via custom trace function if found.
+; (in A=0,X=0; out A=0,X=0)
+;
+         +IDEA
+         bcs   .notEA
+         jmp   foundea
+.notEA
+;
+; Try to identify hybrid 16-/13-sector bootloader.
+; Exit via custom trace function if found.
+; (in A=0,X=0; out A=0,X=0)
+;
+         +IDDOS32
+         bcs   .notDOS32
+         jsr   PrintByID
+         !byte s_dos32b0
+         jmp   TraceDOS32
+.notDOS32
+;
 ; Try to identify DOS 3.3P (Special Delivery) bootloader.
 ; Exit via custom trace function if found.
+; (in A=0,X=0; out A=0,X=0)
 ;
          +IDSpecDel
          bcs   .notSpecialDelivery
@@ -173,24 +281,10 @@ IDBootloader
          jmp   TraceSpecDel
 .notSpecialDelivery
 ;
-; Try to identify Electronic Arts bootloader.
+; Try to identify hybrid 16-/13-sector bootloader (variant
+; that loads into $3600 then relocates).
 ; Exit via custom trace function if found.
-;
-         +IDEA
-         bcs   .notEA
-         jmp   foundea
-.notEA
-;
-; Try to identify hybrid 16-/13-sector bootloader on
-; DOS 3.2 disks.
-; Exit via custom trace function if found.
-;
-         +IDDOS32
-         bcs   .notDOS32
-         jsr   PrintByID
-         !byte s_dos32b0
-         jmp   TraceDOS32
-.notDOS32
+; (in A=0,X=0; out A=0,X=0)
          +IDDOS32LO
          bcs   .notDOS32LO
          jsr   PrintByID
@@ -198,8 +292,48 @@ IDBootloader
          jmp   TraceDOS32LO
 .notDOS32LO
 ;
+; ProDOS (all versions)
+; (in A=0,X=0; out none [after jsr IDVolumeName])
+;
+         +IDProDOS
+         bcs   .notProDOS
+         jsr   PrintByID
+         !byte s_prodosb0
+         sta   gIsProDOS             ; A = 0 (TRUE)
+         jsr   IDVolumeName
+         ; /!\ execution falls through here because Dinkey-DOS disks are also ProDOS
+.notProDOS
+;
+; Dinkey-DOS (ProDOS file structure with DOS 3.3-ish RWTS in language card)
+; detectable now because IDVolumeName just read the first sector of the
+; volume directory into memory so we can look for a unique filename
+; (in none; out none)
+;
+         +IDDinkeyDOS
+         bcs   .notDinkey
+         sta   gDisplayBytes         ; A = #$0B
+         jsr   PrintByID
+         !byte s_dinkeydos
+         lda   #TRUE
+         sta   gIsDinkeyDOS
+         ; /!\ execution falls through here to save bytes (no other IDs will match)
+.notDinkey
+;
+; Apple Pascal (all versions)
+; (in none; out none [after jsr IDVolumeName])
+;
+         +IDPascal
+         bcs   .notPascal
+         jsr   PrintByID
+         !byte s_pascalb0
+         sta   gIsPascal             ; A = 0 (TRUE)
+         jsr   IDVolumeName
+         ; /!\ execution falls through here
+.notPascal
+;
 ; Try to identify Interplay bootloader.
 ; Exit via custom trace function if found.
+; (in none; out none)
 ;
          +IDAdvent
          bcs   .notInterplay
@@ -209,6 +343,7 @@ IDBootloader
 ; Try to detect whether there is code in the boot sector
 ; that loads 4-and-4-encoded data. This is an early escape
 ; hatch for disks that will fail later anyway.
+; (in none; out none)
 ;
          +IDEncoded44
          bcs   .not44
@@ -223,6 +358,7 @@ IDBootloader
 ; (the universal RWTS only works on 6-and-2 encoded data), so
 ; this serves as an early escape hatch for disks that will
 ; fail later anyway.
+; (in none; out none)
 ;
          +IDEncoded53
          bcs   .not53
@@ -231,124 +367,10 @@ IDBootloader
          jmp   TheEnd
 .not53
 ;
-; ProDOS (all versions)
+; 5-5-5 spiral bootloader
+; (in none; out none)
 ;
-         +IDProDOS
-         bcs   .notProDOS
-         jsr   PrintByID
-         !byte s_prodosb0
-         lda   #TRUE
-         sta   gIsProDOS
-         jsr   IDVolumeName
-         ; /!\ execution falls through here because Dinkey-DOS disks are also ProDOS
-.notProDOS
-;
-; Dinkey-DOS (ProDOS file structure with DOS 3.3-ish RWTS in language card)
-; detectable now because IDVolumeName just read the first sector of the
-; volume directory into memory so we can look for a unique filename
-;
-         +IDDinkeyDOS
-         bcs   .notDinkey
-         lda   #$0B
-         sta   gDisplayBytes
-         jsr   PrintByID
-         !byte s_dinkeydos
-         lda   #TRUE
-         sta   gIsDinkeyDOS
-         ; /!\ execution falls through here to save bytes (no other IDs will match)
-.notDinkey
-;
-; Apple Pascal (all versions)
-;
-         +IDPascal
-         bcs   .notPascal
-         jsr   PrintByID
-         !byte s_pascalb0
-         lda   #TRUE
-         sta   gIsPascal
-         jsr   IDVolumeName
-         ; /!\ execution falls through here to save bytes (no other IDs will match)
-.notPascal
-;
-; David-DOS II
-;
-         +IDDavid
-         bcs   .notDavid
-         jsr   PrintByID
-         !byte s_daviddos
-         lda   #TRUE
-         sta   gIsDavidDOS
-         ; /!\ execution falls through here to save bytes (no other IDs will match)
-.notDavid
-;
-; Encrypted Datasoft bootloader
-;
-         +IDDatasoft
-         bcs   .notDatasoft
-         jsr   PrintByID
-         !byte s_datasoftb0
-         lda   #TRUE
-         sta   gIsDatasoft
-         ; /!\ execution falls through here to save bytes (no other IDs will match)
-.notDatasoft
-;
-; TSR bootloader
-;
-         +IDTSR
-         bcs   .notTSR
-         jsr   PrintByID
-         !byte s_tsr
-         lda   #TRUE
-         sta   gIsTSR
-         ; /!\ execution falls through here to save bytes (no other IDs will match)
-.notTSR
-;
-; Micrograms bootloader
-; (just for display)
-;
-         +IDMicrograms
-         bcs   .notMicrograms
-         jsr   PrintByID
-         !byte s_micrograms
-         ; /!\ execution falls through here to save bytes (no other IDs will match)
-.notMicrograms
-;
-; Quick-DOS
-; (just for display)
-;
-         +IDQuickDOS
-         bcs   .notQuickDOS
-         jsr   PrintByID
-         !byte s_quickdos
-         ; /!\ execution falls through here to save bytes (no other IDs will match)
-.notQuickDOS
-;
-; RDOS (16-sector)
-; (just for display)
-;
-+
-         +IDRDOS16
-         bcs   .notRDOS16
-         jsr   PrintByID
-         !byte s_rdos
-         ; /!\ execution falls through here to save bytes (no other IDs will match)
-.notRDOS16
-;
-; Dav Holle encrypted bootloader
-; (will be decrypted and patched)
-;
-         jsr   IDHolle
-         bcs   .notHolle
-         jsr   PrintByID
-         !byte s_holle
-         lda   #TRUE
-         sta   gIsHolle
-         ; /!\ execution falls through here to save bytes (no other IDs will match)
-.notHolle
-;
-; 555 bootloader
-;
-         jsr   ID555
+         +ID555
          bcs   .not555
          lda   #0
          sta   gDisplayBytes

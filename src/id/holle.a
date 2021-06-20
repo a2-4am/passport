@@ -2,28 +2,26 @@
 ; IDHolle
 ; identify Dav Holle's encrypted bootloader
 ;
-; in:  $0800..$08FF contains T00,S00
-;      first page of track buffer also contains T00,S00
-; out: C clear if Holle bootloader found
-;      C set otherwise
-;      all registers clobbered
-;      all other flags clobbered
+; in:    $0800..$08FF contains T00,S00
+;        first page of track buffer also contains T00,S00
+;        A = 0
+;        X = 0
+; out:   C clear if Holle bootloader found
+;        C set otherwise
+;        A = 0
+;        X = 0
+;        all other registers & flags clobbered
 ;-------------------------------
-!zone {
-IDHolle
-         lda   #$00
-         tax
-         ldy   #(@searchend-@searchstart)
+!macro IDHolle {
+         ldy   #$10
          jsr   compare    ; if T00,S00,$00 ==
-@searchstart
          !byte $01
-         CLD
-         BIT   $C081
-         LDA   #$60
-         EOR   $FF58
-@hang    BNE   @hang
-         STA   $03F3
-         SEI
-@searchend
-         rts              ; passport-test-suite/Crime Wave.woz [C=0] matches
+         !byte $D8        ; CLD
+         !byte $2C,$81,$C0; BIT $C081
+         !byte $A9,$60    ; LDA #$60
+         !byte $4D,$58,$FF; EOR $FF58
+         !byte $D0,$FE    ; BNE
+         !byte $8D,$F3,$03; STA $03F3
+         !byte $78
+                          ; passport-test-suite/Crime Wave.woz [C=0] matches
 }

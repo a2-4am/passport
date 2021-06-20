@@ -5,7 +5,6 @@
 ;
 ; in:    $0800..$08FF contains T00,S00
 ;        first page of track buffer also contains T00,S00
-;        A = 0
 ;        X = 0
 ; out:   C clear if traceable DOS 3.3-style bootloader found
 ;        C set otherwise
@@ -20,6 +19,7 @@ IDDOS33
 ; Must weed out some Infocom and TLC disks that would
 ; load over program space and crash.
 ;
+         txa
          ldy   $08FE
          cpy   #$B6
          beq   @ok08FE    ; passport-test-suite/Binomial Multiplication.woz [Z=1] here, loads at $B600

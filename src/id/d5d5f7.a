@@ -12,7 +12,8 @@
 ; in:    $0800..$08FF contains T00,S00
 ;        IDDOS33 returned success
 ;        A = 0
-; out:   A,Y preserved
+; out:   A = 0
+;        Y preserved
 ;        all other flags and registers clobbered
 ;-------------------------------
 !macro IDD5D5F7 {

@@ -2,12 +2,15 @@
 ; IDProDOS
 ; identify ProDOS bootloader
 ;
-; in:  $0800..$08FF contains T00,S00
-;      first page of track buffer also contains T00,S00
-; out: C clear if ProDOS bootloader found
-;      C set otherwise
-;      all registers clobbered
-;      all other flags clobbered
+; in:    $0800..$08FF contains T00,S00
+;        first page of track buffer also contains T00,S00
+;        A = 0
+;        X = 0
+; out:   C clear if ProDOS bootloader found
+;        C set otherwise
+;        A = 0
+;        X = 0
+;        all other registers & flags clobbered
 ;-------------------------------
 !macro IDProDOS {
 ; Some disks jump to $08FF at $0804 (SOS entry point).
@@ -15,8 +18,6 @@
 ; ProDOS (e.g. 1-2-3 Sequence Me, Alge-Blaster Plus,
 ; Dazzle Draw, SuperPrint II). All of these variants
 ; will match.
-         lda   #$00
-         tax
          ldy   #$05
          jsr   compare    ; if T00,S00,$00 ==
          !byte $01

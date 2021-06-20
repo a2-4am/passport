@@ -2,12 +2,15 @@
 ; IDPascal
 ; identify Apple Pascal bootloader
 ;
-; in:  $0800..$08FF contains T00,S00
-;      first page of track buffer also contains T00,S00
-; out: C clear if Apple Pascal bootloader found
-;      C set otherwise
-;      all registers clobbered
-;      all other flags clobbered
+; in:    $0800..$08FF contains T00,S00
+;        first page of track buffer also contains T00,S00
+;        A = 0
+;        X = 0
+; out:   C clear if Apple Pascal bootloader found
+;        C set otherwise
+;        A = 0
+;        X = 0
+;        all other registers & flags clobbered
 ;-------------------------------
 !macro IDPascal {
 ;

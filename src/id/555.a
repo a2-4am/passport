@@ -2,11 +2,10 @@
 ; ID555
 ; identify 555 bootloader
 ;
-; in:  track buffer contains T00,S00
-; out: C clear if 555 bootloader found
-;      C set otherwise
-;      all registers clobbered
-;      all other flags clobbered
+; in:    track buffer contains T00,S00
+; out:   C clear if 555 bootloader found
+;        C set otherwise
+;        all registers & flags clobbered
 ;
 ; tested with
 ; - Addition Magician
@@ -33,7 +32,7 @@
 ; - Temple of Apshai
 ; - Trap-a-Zoid
 ;-------------------------------
-ID555
+!macro ID555 {
          lda   #8
          ldy   #22
          jsr   SearchSector
@@ -48,4 +47,5 @@ ID555
          !byte $C8              ; INY
          !byte $C4,WILDCARD     ; CPY $xx
          !byte $90,$EF          ; BCC *-$0F
-         rts
+                          ; passport-test-suite/Jumpman.woz [C=0] matches
+}

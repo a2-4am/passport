@@ -2,16 +2,17 @@
 ; IDRDOS16
 ; identify RDOS 16-sector bootloader
 ;
-; in:  $0800..$08FF contains T00,S00
-;      first page of track buffer also contains T00,S00
-; out: C clear if RDOS 16-sector bootloader found
-;      C set otherwise
-;      all registers clobbered
-;      all other flags clobbered
+; in:    $0800..$08FF contains T00,S00
+;        first page of track buffer also contains T00,S00
+;        A = 0
+;        X = 0
+; out:   C clear if RDOS 16-sector bootloader found
+;        C set otherwise
+;        A = 0
+;        X = 0
+;        all other registers & flags clobbered
 ;-------------------------------
 !macro IDRDOS16 {
-         lda   #$00
-         tax
          ldy   #$0E
          jsr   compare    ; if T00,S00,$00 ==
          !byte $01

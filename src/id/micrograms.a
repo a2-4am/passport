@@ -2,17 +2,19 @@
 ; IDMicrograms
 ; identify Micrograms bootloader
 ;
-; in:  track buffer contains T00,S00
-; out: C clear if Micrograms bootloader was found
-;      C set if not found
-;      all other flags clobbered
-;      all registers clobbered
+; in:    track buffer contains T00,S00
+;        A = 0
+;        X = 0
+; out:   C clear if Micrograms bootloader was found
+;        C set if not found
+;        A = 0
+;        X = 0
+;        all other registers & flags clobbered
 ;-------------------------------
 !macro IDMicrograms {
-         lda   #$00
-         ldx   #$01
-         ldy   #$0A
+         ldy   #$0B
          jsr   compare
+         !byte $01
          !byte $A5,$27
          !byte $C9,$09
          !byte $D0,$12
@@ -23,5 +25,7 @@
          ldy   #$02
          jsr   compare
          !byte $4C,$00
+                                     ; passport-test-suite/Shapes and Patterns.woz [C=0] matches
+         tax
 @notMicrograms
 }

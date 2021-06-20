@@ -2,11 +2,11 @@
 ; IDDinkeyDOS
 ; identify Dinkey-DOS by filename in ProDOS catalog
 ;
-; in:  track buffer contains T00,S0B
-; out: C clear if Dinkey-DOS found
-;      C set otherwise
-;      all registers clobbered
-;      all other flags clobbered
+; in:    track buffer contains T00,S0B
+; out:   C clear if Dinkey-DOS found
+;        C set otherwise
+;        A = #$0B
+;        all other registers & flags clobbered
 ;-------------------------------
 !macro IDDinkeyDOS {
          lda   #$0B

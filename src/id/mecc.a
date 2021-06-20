@@ -8,6 +8,7 @@
 ;
 ; in:    track buffer contains T00,S00
 ;        A = 0
+;        X = 0
 ; out:   C clear if MECC bootloader was found
 ;        C set if not found
 ;        A = 0
@@ -15,7 +16,6 @@
 ;        all other registers & flags clobbered
 ;-------------------------------
 !macro IDMECC {
-         tax
          ldy   #$17
          jsr   compare
          !byte $01,$4C,$1A,$08,$17,$0F,$00,$00

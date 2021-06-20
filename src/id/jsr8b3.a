@@ -9,15 +9,10 @@
 ; out:   C clear if this bootloader was found
 ;        C set otherwise
 ;        A = 0
+;        X = 0
 ;        all other registers & flags clobbered
 ;-------------------------------
 !macro ID8b3 {
-         tax
-         ldy   #$08
-         jsr   compare
-         !byte $01,$20,$B3,$08,$D0,$19,$EA,$A5
-         bcs   +
-
          ldx   #$B3
          ldy   #$14
          jsr   compare
@@ -25,6 +20,11 @@
          !byte $A9,$1C,$8D,$CC,$03
          !byte $A9,$00,$8D,$D5,$03
          !byte $A9,$37,$8D,$A3,$03
+         tax
+         bcs   +
+         ldy   #$08
+         jsr   compare
+         !byte $01,$20,$B3,$08,$D0,$19,$EA,$A5
                           ; passport-test-suite/Ardy The Aardvark.woz [C=0] matches
 +
 }

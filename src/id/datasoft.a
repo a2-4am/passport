@@ -2,21 +2,20 @@
 ; IDDatasoft
 ; identify Datasoft encrypted bootloader
 ;
-; in:  track buffer contains T00,S00
-; out: C clear if Datasoft encrypted bootloader found
-;      C set otherwise
-;      all registers clobbered
-;      all other flags clobbered
-;
-; tested with
-; - Tomahawk
-; - Video Title Shop
+; in:    track buffer contains T00,S00
+;        A = 0
+;        X = 0
+; out:   C clear if Datasoft encrypted bootloader found
+;        C set otherwise
+;        A = 0
+;        X = 0
+;        all other registers & flags clobbered
 ;-------------------------------
 !macro IDDatasoft {
-         lda   #$00
-         tax
          ldy   #$08
          jsr   compare
-         !byte $01,$4C,$7E,$08,$04,$8A,$0C,$B8
+         !byte $01
+         !byte $4C,$7E,$08
+         !byte $04,$8A,$0C,$B8
                           ; passport-test-suite/Tomahawk.woz [C=0] matches
 }
