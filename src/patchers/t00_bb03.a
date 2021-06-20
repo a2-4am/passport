@@ -21,7 +21,6 @@
 ; - Trivia Fever
 ;-------------------------------
 !zone {
-         sec
          lda   #$07       ; sector to check for David-DOS variant
          bit   gIsDavidDOS
          beq   .check
