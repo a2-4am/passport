@@ -28,7 +28,7 @@ SearchTrack
 ; SearchSector subroutine
 ; written by qkumba
 ; same as SearchTrack, but for a single sector
-; in:  A = sector address
+; in:  A = high byte of sector address in data buffer (e.g. $10 for sector 0)
 ;      Y = string length
 ;      stack = string to find
 ; out: C clear if string found

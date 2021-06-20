@@ -43,9 +43,8 @@ AnalyzeT00
          jmp   T00_IsNotRWTS
 +
          ; DOS 3.3 RWTS patchers
-         !source "../patchers/t00_artsci.a"
-         !source "../patchers/t00_bademu.a"
-         !source "../patchers/t00_bademu2.a"
+         !source "../patchers/t00_artsci.a"                ; in A=0A,X=FE,Y=02; out none
+         !source "../patchers/t00_bademu.a"                ; in           Y=05; out none
          !source "../patchers/t00_border.a"
          !source "../patchers/t00_dakin5.a"
          !source "../patchers/t00_datasoft2.a"

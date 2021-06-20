@@ -8,7 +8,7 @@
 ; - Magic Words
 ; - Photar
 ;-------------------------------
-!zone {
+T00_ARTSCI
          ; gTrack = 0
          ; Caller found DOS 3.3 RWTS
 
@@ -17,20 +17,17 @@
          ldy   #$02
          jsr   compare
          !byte $DE,$D5
-         bcs   .exit
+         bcs   +
 
-         ldy   #(@searchend-@searchstart)
+         ldy   #$05
          jsr   SearchTrack
-@searchstart
-         LDY   #$35
-         TXA
-         STA   ($3C),Y
-@searchend
-         bcs   .exit      ; passport-test-suite/Photar.woz [C=0] matches
+         !byte $A0,$35    ; LDY #$35
+         !byte $8A        ; TXA
+         !byte $91,$3C    ; STA ($3C),Y
+         bcs   +          ; passport-test-suite/Photar.woz [C=0] matches
          jsr   PrintByID
          !byte s_bytrack
          ldy   #$01
          jsr   modify
          !byte $60
-.exit
-}
++
