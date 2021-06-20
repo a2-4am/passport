@@ -50,7 +50,6 @@ NonRelocatable
          !source "id/trace33.a"
          !source "id/trace32.a"
          !source "id/trace8b3.a"
-         !source "id/bootfailure.a"
          !source "id/trace33p.a"
          !source "id/dos33.a"
          !source "id/dos32.a"
@@ -100,7 +99,6 @@ NonRelocatable
          !source "progress.a"
          !source "rwts.a"
          !source "standarddelivery.a"
-         !source "wholetrack.a"
          !source "adstyle.a"
          !source "universalstyle.a"
          !source "crackme.a"
@@ -460,6 +458,8 @@ _byte_hi = * + 2
 _byte_skip_hi:
          rts
 
+         !source "wholetrack.a"
+         !source "id/bootfailure.a"
          !source "apicode.a"                    ; /!\ must be last
 
 !if RELBASE = $2000 {

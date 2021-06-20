@@ -23,38 +23,39 @@
 !zone {
          sec
          lda   #$07       ; sector to check for David-DOS variant
-         ldx   gIsDavidDOS
-         beq   .maybe
-         lda   gIsBoot0   ; if DOS 3.3 boot0 loader
-         bne   .noButInYellow
+         bit   gIsDavidDOS
+         beq   .check
+         bit   gIsBoot0   ; if DOS 3.3 boot0 loader
+         bne   .exit
          lda   #$05       ; sector to check for DOS 3.3 variant
-.maybe
-         ldx   #$03
+.check   ldx   #$03
          ldy   #$03
          jsr   compare    ; if T00,S0(5|7),$03 ==
          !byte $4E,$06,$BB
-         bcs   .no
+         bcs   .exit
          jsr   PrintByID
          !byte s_bb03
-         lda   gIsDavidDOS
+
+         bit   gIsDavidDOS
          beq   .variant2
+
          lda   #$01
          ldx   #$38
-         ldy   #$03
          jsr   compare    ; if T00,S01,$38 ==
          !byte $20,$03,$BB; JSR $BB03
          bcc   .variant1
+
          jsr   compare    ; if T00,S01,$38 ==
          !byte $4C,$03,$BB; JMP $BB03
-         bcs   .no
+         bcs   .exit
          lda   #$05
          ldx   #$6B
-         ldy   #$05
-         jsr   compare    ; if T00,S05,$6B ==
-         !byte $06,$26,$7D,$39,$41; encrypted, decrypts to 'LDA $C08C,X / BPL -'
-.noButInYellow
-         bcs   .no
-.variant3
+         tay
+         jsr   compare    ; and T00,S05,$6B ==
+         !byte $06,$26,$7D; encrypted, decrypts to 'LDA $C08C,X / BPL -'
+         !byte $39,$41
+         bcs   .exit
+;variant3
          ldy   #$02
          jsr   modify     ; then set T00,S05,$6B =
          !byte $6B,$F6    ; encrypted, decrypts to 'BNE +$5C' which will unconditionally branch to success path at $BBC9
@@ -63,8 +64,9 @@
          dey
          jsr   modify     ; and set T00,S06,$0F =
          !byte $89        ; encrypted, decrypts to $10 which is the expected nibble count value
-                          ; unconditional branch (V is always 0 coming out of modify)
-         bvc   .no        ; passport-test-suite/Trivia Fever.woz [V=0] reaches here
+                          ; passport-test-suite/Trivia Fever.woz [V=0] reaches here
+         bvc   .exit      ; unconditional branch (V is always 0 coming out of modify)
+
 .variant1
          lda   $1243
          eor   $1543
@@ -79,10 +81,10 @@
 +        !byte $FD        ; SMC
          !byte $48
          !byte $4C,$93,$B7
-                          ; unconditional branch (V is always 0 coming out of modify)
-         bvc   .no        ; passport-test-suite/Classifying Animals with Backbones.woz [V=0] reaches here
+                          ; passport-test-suite/Classifying Animals with Backbones.woz [V=0] reaches here
+         bvc   .exit      ; unconditional branch (V is always 0 coming out of modify)
+
 .variant2
-         lda   #$07
          ldx   #$03       ; passport-test-suite/Case of the Great Train Robbery.woz [Z=0] reaches here
          ldy   #$0B
          jsr   modify     ; then set T00,S07,$03 =
@@ -92,5 +94,5 @@
          !byte $48
          !byte $A0,$04
          !byte $4C,$A9,$B7
-.no
+.exit
 }
