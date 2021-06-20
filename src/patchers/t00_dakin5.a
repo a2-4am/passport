@@ -13,31 +13,23 @@
 
          lda   #$00
          ldx   #$B3
-         ldy   #(@compareend-@comparestart)
+         ldy   #$0C
          jsr   compare    ; if T00,S00,$B3 ==
-@comparestart
-         CMP   #$AA
-         BNE   @b
-         LDA   $2E
-         BEQ   @a
-         EOR   #$7E
-         STA   $2E
-@a       LDA   #$AA
-         CLC
-         RTS
-@b       SEC
-         RTS
-@compareend
+         !byte $C9,$AA    ; CMP #$AA
+         !byte $D0,$0C    ; BNE +C
+         !byte $A5,$2E    ; LDA $2E
+         !byte $F0,$04    ; BEQ +4
+         !byte $49,$7E    ; EOR #$7E
+         !byte $85,$2E    ; STA $2E
          bcs   .exit
          lda   #$03
          ldx   #$9A
-         ldy   #$03
+         tay
          jsr   compare    ; and T00,S03,$9A ==
-         JMP   $B6B3
+         !byte $4C,$B3,$B6; JMP $B6B3
          bcs   .exit      ; passport-test-suite/MIRV.woz [C=0] matches
          jsr   PrintByID
          !byte s_dakin5
-         ldy   #$03
          jsr   modify     ; then set T00,S03,$9A =
          !byte $C9,$AA
          !byte $D0
