@@ -7,33 +7,29 @@
 ; (AppleWin, older versions of MAME)
 ; so we patch it for compatibility
 ;
-; tested on
+; variant 1:
 ; - Dino Dig (Troll Associates)
 ; - Make A Face (Troll Associates)
 ; - Let's Go There: Beginning Map and Geography Skills (Troll Associates)
+;
+; variant 2:
+; - Dinosaur Days (Pelican Software)
 ;-------------------------------
-!zone {
+T00_BADEMU
          ; gTrack = 0
          ; Caller found DOS 3.3 RWTS
 
-         lda   #$03
-         ldx   #$4F
-         ldy   #$11
-         jsr   compare    ; and T00,S03,$4F ==
-         !byte $BD,$8C,$C0; LDA $C08C,X
-         !byte $10,$FB    ; BPL -$FB
-         !byte $C9,$D5    ; CMP #$D5
-         !byte $D0,$F0    ; BNE -$F0
-         !byte $EA        ; NOP
+         ldy   #$05
+         jsr   SearchTrack
          !byte $BD,$8C,$C0; LDA $C08C,X
          !byte $C9,$D5    ; CMP #$D5
-         !byte $F0,$12    ; BEQ +$12
-         bcs   .exit      ; passport-test-suite/Beginning Map and Geography Skills.woz [C=0] matches
+         bcs   +          ; passport-test-suite/Beginning Map and Geography Skills.woz [C=0] matches
+                          ; passport-test-suite/Dinosaur Days.woz [C=0] matches at a different offset
          jsr   PrintByID
          !byte s_d5timing
-         ldx   #$58
-         ldy   #$02
-         jsr   modify     ; then set T00,S03,$58 =
-         !byte $F0,06     ; BEQ +$06
-.exit
-}
+         inx
+         inx
+         ldy   #$01
+         jsr   modify     ; then change $C0 to $BF to avoid hitting softswitch
+         !byte $BF
++
