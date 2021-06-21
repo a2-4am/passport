@@ -4,6 +4,9 @@
 ; timing bits for DOS sectors but
 ; not others
 ;
+; in:    A=02,X=F6,Y=03
+; out:   A=02,X=F6,Y=03
+;
 ; tested on
 ; - Black Belt (Earthware Computer Services)
 ; - Zoo Master (Earthware Computer Services)
@@ -13,9 +16,6 @@ EARTHWARE
          ; gTrack = 0
          ; Caller found DOS 3.3 RWTS
 
-         lda   #$02
-         ldx   #$F6
-         ldy   #$03
          jsr   compare
          !byte $4C,$89,$B6
          bcs   @exit                 ; passport-test-suite/Zoo Master.woz [C=0] here
