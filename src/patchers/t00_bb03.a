@@ -22,9 +22,9 @@
 ;-------------------------------
 !zone {
          lda   #$07       ; sector to check for David-DOS variant
-         bit   gIsDavidDOS
+         lda   gIsDavidDOS
          beq   .check
-         bit   gIsBoot0   ; if DOS 3.3 boot0 loader
+         lda   gIsBoot0   ; if DOS 3.3 boot0 loader
          bne   .exit
          lda   #$05       ; sector to check for DOS 3.3 variant
 .check   ldx   #$03
@@ -35,7 +35,7 @@
          jsr   PrintByID
          !byte s_bb03
 
-         bit   gIsDavidDOS
+         lda   gIsDavidDOS
          beq   .variant2
 
          lda   #$01

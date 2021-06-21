@@ -18,28 +18,23 @@
 ; - The Quarter Mile (Barnum)
 ; - Reading and Writing with The Boars (McGraw-Hill)
 ;------------------------------------------------------------------------------
-!zone {
+E7Everywhere
          lda   gIsBoot0
-         beq   +
-         lda   gIsProDOS
-         bne   .exit
-+
+         and   gIsProDOS
+         bne   +
          ldy   #$11
          jsr   SearchTrack
-;
-         LDA   #$05
+         !byte $A9,$05    ; LDA #$05
          !byte $8D,WILDCARD,WILDCARD
          !byte $AE,WILDCARD,WILDCARD
-         LDA   $C08E,X
-         LDA   $C089,X
-         LDA   #$00
+         !byte $BD,$8E,$C0; LDA $C08E,X
+         !byte $BD,$89,$C0; LDA $C089,X
+         !byte $A9,$00    ; LDA #$00
          !byte $8D
-;
-         bcs   .exit      ; passport-test-suite/Garfield Trivia Game.woz [C=0] matches
-         jsr   PrintByID
+         bcs   +          ; passport-test-suite/Garfield Trivia Game.woz [C=0] matches
+         jsr   PrintByID  ; passport-test-suite/Curious George Goes Shopping.woz [C=0] matches
          !byte s_e7everywhere
          ldy   #$02
          jsr   modify
          !byte $18,$60    ; CLC/RTS
-.exit
-}
++

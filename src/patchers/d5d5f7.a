@@ -18,7 +18,6 @@
 ; always run on Pascal disks
 ;
          lda   gIsPascal
-         beq   +
 ;
 ; if DOS 3.3-shaped bootloader, only run if we found
 ; specific markers on T00,S00 earlier that are shared
@@ -26,10 +25,9 @@
 ; (This filter is subject to revision if we find
 ; additional samples.)
 ;
-         lda   gPossibleD5D5F7
+         and   gPossibleD5D5F7
          bne   .exit
-
-+        ldy   #$20
+         ldy   #$20
          jsr   SearchTrack
          !byte $BD,$8C,$C0; LDA $C08C,X
          !byte $10,$FB    ; BPL -$FB

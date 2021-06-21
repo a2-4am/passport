@@ -11,31 +11,27 @@
 ; - Multiplication B (1981, SRA)
 ; - Measurement D-1 (1983, SRA)
 ;-------------------------------
-!zone {
+SRA
          lda   gIsDOS32
-         bne   +
-         lda   #$0C
-         bne   .start                ; always branches
-+        lda   gIsBoot0
-         bne   .exit
+         and   gIsBoot0
+         bne   @exit
+
          lda   #$0F
-.start   sta   .sector+1
-.sector  lda   #$FF                  ; modified above
+         sta   @sector+1
+@sector  lda   #$FD                  ; SMC
          ldx   #$3A
          ldy   #$09
          jsr   compare
          !byte $20,$00,$7B           ; JSR $7B00
          !byte $8D,$6C,$7A           ; STA $7A6C
          !byte $AD,$B1,$78           ; LDA $78B1
-         bcs   .nextsector           ; passport-test-suite/Computer Drill and Instruction - Multiplication B.woz [C=0] matches
+         bcs   @next                 ; passport-test-suite/Computer Drill and Instruction - Multiplication B.woz [C=0] matches
          jsr   PrintByID
          !byte s_sra
          inx
          ldy   #$02
          jsr   modify
          !byte $0F,$5A               ; new JSR entry point
-.nextsector
-         dec   .sector+1
-         bpl   .sector
-.exit
-}
+@next    dec   @sector+1
+         bpl   @sector
+@exit

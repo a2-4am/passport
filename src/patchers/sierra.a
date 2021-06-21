@@ -578,11 +578,6 @@
          bcs   .exit
 
 .yes
-         bit   gMode                 ; don't print anything in verify mode
-         bpl   +
-         jsr   PrintByID
-         !byte s_sierra
-+
 .page9
          lda   $D103,x
          sta   .load+1
@@ -590,11 +585,13 @@
          lda   $D104,x
          sta   .load+2
 
-         bit   gMode
-         bpl   .exit
-         bvc   .exit
          lda   #TRUE
          sta   gIsSierra
+
+         bit   gMode                 ; don't print or restart in verify mode
+         bpl   .exit
+         jsr   PrintByID
+         !byte s_sierra
          jmp   RestartScan
 .exit
 }
