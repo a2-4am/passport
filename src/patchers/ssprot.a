@@ -17,14 +17,14 @@
 ;-------------------------------
 !zone {
          lda   gIsF7F6
-         bne   .exit0
+         bne   .exit
          lda   #$0F
          sta   .sector+1
 .sector  lda   #$FF                  ; modified above
          ldx   #$00
          ldy   #$08
          jsr   compare
-         !byte $00,$08,$02,$03
+         !byte $00,$08,$02,$03       ; DOS 3.3 file addr/len
          !byte $D8                   ; CLD
          !byte $20,$0B,$08           ; JSR $080B
          bcs   .nextsector
@@ -52,48 +52,39 @@
          jsr   compare
          !byte $23,$2A,$24           ; passport-test-suite/Metric System Tutor.woz [C=0] matches
          bcc   .variant3
-         bcs   .nextsector
-
-.exit0   jmp   .exit
-.sector0 bpl   .sector
-
-.variant1
-         ldx   #$20
-         ldy   #$03
-         jsr   modify
-         !byte $EA                   ; NOP
-         !byte $A9,$35               ; LDA #$35
-         ldx   #$76
-         dey
-         jsr   modify
-         !byte $AA,$A2               ; new JMP entry point ($0900 when decrypted)
-         bvc   .nextsector           ; always branches
-
-.variant2
-         ldx   #$20
-         ldy   #$03
-         jsr   modify
-         !byte $EA                   ; NOP
-         !byte $A9,$27               ; LDA #$27
-         ldx   #$76
-         dey
-         jsr   modify                ; new JMP entry point ($0903 when decrypted)
-         !byte $FA,$F2
-         bvc   .nextsector           ; always branches
-
-.variant3
-         ldx   #$20
-         ldy   #$03
-         jsr   modify
-         !byte $EA                   ; NOP
-         !byte $A9,$27               ; LDA #$27
-         ldx   #$76
-         dey
-         jsr   modify                ; new JMP entry point ($0903 when decrypted)
-         !byte $A9,$A1
 
 .nextsector
          dec   .sector+1
-         bpl   .sector0
+         bpl   .sector
+         bmi   .exit
+
+.variant1
+         dey
+         jsr   modify
+         !byte $AA,$A2               ; new JMP entry point ($0900 when decrypted)
+         ldx   #$20
+         iny
+         jsr   modify
+         !byte $EA                   ; NOP
+         !byte $A9,$35               ; LDA #$35
+         bvc   .exit                 ; always branches
+
+.variant2
+         dey
+         jsr   modify                ; new JMP entry point ($0903 when decrypted)
+         !byte $FA,$F2
+         bvc   .variant2and3common   ; always branches
+
+.variant3
+         dey
+         jsr   modify                ; new JMP entry point ($0903 when decrypted)
+         !byte $A9,$A1
+.variant2and3common
+         ldx   #$20
+         iny
+         jsr   modify
+         !byte $EA                   ; NOP
+         !byte $A9,$27               ; LDA #$27
+
 .exit
 }
