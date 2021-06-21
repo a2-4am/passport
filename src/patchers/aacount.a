@@ -22,8 +22,7 @@
          bcs   +                     ; passport-test-suite/Moebius.woz [C=0] matches
          jsr   PrintByID
          !byte s_aacount
-         ldy   #$01
-         jsr   modify
+         jsr   modify1
          !byte $60                   ; RTS
 +
          dec   .sector+1

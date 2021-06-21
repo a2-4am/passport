@@ -36,8 +36,7 @@
          inx
          jsr   PrintByID
          !byte s_fbff
-         ldy   #$01
-         jsr   modify
+         jsr   modify1
          !byte $A2                   ; change encrypted BNE +4 to +5D so code exits with Death Counter > 0
 .exit
 }

@@ -22,8 +22,7 @@
          adc   #8
          tax
          tya
-         ldy   #$01
-         jsr   modify     ; change BNE to continue instead
+         jsr   modify1    ; change BNE to continue instead
          !byte $00
 .exit
 }

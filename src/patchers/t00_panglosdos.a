@@ -55,8 +55,7 @@
          !byte $60     ;RTS
          bcs   .exit
          inx
-         ldy   #$01
-         jsr   modify
+         jsr   modify1
          !byte $AA
          ldy   #$03
          jsr   SearchTrack

@@ -458,8 +458,8 @@ _byte_hi = * + 2
 _byte_skip_hi:
          rts
 
-         !source "id/bootfailure.a"
          !source "wholetrack.a"
+         !source "id/bootfailure.a"
          !source "apicode.a"                    ; /!\ must be last
 
 !if RELBASE = $2000 {

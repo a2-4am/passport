@@ -20,8 +20,7 @@
          !byte $48
          bcs   .exit      ; passport-test-suite/Advanced Electricity.woz [C=0] matches
          jsr   inx8
-         ldy   #$01
-         jsr   modify
+         jsr   modify1
          !byte $00
 .exit
 }

@@ -33,8 +33,7 @@
          sta   .value
          lda   .sectors,y
          ldx   .offsets,y
-         ldy   #$01
-         jsr   modify
+         jsr   modify1
 .value   !byte $d1
          dec   .loop+1
          bpl   .loop

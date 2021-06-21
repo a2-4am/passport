@@ -29,8 +29,7 @@
          sta   .swapper2+1
          inx
          stx   .swapper1+1
-         ldy   #$01
-         jsr   modify     ; offset $01. $B5 -> $AD
+         jsr   modify1    ; offset $01. $B5 -> $AD
          !byte $AD
 .swapper1
          lda   #$FF       ; modified at runtime
@@ -104,11 +103,10 @@
          !byte $8E,$2C,$BF
          bcs   .exitt1
          inx
-         ldy   #$01
-         jsr   modify     ; then set T01,S02,$B0 =
+         jsr   modify1    ; then set T01,S02,$B0 =
          !byte $AD
          ldx   #$B7
-         jsr   modify     ; and set T01,S02,$B7 =
+         jsr   modify1    ; and set T01,S02,$B7 =
          !byte $9B
 
 .exitt1

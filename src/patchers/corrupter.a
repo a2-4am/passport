@@ -44,8 +44,7 @@
          bcs   .exit      ; passport-test-suite/Squire.woz [C=0] matches
          jsr   PrintByID
          !byte s_corrupter
-         ldy   #$01
-         jsr   modify
+         jsr   modify1
          !byte $60        ; RTS
 .exit
 }

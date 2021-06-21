@@ -35,8 +35,7 @@
 
          ;and disable it
 
-         ldy   #$01
-         jsr   modify     ; passport-test-suite/Stickybear Math.woz [Z=0] reaches here
+         jsr   modify1      ; passport-test-suite/Stickybear Math.woz [Z=0] reaches here
          !byte $60          ;RTS
          pla
 

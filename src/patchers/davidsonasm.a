@@ -29,8 +29,7 @@
          jsr   PrintByID
          !byte s_badblock
          ldx   #$04
-         ldy   #$01
-         jsr   modify
+         jsr   modify1
          !byte $79        ; JMP to $0879 instead
 +        dec   .sector+1
          bpl   .sector

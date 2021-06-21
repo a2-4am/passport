@@ -33,8 +33,7 @@
          bcs   .exit
          jsr   PrintByID
          !byte s_a6bc95
-         ldy   #$01
-         jsr   modify
+         jsr   modify1
          !byte $60        ; RTS
 .exit
 }

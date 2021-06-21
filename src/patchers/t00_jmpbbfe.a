@@ -133,8 +133,7 @@ _jmpbbfe
          !byte $6C,$FD,$08
 
          ldx   #$FE
-         ldy   #$01
-         jsr   modify
+         jsr   modify1
 @offset  !byte $FD        ; SMC (byte offset of new entry point)
 
          ; check for code that branches over a serial number

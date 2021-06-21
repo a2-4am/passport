@@ -36,10 +36,7 @@
          jsr   PrintByID
          !byte s_hoffman
          lda   #$0C
-         ldy   #$01
-         jsr   modify     ; then set T00,S0C,$00 =
-;
-         RTS
-;
+         jsr   modify1    ; then set T00,S0C,$00 =
+         !byte $60
 .exit
 }

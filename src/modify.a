@@ -1,3 +1,7 @@
+modify1
+         ldy   #$01
+         ; /!\ execution falls through here
+
 ;-------------------------------
 ; modify subroutine
 ; in:  A = starting address (high byte)

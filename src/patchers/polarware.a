@@ -28,8 +28,7 @@
          inx
          jsr   PrintByID
          !byte s_fbff
-         ldy   #$01
-         jsr   modify
+         jsr   modify1
          !byte $B2                   ; change encrypted BNE +4 to +5D so code exits with Death Counter > 0
          lda   #TRUE
          sta   gPolarwareTamperCheck
@@ -45,8 +44,7 @@
          jsr   inx9
          jsr   PrintByID
          !byte s_tamper
-         ldy   #$01
-         jsr   modify
+         jsr   modify1
          !byte $50                   ; change BEQ to BVC which acts as a branch-always
 .exit
 }

@@ -25,8 +25,7 @@
          jsr   PrintByID
          !byte s_springboard
          ldx   #$98
-         ldy   #$01
-         jsr   modify     ; then set T00,S03,$98 =
+         jsr   modify1    ; then set T00,S03,$98 =
          !byte $00        ; branch to next instruction on failure
 .exit
 }

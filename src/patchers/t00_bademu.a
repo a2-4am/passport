@@ -29,7 +29,6 @@ T00_BADEMU
          !byte s_d5timing
          inx
          inx
-         ldy   #$01
-         jsr   modify     ; then change $C0 to $BF to avoid hitting softswitch
+         jsr   modify1    ; then change $C0 to $BF to avoid hitting softswitch
          !byte $BF
 +

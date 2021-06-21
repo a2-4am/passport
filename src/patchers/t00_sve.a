@@ -27,15 +27,12 @@
          !byte $BD,$8E,$C0           ; LDA $C08E,X
          bcs   .exit
          lda   (BASEPAGE*256)+$655
-         bpl   .noconfig
+         bpl   .exit
          and   #$7f
-         sta   .config
+         sta   +
          lda   #$06
          dex
-         ldy   #$01
-         jsr   modify
-.config
-         !byte $64
-.noconfig
+         jsr   modify1
++        !byte $64
 .exit
 }

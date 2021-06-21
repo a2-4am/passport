@@ -23,13 +23,12 @@
          !byte s_trillium
 
          jsr   inx4
-         ldy   #$01
-         jsr   modify
+         jsr   modify1
          !byte $2C        ; BIT
          inx
          inx
          inx
-         jsr   modify
+         jsr   modify1
          !byte $A9        ; LDA
 .exit
 }

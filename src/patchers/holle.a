@@ -176,8 +176,7 @@
 .addressEpilogueEnd
          bcs   +
          inx
-         ldy   #$01
-         jsr   modify     ; normalize address epilogue 1st nibble
+         jsr   modify1    ; normalize address epilogue 1st nibble
          !byte $DE
 +
          ldy   #(.dataPrologue3End-.dataPrologue3Start)
@@ -206,8 +205,7 @@
 .dataEpilogue1End
          bcs   +
          inx
-         ldy   #$01
-         jsr   modify     ; normalize data epilogue 1st nibble
+         jsr   modify1    ; normalize data epilogue 1st nibble
          !byte $DE
 +
          ldy   #(.dataEpilogue3End-.dataEpilogue3Start)
@@ -219,8 +217,7 @@
          bcs   +
          inx
          inx
-         ldy   #$01
-         jsr   modify     ; ignore data epilogue 3rd nibble
+         jsr   modify1    ; ignore data epilogue 3rd nibble
          !byte $00
 +
          ldy   #(.diskVolumeEnd-.diskVolumeStart)
@@ -240,8 +237,7 @@
          AND   #$01
 .alternatingTrackEnd
          bcs   .exit
-         ldy   #$01
-         jsr   modify
+         jsr   modify1
          !byte $A9        ; EOR -> LDA so alternating track check always passes
 
          jmp   .exit

@@ -32,11 +32,10 @@
          !byte $60        ; RTS
          bcs   .exit      ; passport-test-suite/Mr. Pixel's Programming Paint Set.woz [C=0] matches
          jsr   inx9
-         ldy   #$01
-         jsr   modify
+         jsr   modify1
          !byte $DE
          jsr   inx0A
-         jsr   modify
+         jsr   modify1
          !byte $AA
 .exit
 }

@@ -27,8 +27,7 @@
          jsr   PrintByID
          !byte s_bytrack
          ldx   #$D1
-         ldy   #$01
-         jsr   modify
+         jsr   modify1
          !byte $FB
 .exit
 }

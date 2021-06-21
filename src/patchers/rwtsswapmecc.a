@@ -14,8 +14,7 @@
          !byte $8D,$7A,$BC
          bcs   +          ; passport-test-suite/Word Wizards v1.0.woz [C=0] matches
          jsr   inx5
-         ldy   #$01
-         jsr   modify
+         jsr   modify1
          !byte $60
 +
          lda   gMECCFastloadType
@@ -28,8 +27,7 @@
          !byte $BD
          bcs   +          ; passport-test-suite/Zoyon Patrol v1.0.woz [C=0] matches
          jsr   inx4
-         ldy   #$01
-         jsr   modify
+         jsr   modify1
          !byte $00
 +
          ldy   #$08
@@ -40,8 +38,7 @@
          !byte $B9
          bcs   +          ; passport-test-suite/MECC Dataquest Composer [C=0] matches
          jsr   inx5
-         ldy   #$01
-         jsr   modify
+         jsr   modify1
          !byte $24
 +
          ldy   #$11

@@ -38,8 +38,7 @@
          !byte $60
          bcs   +          ; passport-test-suite/Miner's Cave.woz [C=0] matches
          jsr   inx9
-         ldy   #$01
-         jsr   modify
+         jsr   modify1
          !byte $18
 +
          ldy   #$18
@@ -53,8 +52,7 @@
          bcs   +          ; passport-test-suite/Spelling Press v1.1.woz [C=0] matches
          jsr   inx0B
          jsr   inx0B
-         ldy   #$01
-         jsr   modify
+         jsr   modify1
          !byte $18
 +
          ldy   #$0C
@@ -68,8 +66,7 @@
          !byte $60
          bcs   +          ; passport-test-suite/Spelling Press v1.1.woz [C=0] matches
          jsr   inx0A
-         ldy   #$01
-         jsr   modify
+         jsr   modify1
          !byte $18
 +
          ldy   #$0B
@@ -78,8 +75,7 @@
          bcs   .exit      ; passport-test-suite/Spelling Press v1.1.woz [C=0] matches
          inx
          inx
-         ldy   #$01
-         jsr   modify
+         jsr   modify1
          !byte $18
 .exit
 }

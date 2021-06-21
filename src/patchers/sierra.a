@@ -41,8 +41,7 @@
 .call
          !byte $20,$D1,$D1 ;JSR $xxxx
          bcs   +
-         ldy   #$01
-         jsr   modify
+         jsr   modify1
          !byte $2C
 
          ;there are two of these on the same track
@@ -52,16 +51,14 @@
 .jmp1
          !byte $4C,$D1,$D1 ;JMP $xxxx
          bcs   +
-         ldy   #$01
-         jsr   modify
+         jsr   modify1
          !byte $60
          ldy   #3
          jsr   SearchTrack
 .jmp2
          !byte $4C,$D1,$D1 ;JMP $xxxx
          bcs   +
-         ldy   #$01
-         jsr   modify
+         jsr   modify1
          !byte $60
 +        ldy   #3
          jsr   SearchTrack
@@ -92,8 +89,7 @@
          inx
          inx
          inx
-         ldy   #$01
-         jsr   modify
+         jsr   modify1
          !byte $00
 +        ldy   #12
          jsr   SearchTrack
@@ -108,8 +104,7 @@
          adc   #9
          tax
          pla
-         ldy   #$01
-         jsr   modify
+         jsr   modify1
          !byte $60
 +        ldy   #14
          jsr   SearchTrack
@@ -148,8 +143,7 @@
          !byte $8D,$DF,$4D ;STA $4DDF
          bcs   +
          inx
-         ldy   #$01
-         jsr   modify
+         jsr   modify1
          !byte $2C ;BIT $xxxx
 +        ldy   #6
          jsr   SearchTrack
@@ -159,8 +153,7 @@
          inx
          inx
          inx
-         ldy   #$01
-         jsr   modify
+         jsr   modify1
          !byte $60 ;RTS
 +        ldy   #17
          jsr   SearchTrack
@@ -179,8 +172,7 @@
          !byte $6C,$36,$00 ;JMP ($0036)
          bcs   +
          jsr   inx5
-         ldy   #$01
-         jsr   modify
+         jsr   modify1
          !byte $2C ;BIT $xxxx
 +        ldy   #15
          jsr   SearchTrack
@@ -201,12 +193,10 @@
          adc   #6
          tax
          pla
-         ldy   #$01
-         jsr   modify
+         jsr   modify1
          !byte $EA         ;NOP
          jsr   inx4
-         ldy   #$01
-         jsr   modify
+         jsr   modify1
          !byte $EA         ;NOP
 +        ldy   #7
          jsr   SearchTrack
@@ -215,8 +205,7 @@
          !byte $4C,$BF,$48 ;JMP $48BF
          bcs   +
          inx
-         ldy   #$01
-         jsr   modify
+         jsr   modify1
          !byte $A6 ;encoded BIT
 +        jmp   .exit
 
@@ -289,8 +278,7 @@
 +
          jsr   PrintByID
          !byte s_sierra
-         ldy   #$01
-         jsr   modify
+         jsr   modify1
 .patchstyle
          !byte $2C ;BIT $xxxx
          jmp   .exit
@@ -314,8 +302,7 @@
          adc   #5
          tax
          pla
-         ldy   #$01
-         jsr   modify
+         jsr   modify1
          !byte $B5 ;load instead of store
 
          ldy   #24
@@ -332,8 +319,7 @@
          bcs   +
          jsr   PrintByID
          !byte s_tamper
-         ldy   #$01
-         jsr   modify
+         jsr   modify1
          !byte $60 ;just return
 
 +        ldy   #15
@@ -351,8 +337,7 @@
          adc   #12
          tax
          pla
-         ldy   #$01
-         jsr   modify
+         jsr   modify1
          !byte $2C ;don't load sector #$10
 
 +        ldy   #13
@@ -369,8 +354,7 @@
          adc   #10
          tax
          pla
-         ldy   #$01
-         jsr   modify
+         jsr   modify1
          !byte $2C ;don't call protection check
 
 .jmpexit

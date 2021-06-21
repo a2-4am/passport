@@ -31,6 +31,8 @@
          jmp   PrintByID
 ;jmodify
          jmp   modify
+;jmodify1
+         jmp   modify1
 ;jcompare
          jmp   compare
 ;gDisplayBytes

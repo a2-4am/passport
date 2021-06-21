@@ -38,15 +38,13 @@ ERRORD51
          pla
          tax
          pla
-         ldy   #$01
-         jsr   modify
+         jsr   modify1
          !byte $4C        ; JMP opcode
 @highBytePtr
          ldy   $FDFD      ; SMC
          sty   +
          inx
          inx
-         ldy   #$01
-         jsr   modify
+         jsr   modify1
 +        !byte $FD        ; SMC (high byte of JMP address)
 @exit

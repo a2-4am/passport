@@ -27,8 +27,7 @@ F7F6
          bcs   +                     ; passport-test-suite/Might and Magic.woz [C=0] matches
 
          jsr   inx4
-         ldy   #$01
-         jsr   modify
+         jsr   modify1
          !byte $18                   ; CLC
 
          lda   #TRUE                 ; needed for Might & Magic

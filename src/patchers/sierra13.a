@@ -29,8 +29,7 @@
          bcs   +
          inx
          inx ;patch the STA
-         ldy   #$01
-         jsr   modify
+         jsr   modify1
          !byte $AD ;LDA
          lda   #$24
          sta   $B91E
@@ -125,8 +124,7 @@
          adc   #$0A
          tax
          pla
-         ldy   #$01
-         jsr   modify
+         jsr   modify1
          !byte $FC
          bvc   .exit
 
@@ -147,8 +145,7 @@
          inx
          inx
          inx ;patch the second JSR
-         ldy   #$01
-         jsr   modify
+         jsr   modify1
          !byte $2C ;LDA
          bvc   .exit
 
@@ -184,8 +181,7 @@
          bcs   .exit
          inx
 .adjust  lda   #$d1
-         ldy   #$01
-         jsr   modify
+         jsr   modify1
          !byte $55 ;encoded zero
          lda   #TRUE
          sta   gIsSierra13

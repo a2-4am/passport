@@ -97,11 +97,10 @@
 .yes
          lda   #$03
          ldx   #$40
-         ldy   #$01
-         jsr   modify     ; then set T00,S03,$40 =
+         jsr   modify1    ; then set T00,S03,$40 =
          !byte $F0
          ldx   #$9C
-         jsr   modify     ; and set T00,S03,$9C =
+         jsr   modify1    ; and set T00,S03,$9C =
          !byte $D0
          lda   #$06
          ldx   #$69

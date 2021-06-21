@@ -27,7 +27,6 @@ T00_ARTSCI
          bcs   +          ; passport-test-suite/Photar.woz [C=0] matches
          jsr   PrintByID
          !byte s_bytrack
-         ldy   #$01
-         jsr   modify
+         jsr   modify1
          !byte $60
 +

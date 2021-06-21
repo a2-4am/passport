@@ -13,7 +13,6 @@
          !byte $B9,$34,$37,$34       ; 'POKE 47445,' in Applesoft BASIC (POKE opcode is $B9)
          !byte $34,$35,$2C
          bcs   +                     ; passport-test-suite/SocMate Analogies Games.woz [C=0] matches
-         ldy   #$01
-         jsr   modify
+         jsr   modify1
          !byte $B2                   ; change POKE opcode to REM
 +

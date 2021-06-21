@@ -29,8 +29,7 @@
          jsr   PrintByID
          !byte s_bytrack
          ldx   #$B8
-         ldy   #$01
-         jsr   modify
+         jsr   modify1
          !byte $23
 .exit
 }

@@ -13,8 +13,7 @@
          bcs   .exit      ; passport-test-suite/Tomahawk.woz [C=0] matches
          jsr   PrintByID
          !byte s_datasoft
-         ldy   #$01
-         jsr   modify
+         jsr   modify1
          !byte $C0
 .exit
 }

@@ -20,8 +20,7 @@
          jsr   PrintByID
          !byte s_badblock
          inx
-         ldy   #$01
-         jsr   modify
+         jsr   modify1
          !byte $CC        ; MLI CLOSE command (instead of BLOCKREAD)
 .exit
 }

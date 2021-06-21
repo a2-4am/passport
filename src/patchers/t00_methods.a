@@ -36,8 +36,7 @@
          jsr   PrintByID
          !byte s_bytrack
          ldx   #$BD
-         ldy   #$01
-         jsr   modify     ; then set T00,S00,$BD =
+         jsr   modify1    ; then set T00,S00,$BD =
          !byte $24        ; BIT
          tya
          ldx   #$47
@@ -46,8 +45,7 @@
          !byte $4C,$CE,$36; JMP $36CE
          bcs   .exit
          inx
-         ldy   #$01
-         jsr   modify     ; then set T00,S01,$48 =
+         jsr   modify1    ; then set T00,S01,$48 =
          !byte $D8
 .exit
 }
