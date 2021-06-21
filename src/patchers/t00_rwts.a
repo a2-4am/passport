@@ -144,8 +144,7 @@
          pla
          inx
          inx
-         ldy   #2
-         jsr   compare
+         jsr   compare2
 .cmpbyte5
          !byte $20,$D1   ; SMC
 

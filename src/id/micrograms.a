@@ -22,8 +22,7 @@
          !byte $85,$3F
          bcs   @notMicrograms        ; passport-test-suite/Shapes and Patterns.woz [C=0] matches
          ldx   #$42
-         ldy   #$02
-         jsr   compare
+         jsr   compare2
          !byte $4C,$00
                                      ; passport-test-suite/Shapes and Patterns.woz [C=0] matches
          tax

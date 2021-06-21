@@ -26,8 +26,7 @@
          jsr   PrintByID
          !byte s_pdi
          jsr   inx0C
-         ldy   #$02
-         jsr   modify
+         jsr   modify2
          !byte $99,$8E     ; jmp directly to decoder
 .exit
 }

@@ -1,5 +1,5 @@
 ;-------------------------------
-; #RDOS13
+; #rdos13
 ; patch RDOS to be 16-sector compatible
 ;
 ; module by qkumba
@@ -45,11 +45,10 @@
 
          lda   #$0A
          ldx   #$75
-         ldy   #2
-         jsr   compare
+         jsr   compare2
          !byte $C9,$D5     ;CMP #$D5
          bcc   +
-         jsr   modify
+         jsr   modify2
          !byte $C9,$D5     ;CMP #$D5
 
 +

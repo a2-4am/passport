@@ -12,13 +12,12 @@
 !zone {
          lda   gIsDOS32
          bne   .exit
-         lda   #$0b
+         lda   #$0B
          ldx   #$84
-         ldy   #$03
-         jsr   compare    ; if T00,S0B,$84 ==
+         jsr   compare3   ; if T00,S0B,$84 ==
          !byte $4C,$F0,$BC
          bcs   .exit      ; passport-test-suite/Demolition Division.woz [C=0] matches
-         jsr   modify     ; then set T00,S0B,$84 =
+         jsr   modify3    ; then set T00,S0B,$84 =
          !byte $AD,$E9,$B7
 .exit
 }

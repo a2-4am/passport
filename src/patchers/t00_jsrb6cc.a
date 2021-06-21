@@ -11,8 +11,7 @@
 
          lda   #$07
          ldx   #$00
-         ldy   #$03
-         jsr   compare
+         jsr   compare3
          !byte $20,$CC,$B6
          bcs   .exit
          txa

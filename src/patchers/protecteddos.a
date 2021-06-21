@@ -152,11 +152,10 @@
 ; bypass check for duplicate T00,S00
 ;
          ldx   #$93
-         ldy   #$03
-         jsr   compare    ; if T00,S01,$93 ==
+         jsr   compare3   ; if T00,S01,$93 ==
          !byte $4C,$00,$B8
          bcs   .skipcheck ; passport-test-suite/Ultima IV.woz [C=0] matches
-         jsr   modify     ; then set T00,S01,$93 =
+         jsr   modify3    ; then set T00,S01,$93 =
          !byte $AC,$E5,$B7
 .skipcheck
 

@@ -13,8 +13,7 @@
          bne   .exit
          lda   #$08
          ldx   #$D6
-         ldy   #$02
-         jsr   compare    ; if T01,S08,$D6 ==
+         jsr   compare2   ; if T01,S08,$D6 ==
          !byte $4C,$D5
          bcs   .exit      ; passport-test-suite/Castle Wolfenstein.woz [C=0] matches
          iny

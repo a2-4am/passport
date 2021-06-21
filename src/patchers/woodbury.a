@@ -26,8 +26,7 @@
          jsr   PrintByID
          !byte s_badblock
          jsr   inx4
-         ldy   #$02
-         jsr   modify
+         jsr   modify2
          !byte $F0,$0E
 .exit
 }

@@ -11,8 +11,7 @@
 
          lda   #$08
          ldx   #$5A
-         ldy   #$03
-         jsr   compare    ; and T00,S08,$5A ==
+         jsr   compare3   ; and T00,S08,$5A ==
          !byte $4C,$B4,$36; JMP $36B4
          bcs   .exit
          lda   #$00
@@ -40,8 +39,7 @@
          !byte $24        ; BIT
          tya
          ldx   #$47
-         ldy   #$03
-         jsr   compare    ; if T00,S01,$47 ==
+         jsr   compare3   ; if T00,S01,$47 ==
          !byte $4C,$CE,$36; JMP $36CE
          bcs   .exit
          inx

@@ -87,8 +87,7 @@
          bcs   .exit
          lda   #$08
          ldx   #$8C
-         ldy   #$02
-         jsr   compare    ; and T00,S08,$8C ==
+         jsr   compare2   ; and T00,S08,$8C ==
          !byte $69,$BA
          bcc   .yes       ; passport-test-suite/Green Globs and Graphing Equations.woz [C=0] matches
 .exit
@@ -109,8 +108,7 @@
          !byte $20,$C3,$BC
          lda   #$08
          ldx   #$8C
-         ldy   #$02
-         jsr   modify     ; and set T00,S08,$8C =
+         jsr   modify2    ; and set T00,S08,$8C =
          !byte $A0,$B9
 .exit2
 }

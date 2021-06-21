@@ -36,8 +36,7 @@
          jsr   PrintByID
          !byte s_fbff
          lda   gDisplayBytes
-         ldy   #$03
-         jsr   modify
+         jsr   modify3
                           ; unconditional jump to success path
          !byte $18        ; CLC
          !byte $90        ; BCC +

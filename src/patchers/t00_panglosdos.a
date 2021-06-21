@@ -29,8 +29,7 @@
          inx
          inx
          inx
-         ldy   #$02
-         jsr   modify
+         jsr   modify2
          !byte $A9,$00 ;LDA #$00
          ldy   #$06
          jsr   SearchTrack
@@ -42,8 +41,7 @@
          inx
          inx
          inx
-         ldy   #$02
-         jsr   modify
+         jsr   modify2
          !byte $A9,$00 ;LDA #$00
 
          ;Monopoly
@@ -61,7 +59,7 @@
          jsr   SearchTrack
          !byte $4C,$56,$BB ;JMP $BB56
          bcs   .exit
-         jsr   modify
+         jsr   modify3
          !byte $AD,$00,$E0 ;LDA $E000
 .exit
 }

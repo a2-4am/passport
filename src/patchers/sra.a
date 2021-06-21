@@ -29,8 +29,7 @@ SRA
          jsr   PrintByID
          !byte s_sra
          inx
-         ldy   #$02
-         jsr   modify
+         jsr   modify2
          !byte $0F,$5A               ; new JSR entry point
 @next    dec   @sector+1
          bpl   @sector

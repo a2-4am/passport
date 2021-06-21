@@ -98,8 +98,7 @@ _jmpbbfe
 
          lda   #$00
          ldx   #$4B
-         ldy   #$02
-         jsr   compare    ; if T00,S00,$4B ==
+         jsr   compare2   ; if T00,S00,$4B ==
          !byte $FE,$BB
          bcs   .exit
 
@@ -128,8 +127,7 @@ _jmpbbfe
          inx
          inx
          inx
-         ldy   #$03
-         jsr   modify
+         jsr   modify3
          !byte $6C,$FD,$08
 
          ldx   #$FE

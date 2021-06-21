@@ -19,13 +19,11 @@
          !byte $C9,$09
          bcs   @notTSR
          ldx   #$FE
-         ldy   #$02
-         jsr   compare
+         jsr   compare2
          !byte $B0,$0F
          bcs   @notTSR
          ldx   #$1C
-         iny
-         jsr   compare
+         jsr   compare3
          !byte $20,$B3,$08
                           ; passport-test-suite/Dawn Patrol.woz [C=0] matches
 @notTSR

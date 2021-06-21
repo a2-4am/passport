@@ -33,10 +33,18 @@
          jmp   modify
 ;jmodify1
          jmp   modify1
+;jmodify2
+         jmp   modify2
+;jmodify3
+         jmp   modify3
 ;jcompare
          jmp   compare
 ;jcompare1
          jmp   compare1
+;jcompare2
+         jmp   compare2
+;jcompare3
+         jmp   compare3
 ;gDisplayBytes
          !fill 10         ; array of ten bytes for use as
                           ; substitution strings

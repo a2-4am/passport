@@ -33,8 +33,7 @@
          bcs   .exit      ; passport-test-suite/Odd One Out 1990.woz [C=0] matches
          jsr   PrintByID
          !byte s_bbf9
-         ldy   #$02
-         jsr   modify
+         jsr   modify2
          !byte $18,$60
 .exit
 }

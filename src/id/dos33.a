@@ -115,15 +115,14 @@ IDDOS33
 ; DOS 3.3 and most derivatives have STA $08FE at $081C
 ;
          ldx   #$1C
-         ldy   #$03
-         jsr   compare    ; if T00,S00,$1C ==
+         jsr   compare3   ; if T00,S00,$1C ==
          !byte $8D,$FE,$08
          bcc   @exit      ; passport-test-suite/Binomial Multiplication.woz [C=0] matches
 ;
 ; Variant jumps to $08F0 and back but is still safe to trace.
 ; Check for this jump and also match the code at $08F0 exactly.
 ;
-         jsr   compare    ; if T00,S00,$1C ==
+         jsr   compare3   ; if T00,S00,$1C ==
          !byte $4C,$F0,$08; JMP $08F0
          bcs   @exit      ; unknown code at $081C -> failure
          ldx   #$F0

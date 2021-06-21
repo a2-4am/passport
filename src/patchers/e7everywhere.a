@@ -34,7 +34,6 @@ E7Everywhere
          bcs   +          ; passport-test-suite/Garfield Trivia Game.woz [C=0] matches
          jsr   PrintByID  ; passport-test-suite/Curious George Goes Shopping.woz [C=0] matches
          !byte s_e7everywhere
-         ldy   #$02
-         jsr   modify
+         jsr   modify2
          !byte $18,$60    ; CLC/RTS
 +

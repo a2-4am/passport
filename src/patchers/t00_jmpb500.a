@@ -18,15 +18,14 @@
 
          lda   #$0C
          ldx   #$84
-         ldy   #$03
-         jsr   compare    ; if T00,S0C,$84 ==
+         jsr   compare3   ; if T00,S0C,$84 ==
          !byte $4C,$00,$B5; JMP $B500
          bcs   .exit
 
          jsr   PrintByID
          !byte s_beforedos
 
-         jsr   modify     ; then set T00,$0C,$84 =
+         jsr   modify3    ; then set T00,$0C,$84 =
          !byte $AD,$E9,$B7
 .exit
 }

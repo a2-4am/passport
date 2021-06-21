@@ -19,8 +19,7 @@
          jsr   inx8
          jsr   PrintByID
          !byte s_a5count
-         ldy   #$02
-         jsr   modify
+         jsr   modify2
          !byte $D0,$7B    ; BNE +$7B
 .exit
 }

@@ -1,7 +1,17 @@
+; utility functions for common cases
+; (from the caller's perspective, these have the side effect of setting Y,
+; since the modify routine will 'save' and 'restore' the value we're setting here)
+modify3
+         ldy   #$03
+         !byte $2C
+         ; /!\ execution falls through here
+modify2
+         ldy   #$02
+         !byte $2C
+         ; /!\ execution falls through here
 modify1
          ldy   #$01
          ; /!\ execution falls through here
-
 ;-------------------------------
 ; modify subroutine
 ; in:  A = starting address (high byte)

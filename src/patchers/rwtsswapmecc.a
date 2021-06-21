@@ -52,8 +52,7 @@
          !byte $B9,WILDCARD,WILDCARD
          !byte $8D,$AC,$D5
          bcs   +          ; passport-test-suite/MECC Dataquest - Europe and Soviet Union.woz [C=0] matches
-         ldy   #$03
-         jsr   modify
+         jsr   modify3
          !byte $A9,$00
          !byte $24
 +

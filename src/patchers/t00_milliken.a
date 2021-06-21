@@ -11,11 +11,10 @@
          bne   .exit
          lda   #$01
          ldx   #$48
-         ldy   #$02
-         jsr   compare    ; and T00,S01,$48 ==
+         jsr   compare2   ; and T00,S01,$48 ==
          !byte $03,$9B
          bcs   .exit      ; passport-test-suite/Tangrams Puzzler.woz [C=0] matches
-         jsr   modify     ; then set T00,S01,$48 =
+         jsr   modify2    ; then set T00,S01,$48 =
          !byte $84,$9D
 .exit
 }

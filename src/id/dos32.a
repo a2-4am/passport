@@ -37,8 +37,7 @@
          !byte $4C,$3B,$02; JMP $023B
          bcs   +
          ldx   #$45
-         ldy   #$03
-         jsr   compare    ; and T00,S00,$45 =
+         jsr   compare3   ; and T00,S00,$45 =
          !byte $4C,$01,$03; JMP $0301
          tax
 +

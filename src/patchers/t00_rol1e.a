@@ -26,13 +26,12 @@ _rol1e
          !byte $BD,$02,$01
          bcs   .exit
          ldx   #$64
-         ldy   #$02
-         jsr   compare    ; and T00,S03,$64 ==
+         jsr   compare2   ; and T00,S03,$64 ==
          !byte $A5,$1E
          bcs   .exit      ; passport-test-suite/Crypto Cube.woz [C=0] matches
          jsr   PrintByID
          !byte s_rol1e
-         jsr   modify     ; then set T00,S03,$64 =
+         jsr   modify2    ; then set T00,S03,$64 =
          !byte $A9,$F7
 .exit
 }

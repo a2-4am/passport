@@ -17,13 +17,12 @@
 
          lda   #$01
          ldx   #$48
-         ldy   #$02
-         jsr   compare
+         jsr   compare2
          !byte $00,$9B
          bcs   .exit      ; passport-test-suite/Fathoms 40.woz [C=0] matches
          jsr   PrintByID
          !byte s_datasoft
-         jsr   modify
+         jsr   modify2
          !byte $76,$9C
 .exit
 }

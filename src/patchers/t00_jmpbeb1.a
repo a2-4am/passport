@@ -56,8 +56,7 @@ _jmpbeb1
          !byte $A9
          bcs   .exit
          ldx   #$5E
-         ldy   #$03
-         jsr   compare    ; and T00,S02,$5E ==
+         jsr   compare3   ; and T00,S02,$5E ==
          !byte $20,$BB,WILDCARD
          bcs   .exit      ; passport-test-suite/Easy as ABC.woz [C=0] matches
          ldx   #$49       ; passport-test-suite/Spelling Rules.woz [C=0] matches

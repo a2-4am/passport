@@ -69,8 +69,7 @@
          !byte s_beforedos
 
          inx
-         ldy   #$03
-         jsr   modify     ; then set offset+1 to
+         jsr   modify3    ; then set offset+1 to
          !byte $4C,$84,$9D
 .exit
 }

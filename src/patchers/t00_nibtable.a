@@ -11,40 +11,30 @@ _nibtable
 
          lda   #$02
          ldx   #$6D
-         ldy   #$03
-         jsr   compare    ; and T00,S02,$6D ==
+         jsr   compare3   ; and T00,S02,$6D ==
          !byte $BD,$29,$BA
          bcs   .checkwrite
-         lda   #$02
          ldx   #$82
-         ldy   #$03
-         jsr   compare    ; and T00,S02,$82 ==
+         jsr   compare3   ; and T00,S02,$82 ==
          !byte $BD,$29,$BA
          bcs   .checkwrite
-         lda   #$02
          ldx   #$95
-         ldy   #$03
-         jsr   compare    ; and T00,S02,$95 ==
+         jsr   compare3   ; and T00,S02,$95 ==
          !byte $BD,$29,$BA
          bcs   .checkwrite
          jsr   .fixwrite
 .checkwrite
          lda   #$03
          ldx   #$09
-         ldy   #$03
-         jsr   compare    ; if T00,S03,$09 ==
+         jsr   compare3   ; if T00,S03,$09 ==
          !byte $59,$00,$BA
          bcs   .exit
-         lda   #$03
          ldx   #$1A
-         ldy   #$03
-         jsr   compare    ; and T00,S03,$1A ==
+         jsr   compare3   ; and T00,S03,$1A ==
          !byte $59,$00,$BA
          bcs   .exit
-         lda   #$03
          ldx   #$2A
-         ldy   #$03
-         jsr   compare    ; and T00,S03,$2A ==
+         jsr   compare3   ; and T00,S03,$2A ==
          !byte $D9,$00,$BA
          bcs   .exit
          jsr   .fixread

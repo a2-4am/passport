@@ -496,19 +496,16 @@
          tax
          lda   .cmp1+1
          pha
-         ldy   #2
-         jsr   compare
+         jsr   compare2
          !byte $B5,$B7
          pla
          bcc   +
          pha
-         ldy   #2
-         jsr   compare
+         jsr   compare2
          !byte $D9,$03
          pla
          bcc   +
-         ldy   #2
-         jsr   compare
+         jsr   compare2
          !byte $00,$BD
 .bcsexit5
          bcs   .bcsexit6

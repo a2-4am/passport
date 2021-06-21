@@ -14,8 +14,7 @@ T00_ARTSCI
 
          lda   #$0A
          ldx   #$FE
-         ldy   #$02
-         jsr   compare
+         jsr   compare2
          !byte $DE,$D5
          bcs   +
 

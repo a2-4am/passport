@@ -217,8 +217,7 @@ b4bbcompare
          bcs   _b4bbexit
          lda   #$0C
          ldx   #$84
-         ldy   #$03
-         jsr   compare
+         jsr   compare3
          !byte $4C,$BB,$B4
          bcs   _b4bbexit
          ldx   #$02                  ; track

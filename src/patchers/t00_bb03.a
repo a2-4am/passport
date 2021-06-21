@@ -28,8 +28,7 @@
          bne   .exit
          lda   #$05       ; sector to check for DOS 3.3 variant
 .check   ldx   #$03
-         ldy   #$03
-         jsr   compare    ; if T00,S0(5|7),$03 ==
+         jsr   compare3   ; if T00,S0(5|7),$03 ==
          !byte $4E,$06,$BB
          bcs   .exit
          jsr   PrintByID
@@ -40,11 +39,11 @@
 
          lda   #$01
          ldx   #$38
-         jsr   compare    ; if T00,S01,$38 ==
+         jsr   compare3   ; if T00,S01,$38 ==
          !byte $20,$03,$BB; JSR $BB03
          bcc   .variant1
 
-         jsr   compare    ; if T00,S01,$38 ==
+         jsr   compare3   ; if T00,S01,$38 ==
          !byte $4C,$03,$BB; JMP $BB03
          bcs   .exit
          lda   #$05
@@ -55,13 +54,11 @@
          !byte $39,$41
          bcs   .exit
 ;variant3
-         ldy   #$02
-         jsr   modify     ; then set T00,S05,$6B =
+         jsr   modify2    ; then set T00,S05,$6B =
          !byte $6B,$F6    ; encrypted, decrypts to 'BNE +$5C' which will unconditionally branch to success path at $BBC9
          lda   #$06
          ldx   #$0F
-         dey
-         jsr   modify     ; and set T00,S06,$0F =
+         jsr   modify1    ; and set T00,S06,$0F =
          !byte $89        ; encrypted, decrypts to $10 which is the expected nibble count value
                           ; passport-test-suite/Trivia Fever.woz [V=0] reaches here
          bvc   .exit      ; unconditional branch (V is always 0 coming out of modify)

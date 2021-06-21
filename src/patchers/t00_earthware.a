@@ -16,12 +16,11 @@
 EARTHWARE
          lda   #$02
          ldx   #$F6
-         ldy   #$03
-         jsr   compare
+         jsr   compare3
          !byte $4C,$89,$B6
          bcs   @exit                 ; passport-test-suite/Zoo Master.woz [C=0] here
          jsr   PrintByID
          !byte s_bytrack
-         jsr   modify
+         jsr   modify3
          !byte $BD,$8C,$C0
 @exit

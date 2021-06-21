@@ -33,12 +33,11 @@
          !byte $20,$D1,$02; JSR $02D1
          bcs   +
          ldx   #$41
-         ldy   #$03
-         jsr   compare
+         jsr   compare3
          !byte $4C,$01,$03; JMP $0301
          bcc   +
          ldx   #$37
-         jsr   compare
+         jsr   compare3
          !byte $4C,$01,$03; JMP $0301
 +        tax
 }

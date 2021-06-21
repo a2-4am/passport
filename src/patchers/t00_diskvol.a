@@ -63,8 +63,7 @@
          lda   #$08
          inx
          inx              ; now $12 or $18 (depending on which compare matched)
-         ldy   #$02
-         jsr   modify     ; then set T00,S08,$12/18 =
+         jsr   modify2    ; then set T00,S08,$12/18 =
          !byte $A9,$00    ; LDA #$00
 .exit
 }

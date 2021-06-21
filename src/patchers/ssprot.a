@@ -40,16 +40,15 @@
          bcs   .nextsector
 
          ldx   #$76
-         ldy   #$03
-         jsr   compare
+         jsr   compare3
          !byte $23,$2A,$28
          bcc   .variant1             ; passport-test-suite/Creative Contraptions.woz [C=0] matches
 
-         jsr   compare
+         jsr   compare3
          !byte $70,$79,$77
          bcc   .variant2             ; passport-test-suite/Wortgefecht.woz [C=0] matches
 
-         jsr   compare
+         jsr   compare3
          !byte $23,$2A,$24           ; passport-test-suite/Metric System Tutor.woz [C=0] matches
          bcc   .variant3
 

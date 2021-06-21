@@ -11,11 +11,10 @@
 
          lda   #$02
          ldx   #$5E
-         ldy   #$03
-         jsr   compare
+         jsr   compare3
          !byte $4C,$B8,$B6
          bcs   .exit      ; passort-test-suite/Crown Of Arthain.woz [C=0] matches
-         jsr   modify
+         jsr   modify3
          !byte $20,$B8,$B8
 .exit
 }

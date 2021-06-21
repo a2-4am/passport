@@ -88,8 +88,7 @@
          adc   #$48
          tax
          pla
-         ldy   #2
-         jsr   modify
+         jsr   modify2
          !byte $A0,$B9
          bvc   .jmpexit
 

@@ -34,8 +34,7 @@
          !byte s_beforedos
 
          ldx   #$F6
-         ldy   #$02
-         jsr   modify     ; then set T02,S00,$F6 =
+         jsr   modify2    ; then set T02,S00,$F6 =
          !byte $84,$9D
 .exit
 }

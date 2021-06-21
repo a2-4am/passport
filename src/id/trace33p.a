@@ -97,8 +97,7 @@ TraceSpecDel4
 
          lda   #$0B
          ldx   #$00
-         ldy   #$03
-         jsr   compare    ; if $1B00 ==
+         jsr   compare3   ; if $1B00 ==
          !byte $4C,$4D,$2A
 SDfail
          php

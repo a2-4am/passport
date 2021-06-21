@@ -189,8 +189,7 @@
          inx
          inx
          inx
-         ldy   #$02
-         jsr   modify      ; disable CPU-burning JSR after data prologue
+         jsr   modify2     ; disable CPU-burning JSR after data prologue
          !byte  $F0,$03
 +
          ldy   #(.dataEpilogue1End-.dataEpilogue1Start)
@@ -223,8 +222,7 @@
          LDY   $2F
 .diskVolumeEnd
          bcs   +
-         ldy   #$02
-         jsr   modify     ; don't use disk volume number to initialize data field checksum
+         jsr   modify2    ; don't use disk volume number to initialize data field checksum
          LDY   #$00
 +
          ldy   #(.alternatingTrackEnd-.alternatingTrackStart)

@@ -34,11 +34,10 @@
 
          lda   #$0A
          ldx   #$12
-         ldy   #$02
-         jsr   compare
+         jsr   compare2
          !byte $B1,$48
          bcs   .exit
-         jsr   modify
+         jsr   modify2
          !byte $A9,$00
 .exit
 }
