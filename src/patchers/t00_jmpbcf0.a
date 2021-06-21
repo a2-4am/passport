@@ -6,26 +6,23 @@
 ; NOTE: must be run before RWTS
 ; patchers due to overlapping bytes
 ;-------------------------------
-!zone {
-_jmpbcf0
+T00_JMPBCF0
          ; gTrack = 0
          ; Caller found DOS 3.3 RWTS
 
          lda   #$03
          ldx   #$94
          ldy   #$08
-         jsr   compare    ; and T00,S03,$94 ==
+         jsr   compare    ; if T00,S03,$94 ==
          !byte $DD,$8C,$C0
          !byte $D0,$A9
          !byte $4C,$F0,$BC
-         bcs   .exit      ; passport-test-suite/Easy as ABC.woz [C=0] matches
+         bcs   +          ; passport-test-suite/Easy as ABC.woz [C=0] matches
          jsr   PrintByID
          !byte s_jmpbcf0
-         ldy   #$08
          jsr   modify     ; then set T00,S03,$94 =
          !byte $EA
          !byte $BD,$8C,$C0
          !byte $10,$FB
          !byte $C9,$AA
-.exit
-}
++
