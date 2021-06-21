@@ -50,10 +50,9 @@ AnalyzeT00
          !source "../patchers/t00_datasoft2.a"             ; in A=0A,X=3A,Y=06; out A=01,X=48,Y=02
          !source "../patchers/t00_jmpb500.a"
 
-         !source "../patchers/t00_jmpb660.a"               ; in A=02,X=F6,Y=03; out A=02,X=F6,Y=03
-         !source "../patchers/t00_earthware.a"             ; in A=02,X=F6,Y=03; out A=02,X=F6,Y=03
+         !source "../patchers/t00_earthware.a"             ;                    out A=02,X=F6,Y=03
+         !source "../patchers/t00_jmpb660.a"               ; in A=02,X=F6,Y=03
 
-         !source "../patchers/t00_jmpb720.a"
          !source "../patchers/t00_jmpbbfe.a"
          !source "../patchers/t00_jmpbcf0.a"
          !source "../patchers/t00_jmpbeb1.a"

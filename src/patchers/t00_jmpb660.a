@@ -1,28 +1,37 @@
 ;-------------------------------
 ; #JMPB660
-; RWTS jumps to $B660 instead of
-; checking third data prologue
+; RWTS jumps to $B660 for check for timing bits
 ;
 ; in:    gTrack = 0
 ;        Caller found DOS 3.3 RWTS
-; out:   A=02,X=F6,Y=03
+;        A=02,X=F6,Y=03
 ;
 ; e.g. Analogies Tutorial, Verb Viper
 ;-------------------------------
-!zone {
-_jmpb660
-         ; gTrack = 0
-         ; Caller found DOS 3.3 RWTS
-
-         lda   #$02
-         ldx   #$F6
-         ldy   #$03
+T00_JMPB660
+;
+; RWTS jumps to $B660 instead of
+; checking third data prologue
+;
          jsr   compare    ; if T00,S02,$F6 ==
          !byte $4C,$60,$B6
-         bcs   .exit      ; passport-test-suite/Analogies Tutorial.woz [C=0] matches
+         bcs   +          ; passport-test-suite/Analogies Tutorial.woz [C=0] matches
          jsr   PrintByID
          !byte s_jmpb660
          jsr   modify     ; then set T00,S02,$F6 =
          !byte $BD,$8C,$C0
-.exit
-}
+;
+; RWTS swapper forcibly reinstalls a jump to $B720 instead of writing
+; the third data prologue
+;
+         lda   #$0B
+         ldx   #$08
+         ldy   #$06
+         jsr   compare    ; and T00,S0B,$08 ==
+         !byte $4C,$20,$B7
+         !byte $4C,$0E,$A9
+         bcs   +          ; passport-test-suite/Analogies Tutorial.woz [C=0] matches
+         jsr   modify     ; then set T00,S0B,$08 =
+         !byte $BD,$8C,$C0
+         !byte $20,$B8,$B8
++
