@@ -21,7 +21,6 @@ EARTHWARE
          bcs   @exit                 ; passport-test-suite/Zoo Master.woz [C=0] here
          jsr   PrintByID
          !byte s_bytrack
-         ldy   #$03
          jsr   modify
          !byte $BD,$8C,$C0
 @exit

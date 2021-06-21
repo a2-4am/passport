@@ -48,7 +48,7 @@ AnalyzeT00
          !source "../patchers/t00_border.a"                ; in A=08,X=5A,Y=0A; out A=08,X=5A,Y=0A
          !source "../patchers/t00_dakin5.a"                ; in A=00,X=B3,Y=0C; out A=03,X=9A,Y=03
          !source "../patchers/t00_datasoft2.a"             ; in A=0A,X=3A,Y=06; out A=01,X=48,Y=02
-         !source "../patchers/t00_earthware.a"
+         !source "../patchers/t00_earthware.a"             ; in A=02,X=F6,Y=03; out A=02,X=F6,Y=03
          !source "../patchers/t00_jmpb500.a"
          !source "../patchers/t00_jmpb660.a"
          !source "../patchers/t00_jmpb720.a"
