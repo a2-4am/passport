@@ -522,8 +522,7 @@ Do555
          tax
          pla
          pha
-         ldy   #3
-         jsr   modify
+         jsr   modify3
          !byte $4C,$18,$05 ; JMP $0518
          clc
          txa

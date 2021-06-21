@@ -34,7 +34,6 @@
 
 +        lda   #$0F
          ldx   #$6B
-         ldy   #$11
          jsr   compare    ; if T00,S0F,$6B ==
          !byte $BD,$8C,$C0
          !byte $10,$FB

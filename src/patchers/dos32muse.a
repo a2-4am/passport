@@ -16,8 +16,7 @@
          jsr   compare2   ; if T01,S08,$D6 ==
          !byte $4C,$D5
          bcs   .exit      ; passport-test-suite/Castle Wolfenstein.woz [C=0] matches
-         iny
-         jsr   modify     ; then set T01,S08,$D6 =
+         jsr   modify3    ; then set T01,S08,$D6 =
          !byte $E8,$D0,$32
 .exit
 }

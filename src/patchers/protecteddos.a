@@ -38,7 +38,7 @@
          tax
 .swapper2
          lda   #$FF       ; modified at runtime
-         jsr   modify     ; offset $08. $D5 -> 9B
+         jsr   modify1    ; offset $08. $D5 -> 9B
          !byte $9B
 
 .specific
@@ -144,8 +144,7 @@
 ;
          lda   #$01
          ldx   #$07
-         tay
-         jsr   modify     ; set T00,S01,$07 =
+         jsr   modify1    ; set T00,S01,$07 =
          !byte $2C
 
 ;
@@ -166,11 +165,10 @@
 ;
          lda   #$05
          ldx   #$15
-         dey
-         jsr   compare    ; if T00,S05,$15 ==
+         jsr   compare2   ; if T00,S05,$15 ==
          !byte $A5,$2F
          bcs   .exit      ; passport-test-suite/Math Blaster v080584.woz [C=0] matches
-         jsr   modify     ; then set T00,S05,$15 =
+         jsr   modify2    ; then set T00,S05,$15 =
          !byte $A9,$00
 
 ;

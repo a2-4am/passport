@@ -14,15 +14,14 @@
 
          lda   #8
          ldx   #$C9
-         ldy   #3
-         jsr   modify
+         jsr   modify3
          !byte $20,$2A,$BB ;JSR $BB2A
 
 ;adjust write-timing
 
          lda   #$9
          ldx   #$89
-         jsr   modify
+         jsr   modify3
          !byte $04         ;sync delay
          !byte $48         ;PHA
          !byte $68         ;PLA

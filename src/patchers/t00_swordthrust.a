@@ -29,11 +29,10 @@
          jsr   PrintByID
          !byte s_bytrack
          ldx   #$81
-         tay
-         jsr   modify
+         jsr   modify1
          !byte $2C
          ldx   #$84
-         jsr   modify
+         jsr   modify1
          !byte $2C
 .exit
 }

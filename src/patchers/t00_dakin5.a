@@ -24,13 +24,12 @@
          bcs   .exit
          lda   #$03
          ldx   #$9A
-         tay
-         jsr   compare    ; and T00,S03,$9A ==
+         jsr   compare3   ; and T00,S03,$9A ==
          !byte $4C,$B3,$B6; JMP $B6B3
          bcs   .exit      ; passport-test-suite/MIRV.woz [C=0] matches
          jsr   PrintByID
          !byte s_dakin5
-         jsr   modify     ; then set T00,S03,$9A =
+         jsr   modify3    ; then set T00,S03,$9A =
          !byte $C9,$AA
          !byte $D0
 .exit

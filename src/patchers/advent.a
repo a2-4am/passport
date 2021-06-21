@@ -72,15 +72,13 @@
          adc   #0
          pha
          tya
-         ldy   #3
-         jsr   modify
+         jsr   modify3
          !byte $C9,$DE               ;CMP #$DE
          !byte $EA                   ;NOP
          pla
 .patch
-         ldx   #0
-         ldy   #3         ; passport-test-suite/Borrowed Time.woz [Z=1] reaches here
-         jsr   modify
+         ldx   #0         ; passport-test-suite/Borrowed Time.woz [Z=1] reaches here
+         jsr   modify3
          !byte $C9,$AA               ;CMP #$AA
          !byte $EA                   ;NOP
          plp

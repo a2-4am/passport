@@ -68,7 +68,7 @@
          jsr   modify1    ; then set T00,S01,$8E =
          !byte $F8        ; change branch to unconditionally jump to success path
          ldx   #$92
-         jsr   modify     ; and set T00,S01,$92 =
+         jsr   modify1    ; and set T00,S01,$92 =
          !byte $F1        ; change branch to unconditionally jump to success path
          bvc   .exit      ; always branches
 

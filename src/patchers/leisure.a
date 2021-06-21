@@ -25,7 +25,7 @@
          jsr   PrintByID
          !byte s_diskvol0x
          jsr   inx6
-         jsr   modify
+         jsr   modify1
          !byte $00
 .exit
 }

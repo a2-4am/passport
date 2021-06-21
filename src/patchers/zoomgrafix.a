@@ -19,8 +19,7 @@
          jsr   PrintByID
          !byte s_diskvol0x
          jsr   inx0B
-         iny
-         jsr   modify
+         jsr   modify1
          !byte $35        ; 'LM = PEEK(KB - 2055)' instead
 .exit
 }

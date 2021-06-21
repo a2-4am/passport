@@ -54,8 +54,7 @@
          jsr   PrintByID
          !byte s_beforedos
 
-         tay
-         jsr   modify     ; then set T02,S03,$00 =
+         jsr   modify3    ; then set T02,S03,$00 =
          !byte $4C,$84,$9D
 .exit
 }

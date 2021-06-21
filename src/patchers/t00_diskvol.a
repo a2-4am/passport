@@ -10,8 +10,7 @@
 
          lda   #$01
          ldx   #$EE
-         tay
-         jsr   compare    ; and T00,S01,$EE ==
+         jsr   compare1   ; and T00,S01,$EE ==
          !byte $FB
          bcs   .exit
 
