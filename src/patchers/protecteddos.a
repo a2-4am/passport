@@ -179,11 +179,10 @@
 ;
          lda   #$07
          ldx   #$4C
-         ldy   #$01
-         jsr   compare    ; if T00,S07,$4C ==
+         jsr   compare1   ; if T00,S07,$4C ==
          !byte $A0
          bcs   +          ; passport-test-suite/Bingo Bugglebee Presents Outdoor Safety.woz [C=0] matches
-         jsr   modify     ; then set T00,S07,$4C =
+         jsr   modify1    ; then set T00,S07,$4C =
          !byte $20
 +
          jmp   .exit

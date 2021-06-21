@@ -108,14 +108,11 @@
          sta   .modify3
          pla
          dex
-         ldy   #1
-         jsr   compare
+         jsr   compare1
 .cmpbyte3               ; SMC
          !byte $D1
          bcc   +
-
-         ldy   #1
-         jsr   modify
+         jsr   modify1
 .modify3                ; SMC
          !byte $D1
 
@@ -134,8 +131,7 @@
          ldy   #$D1     ; SMC
          lda   .table4,y
          ldx   .table4+1,y
-         ldy   #1
-         jsr   compare
+         jsr   compare1
          !byte $A9
          bcs   +
 
@@ -163,14 +159,11 @@
          sta   .modify6
          pla
          dex
-         ldy   #1
-         jsr   compare
+         jsr   compare1
 .cmpbyte6
          !byte $D1      ; SMC
          bcc   +
-
-         ldy   #1
-         jsr   modify
+         jsr   modify1
 .modify6
          !byte $D1      ; SMC
 

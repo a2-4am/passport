@@ -47,8 +47,7 @@ TraceSpecDel
          sta   $3FFF      ; RWTS loads successfully later
 ;;         lda   #$00       ; save zero page before trace
          ldx   #$0A
-         ldy   #$01
-         jsr   CopyMemory
+         jsr   CopyMemory1
 
          jsr   MoveT00PakHigh
 
@@ -105,8 +104,7 @@ SDfail
          php
          lda   #$0A       ; restore zero page from before trace
          ldx   #$00
-         ldy   #$01
-         jsr   CopyMemory
+         jsr   CopyMemory1
          plp
          bcc   SDsuccess
 
@@ -140,20 +138,16 @@ SDsuccess
 ;
          lda   #$13
          ldx   #$14
-         ldy   #$01
-         jsr   CopyMemory
+         jsr   CopyMemory1
          lda   #$12
          ldx   #$13
-         ldy   #$01
-         jsr   CopyMemory
+         jsr   CopyMemory1
          lda   #$11
          ldx   #$12
-         ldy   #$01
-         jsr   CopyMemory
+         jsr   CopyMemory1
          lda   #$10
          ldx   #$11
-         ldy   #$01
-         jsr   CopyMemory
+         jsr   CopyMemory1
 
 ; $1B00-$1FFF is real code and in the right place
 ; but we should clear the rest of T00 so we're not
@@ -210,8 +204,7 @@ SDsuccess
          !byte $C9,$AD,$90,$E5
          lda   #$18
          ldx   #$38
-         ldy   #$01
-         jsr   CopyMemory
+         jsr   CopyMemory1
          jsr   WriteTrackNA          ; doesn't really write anything in verify-only mode
          lda   #$C9
          sta   $38B6

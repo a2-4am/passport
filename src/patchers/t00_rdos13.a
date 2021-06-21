@@ -55,8 +55,7 @@
 +
          lda   #$0A
          ldx   #$8B
-         ldy   #1
-         jsr   modify
+         jsr   modify1
          !byte $96
 
          jsr   PrintByID

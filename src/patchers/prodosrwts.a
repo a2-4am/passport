@@ -21,11 +21,10 @@ _prodosrwts
          !byte $38
          bcs   .exit      ; passport-test-suite/Mystery Objects v1.1.woz [C=0] matches
          jsr   inx0F
-         ldy   #$01
-         jsr   compare
+         jsr   compare1
          !byte $DE
          bcc   .exit
-         jsr   modify
+         jsr   modify1
          !byte $DE
 .exit
 }

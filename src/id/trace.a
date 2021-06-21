@@ -12,8 +12,7 @@ Trace
          pha
          lda   #$C6
          ldx   #$16
-         ldy   #$01
-         jsr   CopyMemory
+         jsr   CopyMemory1
          pla
          ldx   #0
          ldy   $16F8

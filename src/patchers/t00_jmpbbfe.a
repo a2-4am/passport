@@ -168,18 +168,17 @@ _jmpbbfe
 
          lda   #$04
          ldx   #$69
-         ldy   #$01
-         jsr   compare    ; if T00,S04,$69 ==
+         jsr   compare1   ; if T00,S04,$69 ==
          !byte $A9
          bcs   +          ; passport-test-suite/Mask Parade.woz [C=0] matches
-         jsr   modify     ; then set T00,S04,$69 =
+         jsr   modify1    ; then set T00,S04,$69 =
          !byte $60
 +
          ldx   #$7D
-         jsr   compare    ; if T00,S04,$7D ==
+         jsr   compare1   ; if T00,S04,$7D ==
          !byte $A9
          bcs   +          ; passport-test-suite/Mask Parade.woz [C=0] matches
-         jsr   modify     ; then set T00,S04,$7D =
+         jsr   modify1    ; then set T00,S04,$7D =
          !byte $60
 +
 .exit

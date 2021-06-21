@@ -76,8 +76,7 @@ IDBootloader
 ;
          lda   #$08
          ldx   #BASEPAGE
-         ldy   #$01
-         jsr   CopyMemory            ; exits with X=0
+         jsr   CopyMemory1           ; exits with X=0
 ;
 ; Try to identify DOS 3.3-shaped bootloader.
 ; Exit via custom trace function if found.

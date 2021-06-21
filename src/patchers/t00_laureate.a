@@ -24,11 +24,10 @@
          sta   .valueb
          lda   .sectors,y
          ldx   .offsets,y
-         ldy   #$01
-         jsr   compare
+         jsr   compare1
 .valuea  !byte $d1
          bcc   +
-         jsr   modify
+         jsr   modify1
 .valueb  !byte $d1
 +        dec   .loop+1
          bpl   .loop

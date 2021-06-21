@@ -124,16 +124,14 @@
          txa
          pha
          tya
-         ldy   #1
-         jsr   modify
+         jsr   modify1
          !byte $EA ;NOP
          pla
          clc
          adc #5
          tax
          pla
-         ldy   #1
-         jsr   modify
+         jsr   modify1
          !byte $EA ;NOP
 +        ldy   #10
          jsr   SearchTrack

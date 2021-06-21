@@ -35,6 +35,8 @@
          jmp   modify1
 ;jcompare
          jmp   compare
+;jcompare1
+         jmp   compare1
 ;gDisplayBytes
          !fill 10         ; array of ten bytes for use as
                           ; substitution strings

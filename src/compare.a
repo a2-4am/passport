@@ -173,6 +173,10 @@ all_done_set
          sec
          rts
 
+compare1
+         ldy   #$01
+         ; /!\ execution falls through here
+
 ;-------------------------------
 ; compare subroutine
 ; in:  A = sector

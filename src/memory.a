@@ -52,6 +52,11 @@ MoveT00PakHigh
          ldx   #$B2
 +        stx   T00PakPtr+1
          ldy   #$0D
+         !byte $2C        ; hide next LDY
+         ; /!\ execution falls through here
+
+CopyMemory1
+         ldy   #$01
          ; /!\ execution falls through here
 
 ;-------------------------------

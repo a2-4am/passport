@@ -32,11 +32,10 @@
          !byte $C9
          bcs   +
          ldx   #$91
-         ldy   #$01
-         jsr   compare
+         jsr   compare1
          !byte $DE
          bcc   +
-         jsr   modify
+         jsr   modify1
          !byte $DE
 +
          ldx   #$2F
@@ -47,11 +46,10 @@
          !byte $C9
          bcs   +
          ldx   #$35
-         ldy   #$01
-         jsr   compare
+         jsr   compare1
          !byte $DE
          bcc   +
-         jsr   modify
+         jsr   modify1
          !byte $DE
 +
          ldx   #$9D
@@ -61,11 +59,10 @@
          JSR   $B8B8
          bcs   +
          ldx   #$9E
-         ldy   #$01
-         jsr   compare    ; first data epilogue nibble (write)
+         jsr   compare1   ; first data epilogue nibble (write)
          !byte $DE
          bcc   +
-         jsr   modify
+         jsr   modify1
          !byte $DE
 +
          dec   .sector+1

@@ -62,12 +62,11 @@
 
          lda   #$03
          ldx   #$40
-         ldy   #$01
-         jsr   compare    ; if T00,S03,$40 ==
+         jsr   compare1   ; if T00,S03,$40 ==
          !byte $D0
          bcs   .exit
          ldx   #$9C
-         jsr   compare    ; and T00,S03,$9C ==
+         jsr   compare1   ; and T00,S03,$9C ==
          !byte $F0
          bcs   .exit
          lda   #$04

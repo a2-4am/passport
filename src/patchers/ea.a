@@ -65,14 +65,12 @@
          sta   .patch2+1
          pla
          pha
-         ldy   #1
-         jsr   modify
+         jsr   modify1
          !byte $AA         ;data prologue #2
 .patch2
          ldx   #$D1
          pla
-         ldy   #1
-         jsr   modify
+         jsr   modify1
          !byte $AD         ;data prologue #3
 
 +        ldy   #13
@@ -84,8 +82,7 @@
          !byte $04,$EB,$19 ;LDA  $c0e8
          bcs   +
          jsr   inx5
-         ldy   #1
-         jsr   modify
+         jsr   modify1
          !byte $04
 +        ldy   #15
          jsr   SearchTrack
@@ -94,8 +91,7 @@
          !byte $5A,$16,$DA,$30,$06,$45,$C2
          bcs   +
          inx
-         ldy   #1
-         jsr   modify
+         jsr   modify1
          !byte $EE         ;enciphered jsra->lda to disable call
 
 +        ldy   #8
@@ -106,8 +102,7 @@
          !byte $4C         ;JMP $xxxx
          bcs   +
          jsr   inx6
-         ldy   #1
-         jsr   modify
+         jsr   modify1
          !byte $00         ;disable branch
 
 +        ldy   #15
@@ -130,14 +125,12 @@
          sta   .patch3 + 1
          pla
          pha
-         ldy   #1
-         jsr   modify
+         jsr   modify1
          !byte $04         ;new checksum value for sub
          pla
 .patch3
          ldx   #$D1
-         ldy   #1
-         jsr   modify
+         jsr   modify1
          !byte $00         ;jsra->lda to disable call
                            ;routine loops infinitely on failure
 
@@ -158,8 +151,7 @@
          adc   #11
          tax
          pla
-         ldy   #1
-         jsr   modify
+         jsr   modify1
          !byte $00         ;disable branch
 
 +        ldy   #15
@@ -179,8 +171,7 @@
          adc   #11
          tax
          pla
-         ldy   #1
-         jsr   modify
+         jsr   modify1
          !byte $4C         ;new checksum value for sub
 
 +        ldy   #14
@@ -197,8 +188,7 @@
          !byte s_tamper
          pla
          jsr   inx5
-         ldy   #1
-         jsr   modify
+         jsr   modify1
          !byte $00         ;new checksum value for cmp
 
 +        ldy   #9
@@ -211,8 +201,7 @@
          jsr   PrintByID
          !byte s_tamper
          jsr   inx6
-         ldy   #1
-         jsr   modify
+         jsr   modify1
          !byte $50         ;new checksum value for cmp
 
 +        ldy   #7
@@ -224,8 +213,7 @@
          jsr   PrintByID
          !byte s_tamper
          jsr   inx4
-         ldy   #1
-         jsr   modify
+         jsr   modify1
          !byte $50         ;new checksum value for cmp
 
 +        ldy   #12
@@ -236,8 +224,7 @@
          !byte $4C,$94,$69 ;JMP $6994
          bcs   +
          jsr   inx6
-         ldy   #1
-         jsr   modify
+         jsr   modify1
          !byte $2C         ;JSR->BIT
 
 +        ldy   #23
@@ -257,8 +244,7 @@
          adc   #21
          tax
          pla
-         ldy   #1
-         jsr   modify
+         jsr   modify1
          !byte $C7         ;lda from known-zero instead
 
 +        ldy   #23
@@ -277,8 +263,7 @@
          adc   #21
          tax
          pla
-         ldy   #1
-         jsr   modify
+         jsr   modify1
          !byte $E0         ;lda from known-zero instead
 
 +        ldy   #23
@@ -297,8 +282,7 @@
          adc   #21
          tax
          pla
-         ldy   #1
-         jsr   modify
+         jsr   modify1
          !byte $E0         ;lda from known-zero instead
 
 +        ldy   #23
@@ -317,8 +301,7 @@
          adc   #21
          tax
          pla
-         ldy   #1
-         jsr   modify
+         jsr   modify1
          !byte $E0         ;lda from known-zero instead
 
 +        ldy   #31
@@ -341,8 +324,7 @@
          adc   #29
          tax
          pla
-         ldy   #1
-         jsr   modify
+         jsr   modify1
          !byte $D1         ;lda from known-zero instead
 
 +        ldy   #16
@@ -361,8 +343,7 @@
          jsr   PrintByID
          !byte s_tamper
          inx
-         ldy   #1
-         jsr   modify
+         jsr   modify1
          !byte $E8         ;new checksum value for eor
 
 +        ldy   #14
@@ -383,8 +364,7 @@
          adc   #12
          tax
          pla
-         ldy   #1
-         jsr   modify
+         jsr   modify1
          !byte $A1         ;new checksum value for eor
 
 +        ldy   #24
@@ -407,35 +387,30 @@
          adc   #24
          tax
          pla
-         ldy   #1
-         jsr   compare
+         jsr   compare1
          !byte $AB         ;Last Gladiator
          bcs   ++
-         ldy   #1
-         jsr   modify
+         jsr   modify1
          !byte $BB         ;new checksum value for eor
          bvc   +
-++       ldy   #1
-         jsr   compare
+++
+         jsr   compare1
          !byte $D4         ;Arctic Fox, PHM Pegasus
          bcs   ++
-         ldy   #1
-         jsr   modify
+         jsr   modify1
          !byte $D5         ;new checksum value for eor
          bvc   +
-++       ldy   #1
-         jsr   compare
+++
+         jsr   compare1
          !byte $2C
          bcs   ++
-         ldy   #1
-         jsr   modify
+         jsr   modify1
          !byte $2D         ;new checksum value for eor
-++       ldy   #1
-         jsr   compare
+++
+         jsr   compare1
          !byte $DB         ;Adventure Construction Set, Archon, Marble Madness, Bard's Tale
          bcs   ++
-         ldy   #1
-         jsr   modify
+         jsr   modify1
          !byte $D4         ;new checksum value for eor
 ++
 
@@ -455,8 +430,7 @@
          adc   #21
          tax
          pla
-         ldy   #1
-         jsr   modify
+         jsr   modify1
          !byte $E0         ;lda from known-zero instead
 
 +        ldy   #23
@@ -475,8 +449,7 @@
          adc   #21
          tax
          pla
-         ldy   #1
-         jsr   modify
+         jsr   modify1
          !byte $30         ;lda from known-zero instead
 
 +        ldy   #14
@@ -493,8 +466,7 @@
          !byte s_tamper
          inx
          inx
-         ldy   #1
-         jsr   modify
+         jsr   modify1
          !byte $F0         ;new checksum value for eor
 
 +        ldy   #23
@@ -513,8 +485,7 @@
          adc   #21
          tax
          pla
-         ldy   #1
-         jsr   modify
+         jsr   modify1
          !byte $E0         ;lda from known-zero instead
 
 +        ldy   #14
@@ -536,12 +507,10 @@
          adc   #25
          tax
          pla
-         ldy   #1
-         jsr   compare
+         jsr   compare1
          !byte $4C
          bcs   +
-         ldy   #1
-         jsr   modify
+         jsr   modify1
          !byte $2C         ;jmp to bit
 
 +
@@ -566,8 +535,7 @@
          adc   #21
          tax
          pla
-         ldy   #1
-         jsr   modify
+         jsr   modify1
          !byte $7F         ;lda from known-zero instead
 
 +        ldy   #13
@@ -584,8 +552,7 @@
          adc   #11
          tax
          pla
-         ldy   #1
-         jsr   modify
+         jsr   modify1
          !byte $00         ;disable branch
 
 +

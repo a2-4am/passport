@@ -449,35 +449,31 @@ Do555
 
 .patchepi
          inx
-         ldy   #1
          pha
-         jsr   modify
+         jsr   modify1
          !byte $DE
          txa
          clc
          adc   #10
          tax
-         ldy   #1
          pla
          pha
-         jsr   modify
+         jsr   modify1
          !byte $AA
          txa
          clc
          adc   #$52
          tax
-         ldy   #1
          pla
          pha
-         jsr   modify
+         jsr   modify1
          !byte $DE
          txa
          clc
          adc   #10
          tax
-         ldy   #1
          pla
-         jsr   modify
+         jsr   modify1
          !byte $AA
          ldy   #8
          jsr   SearchTrack
@@ -489,8 +485,7 @@ Do555
          inx
          inx
          inx
-         ldy   #1
-         jsr   modify
+         jsr   modify1
          !byte $00
 .novol
          rts
@@ -509,8 +504,7 @@ Do555
          tax
          pla
          pha
-         ldy   #1
-         jsr   modify
+         jsr   modify1
          !byte $08
          clc
          txa
@@ -538,8 +532,7 @@ Do555
          pla
          adc   #$FE
          pha
-         ldy   #1
-         jsr   modify
+         jsr   modify1
          !byte $8D
          clc
          txa
@@ -547,8 +540,7 @@ Do555
          tax
          pla
          pha
-         ldy   #1
-         jsr   modify
+         jsr   modify1
          !byte $8D
          clc
          txa
@@ -556,8 +548,7 @@ Do555
          tax
          pla
          pha
-         ldy   #1
-         jsr   modify
+         jsr   modify1
          !byte $8D
          clc
          txa
@@ -565,8 +556,7 @@ Do555
          tax
          pla
          pha
-         ldy   #1
-         jsr   modify
+         jsr   modify1
          !byte $8D
          clc
          txa
@@ -574,8 +564,7 @@ Do555
          tax
          pla
          pha
-         ldy   #1
-         jsr   modify
+         jsr   modify1
          !byte $8D
          clc
          txa
@@ -583,8 +572,7 @@ Do555
          tax
          pla
          pha
-         ldy   #1
-         jsr   modify
+         jsr   modify1
          !byte $8D
          clc
          txa
@@ -592,8 +580,7 @@ Do555
          tax
          pla
          adc   #$FE
-         ldy   #1
-         jsr   modify
+         jsr   modify1
          !byte $8D
          rts
 

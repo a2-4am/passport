@@ -31,13 +31,12 @@
          sta   .modbyte
          lda   .table-24,y
          ldx   .table+1-24,y
-         ldy   #$01
-         jsr   compare
+         jsr   compare1
 .cmpbyte
          !byte $D1        ; SMC
          bcc   +
 
-         jsr   modify
+         jsr   modify1
 .modbyte
          !byte $D1        ; SMC
 

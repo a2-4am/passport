@@ -189,7 +189,8 @@ gTargetType                   = gOnAClearDayYouCanReadForever-$01     ; byte
 gRAMDiskRef                   = gTargetType-$01                       ; byte
 gHardDiskRef                  = gRAMDiskRef-$01                       ; byte
 gDisplayBytes                 = gHardDiskRef-$0A                      ; 10 bytes
-jcompare                      = gDisplayBytes-$03                     ; 3-byte
+jcompare1                     = gDisplayBytes-$03                     ; 3-byte
+jcompare                      = jcompare1-$03                         ; 3-byte
 jmodify1                      = jcompare-$03                          ; 3-byte
 jmodify                       = jmodify1-$03                          ; 3-byte
 jPrintByID                    = jmodify-$03                           ; 3-byte
@@ -204,6 +205,7 @@ gNIBTableBase                 = gNIBTableFF-$7F                       ; 127 byte
 
 !ifdef MODULE {
 compare                   = jcompare
+compare1                  = jcompare1
 modify                    = jmodify
 modify1                   = jmodify1
 PrintByID                 = jPrintByID

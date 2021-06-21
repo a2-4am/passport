@@ -32,11 +32,10 @@
          bne   .yes
 +
          ldx   #$EB
-         ldy   #$01
-         jsr   compare    ; and T00,S01,$EB !=
+         jsr   compare1   ; and T00,S01,$EB !=
          !byte $FE
          bcc   .exit
-         jsr   compare    ; and T00,S01,$EB !=
+         jsr   compare1   ; and T00,S01,$EB !=
          !byte $00
          bcc   .exit
 .yes
