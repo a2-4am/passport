@@ -13,7 +13,7 @@
 ;        all other registers & flags clobbered
 ;-------------------------------
 !macro IDDavid {
-         ldy   #$06
+         ldy   #$07
          jsr   compare    ; if T00,S00,$00 ==
          !byte $01
          !byte $A5,$27    ; LDA $27
@@ -21,6 +21,7 @@
          !byte $D0,$17    ; BNE +$17
          bcs   @notDavid
          ldx   #$4A
+         dey
          jsr   compare    ; and T00,S00,$4A ==
          !byte $A2,WILDCARD    ; LDX #$**
          !byte $BD,WILDCARD,$08; LDA $08**,X

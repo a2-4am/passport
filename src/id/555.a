@@ -24,7 +24,7 @@
          !byte $90,$EF          ; BCC *-$0F
          bcc .exit        ; passport-test-suite/Jumpman.woz [C=0] matches
          lda   #8
-         ldy   #19
+         ldy   #18
          jsr   SearchSector
          !byte $4C,$76,$08  ; JMP $0876
          !byte $00,$03,$05
