@@ -174,6 +174,9 @@ Do555
          ; static boot tracer!
 
          ldy   $801,x
+         lda   $800,y
+         cmp   #$A9       ; LDA
+         beq   .nohalf
          lda   $801,y
          tay
          lda   $800,y
@@ -193,6 +196,14 @@ Do555
 
 .jmpexit2
          jmp   FatalError
+
+.nohalf
+         lda   #$FF
+         sta   .curtrk+1
+         lda   #$34
+         sta   .hookseek+1
+         ldx   #$93
+         jmp   .foundpart
 
 .foundseek2
          stx   $3A
@@ -301,6 +312,8 @@ Do555
 .foundpart
          stx   $3A
          jsr   IncProgress
+
+.donohalf
          lda   gSector
          sta   .cmpsect+1
 
@@ -444,9 +457,19 @@ Do555
 .patch
          !byte $00,$04     ; [JSR] $04xx
          !byte $B0,$0B     ; BCS *+$0D
-         !byte $E6,$41     ; STA $41
+         !byte $E6,$41     ; INC $41
          !byte $EA         ; NOP
          !byte $4C         ; JMP $xxxx
+         lda   .curtrk+1
+         bpl   .skipnohalf
+         ldy   #$A5
+         lda   #$36
+         sta   ($3E),y
+         iny
+         lda   #4
+         sta   ($3E),y
+
+.skipnohalf
          sec
          txa
          sbc   #5
