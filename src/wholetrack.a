@@ -19,7 +19,13 @@ SkipTrack
 ;
          jsr   JustTheSameDamnThingOverAndOver
          lda   #s_sync
-         bcc   @print     ; always branches
+         bcc   @print
+;
+; RW18-format track?
+;
+         jsr   VerifyInfocom18
+         lda   #s_rw18
+         bcc   @print
 ;
 ; Unformatted track?
 ;
