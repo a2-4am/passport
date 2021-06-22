@@ -6,31 +6,6 @@
 ; out:   C clear if 555 bootloader found
 ;        C set otherwise
 ;        all registers & flags clobbered
-;
-; tested with
-; - Addition Magician
-; - Adventure Double Feature Vol. II
-; - Agent USA
-; - Bumble Games v1.3
-; - Bumble Games v1.4
-; - Bumble Plot v1.1
-; - Con-Putation
-; - Crush, Crumble and Chomp v1981-06-22
-; - Gertrude's Puzzles v1.0
-; - Gertrude's Secrets v1.0
-; - Jumble Jet
-; - Jumpman
-; - Microzine 3
-; - Microzine 4
-; - Microzine 5
-; - Microzine 6
-; - Moptown Parade v1.0
-; - Number Stumper
-; - Reader Rabbit v1.0
-; - Rocky's Boots v1.0
-; - Tales of Discovery
-; - Temple of Apshai
-; - Trap-a-Zoid
 ;-------------------------------
 !macro ID555 {
          lda   #8
@@ -47,5 +22,15 @@
          !byte $C8              ; INY
          !byte $C4,WILDCARD     ; CPY $xx
          !byte $90,$EF          ; BCC *-$0F
-                          ; passport-test-suite/Jumpman.woz [C=0] matches
+         bcc .exit        ; passport-test-suite/Jumpman.woz [C=0] matches
+         lda   #8
+         ldy   #19
+         jsr   SearchSector
+         !byte $4C,$76,$08  ; JMP $0876
+         !byte $00,$03,$05
+         !byte $07,$09,$0B
+         !byte $0D,$0F,$02
+         !byte $04,$06,$08
+         !byte $0A,$0C,$0E
+.exit
 }
