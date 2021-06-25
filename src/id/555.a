@@ -24,13 +24,26 @@
          !byte $90,$EF          ; BCC *-$0F
          bcc .exit        ; passport-test-suite/Jumpman.woz [C=0] matches
          lda   #8
+         ldx   #1
          ldy   #18
-         jsr   SearchSector
-         !byte $4C,$76,$08  ; JMP $0876
+         jsr   CompareMemory
+         !byte $4C,$76,$08 ; JMP $0876
          !byte $00,$03,$05
          !byte $07,$09,$0B
          !byte $0D,$0F,$02
          !byte $04,$06,$08
          !byte $0A,$0C,$0E
+         bcc .exit
+         lda   #8
+         ldx   #1
+         ldy   #19
+         jsr   CompareMemory
+         !byte $4C,$7A,$08 ; JMP $087A
+         !byte $00,$00,$03
+         !byte $05,$07,$09
+         !byte $0B,$0D,$0F
+         !byte $02,$04,$06
+         !byte $08,$0A,$0C
+         !byte $0E
 .exit
 }

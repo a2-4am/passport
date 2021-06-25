@@ -10,6 +10,7 @@
 ; - Adventure Double Feature Vol. II
 ; - Agent USA
 ; - Algebra
+; - Bugbyter
 ; - Bumble Games v1.3
 ; - Bumble Games v1.4
 ; - Bumble Plot v1.1
@@ -24,6 +25,7 @@
 ; - Jumble Jet
 ; - Jumpman
 ; - L.A. Land Monopoly
+; - Lazersilk
 ; - Microzine 3
 ; - Microzine 4
 ; - Microzine 5
@@ -32,9 +34,12 @@
 ; - Number Stumper
 ; - Reader Rabbit v1.0
 ; - Rocky's Boots v1.0
+; - Supermap
 ; - Tales of Discovery
 ; - Temple of Apshai
+; - The Game Show
 ; - Trap-a-Zoid
+; - Zenith
 ;-------------------------------
 !zone {
          jmp   .exit2     ; reachable only via inspect
@@ -45,6 +50,8 @@ Do555
          lda   $802
          cmp   #$76
          beq   .setfixed
+         cmp   #$7A
+         beq   .setfixed2
 
          lda   #8
          ldy   #3
@@ -89,6 +96,9 @@ Do555
 
 .setfixed
          lda   #1
+         !byte $2C
+.setfixed2
+         lda   #3
          sta   .curtrk+1
          lda   #$FF
          sta   .cmpsect+1
@@ -262,13 +272,19 @@ Do555
          tax
          cmp   .patch
          beq   .inctrack
-         bcs   .walkcode
          lda   $800,x
+         bcs   .checkinc
          cmp   #$20       ; JSR
          bne   .skipjsr2
          lda   $801,x
          cmp   .patch
          bne   .skipjsr2
+         beq   .inctrack
+
+.checkinc
+         cmp   #$A9
+         bne   .walkcode
+         inc   .curtrk+1
 
 .inctrack
          inc   .curtrk+1
@@ -359,12 +375,10 @@ Do555
          jsr   compare
          !byte $20,$76,$08 ;JSR $0876
          bcs   .notfixed
-         ldy   #1
-         jsr   modify
+         jsr   modify1
          !byte $2C ;BIT
          ldx   #$64
-         ldy   #3
-         jsr   modify
+         jsr   modify3
          !byte $20,$76,$08 ;JSR $0876
 
 .notfixed
@@ -395,12 +409,42 @@ Do555
          bne   .writesectors
          ldx   (BASEPAGE*256)+2
          cpx   #$76
-         bne   .writesectors
+         bne   .checkfixed2
          lda   #0
          ldx   #$B2
-         ldy   #1
-         jsr   modify
+         jsr   modify1
          !byte 1
+
+.checkfixed2
+         ldx   (BASEPAGE*256)+2
+         cpx   #$7A
+         bne   .writesectors
+         lda   #0
+         ldx   #$16
+         ldy   #4
+         jsr   modify
+         !byte $1A,$08
+         !byte $E6,$41 ; INC $41
+         lda   #$0B
+         ldx   #$0D
+         jsr   modify1
+         !byte $EA
+         lda   #$0B
+         ldx   #$64
+         jsr   modify1
+         !byte $2C ; BIT
+         lda   #$0B
+         ldx   #$86
+         ldy   #4
+         jsr   modify
+         !byte $8A,$04
+         !byte $E6,$41 ; INC $41
+         lda   #$0B
+         ldx   #$EA
+         ldy   #6
+         jsr   modify
+         !byte $20,$85,$04 ; JSR $0485
+         !byte $4C,$85,$04 ; JMP $0485
 
 .writesectors
          jsr   WriteTrackNA
@@ -494,26 +538,19 @@ Do555
 .endsector
          cpx   #00        ; SMC
          bne   .readsector
+         !byte $A9        ; mask CLC
+.rescanpro
+         clc
+         php
          ldy   #12
          jsr   SearchTrack
-         !byte $C9,$FF     ; CMP #$FF
-         !byte $D0,$0A     ; BNE *+$0C
-         !byte $EA         ; NOP
-         !byte $BD,$8C,$C0 ; LDA $C08C,X
-         !byte $10,$FB     ; BPL *-3
-         !byte $C9,$FF     ; CMP #$FF
-         bcc   .patchepi
-         ldy   #9
-         jsr   SearchTrack
-         !byte $AC,$9F,$05 ; LDY $059F
-         !byte $C8         ; INY
-         !byte $C8         ; INY
-         !byte $98         ; TYA
-         !byte $20,$19,$05 ; JSR $0519
-         bcc   .patchrocky
-         rts
-
-.patchepi
+         !byte $C9,$FF      ; CMP #$FF
+         !byte $D0,WILDCARD ; BNE *+$xx
+         !byte $EA          ; NOP
+         !byte $BD,$8C,$C0  ; LDA $C08C,X
+         !byte $10,$FB      ; BPL *-3
+         !byte $C9,$FF      ; CMP #$FF
+         bcs   .notadrpro
          inx
          pha
          jsr   modify1
@@ -523,24 +560,30 @@ Do555
          adc   #10
          tax
          pla
-         pha
          jsr   modify1
          !byte $AA
+         plp
+         bcs   .rescanpro
+         !byte $A9        ; mask PLP
+.notadrpro
+         plp
+         ldy   #9
+         jsr   SearchTrack
+         !byte $BD,$8C,$C0  ; LDA $C08C,X
+         !byte $10,$FB      ; BPL *-3
+         !byte $C9,$FF      ; CMP #$FF
+         !byte $F0,$02      ; BEQ *+4
+         bcs   .notadrepi
+         pha
          txa
-         clc
-         adc   #$52
+         adc   #6
          tax
          pla
-         pha
          jsr   modify1
          !byte $DE
-         txa
-         clc
-         adc   #10
-         tax
-         pla
-         jsr   modify1
-         !byte $AA
+
+.notadrepi
+
          ldy   #8
          jsr   SearchTrack
          !byte $A9,$20 ; LDA #$20
@@ -554,6 +597,26 @@ Do555
          jsr   modify1
          !byte $00
 .novol
+
+         ldy   #9
+         jsr   SearchTrack
+         !byte $AC,$9F,$05 ; LDY $059F
+         !byte $C8         ; INY
+         !byte $C8         ; INY
+         !byte $98         ; TYA
+         !byte $20,$19,$05 ; JSR $0519
+         bcc   .patchrocky
+         ldy   #5
+         jsr   SearchTrack
+         !byte $20,$87,$07 ; JSR $0787
+         !byte $A6,$2B     ; LDX $2B
+         bcs   .notfixed2
+         ldy   #5
+         jsr   modify
+         !byte $20,$89,$07 ; JSR $0789
+         !byte $E6,$41     ; INC $41
+         
+.notfixed2
          rts
 
 .patchrocky
