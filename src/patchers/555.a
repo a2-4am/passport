@@ -340,27 +340,6 @@ Do555
 .dofixed
          lda   #BASEPAGE
          sta   gAddress+1
-
-.copytracks
-         ldx   #0
-         stx   gSector
-         ldy   #$10
-         jsr   .readwrite
-         lda   gTrack
-         cmp   #1
-         bne   .curtrk
-         ldx   #$AC
-         stx   $BDEF
-         ldx   #$90
-         stx   $BDF2
-.curtrk
-         cmp   #00        ; SMC
-         beq   .ispartial
-         jmp   .notpartial
-
-.ispartial
-         ldy   #$CD
-         sty   $BE2B
          lda   #8
          ldx   #$AD
          ldy   #4
@@ -384,6 +363,26 @@ Do555
          lda   #16
          sta   .forwards1+3,x
 
+.copytracks
+         ldx   #0
+         stx   gSector
+         ldy   #$10
+         jsr   .readwrite
+         lda   gTrack
+         cmp   #1
+         bne   .curtrk
+         ldx   #$AC
+         stx   $BDEF
+         ldx   #$90
+         stx   $BDF2
+.curtrk
+         cmp   #00        ; SMC
+         beq   .ispartial
+         jmp   .notpartial
+
+.ispartial
+         ldy   #$CD
+         sty   $BE2B
 
 .forwards1
          ldx   #1
