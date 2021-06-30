@@ -24,6 +24,7 @@
 ; - Guardian
 ; - Jumble Jet
 ; - Jumpman
+; - Keyboard Golf
 ; - L.A. Land Monopoly
 ; - Lazersilk
 ; - Microzine 3
@@ -37,6 +38,7 @@
 ; - Supermap
 ; - Tales of Discovery
 ; - Temple of Apshai
+; - The Final Frontier
 ; - The Game Show
 ; - Trap-a-Zoid
 ; - Zenith
@@ -212,7 +214,7 @@ Do555
          sta   .curtrk+1
          lda   #$34
          sta   .hookseek+1
-         ldx   #$93
+         ldx   #$94
          jmp   .foundpart
 
 .foundseek2
@@ -242,6 +244,8 @@ Do555
          stx   $3A
          ldy   #0
          lda   ($3A),y
+         cmp   #$4C       ; JMP $xxxx
+         beq   .nohalf
          cmp   #$AA       ; TAX
          beq   .isldx
          cmp   #$A2       ; LDX #$xx
@@ -345,13 +349,43 @@ Do555
          lda   gTrack
          cmp   #1
          bne   .curtrk
+         ldx   #$AC
+         stx   $BDEF
          ldx   #$90
          stx   $BDF2
 .curtrk
          cmp   #00        ; SMC
-         bne   .notpartial
+         beq   .ispartial
+         jmp   .notpartial
+
+.ispartial
          ldy   #$CD
          sty   $BE2B
+         lda   #8
+         ldx   #$AD
+         ldy   #4
+         jsr   CompareMemory
+         !byte $A9,$0F ; LDA #$0F
+         !byte $85,$3D ; STA $3D
+         ldx   #0
+         bcs   .forwards
+         ldx   #<.forwards3-<.forwards1
+
+.forwards
+         lda   #1
+         sta   .forwards1+1,x
+         lda   #6
+         sta   .forwards1+3,x
+         txa
+         eor   #<.forwards3-<.forwards1
+         tax
+         lda   #11
+         sta   .forwards1+1,x
+         lda   #16
+         sta   .forwards1+3,x
+
+
+.forwards1
          ldx   #1
          ldy   #6
          jsr   .readsectors
@@ -365,14 +399,14 @@ Do555
          inc   gTrack
          lsr   gTrack
          inc   dct+1      ; back to normal
+.forwards3
          ldx   #11
          ldy   #16
          jsr   .readsectors
          dec   gTrack
          lda   #1
          ldx   #$44
-         ldy   #3
-         jsr   compare
+         jsr   compare3
          !byte $20,$76,$08 ;JSR $0876
          bcs   .notfixed
          jsr   modify1
@@ -382,6 +416,24 @@ Do555
          !byte $20,$76,$08 ;JSR $0876
 
 .notfixed
+         lda   #$0F
+         ldx   #$38
+         jsr   compare3
+         !byte $20,$5F,$08 ;JSR $085F
+         bcs   .notfixed2
+         jsr   modify1
+         !byte $2C ;BIT
+         ldx   #$4B
+         jsr   modify1
+         !byte $C1
+         ldx   #$C1
+         ldy   #9
+         jsr   modify
+         !byte $20,$5F,$08 ;JSR $085F
+         !byte $20,$5F,$08 ;JSR $085F
+         !byte $4C,$5F,$08 ;JMP $085F
+
+.notfixed2
          jsr   ReorderLogicalToPhysical
          jsr   .writesectors
          inc   gTrack
@@ -407,39 +459,40 @@ Do555
          jsr   .readsectors
          lda   gTrack
          bne   .writesectors
-         ldx   (BASEPAGE*256)+2
-         cpx   #$76
-         bne   .checkfixed2
-         lda   #0
+         ldx   #2
+         jsr   compare1
+         !byte $76
+         bcs   .checkfixed2
          ldx   #$B2
+         jsr   compare
+         !byte $00
+         bcc   .patchfixed
+         ldx   #$B6
+
+.patchfixed
          jsr   modify1
          !byte 1
+         ldx   #2
 
 .checkfixed2
-         ldx   (BASEPAGE*256)+2
-         cpx   #$7A
-         bne   .writesectors
-         lda   #0
+         jsr   compare
+         !byte $7A
+         bcs   .writesectors
          ldx   #$16
-         ldy   #4
-         jsr   modify
+         jsr   modify4
          !byte $1A,$08
          !byte $E6,$41 ; INC $41
          lda   #$0B
          ldx   #$0D
          jsr   modify1
          !byte $EA
-         lda   #$0B
          ldx   #$64
          jsr   modify1
          !byte $2C ; BIT
-         lda   #$0B
          ldx   #$86
-         ldy   #4
-         jsr   modify
+         jsr   modify4
          !byte $8A,$04
          !byte $E6,$41 ; INC $41
-         lda   #$0B
          ldx   #$EA
          ldy   #6
          jsr   modify
@@ -466,6 +519,9 @@ Do555
          lda   gError
          cmp   #$40       ; sector not found
          bne   .reallyfatal
+         lda   gTrack
+         cmp   .curtrk+1
+         bcc   .notpatch2 ; cross fingers
          rts
 
 .reallyfatal
@@ -506,7 +562,10 @@ Do555
          !byte $4C         ; JMP $xxxx
          lda   .curtrk+1
          bpl   .skipnohalf
-         ldy   #$A5
+         lda   $3A
+         clc
+         adc   #$12
+         tay
          lda   #$36
          sta   ($3E),y
          iny
@@ -583,7 +642,6 @@ Do555
          !byte $DE
 
 .notadrepi
-
          ldy   #8
          jsr   SearchTrack
          !byte $A9,$20 ; LDA #$20
@@ -596,120 +654,97 @@ Do555
          inx
          jsr   modify1
          !byte $00
-.novol
 
-         ldy   #9
-         jsr   SearchTrack
-         !byte $AC,$9F,$05 ; LDY $059F
-         !byte $C8         ; INY
-         !byte $C8         ; INY
-         !byte $98         ; TYA
-         !byte $20,$19,$05 ; JSR $0519
-         bcc   .patchrocky
+.novol
          ldy   #5
          jsr   SearchTrack
          !byte $20,$87,$07 ; JSR $0787
          !byte $A6,$2B     ; LDX $2B
-         bcs   .notfixed2
+         bcs   .notfixed3
          ldy   #5
          jsr   modify
          !byte $20,$89,$07 ; JSR $0789
          !byte $E6,$41     ; INC $41
          
-.notfixed2
-         rts
-
-.patchrocky
+.notfixed3
          ldy   #8
+         jsr   SearchTrack
+         !byte $01,$30,$28
+         !byte $24,$20,$1E
+         !byte $1D,$1C
+         bcs   .notseek
          pha
-         jsr   modify
-         !byte $E6,$41     ; INC $41
-         !byte $A5,$41     ; LDA $41
-         !byte $20,$18,$05 ; JSR $0518
-         !byte $A9         ; LDA #$xx
-         clc
+         sec
          txa
-         adc   #$38
+         sbc   #$6D
          tax
          pla
+         sbc   #0
+         ldy   #10
+         jsr   compare
+	 !byte $0A                   ; ASL
+         !byte $85,WILDCARD          ; STA $xx
+         !byte $CD,WILDCARD,WILDCARD ; CMP $xxxx
+         !byte $F0,$53               ; BEQ *+$55
+         !byte $A9,$00               ; LDA #$00
+         bcs   .notseek
          pha
+         txa
+         adc   #8
+         tax
+         pla
+         jsr   modify2
+         !byte $D0,$73 ; BNE *+$75
+         pha
+         clc
+         txa
+         adc   #$23
+         tax
+         pla
          jsr   modify1
          !byte $08
+         pha
+         ldy   #$15
+         sec
+         lda   (moddest),y
+         sbc   #4
+         sta   (moddest),y
+         iny
+         lda   (moddest),y
+         sbc   #0
+         sta   (moddest),y
          clc
          txa
          adc   #$4A
          tax
          pla
+         adc   #0 ; DOS seek spans a page
+         jsr   modify4
+         !byte $70,$2C,$26
+         !byte $22
          pha
-         ldy   #4
+         lda   (moddest),y
+         tay
+         pla
+         cpy   #$70
+         beq   .nocross ; Pollywog seek spans a page
+         sec
+         sbc   #1
+.nocross
+         inx
+         inx
+         inx
+         inx
+         ldy   #11
          jsr   modify
-         !byte $85,$41     ; STA $41
-         !byte $D0,$08     ; BNE *+$0A
-         clc
-         txa
-         adc   #$0C
-         tax
-         pla
-         pha
-         jsr   modify3
-         !byte $4C,$18,$05 ; JMP $0518
-         clc
-         txa
-         adc   #$7B
-         tax
-         pla
-         adc   #$FE
-         pha
-         jsr   modify1
-         !byte $8D
-         clc
-         txa
-         adc   #$3B
-         tax
-         pla
-         pha
-         jsr   modify1
-         !byte $8D
-         clc
-         txa
-         adc   #$21
-         tax
-         pla
-         pha
-         jsr   modify1
-         !byte $8D
-         clc
-         txa
-         adc   #$22
-         tax
-         pla
-         pha
-         jsr   modify1
-         !byte $8D
-         clc
-         txa
-         adc   #$1C
-         tax
-         pla
-         pha
-         jsr   modify1
-         !byte $8D
-         clc
-         txa
-         adc   #$38
-         tax
-         pla
-         pha
-         jsr   modify1
-         !byte $8D
-         clc
-         txa
-         adc   #$2E
-         tax
-         pla
-         adc   #$FE
-         jsr   modify1
-         !byte $8D
+         !byte $1F,$1E,$1D
+         !byte $1C
+         !byte $4A     ; LSR
+         !byte $85,$41 ; STA $41
+         !byte $A9,$00 ; LDA #$00
+         !byte $F0,$86 ; BEQ *-$78
+
+.notseek
          rts
 
 .decode
@@ -725,6 +760,8 @@ Do555
 .cleanup
          lda   #1
          sta   dct+1
+         lda   #$CC
+         sta   $BDEF
          lda   #$F0
          sta   $BDF2
          lda   #$B9

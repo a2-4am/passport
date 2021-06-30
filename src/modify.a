@@ -1,6 +1,10 @@
 ; utility functions for common cases
 ; (from the caller's perspective, these have the side effect of setting Y,
 ; since the modify routine will 'save' and 'restore' the value we're setting here)
+modify4
+         ldy   #$04
+         !byte $2C
+         ; /!\ execution falls through here
 modify3
          ldy   #$03
          !byte $2C
