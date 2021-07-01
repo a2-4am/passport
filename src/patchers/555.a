@@ -18,6 +18,7 @@
 ; - Cosmic Combat
 ; - Crosscountry Rallye
 ; - Crush, Crumble and Chomp v1981-06-22
+; - Disk Director
 ; - Game of the U.S.
 ; - Gertrude's Puzzles v1.0
 ; - Gertrude's Secrets v1.0
@@ -212,7 +213,7 @@ Do555
 .nohalf
          lda   #$FF
          sta   .curtrk+1
-         lda   #$34
+         lda   #0
          sta   .hookseek+1
          ldx   #$94
          jmp   .foundpart
@@ -520,7 +521,7 @@ Do555
          bne   .reallyfatal
          lda   gTrack
          cmp   .curtrk+1
-         bcc   .notpatch2 ; cross fingers
+         bcc   .linknotpatch2 ; cross fingers
          rts
 
 .reallyfatal
@@ -535,18 +536,21 @@ Do555
          jsr   ReadSector
          bcs   .maybefatal
          lda   gTrack
+.linknotpatch2
          bne   .notpatch2
          lda   gSector
 .cmpsect
          eor   #$00       ; SMC
          bne   .notpatch2
          jsr   .decode
+         lda   $3A
+         adc   #$0E
 
 .hookseek
          ldy   #00        ; SMC
-         lda   $3A
-         adc   #$0E
+         beq   .nohook
          sta   ($3E),y
+.nohook
          sbc   #3
          tax
          lda   $3F
@@ -559,17 +563,35 @@ Do555
          !byte $E6,$41     ; INC $41
          !byte $EA         ; NOP
          !byte $4C         ; JMP $xxxx
-         lda   .curtrk+1
+         ldy   .curtrk+1
          bpl   .skipnohalf
-         lda   $3A
          clc
-         adc   #$12
-         tay
-         lda   #$36
+         txa
+         adc   #4
+         sta   $3C
+         lda   $3F
+         sta   $3D
+         ldy   #6
+         jsr   SearchSector
+         !byte $20,WILDCARD,WILDCARD ; JSR $xxxx
+         !byte $48                   ; PHA
+         !byte $98                   ; TYA
+         !byte $48                   ; PHA
+         stx   $3E
+         ldy   #1
+         lda   ($3E),y
+         ldy   #4
+         sta   ($3C),y
+         ldy   #1
+         lda   $3C
          sta   ($3E),y
          iny
-         lda   #4
-         sta   ($3E),y
+         lda   ($3E),y
+         ldy   #5
+         sta   ($3C),y
+         lda   #0
+         sta   $3E
+         beq   .notpatch1
 
 .skipnohalf
          sec
@@ -595,10 +617,13 @@ Do555
          inx
 .endsector
          cpx   #00        ; SMC
-         bne   .readsector
-         !byte $A9        ; mask CLC
+         beq   .rescanall
+         jmp   .readsector
+
 .rescanpro
          clc
+
+.rescanall
          php
          ldy   #12
          jsr   SearchTrack
