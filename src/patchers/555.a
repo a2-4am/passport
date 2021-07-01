@@ -19,6 +19,8 @@
 ; - Crosscountry Rallye
 ; - Crush, Crumble and Chomp v1981-06-22
 ; - Disk Director
+; - Drinks On a Disk
+; - Friends or Lovers
 ; - Game of the U.S.
 ; - Gertrude's Puzzles v1.0
 ; - Gertrude's Secrets v1.0
@@ -42,6 +44,7 @@
 ; - The Final Frontier
 ; - The Game Show
 ; - Trap-a-Zoid
+; - Volcanoes
 ; - Zenith
 ;-------------------------------
 !zone {
@@ -152,6 +155,11 @@ Do555
          lda   #8
          ldy   #6
          jsr   CompareMemory
+	 !byte $20,WILDCARD,WILDCARD ; JSR $xxxx
+	 !byte $88                   ; DEY
+         !byte $D0,$FA               ; BNE *-4
+         bcc   .nohalf
+         jsr   CompareMemory
 	 !byte $99,$02,$08 ; STA $802,y
 	 !byte $88         ; DEY
          !byte $D0,$FA     ; BNE *-4
@@ -198,6 +206,8 @@ Do555
          lda   $801,y
          tay
          lda   $800,y
+         cmp   #$E6       ; INC $xx
+         beq   .nohalf
          cmp   #$48       ; PHA
          beq   .foundseek2
          inc   .curtrk+1
@@ -521,7 +531,7 @@ Do555
          bne   .reallyfatal
          lda   gTrack
          cmp   .curtrk+1
-         bcc   .linknotpatch2 ; cross fingers
+         bcc   .jmpnotpatch2 ; cross fingers
          rts
 
 .reallyfatal
@@ -536,15 +546,29 @@ Do555
          jsr   ReadSector
          bcs   .maybefatal
          lda   gTrack
-.linknotpatch2
-         bne   .notpatch2
+         bne   .jmpnotpatch2
          lda   gSector
 .cmpsect
          eor   #$00       ; SMC
-         bne   .notpatch2
+         beq   .checkpatch
+
+.jmpnotpatch2
+         jmp   .notpatch2
+
+.checkpatch
          jsr   .decode
-         lda   $3A
-         adc   #$0E
+         ldy   #$37
+         lda   ($3E),y
+         cmp   #$41       ; [INC] $41
+         beq   .notpatch1
+         ldy   $3A
+         iny
+         lda   ($3E),y
+         cmp   #$4C
+         beq   .notpatch1
+         tya
+         clc
+         adc   #$0D
 
 .hookseek
          ldy   #00        ; SMC
