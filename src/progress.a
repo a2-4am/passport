@@ -34,11 +34,18 @@ ResetProgress
          sta   progressind+1
          lda   #$05
          sta   progressind+2
-         rts
+         lda   gMode
+         ror
+         bcc   +
+         jmp   thinking
 
 IncProgress
+         lda   gMode
+         ror
+         bcs   ++
          lda   #$20                  ; display minimal progress indicator
 progressind
          sta   $FFFF                 ; SMC
          inc   progressind+1
-         rts
++        rts
+++       jmp   print_thinking_frame
