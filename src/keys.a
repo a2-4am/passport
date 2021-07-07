@@ -1,3 +1,13 @@
+;-------------------------------
+; WaitForKey
+; wait forever for a key
+; if the key pressed is '*', break to the monitor
+; with a message on how to get back
+;
+; in:    none
+; out:   A = uppercase version of key pressed
+;        other flags and registers clobbered
+;-------------------------------
 WaitForKey
          bit   STROBE
 -        lda   KEY

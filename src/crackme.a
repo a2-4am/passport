@@ -1,3 +1,18 @@
+;-------------------------------
+; ReadWithRWTS
+; This is the main loop. The caller has put an RWTS
+; in place -- either by boot tracing or by starting
+; with the built-in RWTS and patching -- and now it's
+; time to do the thing. This routine reads the source
+; disk, applies patches in memory, maybe writes out
+; the result (depending on mode), and prints relevant
+; log messages along the way.
+;
+; in:    suitable RWTS is in place
+;        relevant globals from ID phase have been set
+; out:   all registers clobbered
+;        exits via TheEnd
+;-------------------------------
 ReadWithRWTS
          jsr   IncProgress
          lda   #$22
@@ -137,7 +152,11 @@ nextsector
          ldy   gTrack
          dey
          tya
-         jsr   ChangeTrack
+         jsr   ChangeTrack           ; in crack mode, this calls WriteTrack
+                                     ; which calls AnalyzeTrack to apply patches,
+                                     ; then (if we're not using a RAM disk)
+                                     ; actually writes the track to the target
+                                     ; disk or file
          jsr   IncProgress
          lda   gTrack
          bmi   Pass

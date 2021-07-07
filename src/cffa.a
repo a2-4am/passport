@@ -1,3 +1,15 @@
+;-------------------------------
+; EnterCFFAIfAvailable
+; check for, and potentially call, the CFFA 3000
+; administration menu
+;
+; currently only supports CFFA 3000 in slot 7
+; (no slot scan)
+;
+; in:    none
+; out:   C clear if we found CFFA 3000 in slot 7 and called it
+;        C set if we didn't find CFFA 3000
+;-------------------------------
 EnterCFFAIfAvailable
          ldy   #$04
 -        lda   $C7F6, y

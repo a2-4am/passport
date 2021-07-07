@@ -1,5 +1,30 @@
 ;-------------------------------
-; NextSlot
+; NextSlot/ThisSlot
+; cycle through available output targets
+;
+; This is more complicated than it used to be,
+; because we now support writing to files on suitable
+; hard disks. But the purpose of this routine is to
+; encapsulate all that messiness and set the relevant
+; globals (SLOT, DRIVE, gTargetType) to values the
+; caller can rely on without any additional checks.
+;
+; ThisSlot is an alternate entry point that is called
+; once during program startup, to set the initial slot
+; and drive and target type. The initial values may
+; have been read from a preferences file, which may not
+; accurately reflect the current environment (e.g. the
+; previous target drive may have disappeared since the
+; preferences file was written). In this case, calling
+; ThisSlot ends up being equivalent to calling NextSlot,
+; but the caller doesn't need to care about it one way
+; or the other. (If ThisSlot ends up having to change
+; the slot or drive, it does NOT set gChangedPrefs to
+; TRUE. This is an intentional design decision, on which
+; you are welcome to have an opinion as long as you keep
+; it to yourself. Just kidding, nobody has ever even
+; thought about this except me.)
+;
 ; in:    DiskIIArray populated by calling ScanForDiskII
 ;        HardDiskArray populated by calling ScanForRAMAndHardDisks
 ; out:   @SLOT, @DRIVE set to ASCII values of next available slot/drive

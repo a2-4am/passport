@@ -1,4 +1,22 @@
 ;-------------------------------
+; Identification routines for various whole-track
+; protections and other frivolities.
+;
+; The main entry point is SkipTrack, which is
+; called when the last sector ($0F or $0C) of a
+; newly-seeked track is unexpectedly unreadable.
+; (All the words in that sentence are important.)
+;
+; This file also contains low-level subroutines
+; that require precise timing. There are
+; assemble-time guards around the timing-sensitive
+; instructions, which means that changes to this
+; file may result in fatal assembler build errors
+; because you moved code that can't cross a page
+; boundary and now it crosses a page boundary.
+;-------------------------------
+
+;-------------------------------
 ; SkipTrack
 ; out:   C clear if we should skip this track
 ;        C set if we should not skip this track

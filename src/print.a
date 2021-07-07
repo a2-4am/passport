@@ -1,8 +1,13 @@
 ;-------------------------------
 ; PrintByID
 ; Print a string from the string table
+;
 ; Handles string substitutions and
 ; auto-uppercases on older machines
+;
+; fully re-entrant to support nested
+; string substitutions (see strings/en.a)
+;
 ; in:    string ID (byte) on stack
 ; out:   all registers preserved
 ;        oVerflow bit clear

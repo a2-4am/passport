@@ -1,3 +1,12 @@
+;-------------------------------
+; Global constants, addresses, and other sundries
+;
+; /!\ Everything after APIEND must be kept in sync
+;     with apidefs.a!
+;
+; /!\ NO CODE IN THIS FILE, NO EXCEPTIONS
+;-------------------------------
+
 TRUE     =     $00        ; Lots of code assumes this is zero
                           ; so it can branch with BEQ, so
                           ; don't change it!
