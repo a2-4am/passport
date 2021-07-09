@@ -242,6 +242,9 @@ were common in educational software.
 - Science Research Associates
   e.g. Computer Drill and Instruction
 
+- Softsmith
+  e.g. Astro Attack, Dinner on a Disk
+
 - Spinnaker Software
   e.g. Snooper Troops, KidWriter
 
@@ -265,12 +268,12 @@ were common in educational software.
 - Woodbury Software
   e.g. PlayWriter (series)
 
-The latest version of Passport can also
-recognize and defeat the protection
-used by some game companies. In general
-there was more variation and "one-off"
-protection in games than in educational
-software, so your mileage may vary.
+Passport can also recognize and defeat
+the copy protection used by some game
+companies. In general there was more
+variation and "one-off" protection in
+games than in educational software, so
+your mileage may vary.
 
 - Activision (patcher by TRex)
   e.g. Hacker, Rampage
@@ -299,6 +302,9 @@ software, so your mileage may vary.
 
 - Data East
   e.g. Ikari Warriors, Batman
+
+- Earthware
+  e.g. Black Belt, Zoo Master
 
 - Electronic Arts (patcher by qkumba)
   e.g. The Bard's Tale, Skyfox
@@ -410,7 +416,7 @@ Development (unreleased)
   you can scroll back with arrows
   (by qkumba)
 - NEW: patchers/555.a (Agent USA,
-  Jumpman) (by qkumba)
+  Jumpman, many Softsmith) (by qkumba)
 - NEW: patchers/earthware.a (Black
   Belt, Zoo Master)
 - NEW: patchers/tsr.a (Dawn Patrol,
