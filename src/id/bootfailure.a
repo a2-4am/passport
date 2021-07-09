@@ -52,11 +52,8 @@ VerifyInfocom18
          cmp   #$AA
          bne   --
          jsr   ReadNib
-         ldx   gTrack
-         bne   .no13     ; skip if not boot phase
          cmp   #$B5      ; 13-sector only
          beq   .build13
-.no13
          cmp   #$AD
          bne   --
 
@@ -122,20 +119,22 @@ VerifyInfocom18
 
 .RW18
          jsr   .rw18pro
-         bne   .jmpbadsect
+         bne   .badsect
          ldx   gIsRW18
          beq   .verifyrw18
          sta   gIsRW18
          bne   .checkmode ; always taken
 
-.jmpbadsect
-         jmp   .badsect
-
          ;build 5-and-3 decoding table
          ;for 13-sector support
 
+.no13
+         jmp   ---
+
 .build13
-         ldx   #$00
+         lda   gTrack
+         bne   .no13     ; skip if not boot phase
+         ldx   #0
          ldy   #$AB
 -        tya
          sta   tmp
