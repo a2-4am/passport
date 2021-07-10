@@ -301,7 +301,6 @@ IDBootloader
          sta   gIsProDOS             ; A = 0 (TRUE)
          jsr   IDVolumeName
          ; /!\ execution falls through here because Dinkey-DOS disks are also ProDOS
-.notProDOS
 ;
 ; Dinkey-DOS (ProDOS file structure with DOS 3.3-ish RWTS in language card)
 ; detectable now because IDVolumeName just read the first sector of the
@@ -316,6 +315,7 @@ IDBootloader
          lda   #TRUE
          sta   gIsDinkeyDOS
          ; /!\ execution falls through here to save bytes (no other IDs will match)
+.notProDOS
 .notDinkey
 ;
 ; Apple Pascal (all versions)
