@@ -43,6 +43,10 @@ IDMECC1
          jsr   compare    ; IF T00,S0B,$02 ==
          !byte $BD,$8C,$C0,$10,$FB,$C9
          bcs   .exit
+         ldx   #$89
+         jsr   compare    ; AND T00,S0B,$89 ==
+         !byte $BD,$8C,$C0,$10,$FB,$C9
+         bcs   .exit
          ldx   #$09
          ldy   #$09
          jsr   compare    ; AND T00,S0B,$09 ==
@@ -50,24 +54,16 @@ IDMECC1
          !byte $C9
          bcs   .exit
          ldx   #$13
-         ldy   #$0A
          jsr   compare    ; AND T00,S0B,$13 ==
          !byte $D0,$E5,$A0,$03,$BD,$8C,$C0,$10
-         !byte $FB,$C9
-         bcs   .exit
-         ldx   #$89
-         ldy   #$06
-         jsr   compare    ; AND T00,S0B,$89 ==
-         !byte $BD,$8C,$C0,$10,$FB,$C9
+         !byte $FB
          bcs   .exit
          ldx   #$90
-         ldy   #$09
          jsr   compare    ; AND T00,S0B,$90 ==
          !byte $D0,$F4,$EA,$BD,$8C,$C0,$10,$FB
          !byte $C9
          bcs   .exit
          ldx   #$9A
-         ldy   #$09
          jsr   compare    ; AND T00,S0B,$9A ==
          !byte $D0,$F2,$EA,$BD,$8C,$C0,$10,$FB
          !byte $C9
