@@ -53,11 +53,6 @@ IDMECC1
          !byte $D0,$EF,$EA,$BD,$8C,$C0,$10,$FB
          !byte $C9
          bcs   .exit
-         ldx   #$13
-         jsr   compare    ; AND T00,S0B,$13 ==
-         !byte $D0,$E5,$A0,$03,$BD,$8C,$C0,$10
-         !byte $FB
-         bcs   .exit
          ldx   #$90
          jsr   compare    ; AND T00,S0B,$90 ==
          !byte $D0,$F4,$EA,$BD,$8C,$C0,$10,$FB
@@ -67,6 +62,12 @@ IDMECC1
          jsr   compare    ; AND T00,S0B,$9A ==
          !byte $D0,$F2,$EA,$BD,$8C,$C0,$10,$FB
          !byte $C9
+         ldx   #$13
+         iny
+         jsr   compare    ; AND T00,S0B,$13 ==
+         !byte $D0,$E5,$A0,$03,$BD,$8C,$C0,$10
+         !byte $FB,$C9
+         bcs   .exit
 .exit
          rts              ; passport-test-suite/Coordinate Math v1.0.woz [C=0] matches
 
@@ -126,28 +127,27 @@ IDMECC4a
          jsr   compare    ; IF T00,S07,$7D ==
          !byte $BD,$8C,$C0,$10,$FB,$C9
          bcs   .exit
-         ldx   #$84
-         ldy   #$09
-         jsr   compare    ; AND T00,S07,$84 ==
-         !byte $D0,$F0,$EA,$BD,$8C,$C0,$10,$FB,$C9
-         bcs   .exit
-         ldx   #$8E
-         ldy   #$0A
-         jsr   compare    ; and T00,S07,$8E ==
-         !byte $D0,$F2,$A0,$03,$BD,$8C,$C0,$10,$FB,$C9
-         bcs   .exit
          ldx   #$0F
-         ldy   #$06
          jsr   compare    ; and T00,S07,$0F ==
          !byte $BD,$8C,$C0,$10,$FB,$49
          bcs   .exit
          ldx   #$18
-         ldy   #$07
+         iny
          jsr   compare    ; and T00,S07,$18 ==
          !byte $EA,$BD,$8C,$C0,$10,$FB,$C9
          bcs   .exit
+         ldx   #$84
+         iny
+         iny
+         jsr   compare    ; AND T00,S07,$84 ==
+         !byte $D0,$F0,$EA,$BD,$8C,$C0,$10,$FB,$C9
+         bcs   .exit
+         ldx   #$8E
+         iny
+         jsr   compare    ; and T00,S07,$8E ==
+         !byte $D0,$F2,$A0,$03,$BD,$8C,$C0,$10,$FB,$C9
+         bcs   .exit
          ldx   #$20
-         ldy   #$0A
          jsr   compare    ; and T00,S07,$20 ==
          !byte $D0,$F2,$A0,$56,$BD,$8C,$C0,$10,$FB,$C9
 .exit
@@ -215,7 +215,7 @@ IDMECC3
          !byte $D0,$EF,$EA,$BD,$8C,$C0,$10,$FB,$C9
          bcs   .exit
          ldx   #$F3
-         ldy   #$0A
+         iny
          jsr   compare    ; and T00,S0A,$F3 ==
          !byte $D0,$F2,$A0,$03,$BD,$8C,$C0,$10,$FB,$C9
          bcs   .exit
@@ -231,7 +231,6 @@ IDMECC3
          !byte $D0,$F4,$EA,$BD,$8C,$C0,$10,$FB,$C9
          bcs   .exit
          ldx   #$7A
-         ldy   #$09
          jsr   compare    ; and T00,S0B,$7A ==
          !byte $D0,$F2,$EA,$BD,$8C,$C0,$10,$FB,$C9
 .exit
