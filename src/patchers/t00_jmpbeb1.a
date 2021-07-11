@@ -56,15 +56,14 @@ _jmpbeb1
          !byte $A9
          bcs   .exit
          ldx   #$5E
-         jsr   compare3   ; and T00,S02,$5E ==
-         !byte $20,$BB,WILDCARD
+         jsr   compare2   ; and T00,S02,$5E ==
+         !byte $20,$BB
          bcs   .exit      ; passport-test-suite/Easy as ABC.woz [C=0] matches
          ldx   #$49       ; passport-test-suite/Spelling Rules.woz [C=0] matches
          jsr   modify1    ; then set T00,S02,$49 =
          !byte $04
-         lda   $124E
-         sta   _jsr+2
-         lda   #$02
+         ldy   $124E
+         sty   _jsr+2
          ldx   #$52
          ldy   #$05
          jsr   modify     ; and set T00,S02,$52 =

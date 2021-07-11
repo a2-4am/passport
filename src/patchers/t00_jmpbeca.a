@@ -38,7 +38,6 @@
          sta   gDisplayBytes ; passport-test-suite/Spelling Rules.woz [C=0] also reaches here
          jsr   PrintByID
          !byte s_jmpbeca
-         ldy   #$0D
          jsr   modify     ; then set T00,S02,$F4 =
          !byte $A0,$56
          !byte $BD,$8C,$C0
