@@ -4,10 +4,9 @@
 
 ;-------------------------------
 ; ConstructStandardDelivery
-; in:    A = low byte of Standard Delivery parameter table (see below)
-;        X = high byte of Standard Delivery parameter table
+; in:    X = ID of which Standard Delivery we should construct
+;        (see apidefs.a)
 ; out:   $1000..$10FF replaced with Standard Delivery bootloader
-;        all registers clobbered
 ;        A,X clobbered
 ;        Y preserved
 ;-------------------------------
