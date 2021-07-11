@@ -179,10 +179,6 @@ ADStyle
 ; high memory)
 ;
 +
-         lda   gTrack
-         pha
-         lda   gSector
-         pha
 b4bbcompare
          lda   #$FD                  ; modified at runtime (in Inspect1)
          ldx   #$00
@@ -199,7 +195,7 @@ b4bbcompare
          sta   b4bbmodify+1
          lda   #$91                  ; low byte of address that checks address epilogue 1
          sta   b4bbmodify2+1
-         ldx   #$00                  ; track
+         ;X=0 so we will reuse that as the track number
          ldy   #$0C                  ; sector
          bne   @all                  ; always branches
 @dos32
@@ -249,9 +245,8 @@ b4bbmodify2
          lda   #kSectorCustomDOS32B4BB
          sta   T02S0C
 _b4bbexit
-         pla
+         lda   #$00
          sta   gSector
-         pla
          sta   gTrack
 ;
 ; Check for Harvey protection
