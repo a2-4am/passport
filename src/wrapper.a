@@ -6,6 +6,7 @@
          !source "apidefs.a"
          !source "strings/enid.a"
          !source "prefs.load.a"
+         !source "hw.diskii.a"
          !source "../build/vars.a"
 
          bit   $C082                 ; read ROM, no write
@@ -42,12 +43,13 @@ OneTimeSetup
          inc   $F1
          dex
          bne   -
+         ;X=0,Y=0
 
-         ldy   #0                    ; save a copy of ProDOS system global page
--        lda   $BF00, y              ; (will be copied back and forth by SwapProDOS later)
-         sta   $0F00, y
+-        lda   $BF00, y              ; save a copy of ProDOS system global page
+         sta   $0F00, y              ; (will be copied back and forth by SwapProDOS later)
          iny
          bne   -
+         ;X=0,Y=0
 
          lda   $FBB3                 ; ROM MachineID
          cmp   #$EA                  ; ][+?
@@ -55,7 +57,9 @@ OneTimeSetup
          lda   #$DF                  ; AND mask to force characters to uppercase on ][+
          sta   kForceLower
 +
-         jsr   ScanForDiskII         ; scan slots for Disk II drives
+         ;X=0,Y=0
+         +ScanForDiskII              ; scan slots for Disk II drives
+         ;X=0
          lda   DiskIIArray+5
          bne   +
          jsr   PrintByID             ; no Disk II in slot 6, this is fatal
@@ -63,6 +67,7 @@ OneTimeSetup
          jsr   WaitForKey
          jmp   CleanExit
 +
+         ;X=0
          jsr   ScanForRAMAndHardDisks; scan for things that look like RAM disks or hard disks
          +LoadPrefs                  ; load preferences (if available)
          jsr   ThisSlot              ; get information about selected drive and set gTargetType for main menu
@@ -80,7 +85,7 @@ OneTimeSetup
 
          jmp   MainMenu
 
-         !source "initscan.a"
+         !source "hw.harddisk.a"
 
 SHOW_PROGRESS_DURING_DECRUNCH = 1    ; activates optional UI code in exodecrunch
 

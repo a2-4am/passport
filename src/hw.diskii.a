@@ -1,0 +1,36 @@
+;-------------------------------
+; ScanForDiskII
+; scan all slots for things that look like Disk II cards
+;
+; in:    X = 0
+;        Y = 0
+; out:   DiskIIArray populated
+;        X = 0
+;        all other registers and flags clobbered
+;-------------------------------
+!macro ScanForDiskII {
+         ;X=0,Y=0
+         stx   cmp1
+         ldx   #$07
+-        txa
+         ora   #$C0
+         sta   cmp1+1
+         ldy   #$01
+         lda   (cmp1), y
+         cmp   #$20
+         bne   +
+         ldy   #$03
+         lda   (cmp1), y
+         bne   +
+         ldy   #$05
+         lda   (cmp1), y
+         cmp   #$03
+         bne   +
+         ldy   #$FF
+         lda   (cmp1), y
+         bne   +
+         tya
+         sta   DiskIIArray-1, x
++        dex
+         bne   -
+}

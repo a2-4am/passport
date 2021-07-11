@@ -5,52 +5,16 @@ RAMFileName    !raw "PASSPORTTMP.DSK"
 RAMFileName_e
 
 ;-------------------------------
-; ScanForDiskII
-; scan all slots for things that look like Disk II cards
-;
-; in:    none
-; out:   DiskIIArray populated
-;        all registers and flags clobbered
-;-------------------------------
-ScanForDiskII
-         lda   #$00
-         sta   cmp1
-         ldx   #$07
--        txa
-         ora   #$C0
-         sta   cmp1+1
-         ldy   #$01
-         lda   (cmp1), y
-         cmp   #$20
-         bne   +
-         ldy   #$03
-         lda   (cmp1), y
-         bne   +
-         ldy   #$05
-         lda   (cmp1), y
-         cmp   #$03
-         bne   +
-         ldy   #$FF
-         lda   (cmp1), y
-         bne   +
-         tya
-         sta   DiskIIArray-1, x
-+        dex
-         bne   -
-         rts
-
-;-------------------------------
 ; ScanForRAMAndHardDisks
 ; scan all slots for things that look like RAM disks or hard drives
 ;
-; in:    none
+; in:    X=0
 ; out:   HardDriveArray populated
 ;        RAMDiskImagePath possibly populated (if a suitable RAM disk was found)
 ;        all registers and flags clobbered
 ;-------------------------------
 ScanForRAMAndHardDisks
-         lda   #$00
-         sta   iunit
+         stx   iunit
 @nextunit
          lda   iunit
          clc
