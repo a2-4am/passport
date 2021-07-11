@@ -81,6 +81,9 @@ UseUniversal
 ;
 ; Some disks have different epilogues on track 0, so we stop using the
 ; adaptive RWTS so we don't falsely accuse those disks of being damaged.
+; (This is implemented by recopying the entire built-in RWTS into place
+; which wipes out all the above patches, but track 0 of Dinkey-DOS and
+; TSR disks is readable, so it's OK that they fall through to here.)
 ;
          lda   #kSectorResetAdaptiveRWTS
          sta   T00S0F
