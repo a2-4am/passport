@@ -10,11 +10,8 @@
 ;-------------------------------
 !zone {
          lda   gIsAdvent
-         beq   +
-.jmpexit
-         jmp   .exit
+         bne   .exit
 
-+
          ;carry controls how many times to run on one track
          ;Mindshadow and Tracer Sanction have two copies
          ;of the protection on track 0, loaded to two
