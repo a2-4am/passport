@@ -362,12 +362,10 @@ AnalyzeTrack
          !source "patchers/holle.a"             ; gIsHolle only
          !source "patchers/zoomgrafix.a"        ; gIsPhoenix only
          !source "patchers/e7everywhere.a"      ; gIsBoot0 || gIsProDOS only
-         !source "patchers/choplifter.a"        ; gIsChoplifter only
          !source "patchers/tsr.a"               ; T04 && gIsTSR only
          !source "patchers/woodbury.a"          ; gPossibleWoodbury only
          !source "patchers/b4bbbasic.a"         ; gPossibleB4BBBasic only
          !source "patchers/errord51.a"          ; gIsLowDOS only
-         !source "patchers/555.a"               ; gIs555 only
          ;
          ; DOS 3.3-specific patchers
          ;
@@ -437,6 +435,11 @@ inx4     inx
          inx
          inx
          rts
+         ;
+         ; Patchers that are called manually
+         ;
+         !source "patchers/choplifter.a"
+         !source "patchers/555.a"
 
 universalrwts
          !bin "../build/universalrwts.pak"

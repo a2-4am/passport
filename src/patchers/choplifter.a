@@ -22,8 +22,6 @@
 ; - Star Blazer (Broderbund)
 ;-------------------------------
 !zone {
-         jmp   .exit2     ; reachable only via inspect
-
 Choplifter
          lda   #$00
          sta   gCommand   ; passport-test-suite/Eggs-It.woz [Z=1] reaches here

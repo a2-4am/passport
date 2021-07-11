@@ -48,8 +48,6 @@
 ; - Zenith
 ;-------------------------------
 !zone {
-         jmp   .exit2     ; reachable only via inspect
-
 Do555
          ; find entrypoint for second stage
 
