@@ -4,7 +4,7 @@
 
 !zone {
          ldy   #0
-         jmp   .initmatch1
+         beq   .initmatch1           ; always branches
 
          ; address prologue (read)
          ; A,X
