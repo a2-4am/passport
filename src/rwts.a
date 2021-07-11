@@ -56,23 +56,23 @@ ReadSector
 ; and sector.
 ;
 _protread
-         lda   gTrack     ; T02,S05+ use "protected" mode
-         cmp   #$03       ; (altered data prologue and
-         bcs   @protected ; nibble translate table)
-         cmp   #$02       ; T00,S00 - T02,S04 use
-         bcc   @standard  ; "standard" mode
+         ; T02,S05+ use 'protected' mode
+         ; other sectors use standard mode
+         lda   gTrack
+         cmp   #$02
+         bcc   @standard
+         bne   @protected
          lda   gSector
          cmp   #$05
-         bcs   @protected
-@standard
-         lda   #$9B
-         sta   $BF2C
-         bne   @go        ; unconditional branch
+         bcc   @standard
 @protected
          lda   #$B5
          sta   $4E
          lda   #$D5
-         sta   $BF2C      ; execution falls through here
+         !byte $2C        ; hide next LDA
+@standard
+         lda   #$9B
+         sta   $BF2C
 @go      lda   #<gRWTSParams
          ldy   #>gRWTSParams
          jmp   $BA00      ; note non-standard entry point
