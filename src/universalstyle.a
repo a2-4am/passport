@@ -43,10 +43,7 @@ UseUniversal
          ldy   #$0F
 -        lda   _originAddressEpilogue, y
          sta   $B990, y
-         dey
-         bpl   -
-         ldy   #$0A
--        lda   _originDataEpilogue, y
+         lda   _originDataEpilogue, y
          sta   $B92F, y
          dey
          bpl   -
@@ -175,6 +172,8 @@ _originDataEpilogue       ; to $B92F
          !byte $85,$2D
          !byte $18
          !byte $60
+         ; next 5 bytes are also copied into $B93A..$B93E
+         ; which is harmless
 
 _tsrCallback
          pha
