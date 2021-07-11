@@ -46,11 +46,6 @@ Relocatable
 NonRelocatable
          !source "apidefs.a"
          !source "strings/en.a"
-         !source "id/trace.a"
-         !source "id/trace33.a"
-         !source "id/trace32.a"
-         !source "id/trace8b3.a"
-         !source "id/trace33p.a"
          !source "id/dos33.a"
          !source "id/dos32.a"
          !source "id/dos32lo.a"
@@ -81,27 +76,33 @@ NonRelocatable
          !source "id/holle.a"
          !source "id/phoenix.a"
          !source "id/555.a"
+         !source "id/trace32.a"
+         !source "id/trace8b3.a"
+         !source "id/trace33p.a"
+         !source "id/trace.a"        ; \__ execution falls through
+         !source "universalstyle.a"  ; /
+         !source "id/trace33.a"      ; \__ execution falls through
+         !source "adstyle.a"         ; /
+         !source "crackme.a"         ; /
          !source "id/inspect0.a"
          !source "print.a"
          !source "compare.a"
          !source "modify.a"
-         !source "memory.a"
          !source "sectormap.a"
          !source "write.a"
          !source "mli.a"
          !source "ramdisk.a"
-         !source "harddisk.a"
+         !source "harddisk.a"        ; \__ execution falls through
+         !source "memory.a"          ; /
          !source "slots.a"
          !source "prefs.a"
          !source "prefs.save.a"
          !source "keys.a"
          !source "cffa.a"
          !source "progress.a"
-         !source "rwts.a"
+         !source "rwts.a"            ; \__ execution falls through
+         !source "memory.clear.a"    ; /
          !source "standarddelivery.a"
-         !source "adstyle.a"
-         !source "universalstyle.a"
-         !source "crackme.a"
 
 MainMenu
          jsr   Cleanup               ; RAM/HD files might be left open after Ctrl-Reset

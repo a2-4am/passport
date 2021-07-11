@@ -1,3 +1,4 @@
+         ; /!\ execution falls through from TraceDOS33c
 ;-------------------------------
 ; ADStyle
 ; Caller has determined that the RWTS in memory
@@ -291,4 +292,4 @@ _b4bbexit
          lda   #kSectorSwitchToBuiltinRWTS
          sta   T02S0F
 +
-         jmp   ReadWithRWTS
+         ; /!\ execution falls through here to ReadWithRWTS

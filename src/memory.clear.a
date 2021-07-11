@@ -1,0 +1,36 @@
+         ; /!\ execution falls through from ChangeTrack
+;-------------------------------
+; ClearTSBuffer
+; clear the $1000 byte memory buffer
+; used to store the current track's data
+; in:    none
+; out:   Z = 1
+;        X preserved
+;        Y = 0
+;        all other flags and registers clobbered
+;-------------------------------
+ClearTSBuffer
+         lda   #BASEPAGE
+         ldx   #$00
+         ldy   #$10
+         ; /!\ execution falls through here
+
+;-------------------------------
+; ClearMemory
+; in:    A = source address (high)
+;        X = value to set
+;        Y = number of pages
+; out:   Z = 1
+;        X preserved
+;        Y = 0
+;        all other flags and registers clobbered
+;-------------------------------
+ClearMemory
+         sta   @dest+2
+@dest    stx   $FF00
+         inc   @dest+1
+         bne   @dest
+         inc   @dest+2
+         dey
+         bne   @dest
+         rts

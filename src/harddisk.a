@@ -5,6 +5,48 @@ HardDiskName    !raw "/IMG0000.DSK"
 HardDiskName_e
 
 ;-------------------------------
+; CloseFileOnHardDisk
+; close the previously open file on a hard disk, if any
+;
+; always safe to call (gracefully returns if no file is open)
+; does not return any error status because no one cares
+;
+; in:    ProDOS is in memory
+; out:   all registers and flags clobbered
+;        ProDOS is in memory
+;-------------------------------
+!macro CloseFileOnHardDisk {
+         lda   gHardDiskRef
+         beq   +
+         jsr   CloseFile
+         lda   #0
+         sta   gHardDiskRef
++
+}
+
+;-------------------------------
+; PrintHardDiskImagePath
+; print full path of file on hard disk
+;
+; in:    @HardDiskImagePath is populated and has non-zero length
+; out:   all registers and flags clobbered
+;-------------------------------
+!macro PrintHardDiskImagePath {
+         lda   HardDiskImagePath
+         sta   @volumelen
+         ldx   #0
+-        lda   HardDiskImagePath+1, x
+         ora   #$80
+         jsr   PrintA
+         inx
+@volumelen=*+1
+         cpx   #$FD       ; SMC
+         bcc   -
+         lda   #$8D
+         jsr   PrintA
+}
+
+;-------------------------------
 ; CreateFileOnHardDisk
 ; create a new autonumbered image file on the user's selected target,
 ; which should be a hard disk
@@ -95,46 +137,5 @@ CreateFileOnHardDisk
          jsr   Create140KFile
          bcs   +
          sta   gHardDiskRef
-+        jmp   SwapProDOS            ; ProDOS in -> out (preserves flags)
-
-;-------------------------------
-; CloseFileOnHardDisk
-; close the previously open file on a hard disk, if any
-;
-; always safe to call (gracefully returns if no file is open)
-; does not return any error status because no one cares
-;
-; in:    ProDOS is in memory
-; out:   all registers and flags clobbered
-;        ProDOS is in memory
-;-------------------------------
-!macro CloseFileOnHardDisk {
-         lda   gHardDiskRef
-         beq   +
-         jsr   CloseFile
-         lda   #0
-         sta   gHardDiskRef
 +
-}
-
-;-------------------------------
-; PrintHardDiskImagePath
-; print full path of file on hard disk
-;
-; in:    @HardDiskImagePath is populated and has non-zero length
-; out:   all registers and flags clobbered
-;-------------------------------
-!macro PrintHardDiskImagePath {
-         lda   HardDiskImagePath
-         sta   @volumelen
-         ldx   #0
--        lda   HardDiskImagePath+1, x
-         ora   #$80
-         jsr   PrintA
-         inx
-@volumelen=*+1
-         cpx   #$FD       ; SMC
-         bcc   -
-         lda   #$8D
-         jsr   PrintA
-}
+         ; /!\ execution falls through to SwapProDOS

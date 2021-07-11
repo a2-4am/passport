@@ -136,32 +136,6 @@ IgnoreAddressChecksum
          rts
 
 ;-------------------------------
-; ChangeTrack
-; in:  A = new track
-;-------------------------------
-ChangeTrack
-         sta   @new+1
-         jsr   WriteTrack
-@new     lda   #$d1       ; modified at runtime
-
-; note: execution falls through here
-
-ChangeTrackNW             ; "N"o "W"rite
-         sta   gTrack
-         jmp   ClearTSBuffer
-
-;-------------------------------
-; ChangeSector
-; in:  A = new sector
-;-------------------------------
-ChangeSector
-         sta   gSector
-         clc
-         adc   #BASEPAGE
-         sta   gAddress+1
-         rts
-
-;-------------------------------
 ; WriteTrack
 ; in:    none
 ;-------------------------------
@@ -232,3 +206,28 @@ FatalWriteError
          jsr   PrintByID
 +        !byte $FD                   ; SMC
          jmp   TheEnd
+
+;-------------------------------
+; ChangeSector
+; in:  A = new sector
+;-------------------------------
+ChangeSector
+         sta   gSector
+         clc
+         adc   #BASEPAGE
+         sta   gAddress+1
+         rts
+
+;-------------------------------
+; ChangeTrack
+; in:  A = new track
+;-------------------------------
+ChangeTrack
+         sta   @new+1
+         jsr   WriteTrack
+@new     lda   #$d1       ; modified at runtime
+         ; /!\ execution falls through here
+
+ChangeTrackNW             ; "N"o "W"rite
+         sta   gTrack
+         ; /!\ execution falls through here to ClearTSBuffer

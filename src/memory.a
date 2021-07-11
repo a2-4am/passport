@@ -20,7 +20,7 @@
 ; B200..BFFF - clobbered by DOS boot tracer (RDOS is B200+, DOS 3.x is B600+)
 ;-------------------------------
 
-
+         ; /!\ execution falls through from CreateFileOnHardDisk
 ;-------------------------------
 ; SwapProDOS
 ; saves/restores memory used by ProDOS ($BF00..$BFFF)
@@ -94,42 +94,6 @@ CopyMemory
          inc   @dest+2
          dey
          bne   @source
-         rts
-
-;-------------------------------
-; ClearTSBuffer
-; clear the $1000 byte memory buffer
-; used to store the current track's data
-; in:    none
-; out:   Z = 1
-;        X preserved
-;        Y = 0
-;        all other flags and registers clobbered
-;-------------------------------
-ClearTSBuffer
-         lda   #BASEPAGE
-         ldx   #$00
-         ldy   #$10
-         ; /!\ execution falls through here
-
-;-------------------------------
-; ClearMemory
-; in:    A = source address (high)
-;        X = value to set
-;        Y = number of pages
-; out:   Z = 1
-;        X preserved
-;        Y = 0
-;        all other flags and registers clobbered
-;-------------------------------
-ClearMemory
-         sta   @dest+2
-@dest    stx   $FF00
-         inc   @dest+1
-         bne   @dest
-         inc   @dest+2
-         dey
-         bne   @dest
          rts
 
 ;-------------------------------

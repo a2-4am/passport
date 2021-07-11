@@ -63,7 +63,7 @@ SkipTrack
          bpl   @print
          bvc   @print
 ; if we're in 'crack' mode, restart the scan to find the protection code
-         jmp   SetupF7F6SecondRound
+         bvs   SetupF7F6SecondRound  ; always branches
 
 @print   sta   +
          jsr   PrintByID

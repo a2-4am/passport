@@ -30,5 +30,5 @@ Trace
 ++       pla
          jsr   PrintByID             ; unknown disk controller
          !byte s_canttrace
-         jmp   UseUniversal
+         ; /!\ execution falls through here to UseUniversal
 }

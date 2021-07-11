@@ -388,5 +388,5 @@ TraceDOS33c               ; 2nd-level trace callback is here
 ;
 ; good to go
 ;
-         jmp   ADStyle    ; use this RWTS to read the disk
+         ; /!\ execution falls through to ADStyle
 }
