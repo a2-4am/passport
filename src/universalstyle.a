@@ -20,51 +20,19 @@ UseUniversal
 ; On pure 13-sector disks, we just hijack the read routine to perform a
 ; verification instead.
 ;
-+
          lda   gIs13Sector
-         bne   +
+         bne   @not13Sector
          lda   #<read13
          sta   jCallRWTS+1
          lda   #>read13
          sta   jCallRWTS+2
          bne   @doneUnivPatching     ; always branches
+@not13Sector
 ;
-; On Dinkey-DOS disks (e.g. Ultima V, Times of Lore), we start with the
-; universal RWTS then apply a patch in memory.
-; These disks use a hybrid RWTS that alters the sector number in the
-; address field based on the address epilogue. Once we normalize the
-; sector numbers, no further patches are required, since the RWTS can also
-; read unprotected disks. A separate patcher finds the actual code that
-; alters the sector number to print it to the log.
-;
-+
-         lda   gIsDinkeyDOS
-         bne   +
-         ldy   #$0F
--        lda   _originAddressEpilogue, y
-         sta   $B990, y
-         lda   _originDataEpilogue, y
-         sta   $B92F, y
-         dey
-         bpl   -
-         bmi   @doneUnivPatching     ; always branches
-;
-; On TSR disks (e.g. Dawn Patrol, Dungeon), we start with the universal
-; RWTS then apply a patch in memory.
-;
-+
-         lda   gIsTSR
-         bne   +
-         lda   #<_tsrCallback
-         sta   $BE8C
-         lda   #>_tsrCallback
-         sta   $BE8D
-;
-; On other disks that use the universal RWTS for the entire disk, we use
+; On disks that use the universal RWTS for the entire disk, we use
 ; an adaptive RWTS that accepts any epilogue on the first sector but then
 ; enforces all other sectors to have the same epilogue.
 ;
-+
          ldy   #$09
 -        lda   _adaptiveAddressEpilogue, y
          sta   $B994, y
@@ -72,6 +40,36 @@ UseUniversal
          sta   $B938, y
          dey
          bpl   -
+;
+; On Dinkey-DOS disks (e.g. Ultima V, Times of Lore), we don't use the
+; adaptive RWTS we just copied into place. Instead, we use the same space
+; to create a hybrid RWTS that alters the sector number in the
+; address field based on the address epilogue. Once we normalize the
+; sector numbers, no further patches are required, since the RWTS can also
+; read unprotected disks. A separate patcher finds the actual code that
+; alters the sector number to print it to the log.
+;
+         lda   gIsDinkeyDOS
+         bne   @notDinkeyDOS
+         ldy   #$0F
+-        lda   _originAddressEpilogue, y
+         sta   $B990, y
+         lda   _originDataEpilogue, y
+         sta   $B92F, y
+         dey
+         bpl   -
+@notDinkeyDOS
+;
+; On TSR disks (e.g. Dawn Patrol, Dungeon), we start with the universal
+; RWTS then apply a patch in memory.
+;
+         lda   gIsTSR
+         bne   @notTSR
+         lda   #<_tsrCallback
+         sta   $BE8C
+         lda   #>_tsrCallback
+         sta   $BE8D
+@notTSR
 ;
 ; Disable drive recalibration on bad sectors so we give up on bad sectors
 ; faster and detect unformatted or specially structured tracks faster.
