@@ -199,13 +199,7 @@ Reaction
          jmp   IDBootloader          ; /src/id/inspect0
 
 @notHardDrive
-         lda   RAMDiskImagePath
-         beq   @printReading         ; no RAM disk available
-         jsr   CreateFileOnRAMDisk
-         bcc   @printReading
-         lda   #0                    ; failed to create temporary file on RAM disk
-         sta   RAMDiskImagePath      ; this is not fatal, but we'll mark the RAM
-                                     ; disk as unavailable so we don't bother with it
+         +MaybeCreateFileOnRAMDisk
 @printReading
          jsr   PrintByID
          !byte s_reading

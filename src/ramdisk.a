@@ -1,16 +1,16 @@
 ;-------------------------------
-; CreateFileOnRAMDisk
+; MaybeCreateFileOnRAMDisk
 ; create 140KB file on RAM disk (filename is hardcoded)
 ;
 ; in:    ProDOS is not in memory
-;        RAMDiskImagePath populated
-; out:   if C set, creation failed (A contains MLI error code)
-;        if C clear, creation succeeded (A clobbered, gRAMDiskRef contains file refnum)
-;        all other flags clobbered
+; out:   if creation succeeded, gRAMDiskRef contains file refnum
+;        all flags clobbered
 ;        all registers clobbered
 ;        ProDOS is not in memory
 ;-------------------------------
-CreateFileOnRAMDisk
+!macro MaybeCreateFileOnRAMDisk {
+         lda   RAMDiskImagePath
+         beq   @doneRAMDisk          ; no RAM disk available -> skip everything
          jsr   SwapProDOS            ; ProDOS out -> in (preserves flags)
          jsr   DeleteFileOnRAMDisk   ; always safe to call
          lda   #<RAMDiskImagePath
@@ -18,9 +18,16 @@ CreateFileOnRAMDisk
          lda   #>RAMDiskImagePath
          sta   mliparam+2
          jsr   Create140KFile
-         bcs   +
-         sta   gRAMDiskRef
-+        jmp   SwapProDOS            ; ProDOS in -> out (preserves flags)
+         bcc   +
+         ; We failed to create temporary file on RAM disk.
+         ; This is not fatal, but we'll mark the RAM
+         ; disk as unavailable so we don't bother with it
+         lda   #0
+         sta   RAMDiskImagePath
++        sta   gRAMDiskRef
+         jsr   SwapProDOS            ; ProDOS in -> out (preserves flags)
+@doneRAMDisk
+}
 
 ;-------------------------------
 ; DeleteFileOnRAMDisk
