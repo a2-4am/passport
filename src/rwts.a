@@ -43,14 +43,9 @@ ReadSector
 
          lda   gIsProtDOS
          beq   _protread
-@go
          ldy   #<gRWTSParams
          lda   #>gRWTSParams
-         jsr   jCallRWTS
-         bcc   +
-         lda   gOnAClearDayYouCanReadForever
-         beq   @go
-+        rts
+         jmp   jCallRWTS
 
 ;
 ; "Protected.DOS" has enough differences that we just
@@ -80,11 +75,7 @@ _protread
          sta   $BF2C      ; execution falls through here
 @go      lda   #<gRWTSParams
          ldy   #>gRWTSParams
-         jsr   $BA00      ; note non-standard entry point
-         bcc   +
-         lda   gOnAClearDayYouCanReadForever
-         beq   @go
-+        rts
+         jmp   $BA00      ; note non-standard entry point
 
 ;-------------------------------
 ; PreReadSector

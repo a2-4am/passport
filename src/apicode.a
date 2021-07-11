@@ -58,12 +58,6 @@
          !byte FALSE      ; target type (disk drive, CFFA virtual drive, file on hard disk)
                           ; see apidefs.a for values
 
-;gOnAClearDayYouCanReadForever
-         !byte FALSE      ; 0=true, 1=false
-                          ; retry reads with a captured RWTS forever,
-                          ; instead of falling back to built-in RWTS
-                          ; compile-time flag, no way to change at runtime
-
 ;gIsRW18
          !byte FALSE      ; 0=true, 1=false
                           ; reset before each operation

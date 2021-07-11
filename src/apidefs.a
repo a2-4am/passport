@@ -193,8 +193,7 @@ gMECCFastloadType             = gIs13Sector-$01                       ; byte
 ;gIsRW18 is a special case whose ID is not in the regular inspection path
 gIsRW18                       = gMECCFastloadType-$01                 ; byte
 
-gOnAClearDayYouCanReadForever = gIsRW18-$01                           ; byte
-gTargetType                   = gOnAClearDayYouCanReadForever-$01     ; byte
+gTargetType                   = gIsRW18-$01                           ; byte
 gRAMDiskRef                   = gTargetType-$01                       ; byte
 gHardDiskRef                  = gRAMDiskRef-$01                       ; byte
 gDisplayBytes                 = gHardDiskRef-$0A                      ; 10 bytes
@@ -296,7 +295,6 @@ ConstructStandardDelivery = jConstructStandardDelivery
 !warn "gIsInfocom18=",gIsInfocom18
 !warn "gIs13Sector=",gIs13Sector
 !warn "gIsRW18=",gIsRW18
-!warn "gOnAClearDayYouCanReadForever=",gOnAClearDayYouCanReadForever
 !warn "gTargetType=",gTargetType
 !warn "gRAMDiskRef=",gRAMDiskRef
 !warn "gHardDiskRef=",gHardDiskRef
