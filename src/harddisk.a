@@ -10,7 +10,7 @@ HardDiskName_e
 ; which should be a hard disk
 ;
 ; in:    HardDiskArray populated
-;        user's select target is a hard disk
+;        user's selected target is a hard disk
 ;        ProDOS is not in memory
 ; out:   if C set, create or open failed (A contains MLI error code)
 ;        if C clear, everything succeeded (A is clobbered)

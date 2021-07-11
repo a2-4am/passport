@@ -39,6 +39,19 @@ SwapProDOS
          plp
 -        rts
 
+;-------------------------------
+; MoveT00PakLow/MoveT00PakHigh
+;
+; Copy compressed blob of track 0 patchers
+; from low memory to high memory or vice versa.
+; Each entry point is always safe to call,
+; e.g. if the blob is already low and you call
+; MoveT00PakLow, it just exits.
+;
+; in:    none
+; out:   if blob needs to be copied, exits via CopyMemory
+;        if no action, all registers preserved
+;-------------------------------
 MoveT00PakLow
          bit   T00PakPtr+1
          bpl   -          ; already low

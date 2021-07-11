@@ -98,7 +98,7 @@ SetMark
          sta   mliparam+1 ; store file reference number
          lda   #CMD_SETMARK ; MLI set_mark command
          ldy   #PC_SETMARK ; number of params for 'set_mark' cmd
-         bne   JsrMLIAndReturnPlus1
+         bne   JsrMLIAndReturnPlus1 ; always branches
 
 ;-------------------------------
 ; write to an open file via ProDOS MLI
@@ -115,7 +115,7 @@ WriteFile
          sta   mliparam+1 ; store file reference number
          lda   #CMD_WRITE ; MLI write command
          ldy   #PC_WRITE  ; number of parameters for 'write' command
-         bne   JsrMLIAndReturnPlus1
+         bne   JsrMLIAndReturnPlus1 ; always branches
 
 ;-------------------------------
 ; set file size in an open file via ProDOS MLI
@@ -132,7 +132,7 @@ SetEOF
          sta   mliparam+1 ; store file reference number
          lda   #CMD_SETEOF ; MLI set_eof command
          ldy   #PC_SETEOF ; number of params for 'set_eof' cmd
-         bne   JsrMLIAndReturnPlus1
+         bne   JsrMLIAndReturnPlus1 ; always branches
 
 ;-------------------------------
 ; get volume name of disk in specific slot+drive
@@ -163,7 +163,7 @@ GetVolumeName
 Online
          lda   #CMD_ONLINE
          ldy   #PC_ONLINE
-         bne   mli
+         bne   mli ; always branches
 
 ;-------------------------------
 ; query volume information
@@ -270,17 +270,17 @@ CreateBinFile
 CreateTxtFile
          ldy   #$04
          lda   #$01
-+        sta   mliparam+7            ; storage type (directory or file)
++        pha                         ; storage type (directory or file)
          sty   mliparam+4            ; file type (directory or binary)
          lda   #FULL_ACCESS
          sta   mliparam+3            ; access bits (full access)
          lda   #0
-         sta   mliparam+5            ; aux type (none)
-         sta   mliparam+6
-         sta   mliparam+8            ; creation date (current)
-         sta   mliparam+9
-         sta   mliparam+10           ; creation time (current)
-         sta   mliparam+11
+         ldy   #6
+-        sta   mliparam+5,y          ; aux type (none) + creation datetime (current)
+         dey
+         bpl   -
+         pla
+         sta   mliparam+7            ; storage type (directory or file)
          lda   #CMD_CREATE           ; MLI create command
          ldy   #PC_CREATE            ; number of parameters for 'create' command
          bne   mli                   ; always branches
