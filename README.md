@@ -408,7 +408,7 @@ IN THE SOFTWARE.
 
 ## History
 
-Development (unreleased)
+2021-07-12
 - Target can be a hard disk, which will
   save an autonumbered .DSK file in
   PASSPORT subdirectory (by qkumba)
