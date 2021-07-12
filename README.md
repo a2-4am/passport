@@ -428,8 +428,6 @@ IN THE SOFTWARE.
 - NEW: patchers/woodbury.a (PlayWriter)
 - NEW: patchers/meccdqc.a (MECC
   DataQuest Composer)
-- NEW: patchers/rwtsswapmecc2.a (Word
-  Wizards v1.0)
 - NEW: patchers/b4bbbasic.a (SocMate
   Analogies Games)
 - NEW: patchers/jsrb6cc.a (Kidwriter)
@@ -441,11 +439,11 @@ IN THE SOFTWARE.
   Clyde's Consonant Slides)
 - NEW: patchers/sigcheck.a (Advanced
   Electricity, Complex Circuits)
-- IMPROVED: patches/mecc.a to erase
+- IMPROVED: patchers/mecc.a to erase
   site license information from final
   generation of MECC disks (by qkumba)
 - IMPROVED: patchers/rwtsswapmecc.a
-  (fixes Zoyon Patrol)
+  (fixes Zoyon Patrol, Word Wizards)
 - IMPROVED: patchers/prodosmecc.a
   (fixes Miner's Cave)
 - IMPROVED: patchers/rwtslog.a (fixes
