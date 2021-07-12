@@ -1,6 +1,5 @@
 ;
-; String IDs
-; (pass in accumulator to PrintByID)
+; String IDs (passed on stack to PrintByID)
 ;
 s_header =     $00
 s_mainmenu =   $01

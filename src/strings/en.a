@@ -1,13 +1,68 @@
 ;
-; Main menu keys
-; (should match the text in .mainmenu below)
-; (these are NOT case-sensitive)
+; Strings (English)
+;
+; This file contains all text printed to the screen
+; throughout the program -- header, main menu, crack
+; log strings, error messages, &c. *All* printing of
+; strings should be routed through PrintByID, which
+; takes an ID (defined in enid.a) and eventually
+; finds one of the starting addresses listed below,
+; via the StringTableLow and StringTableHigh arrays.
+;
+; Strings can contain substitution strings, which
+; are replaced by current values at runtime. Each
+; substitution string is two bytes long. The first
+; byte is always '%', which puts the print routine
+; into substitution mode. The next byte controls
+; which value is printed (see list below), then
+; substitution mode ends automatically. Unknown
+; substitution strings are silently ignored and
+; produce no output.
+;
+; Substitution strings are case-sensitive.
+;
+; Supported substitution strings:
+;   %S  destination (write) slot
+;   %D  destination (write) drive
+;   %t  current track (during read and patch)
+;   %s  current sector (during read)
+;
+; In addition, it supports '%0' through '%9'
+; for printing arbitrary hexadecimal values.
+; These are stored in the gDisplayBytes array and
+; can be set directly before calling PrintByID.
+;
+; Finally, strings can include other strings,
+; using '@' followed by a raw byte (not ASCII)
+; for the ID of the string to be included at
+; that spot. String inclusion is recursive;
+; included strings may include other strings.
+; It's strings all the way down.
+;
+; Strings are printed on a 40-column screen with
+; the normal text width behavior, i.e. printing
+; a full 40 characters will move to the first
+; column of the next line without the need to
+; print a carriage return.
+;
+; Lowercase characters will be automatically
+; converted to uppercase on machines that do
+; not support lowercase by default. This is
+; handled within PrintByID, so just define
+; strings with lowercase here and don't worry
+; about it.
+;
+; Inverse characters can be printed, but the
+; syntax is strange; see .mainmenu.
+;
+; Mousetext can not be printed.
+;
+; All strings are null-terminated.
 ;
 !ct "lcase.ct"
-
 !source "strings/enid.a"
-!zone {
-StringTableLow
+
+StringTableLow            ; must be kept in sync with constants in enid.a
          !byte <.header
          !byte <.mainmenu
          !byte <.progbar
@@ -157,7 +212,7 @@ StringTableLow
          !byte <.lockitupserial
          !byte <.protection
 
-StringTableHigh
+StringTableHigh           ; must be kept in sync with constants in enid.a
          !byte >.header
          !byte >.mainmenu
          !byte >.progbar
@@ -307,41 +362,10 @@ StringTableHigh
          !byte >.lockitupserial
          !byte >.protection
 
-;
-; Text can contain substitution strings, which
-; are replaced by current values at runtime. Each
-; substitution string is two bytes long. The first
-; byte is always '%', which puts the print routine
-; into substitution mode. The next byte controls
-; which value is printed (see list below), then
-; substitution mode ends automatically. Unknown
-; substitution strings are silently ignored and
-; produce no output.
-;
-; Substitution strings are case-sensitive.
-;
-; Supported substitution strings:
-;   %S  destination (write) slot
-;   %D  destination (write) drive
-;   %t  current track (during read and patch)
-;   %s  current sector (during read)
-;
-; In addition, it supports '%0' through '%9'
-; for printing arbitrary hexadecimal values.
-; These are stored in the gDisplayBytes array and
-; can be set directly before calling PrintByID.
-;
-; Finally, strings can include other strings by
-; number, using '@' followed by a raw byte (not
-; ASCII) for the number of the string to be
-; included at that spot. String inclusion is
-; recursive; included strings may include other
-; strings. It's strings all the way down.
-;
 .passport
          !text "Passport ",$00
 .header
-         !text "@",s_passport,"by 4am@",s_space7,"@",s_space7," 2021-07-11",$00
+         !text "@",s_passport,"by 4am@",s_space7,"@",s_space7," 2021-07-12",$00
 .bar9
          !text "_________",$00
 .bar18
@@ -724,4 +748,3 @@ StringTableHigh
          !text "@",s_found,"RW18-sector format",$8D,$00
 .x555
          !text "@",s_found,"5-5-5 spiral @",s_bootloader,$8D,$00
-}
