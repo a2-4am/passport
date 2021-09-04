@@ -409,10 +409,14 @@ IN THE SOFTWARE.
 ## History
 
 2021-09-04
-- new E7 patch that works on //c and
-  IIgs (fixes Commando, Animate, &c.)
-- small update to EA patcher (fixes
+- IMPROVED: patchers/universale7.a
+  cracks now work on //c and IIgs
+  (fixes Commando, Animate, &c.)
+- IMPROVED: patchers/ea.a (fixes
   Mind Mirror) (by qkumba)
+- Autonumbered .DSK files now go to 11
+- Matching updates to the
+  [Passport test suite](https://github.com/a2-4am/passport-test-suite)
 
 2021-07-12
 - Target can be a hard disk, which will
