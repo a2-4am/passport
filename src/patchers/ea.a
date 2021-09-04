@@ -513,6 +513,25 @@
          jsr   modify1
          !byte $2C         ;jmp to bit
 
++        ldy   #23
+         jsr   SearchTrack
+         !byte $03,$7A     ;LDI  #$00
+         !byte $06,$7E,$9F ;STA  $32E2
+         !byte $05,$4C,$9D ;JSRA $30D0
+         !byte $05,$4C,$9D ;JSRA $30D0
+         !byte $05,$4C,$9D ;JSRA $30D0
+         !byte $05,$4C,$9D ;JSRA $30D0
+         !byte $04,$74,$6D ;LDA  $c0e8
+         !byte $04,$7E,$9F ;LDA  $32E2
+         bcs   +
+         pha
+         txa
+         adc   #21
+         tax
+         pla
+         jsr   modify1
+         !byte $7F         ;lda from known-zero instead
+
 +
 
 .dostitles
