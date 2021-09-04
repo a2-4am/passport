@@ -408,6 +408,12 @@ IN THE SOFTWARE.
 
 ## History
 
+2021-09-04
+- new E7 patch that works on //c and
+  IIgs (fixes Commando, Animate, &c.)
+- small update to EA patcher (fixes
+  Mind Mirror) (by qkumba)
+
 2021-07-12
 - Target can be a hard disk, which will
   save an autonumbered .DSK file in

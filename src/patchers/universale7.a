@@ -5,6 +5,9 @@
 ; fools most E7 protection checks
 ; (invented by qkumba, see PoC||GTFO 0x11
 ; and 4am crack no. 655 Rocky's Boots 4.0)
+; (updated 2021 with a more compatible
+; version to fix issues on Apple //c and
+; Apple IIgs)
 ;-------------------------------
 !zone {
 universale7
@@ -25,10 +28,10 @@ universale7
          sta   gDisplayBytes
          jsr   PrintByID
          !byte s_e7
-         ldx   #$A3
+         ldx   #$A4
          ldy   #$0C
          jsr   modify
-         !byte $64,$B4,$44,$80,$2C,$DC,$18,$B4,$44,$80,$44,$B4
+         !byte $78,$A8,$58,$9C,$30,$C0,$04,$A8,$58,$9C,$58,$A8
 .nextsector
          dec   .sector+2
          lda   .sector+2
