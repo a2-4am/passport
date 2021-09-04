@@ -123,9 +123,9 @@ CreateFileOnHardDisk
 @nextDigit
          inc   HardDiskImagePath-4, x
          lda   HardDiskImagePath-4, x
-         cmp   #'9'+1
+         cmp   #$39+1                           ; '9'+1
          bcc   @findSpare                       ; loop back to check if new filename exists
-         lda   #'0'
+         lda   #$30                             ; '0'
          sta   HardDiskImagePath-4, x
          dex
          bne   @nextDigit
