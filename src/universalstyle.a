@@ -22,9 +22,11 @@ UseUniversal
 ;
          lda   gIs13Sector
          bne   @not13Sector
-         lda   #<read13
+         lda   #0
+         sta   $47E                  ; restore track number replaced by DOS
+         lda   #<seekread13
          sta   jCallRWTS+1
-         lda   #>read13
+         lda   #>seekread13
          sta   jCallRWTS+2
          bne   @doneUnivPatching     ; always branches
 @not13Sector

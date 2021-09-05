@@ -309,6 +309,11 @@ VerifyInfocom18
          eor   #$AA
 +        rts
 
+seekread13
+         dec   gCommand
+         jsr   $BD00       ; seek
+         inc   gCommand
+
 read13
          lda   $C0E9
          lda   #$1C        ; retry count
