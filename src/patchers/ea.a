@@ -532,6 +532,25 @@
          jsr   modify1
          !byte $7F         ;lda from known-zero instead
 
++        ldy   #16
+         jsr   SearchTrack
+         !byte $49,$4E     ;EOR #$4E
+         !byte $09,$A1     ;ORA #$A1
+         !byte $48         ;PHA
+         !byte $A9,$04     ;LDA #$04
+         !byte $48         ;PHA
+         !byte $A5,$4F     ;LDA $4F
+         !byte $45,$4F     ;EOR $4F
+         !byte $18         ;CLC
+         !byte $E9,$00     ;SBC #$00
+         !byte $48         ;PHA
+         bcs   +
+         jsr   PrintByID
+         !byte s_tamper
+         inx
+         jsr   modify1
+         !byte $E8         ;new checksum value for eor
+
 +
 
 .dostitles
