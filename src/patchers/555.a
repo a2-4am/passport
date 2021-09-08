@@ -30,6 +30,7 @@
 ; - Keyboard Golf
 ; - L.A. Land Monopoly
 ; - Lazersilk
+; - Logic Builders
 ; - Microzine 3
 ; - Microzine 4
 ; - Microzine 5
@@ -224,6 +225,12 @@ Do555
          lda   #0
          sta   .hookseek+1
          ldx   #$94
+         lda   $801,x
+         cmp   #$B7
+         bne   .not_e7
+         ldx   #$A2
+
+.not_e7
          jmp   .foundpart
 
 .foundseek2
@@ -558,12 +565,12 @@ Do555
          ldy   #$37
          lda   ($3E),y
          cmp   #$41       ; [INC] $41
-         beq   .notpatch1
+         beq   .jnotpatch1
          ldy   $3A
          iny
          lda   ($3E),y
          cmp   #$4C
-         beq   .notpatch1
+         beq   .jnotpatch1
          tya
          clc
          adc   #$0D
@@ -585,6 +592,21 @@ Do555
          !byte $E6,$41     ; INC $41
          !byte $EA         ; NOP
          !byte $4C         ; JMP $xxxx
+         txa
+         pha
+         sec
+         lda   $3F
+         sbc   #BASEPAGE
+         ldx   #$9B
+         jsr   compare3
+         !byte $20,$00,$02
+         bcs   .skip_e7
+         jsr   modify1
+         !byte $2C
+
+.skip_e7
+         pla
+         tax
          ldy   .curtrk+1
          bpl   .skipnohalf
          clc
@@ -613,6 +635,7 @@ Do555
          sta   ($3C),y
          lda   #0
          sta   $3E
+.jnotpatch1
          beq   .notpatch1
 
 .skipnohalf
