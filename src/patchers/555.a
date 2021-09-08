@@ -515,7 +515,7 @@ Do555
          !byte $4C,$85,$04 ; JMP $0485
 
 .writesectors
-         jsr   WriteTrackNA
+         jsr   WriteTrack
          jsr   IncProgress
          lda   KEY
          bmi   .cancel
