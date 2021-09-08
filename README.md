@@ -408,6 +408,10 @@ IN THE SOFTWARE.
 
 ## History
 
+In-development (unreleased)
+- IMPROVED: patchers/ea.a (fixes
+  Boulder Dash II) (by qkumba)
+
 2021-09-04
 - IMPROVED: patchers/universale7.a
   cracks now work on //c and IIgs
