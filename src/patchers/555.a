@@ -592,21 +592,6 @@ Do555
          !byte $E6,$41     ; INC $41
          !byte $EA         ; NOP
          !byte $4C         ; JMP $xxxx
-         txa
-         pha
-         sec
-         lda   $3F
-         sbc   #BASEPAGE
-         ldx   #$9B
-         jsr   compare3
-         !byte $20,$00,$02
-         bcs   .skip_e7
-         jsr   modify1
-         !byte $2C
-
-.skip_e7
-         pla
-         tax
          ldy   .curtrk+1
          bpl   .skipnohalf
          clc
