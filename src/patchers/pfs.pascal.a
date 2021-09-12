@@ -1,0 +1,26 @@
+;-------------------------------
+; #PFSPASCAL
+; a variant of Activision's Timing Bit Detection
+; linked as an Apple Pascal module
+; (soft switches are hard-coded to slot 6)
+;
+; tested on
+; - pfs: file (Pascal version)
+; - pfs: graph (Pascal version)
+; - pfs: report (Pascal version)
+;-------------------------------
+         ; gIsPascal is TRUE here
+
+         ldy   #$09
+         jsr   SearchTrack
+         !byte $F0,$27    ; BEQ +
+         !byte $AD,$EC,$C0; LDA $C0EC
+         !byte $10,$FB    ; BPL -
+         !byte $C9,$93    ; CMP #$93
+         bcs   +          ; passport-test-suite/PFS Graph.woz [C=0] matches
+         jsr   PrintByID
+         !byte s_fbff
+         inx
+         jsr   modify1
+         !byte $25        ; unconditional jump to success path
++

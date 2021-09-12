@@ -1,0 +1,28 @@
+;-------------------------------
+; #PFSPRODOS
+; a variant of Activision's Timing Bit Detection
+; used by PFS ProDOS titles
+; (soft switches are munged and corrected at runtime)
+;
+; tested on
+; - pfs: file (ProDOS version)
+; - pfs: report (ProDOS version)
+; - pfs: write (ProDOS version)
+;-------------------------------
+         ; gIsProDOS is TRUE here
+
+         ldy   gTrack
+         cpy   #$05
+         bne   +
+         lda   #$00
+         ldx   #$5E
+         jsr   compare    ; if T05,S00,$5E ==
+         !byte $FF
+         !byte $CD,$88,$C0
+         !byte $60
+         bcs   +          ; passport-test-suite/PFS Write.woz [C=0] matches
+         jsr   PrintByID
+         !byte s_fbff
+         jsr   modify1
+         !byte $00
++

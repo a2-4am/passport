@@ -409,6 +409,10 @@ IN THE SOFTWARE.
 ## History
 
 In-development (unreleased)
+- NEW: patchers/pfs.pascal.a (fixes
+  pfs:* Pascal titles)
+- NEW: patchers/pfs.prodos.a (fixes
+  pfs:* ProDOS titles)
 - IMPROVED: patchers/ea.a (fixes
   Boulder Dash II) (by qkumba)
 
