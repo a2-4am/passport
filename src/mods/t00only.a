@@ -94,6 +94,7 @@ T00_IsNotRWTS
          !source "../patchers/t00_pascalrwts.a"
          !source "../patchers/t00_rdos13.a"
          !source "../patchers/t00_rol1e.a"
+         !source "../patchers/t00_sigcheck.a"
          rts
 
 !if * > $3200 {

@@ -365,6 +365,7 @@ AnalyzeTrack
          !source "patchers/tsr.a"               ; T04 && gIsTSR only
          !source "patchers/woodbury.a"          ; gPossibleWoodbury only
          !source "patchers/b4bbbasic.a"         ; gPossibleB4BBBasic only
+         !source "patchers/sigcheck.a"          ; gPossibleSigCheck only
          !source "patchers/errord51.a"          ; gIsLowDOS only
          ;
          ; DOS 3.3-specific patchers
@@ -386,7 +387,6 @@ _endDOS33Patchers
          lda   gIsDiversi
          bne   _endDiversiPatchers
          !source "patchers/pdi.a"               ; gIsDiversi only
-         !source "patchers/sigcheck.a"          ; gIsDiversi only
 _endDiversiPatchers
          ;
          ; ProDOS-specific patchers

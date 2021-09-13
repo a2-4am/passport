@@ -409,12 +409,18 @@ IN THE SOFTWARE.
 ## History
 
 In-development (unreleased)
+- NEW: patchers/t00_sigcheck.a (fixes
+  Hardball, Law of the West)
 - NEW: patchers/pfs.pascal.a (fixes
   pfs:* Pascal titles)
 - NEW: patchers/pfs.prodos.a (fixes
   pfs:* ProDOS titles)
 - IMPROVED: patchers/ea.a (fixes
   Boulder Dash II) (by qkumba)
+- IMPROVED: patchers/sigcheck.a (fixes
+  Inca, Holy Grail)
+- Detect extra wide tracks anywhere,
+  not just on track 6
 
 2021-09-04
 - IMPROVED: patchers/universale7.a

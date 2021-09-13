@@ -29,8 +29,8 @@ SkipTrack
 ;
 ; Electronic Arts protection track?
 ;
-         jsr   IsEATrack6
-         lda   #s_eatrk6
+         jsr   IsWideTrack
+         lda   #s_widetrack
          bcc   @print
 ;
 ; Nibble count track?
@@ -250,23 +250,27 @@ IsUnformatted
          rts
 
 ;-------------------------------
-; IsEATrack6
-; check if track 6 even exists
+; IsWideTrack
+; check if this track claims to be the previous track
 ; in the case of EA, track 6 reads as track 5
+; in the case of Accolade, track $22 reads as track $21
 ;
 ; in  slot 6, drive 1 is on track to test
-; out C clear if read track does not match expected track
-;     C set otherwise
+; out C clear if found wide track
+;     C set if not found
 ;-------------------------------
-IsEATrack6
-         lda   gTrack
-         cmp   #6
+IsWideTrack
+         lda   $2E
+         clc
+         adc   #1
+         cmp   gTrack
+         beq   +
          sec
-         bne   +
-         lda   $2E ;DOS read track number
-         sbc   #5
-         cmp   #1
-+        rts
+         rts
++        lda   #TRUE
+         sta   gPossibleSigCheck
+         clc
+         rts
 
 ;-------------------------------
 ; ReadNib

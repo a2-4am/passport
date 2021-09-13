@@ -1,14 +1,12 @@
 ;-------------------------------
-; #SIGCHECK
+; #T00SIGCHECK
 ; productized extra wide track protection check
 ;
 ; tested on
-; - Advanced Electricity
-; - Complex Circuits
-; - Projectile and Circular Motion
+; - Hardball
 ;-------------------------------
-         lda   gPossibleSigCheck
-         bne   +
+         ; gTrack = 0
+
          ldy   #$0A
          jsr   SearchTrack
          !byte $4C,$42,$61
@@ -16,9 +14,15 @@
          !byte $F0,$02
          !byte $A9,$FF
          !byte $48
-         bcs   +          ; passport-test-suite/Advanced Electricity.woz [C=0] matches
-         jsr   inx8
+         bcs   +          ; passport-test-suite/Hardball.woz [C=0] matches
+         inx
+         inx
+         inx
+         inx
+         inx
+         inx
+         inx
+         inx
          jsr   modify1
          !byte $00
 +
-
