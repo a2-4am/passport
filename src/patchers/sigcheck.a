@@ -3,22 +3,25 @@
 ; productized extra wide track protection check
 ;
 ; tested on
-; - Advanced Electricity
-; - Complex Circuits
-; - Projectile and Circular Motion
+; - Advanced Electricity (EME)
+; - Complex Circuits (EME)
+; - Projectile and Circular Motion (EME)
+; - Inca (Hayden)
+; - Holy Grail (Hayden)
+; - The Dam Busters (Accolade)
+; - Conjecture (Robert Scott)
+; - Solo Flight (MicroProse)
 ;-------------------------------
-         lda   gPossibleSigCheck
+         lda   gIsBoot0
          bne   +
-         ldy   #$0A
+         ldy   #$06
          jsr   SearchTrack
-         !byte $4C,$42,$61
-         !byte $A9,$00
-         !byte $F0,$02
-         !byte $A9,$FF
+         !byte $18        ; CLC
+         !byte $B0,$7E    ; BCS +
+         !byte $A5,$00    ; LDA $00
          !byte $48
          bcs   +          ; passport-test-suite/Advanced Electricity.woz [C=0] matches
-         jsr   inx8
-         jsr   modify1
-         !byte $00
+         jsr   modify3
+         !byte $A9,$00    ; LDA #$00
+         !byte $60        ; RTS
 +
-

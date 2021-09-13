@@ -267,9 +267,7 @@ IsWideTrack
          beq   +
          sec
          rts
-+        lda   #TRUE
-         sta   gPossibleSigCheck
-         clc
++        clc
          rts
 
 ;-------------------------------

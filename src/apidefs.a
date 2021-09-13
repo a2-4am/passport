@@ -182,8 +182,7 @@ gIsTSR                        = gIsDiversi-$01                        ; byte
 gPossibleMECCSwapper          = gIsTSR-$01                            ; byte
 gPossibleWoodbury             = gPossibleMECCSwapper-$01              ; byte
 gPossibleB4BBBasic            = gPossibleWoodbury-$01                 ; byte
-gPossibleSigCheck             = gPossibleB4BBBasic-$01                ; byte
-gIsLowDOS                     = gPossibleSigCheck-$01                 ; byte
+gIsLowDOS                     = gPossibleB4BBBasic-$01                ; byte
 ;LASTFILTER ; add new gIs* above this line
 ;gIsInfocom18 is a special case whose ID is not in the regular inspection path
 gIsInfocom18                  = gIsLowDOS-$01                         ; byte

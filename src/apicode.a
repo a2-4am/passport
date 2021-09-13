@@ -83,10 +83,6 @@ FIRSTFILTER
          !byte FALSE      ; 0=true, 1=false
                           ; reset before each operation
                           ; set in IDVolumeName() after identifying ProDOS bootloader
-;gPossibleSigCheck
-         !byte FALSE      ; 0=true, 1=false
-                          ; reset before each operation
-                          ; set in IsWideTrack() after finding extra wide protection track
 ;gPossibleB4BBBasic
          !byte FALSE      ; 0=true, 1=false
                           ; reset before each operation

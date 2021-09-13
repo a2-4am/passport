@@ -3,26 +3,19 @@
 ; productized extra wide track protection check
 ;
 ; tested on
-; - Hardball
+; - Hardball (Accolade)
+; - Law of the West (Accolade)
 ;-------------------------------
          ; gTrack = 0
 
-         ldy   #$0A
+         ldy   #$06
          jsr   SearchTrack
-         !byte $4C,$42,$61
-         !byte $A9,$00
-         !byte $F0,$02
-         !byte $A9,$FF
+         !byte $18        ; CLC
+         !byte $B0,$7E    ; BCS +
+         !byte $A5,$00    ; LDA $00
          !byte $48
          bcs   +          ; passport-test-suite/Hardball.woz [C=0] matches
-         inx
-         inx
-         inx
-         inx
-         inx
-         inx
-         inx
-         inx
-         jsr   modify1
-         !byte $00
+         jsr   modify3
+         !byte $A9,$00    ; LDA #$00
+         !byte $60        ; RTS
 +
