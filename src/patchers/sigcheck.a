@@ -10,18 +10,17 @@
 ; - Holy Grail (Hayden)
 ; - The Dam Busters (Accolade)
 ; - Conjecture (Robert Scott)
-; - Solo Flight (MicroProse)
 ;-------------------------------
          lda   gIsBoot0
          bne   +
-         ldy   #$06
+         ldy   #$05
          jsr   SearchTrack
+         !byte $BD,$80,$C0; LDA $C080,X
          !byte $18        ; CLC
-         !byte $B0,$7E    ; BCS +
-         !byte $A5,$00    ; LDA $00
-         !byte $48
+         !byte $68        ; PLA
          bcs   +          ; passport-test-suite/Advanced Electricity.woz [C=0] matches
-         jsr   modify3
-         !byte $A9,$00    ; LDA #$00
-         !byte $60        ; RTS
+         inx
+         inx
+         jsr   modify1
+         !byte $D0        ; change indexed softswitch address so it does nothing
 +
