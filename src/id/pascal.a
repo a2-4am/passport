@@ -13,18 +13,20 @@
 !macro IDPascal {
 ;
 ; Apple Pascal signature (version < 1.3)
-; The wildcard in 7th position catches alternate jump
+; 7th position not included, to catch alternate jump
 ; addresses (e.g. Wizardry I, Sundog Frozen Legacy)
+; 8th position not included, to catch PFS
 ;
          lda   #$00
          tax
-         ldy   #$08
+         ldy   #$06
          jsr   compare    ; if T00,S00,$00 ==
          !byte $01
          !byte $E0,$60
          !byte $F0,$03
-         !byte $4C,WILDCARD,$08
+         !byte $4C
          bcc   @notPascal ; passport-test-suite/Wizplus.woz [C=0] matches
+                          ; passport-test-suite/PFS A02.woz [C=0] matches
 ;
 ; Apple Pascal 1.3 signature [thanks Marco V.]
 ;
