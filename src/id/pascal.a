@@ -35,7 +35,6 @@
          !byte $01
          !byte $E0,$70
          !byte $B0,$04
-         !byte $E0,$40
-         !byte $B0
+         !byte $E0
 @notPascal                ; passport-test-suite/Triangles Through Octagons.woz [C=0] matches
 }
