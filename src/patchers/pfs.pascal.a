@@ -24,3 +24,31 @@
          jsr   modify1
          !byte $25        ; unconditional jump to success path
 +
+         ldy   #$09
+         jsr   SearchTrack
+         !byte $9E,$06
+         !byte $9E,$22
+         !byte $00
+         !byte $C3,$A1
+         !byte $02,$B9
+         bcc   @foundWriteCheck
+
+         ldy   #$09
+         jsr   SearchTrack
+         !byte $9E,$06
+         !byte $9E,$22
+         !byte $00
+         !byte $C3,$A1
+         !byte $2E,$C7
+         bcs   @exit
+
+@foundWriteCheck
+         jsr   PrintByID
+         !byte s_corrupter
+         inx
+         jsr   modify1
+         !byte $05        ; UREAD command instead of UWRITE
+         jsr   inx4
+         jsr   modify1
+         !byte $CB        ; NEQI instead of EQUI because we expect the UREAD to succeed
+@exit

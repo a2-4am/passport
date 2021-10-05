@@ -365,7 +365,7 @@ StringTableHigh           ; must be kept in sync with constants in enid.a
 .passport
          !text "Passport ",$00
 .header
-         !text "@",s_passport,"by 4am@",s_space7,"@",s_space7," 2021-09-29",$00
+         !text "@",s_passport,"by 4am@",s_space7,"@",s_space7," 2021-10-05",$00
 .bar9
          !text "_________",$00
 .bar18
@@ -629,7 +629,7 @@ StringTableHigh           ; must be kept in sync with constants in enid.a
 .restart
          !text "Restarting scan",$8D,$00
 .corrupter
-         !text "T13,S0E Protection check intentionally",$8D
+         !text "T%t,S%0 Protection check intentionally",$8D
          !text "destroys unauthorized copies",$8D,$00
 .eaboot0
          !text "@",s_tfound,"Electronic Arts @",s_bootloader,$8D,$00
