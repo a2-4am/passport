@@ -17,13 +17,14 @@
          !byte $AD,$EC,$C0; LDA $C0EC
          !byte $10,$FB    ; BPL -
          !byte $C9,$93    ; CMP #$93
-         bcs   +          ; passport-test-suite/PFS Graph.woz [C=0] matches
+         bcs   @writeCheck; passport-test-suite/PFS Graph.woz [C=0] matches
          jsr   PrintByID
          !byte s_fbff
          inx
          jsr   modify1
          !byte $25        ; unconditional jump to success path
-+
+
+@writeCheck
          ldy   #$09
          jsr   SearchTrack
          !byte $9E,$06
@@ -51,4 +52,5 @@
          jsr   inx4
          jsr   modify1
          !byte $CB        ; NEQI instead of EQUI because we expect the UREAD to succeed
+         bvc   @writeCheck; always branches (may find additional write checks on same track)
 @exit
