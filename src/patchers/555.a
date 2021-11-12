@@ -193,10 +193,25 @@ Do555
          ;so we can count calls to whole-track seek
          ; static boot tracer!
 
+.skip2jsr
          ldy   $801,x
          lda   $800,y
          cmp   #$A9       ; LDA
-         beq   .nohalf
+         bne   .maybehalf
+         lda   $806,x
+         cmp   #$20       ; JSR $xxxx
+         bne   .nohalf
+         lda   $808,x
+         eor   .patch+1
+         bne   .nohalf
+         txa
+         adc   #5         ; try the next JSR instead
+         tax
+         inc   .curtrk+1
+         inc   .curtrk+1
+         bne   .skip2jsr  ; always taken
+
+.maybehalf
          lda   $801,y
          tay
          lda   $800,y
