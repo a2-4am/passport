@@ -120,7 +120,7 @@
          bcs   +
          pha
          tay
-         jsr   inx5
+         jsr   inx4
          txa
          pha
          tya
