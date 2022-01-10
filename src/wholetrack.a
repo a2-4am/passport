@@ -213,9 +213,6 @@ JustTheSameDamnThingOverAndOver
 ;     C set if track is formatted
 ;-------------------------------
 IsUnformatted
-         lda   #$FD
-         sta   gNIBTableFF
-
          lda   $C0E9      ; turn on drive motor, but we assume it's already spun up from previous reads so no waiting
          lda   #$00
          sta   unform
@@ -244,9 +241,6 @@ IsUnformatted
          sec
 @unformatted
          lda   $C0E8
-
-         lda   #$3F
-         sta   gNIBTableFF
          rts
 
 ;-------------------------------
