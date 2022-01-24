@@ -15,6 +15,11 @@
 ;        exits via TheEnd
 ;-------------------------------
 ReadWithRWTS
+         ldx   #0
+         ldy   #0
+         dec   gCommand
+         jsr   ReadSectorXY                     ; clear DOS error
+         inc   gCommand
          jsr   IncProgress
          lda   #$22
          jsr   ChangeTrackNW
@@ -38,6 +43,9 @@ ReadWithRWTS
          lda   gIsInfocom18
          and   gIsRW18
          bne   checksector
+         dec   gCommand
+         jsr   ReadSector                       ; seek
+         inc   gCommand
          jsr   VerifyInfocom18
          bcc   .passtrack
          jmp   FatalError
