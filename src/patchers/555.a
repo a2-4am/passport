@@ -21,6 +21,7 @@
 ; - Disk Director
 ; - Drinks On a Disk
 ; - Friends or Lovers
+; - Funbunch College Prep
 ; - Game of the U.S.
 ; - Gertrude's Puzzles v1.0
 ; - Gertrude's Secrets v1.0
@@ -157,8 +158,9 @@ Do555
 	 !byte $20,WILDCARD,WILDCARD ; JSR $xxxx
 	 !byte $88                   ; DEY
          !byte $D0,$FA               ; BNE *-4
-         bcc   .nohalf
-         jsr   CompareMemory
+         bcs   +
+         jmp   .nohalf
++        jsr   CompareMemory
 	 !byte $99,$02,$08 ; STA $802,y
 	 !byte $88         ; DEY
          !byte $D0,$FA     ; BNE *-4
@@ -198,6 +200,14 @@ Do555
          lda   $800,y
          cmp   #$A9       ; LDA
          bne   .maybehalf
+         lda   $803,y
+         cmp   #$0B       ; [JMP] $xx0B
+         beq   .incx3
+         cmp   #$20       ; JSR $xxxx
+         bne   .nohalf
+         lda   $808,x
+         eor   .patch+1
+         bne   .nohalf
          lda   $806,x
          cmp   #$20       ; JSR $xxxx
          bne   .nohalf
@@ -207,7 +217,12 @@ Do555
          txa
          adc   #5         ; try the next JSR instead
          tax
-         inc   .curtrk+1
+         bcc   +
+.incx3
+         inx
+         inx
+         inx              ; try the next JSR instead
++        inc   .curtrk+1
          inc   .curtrk+1
          bne   .skip2jsr  ; always taken
 
