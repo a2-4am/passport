@@ -298,10 +298,20 @@ FFer
 
 ;standard 13-sector prologue on T00
 ;because we can't decode the 16-sector version
+         lda   $BC76
+         pha
+         lda   $BC8B
+         pha
          lda   #$D5
          sta   $BC76
          lda   #$B5
          sta   $BC8B
+         jsr   +
+         pla
+         sta   $BC8B
+         pla
+         sta   $BC76
+         rts
 
 +        lda   gAddress
          sta   $BAF7
