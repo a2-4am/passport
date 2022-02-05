@@ -155,6 +155,12 @@ VerifyInfocom18
 .verifyrw18
          ldx   #$06       ; six sectors, three times the usual size
          stx   tmp        ; sector counter
+         stx   $40
+         stx   $41
+         stx   $42
+         stx   $43
+         stx   $44
+         stx   $45
          bne   +
 
 .retryrw18
@@ -166,7 +172,11 @@ VerifyInfocom18
          bne   --
          jsr   .rw18pro
          bne   .badrw18
-+        ldy   #4
++        ldx   $2D
+         cmp   $40,x
+         beq   .badrw18
+         sta   $40,x
+         ldy   #4
 -        dey
          beq   .badrw18
 .x4
