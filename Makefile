@@ -29,7 +29,7 @@ asm:
 	cd src/mods && $(ACME) -r ../../build/t00only.lst t00only.a
 	$(EXOMIZER) build/t00only.bin -o build/t00only.tmp
 	printf "\x20\x00" | cat - build/t00only.tmp > build/t00only.pak
-	cd src && $(ACME) -r ../build/passport.lst -DFORWARD_DECRUNCHING=1 passport.a 2> ../build/relbase.log
+	cd src && $(ACME) -r ../build/passport.lst -o ../build/passport.tmp -DFORWARD_DECRUNCHING=1 passport.a 2> ../build/relbase.log
 	cd src && $(ACME) -DRELBASE=`cat ../build/relbase.log | grep "RELBASE =" | cut -d"=" -f2 | cut -d"(" -f2 | cut -d")" -f1` -DFORWARD_DECRUNCHING=1 passport.a 2> ../build/vars.log
 	grep "ThisSlot=" build/vars.log | cut -d":" -f3 | cut -d"(" -f1 >> build/vars.a
 	grep "PrintByID=" build/vars.log | cut -d":" -f3 | cut -d"(" -f1 >> build/vars.a
