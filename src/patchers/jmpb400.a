@@ -3,7 +3,7 @@
 ; Boot1 jumps to $B400 for a
 ; self-decrypting nibble check
 ; that seeks to track $23
-; and exits via $9D84 if successful
+; and exits via $9D84 or $9B00 if successful
 ;
 ; tested on
 ; Binomal Multiplication (1984, Mindscape)
@@ -12,6 +12,7 @@
 ; First Degree Linear Equations (1984, Mindscape)
 ; PathWords (1984, Thunder Mountain)
 ; Success With Math - Multiplying and Dividing Fractions (1984, Mindscape)
+; Rebus Writer (1987, Mindscape)
 ;-------------------------------
 !zone {
          ; gIsBoot0 is TRUE here
@@ -31,11 +32,11 @@
          bcs   .exit
 
          ldx   #$D5
-         ldy   #$16
+         ldy   #$14
          jsr   compare    ; and T02,S03,$D5 ==
          !byte $F1,$C2,$8C,$F1,$C0,$8C,$5C,$B7  ; encrypted code --
          !byte $85,$99,$9C,$BF,$8C,$11,$9C,$82  ; decrypted listing follows
-         !byte $F1,$C4,$8C,$00,$C8,$D1
+         !byte $F1,$C4,$8C,$00
                           ; LDA   $C08E,X
                           ; LDA   $C08C,X
                           ; BPL   $00D8
@@ -44,8 +45,9 @@
                           ; CPY   #$5D
                           ; BNE   $00B3
                           ; LDA   $C088,X
-                          ; JMP   $9D84
+                          ; JMP
          bcs   .exit      ; passport-test-suite/Binomial Multiplication.woz [C=0] matches
+                          ; passport-test-suite/Rebus Writer.woz [C=0] matches
 
          ldx   #$B4
          stx   gDisplayBytes+1       ; address (hi)
@@ -54,7 +56,18 @@
          jsr   PrintByID
          !byte s_beforedos
 
+         pha
+         lda   $13E9
+         eor   #$4C
+         sta   @jmplo
+         lda   $13EA
+         eor   #$4C
+         sta   @jmphi
+         pla
+
          jsr   modify3    ; then set T02,S03,$00 =
-         !byte $4C,$84,$9D
+         !byte $4C
+@jmplo   !byte $84        ; SMC
+@jmphi   !byte $9D        ; SMC
 .exit
 }
