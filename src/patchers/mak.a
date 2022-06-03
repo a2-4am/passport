@@ -1,0 +1,41 @@
+;-------------------------------
+; #MAK
+; Boot1 jumps to $B3BB to read
+; two sectors on track $23
+;
+; so named because it prints the
+; initials 'MAK' on screen before
+; executing the protection check
+;
+; Kittens, Kids, and a Frog 03.12.86 (Hartley)
+; Who What Where When Why 02.05.86 (Hartley)
+;-------------------------------
+!zone {
+         ; gIsBoot0 is TRUE here
+
+         lda   gTrack
+         cmp   #$02
+         bne   .exit
+
+         lda   #$02
+         ldx   #$BB
+         ldy   #$0A
+         jsr   compare    ; if T02,S02,$BB ==
+         !byte $20,$58,$FC; JSR $FC58
+         !byte $A9,$CD    ; LDA #$CD
+         !byte $20,$ED,$FD; JSR $FDED
+         !byte $A9,$C1    ; LDA #$C1
+         bcs   .exit      ; passport-test-suite/Kittens, Kids, and a Frog.woz [C=0] matches
+
+         ldy   #$B3
+         sty   gDisplayBytes+1       ; address (hi)
+         ldy   #$BB
+         sty   gDisplayBytes+2       ; address (lo)
+         jsr   PrintByID
+         !byte s_beforedos
+
+         ldx   #$BB
+         jsr   modify3    ; then set T02,S02,$BB =
+         !byte $4C,$84,$9D
+.exit
+}

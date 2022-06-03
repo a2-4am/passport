@@ -378,6 +378,7 @@ AnalyzeTrack
          !source "patchers/harvey.a"            ; gIsBoot0 && T01 only
          !source "patchers/jmpb400.a"           ; gIsBoot0 && T02 only
          !source "patchers/jmpb412.a"           ; gIsBoot0 && T02 only
+         !source "patchers/mak.a"               ; gIsBoot0 && T02 only
          !source "patchers/jsr8635.a"           ; gIsBoot0 only
          !source "patchers/sierra.a"            ; gIsBoot0 only
 _endDOS33Patchers
