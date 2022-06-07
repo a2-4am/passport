@@ -28,6 +28,7 @@
 ; - The Dark Crystal
 ; - Mixed Up Mother Goose
 ; - The Artist
+; - Ultima II
 ;
 ; module by qkumba
 ;-------------------------------
@@ -355,16 +356,15 @@
          jsr   modify1
          !byte $2C ;don't call protection check
 
++
 .jmpexit
          jmp   .exit
 
 .dosearch
          ; gIsBoot0 is TRUE here
 
-         ldy   #15
+         ldy   #9
          jsr   SearchTrack
-         !byte $CE,WILDCARD,WILDCARD ;DEC $xxxx
-         !byte $EF,WILDCARD,WILDCARD ;mod->INC $xxxx
          !byte $AD,WILDCARD,WILDCARD ;LDA $xxxx
          !byte $49,WILDCARD          ;EOR #$xx
          !byte $D0,01                ;BNE *+3
@@ -387,7 +387,7 @@
          sta   .page10+2
          stx   .adj+1
          txa
-         adc   #17
+         adc   #11
          tax
 .page1
          lda   $D100,x
