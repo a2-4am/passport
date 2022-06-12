@@ -71,5 +71,17 @@
          inx
          jsr   modify3    ; then set offset+1 to
          !byte $4C,$84,$9D
+
+         ldx   #$19
+         ldy   #$05
+         jsr   compare    ; if T02,S0x,$19 ==
+         !byte $AE,$07,$B7; LDX $B707
+         !byte $8E,$55    ; STX $xx55
+         bcs   .exit      ; passport-test-suite/Half Time.woz [C=0] matches
+         inx
+         inx
+         inx
+         jsr   modify1    ; disable optional RWTS swapper
+         !byte $2C
 .exit
 }
