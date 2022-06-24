@@ -25,7 +25,7 @@
          ldy   #$03
          jsr   SearchTrack
          !byte $4C,$00,$BB
-         bcs   .variation2
+         bcs   .variation2           ; passport-test-suite/Blazing Paddles rev. 0.woz [C=0] matches
          tay                         ; only continue if we found it in sector 0
          bne   .variation2
          inx
@@ -39,17 +39,17 @@
          ldx   #$00
          jsr   compare2
          !byte $E0,$02
-         bcs   .secondary
+         bcs   .secondary            ; passport-test-suite/Take 1 v06431.woz [C=0] matches
 
          ldy   #$04
          jsr   SearchTrack
          !byte $A5,$2B
          !byte $8D,$D0
-         bcs   .secondary
+         bcs   .secondary            ; passport-test-suite/Take 1 v06431.woz [C=0] matches
          cmp   #$06                  ; only continue if we found it in sector 6
          bne   .secondary
          dex
-         stx   @offset
+         stx   @offset               ; passport-test-suite/Prince v15531.woz [X=3C] here
          ldx   #$01
          jsr   modify1               ; change entry point to first instruction after protection
 @offset  !byte $FD                   ; SMC
@@ -63,7 +63,7 @@
          !byte $A5,$2D
          !byte $C9,$FF
          !byte $D0,$F7
-         bcs   .exit
+         bcs   .exit                 ; passport-test-suite/Take 1 v06431.woz [C=0] matches
          inx
          inx
          inx

@@ -17,7 +17,7 @@
          ldx   #$15
          jsr   compare3
          !byte $18,$AD,$4A
-         bcc   +                     ; passport-test-suite/Blazing Paddles.woz [C=0] matches
+         bcc   +                     ; passport-test-suite/Blazing Paddles rev. 0.woz [C=0] matches
 ; variation 2
 ; - Guitar Wizard v11601
 ; - Prince v15521
@@ -34,6 +34,6 @@
          !byte $48
          !byte $AD,$01,$E0
          !byte $48
-                                     ; passport-test-suite/Take 1.woz [C=0] matches
+                                     ; passport-test-suite/Take 1 v06431.woz [C=0] matches
 +
 }
