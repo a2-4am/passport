@@ -9,7 +9,7 @@
 ; - address prologue $D4 $AA $96 or $D5 $AA $96
 ; - verifies address field checksum
 ; - any address epilogue
-; - data prologue $D5 $AA $AD
+; - data prologue $D5 $AA * (anything > $96)
 ; - verifies data field checksum
 ; - any data epilogue
 ; - waits longer than a normal RWTS to find an address prologue (long enough
@@ -37,7 +37,7 @@ universalrwts
          !byte $C0,$60,$A0,$00,$A2,$56,$CA,$30,$FB,$B9,$00,$BB,$5E,$00,$BC,$2A
          !byte $5E,$00,$BC,$2A,$91,$3E,$C8,$C4,$26,$D0,$EB,$60,$A0,$20,$88,$F0
          !byte $61,$BD,$8C,$C0,$10,$FB,$49,$D5,$D0,$F4,$EA,$BD,$8C,$C0,$10,$FB
-         !byte $C9,$AA,$D0,$F2,$A0,$56,$BD,$8C,$C0,$10,$FB,$C9,$AD,$D0,$E7,$A9
+         !byte $C9,$AA,$D0,$F2,$A0,$56,$BD,$8C,$C0,$10,$FB,$C9,$97,$90,$E7,$A9
          !byte $00,$88,$84,$26,$BC,$8C,$C0,$10,$FB,$59,$00,$BA,$A4,$26,$99,$00
          !byte $BC,$D0,$EE,$84,$26,$BC,$8C,$C0,$10,$FB,$59,$00,$BA,$A4,$26,$99
          !byte $00,$BB,$C8,$D0,$EE,$BC,$8C,$C0,$10,$FB,$D9,$00,$BA,$D0,$13,$BD
