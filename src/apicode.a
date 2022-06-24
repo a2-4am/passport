@@ -79,6 +79,10 @@
                           ; set in IDBootFailure() after reading T00
 
 FIRSTFILTER
+;gIsBaudville
+         !byte FALSE      ; 0=true, 1=false
+                          ; reset before each operation
+                          ; set in IDBootloader() after reading T00,S00
 ;gIsLowDOS
          !byte FALSE      ; 0=true, 1=false
                           ; reset before each operation

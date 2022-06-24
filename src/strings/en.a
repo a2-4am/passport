@@ -211,6 +211,7 @@ StringTableLow            ; must be kept in sync with constants in enid.a
          !byte <.erasingserialnumber
          !byte <.lockitupserial
          !byte <.protection
+         !byte <.baudville
 
 StringTableHigh           ; must be kept in sync with constants in enid.a
          !byte >.header
@@ -361,11 +362,12 @@ StringTableHigh           ; must be kept in sync with constants in enid.a
          !byte >.erasingserialnumber
          !byte >.lockitupserial
          !byte >.protection
+         !byte >.baudville
 
 .passport
          !text "Passport ",$00
 .header
-         !text "@",s_passport,"by 4am@",s_space7,"@",s_space7," 2022-06-12",$00
+         !text "@",s_passport,"by 4am@",s_space7,"@",s_space7," 2022-06-24",$00
 .bar9
          !text "_________",$00
 .bar18
@@ -748,3 +750,5 @@ StringTableHigh           ; must be kept in sync with constants in enid.a
          !text "@",s_found,"RW18-sector format",$8D,$00
 .x555
          !text "@",s_found,"5-5-5 spiral @",s_bootloader,$8D,$00
+.baudville
+         !text "@",s_found,"Baudville @",s_bootloader,$8D,$00

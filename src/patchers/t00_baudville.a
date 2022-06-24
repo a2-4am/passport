@@ -1,0 +1,75 @@
+;-------------------------------
+; #BAUDVILLE
+; track sync and hidden sector checks
+;
+; tested on
+; - Blazing Paddles rev. 0
+; - Blazing Paddles v04421
+; - Blazing Paddles v04431
+; - Guitar Wizard v11601
+; - Pixit v01331
+; - Prince v15521
+; - Prince v15531
+; - Rainy Day Games v13501
+; - Ski Crazed v28701
+; - Take 1 v06431
+; - Take 1 v06451
+; - Video Vegas v12501
+; - Video Vegas v12511
+;-------------------------------
+!zone {
+         lda   gIsBaudville
+         bne   .exit
+
+;.variation1
+         ldy   #$03
+         jsr   SearchTrack
+         !byte $4C,$00,$BB
+         bcs   .variation2
+         tay                         ; only continue if we found it in sector 0
+         bne   .variation2
+         inx
+         inx
+         jsr   modify1
+         !byte $B1                   ; JMP $BB00 -> JMP $B100
+         bvc   .secondary            ; always branches
+
+.variation2
+         lda   #$06
+         ldx   #$00
+         jsr   compare2
+         !byte $E0,$02
+         bcs   .secondary
+
+         ldy   #$04
+         jsr   SearchTrack
+         !byte $A5,$2B
+         !byte $8D,$D0
+         bcs   .secondary
+         cmp   #$06                  ; only continue if we found it in sector 6
+         bne   .secondary
+         dex
+         stx   @offset
+         ldx   #$01
+         jsr   modify1               ; change entry point to first instruction after protection
+@offset  !byte $FD                   ; SMC
+         ; /!\ execution falls through here
+
+.secondary
+         lda   #$0F
+         ldx   #$04
+         ldy   #$06
+         jsr   compare
+         !byte $A5,$2D
+         !byte $C9,$FF
+         !byte $D0,$F7
+         bcs   .exit
+         inx
+         inx
+         inx
+         inx
+         inx
+         jsr   modify1
+         !byte $00                   ; branch back -> branch to next instruction (i.e. ignore)
+.exit
+}

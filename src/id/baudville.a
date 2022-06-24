@@ -1,0 +1,39 @@
+;-------------------------------
+; IDBaudville
+; identify Baudville bootloader
+;
+; in:    track buffer contains T00,S00
+; out:   C clear if Baudville bootloader found
+;        C set otherwise
+;        all other registers & flags clobbered
+;-------------------------------
+!macro IDBaudville {
+; variation 1
+; - Blazing Paddles rev. 0
+; - Blazing Paddles v04421
+; - Blazing Paddles v04431
+; - Pixit v01331
+         lda   #$00
+         ldx   #$15
+         jsr   compare3
+         !byte $18,$AD,$4A
+         bcc   +                     ; passport-test-suite/Blazing Paddles.woz [C=0] matches
+; variation 2
+; - Guitar Wizard v11601
+; - Prince v15521
+; - Prince v15531
+; - Rainy Day Games v13501
+; - Ski Crazed v28701
+; - Take 1 v06431
+; - Take 1 v06451
+; - Video Vegas v12501
+; - Video Vegas v12511
+         lda   #BASEPAGE
+         ldy   #$05
+         jsr   SearchSector
+         !byte $48
+         !byte $AD,$01,$E0
+         !byte $48
+                                     ; passport-test-suite/Take 1.woz [C=0] matches
++
+}

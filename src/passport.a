@@ -71,6 +71,7 @@ NonRelocatable
          !source "id/volumename.a"
          !source "id/dinkeydos.a"
          !source "id/advent.a"
+         !source "id/baudville.a"
          !source "id/panglosdos.a"
          !source "id/davidson.a"
          !source "id/holle.a"

@@ -149,3 +149,4 @@ s_555        = $90
 s_erasingserialnumber = $91
 s_lockitupserial = $92
 s_protection = $93
+s_baudville  = $94

@@ -339,6 +339,17 @@ IDBootloader
          jmp   foundadvent
 .notInterplay
 ;
+; Try to identify Baudville bootloader.
+; (in none; out none)
+;
+         +IDBaudville
+         bcs   .notBaudville
+         jsr   PrintByID
+         !byte s_baudville
+         lda   #TRUE
+         sta   gIsBaudville
+.notBaudville
+;
 ; Try to detect whether there is code in the boot sector
 ; that loads 4-and-4-encoded data. This is an early escape
 ; hatch for disks that will fail later anyway.
