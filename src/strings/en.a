@@ -212,6 +212,7 @@ StringTableLow            ; must be kept in sync with constants in enid.a
          !byte <.lockitupserial
          !byte <.protection
          !byte <.baudville
+         !byte <.pfs
 
 StringTableHigh           ; must be kept in sync with constants in enid.a
          !byte >.header
@@ -363,11 +364,12 @@ StringTableHigh           ; must be kept in sync with constants in enid.a
          !byte >.lockitupserial
          !byte >.protection
          !byte >.baudville
+         !byte >.pfs
 
 .passport
          !text "Passport ",$00
 .header
-         !text "@",s_passport,"by 4am@",s_space7,"@",s_space7," 2022-06-25",$00
+         !text "@",s_passport,"by 4am@",s_space7,"@",s_space7," 2022-06-26",$00
 .bar9
          !text "_________",$00
 .bar18
@@ -752,3 +754,5 @@ StringTableHigh           ; must be kept in sync with constants in enid.a
          !text "@",s_found,"5-5-5 spiral @",s_bootloader,$8D,$00
 .baudville
          !text "@",s_found,"Baudville @",s_bootloader,$8D,$00
+.pfs
+         !text "@",s_found,"PFS @",s_protectioncheck,$8D,$00

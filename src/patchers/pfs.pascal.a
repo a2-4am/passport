@@ -20,7 +20,7 @@
          !byte $C9,$93    ; CMP #$93
          bcs   @variation2; passport-test-suite/PFS Graph.woz [C=0] matches
          jsr   PrintByID
-         !byte s_fbff
+         !byte s_pfs
          inx
          jsr   modify1
          !byte $25        ; unconditional jump to success path
@@ -35,7 +35,7 @@
          !byte $C9,$AD    ; CMP #$AD
          bcs   @writeCheck; passport-test-suite/PFS Write 1984-11-01.woz [C=0] matches
          jsr   PrintByID
-         !byte s_fbff
+         !byte s_pfs
          inx
          jsr   modify1
          !byte $2F        ; unconditional jump to success path
