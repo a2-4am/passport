@@ -409,16 +409,29 @@ IN THE SOFTWARE.
 ## History
 
 In-development (unreleased)
+- NEW: patchers/mak.a (fixes "Kittens,
+  Kids, and a Frog")
+- NEW: patchers/t00_baudville.a (fixes
+  Blazing Paddles, Take 1)
 - NEW: patchers/t00_sigcheck.a (fixes
   Hardball, Law of the West)
 - NEW: patchers/pfs.pascal.a (fixes
   pfs:* Pascal titles)
 - NEW: patchers/pfs.prodos.a (fixes
   pfs:* ProDOS titles)
+- IMPROVED: id/555.a (fixes Fax,
+  Funbunch College Prep)
 - IMPROVED: patchers/ea.a (fixes
   Boulder Dash II) (by qkumba)
+- IMPROVED: patchers/jmpb400.a (fixes
+  Rebus Writer, Writer's Helper)
+- IMPROVED: patchers/jmpb4bb.a (fixes
+  Half Time)
+- IMPROVED: patchers/sierra.a (fixes
+  Ultima II)
 - IMPROVED: patchers/sigcheck.a (fixes
   Inca, Holy Grail)
+- IMPROVED: RW18 sector verification
 - Detect extra wide tracks anywhere,
   not just on track 6
 
