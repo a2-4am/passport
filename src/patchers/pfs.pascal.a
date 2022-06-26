@@ -41,7 +41,16 @@
          !byte $00
          !byte $C3,$A1
          !byte $2E,$C7
-         bcs   @exit
+         bcc   @foundWriteCheck
+
+         ldy   #$09
+         jsr   SearchTrack
+         !byte $9E,$06
+         !byte $9E,$22
+         !byte $00
+         !byte $C3,$AB
+         !byte $05,$A9
+         bcs   @exit      ; passport-test-suite/PFS Graph 1983-01-12.woz [C=0] here
 
 @foundWriteCheck
          jsr   PrintByID
