@@ -17,12 +17,26 @@
          !byte $AD,$EC,$C0; LDA $C0EC
          !byte $10,$FB    ; BPL -
          !byte $C9,$93    ; CMP #$93
-         bcs   @writeCheck; passport-test-suite/PFS Graph.woz [C=0] matches
+         bcs   @variation2; passport-test-suite/PFS Graph.woz [C=0] matches
          jsr   PrintByID
          !byte s_fbff
          inx
          jsr   modify1
          !byte $25        ; unconditional jump to success path
+
+@variation2
+         ldy   #$09
+         jsr   SearchTrack
+         !byte $F0,$31    ; BEQ +
+         !byte $AD,$EC,$C0; LDA $C0EC
+         !byte $10,$FB    ; BPL -
+         !byte $C9,$AD    ; CMP #$AD
+         bcs   @writeCheck; passport-test-suite/PFS Write 1984-11-01.woz [C=0] matches
+         jsr   PrintByID
+         !byte s_fbff
+         inx
+         jsr   modify1
+         !byte $2F        ; unconditional jump to success path
 
 @writeCheck
          ldy   #$09
