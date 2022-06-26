@@ -11,6 +11,7 @@
 ;-------------------------------
          ; gIsPascal is TRUE here
 
+@variation1
          ldy   #$09
          jsr   SearchTrack
          !byte $F0,$27    ; BEQ +
@@ -23,6 +24,7 @@
          inx
          jsr   modify1
          !byte $25        ; unconditional jump to success path
+         bvc   @variation1; always branches (may find additional protection checks on same track)
 
 @variation2
          ldy   #$09
@@ -37,6 +39,7 @@
          inx
          jsr   modify1
          !byte $2F        ; unconditional jump to success path
+         bvc   @variation2; always branches (may find additional protection checks on same track)
 
 @writeCheck
          ldy   #$09
