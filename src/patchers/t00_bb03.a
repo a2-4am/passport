@@ -15,17 +15,22 @@
 ; - Mrs. Wigglesworth's Secret
 ; - Mystery of the Witch's Shoes
 ;
-; variant 3 (JMP $BB03)
+; variant 3a (JMP $BB03)
 ; - Alice in Wonderland (some versions)
 ; - Sum Ducks
 ; - Trivia Fever
+;
+; variant 3b (JMP $BB03 but no whole track count)
+; - Pacific 231
 ;-------------------------------
 !zone {
          lda   #$07       ; sector to check for David-DOS variant
          ldy   gIsDavidDOS
          beq   .check
          ldy   gIsBoot0   ; if DOS 3.3 boot0 loader
-         bne   .exit
+         beq   +
+         jmp   .exit
++
          lda   #$05       ; sector to check for DOS 3.3 variant
 .check   ldx   #$03
          jsr   compare3   ; if T00,S0(5|7),$03 ==
@@ -52,8 +57,22 @@
          jsr   compare    ; and T00,S05,$6B ==
          !byte $06,$26,$7D; encrypted, decrypts to 'LDA $C08C,X / BPL -'
          !byte $39,$41
+         bcc   .variant3a
+         ldx   #$65
+         jsr   compare    ; or T00,S05,$65 ==
+         !byte $A3,$BC
+         !byte $BD,$30,$99; encrypted, decrypts to 'LDY #$05 / LDA $C08C,X'
          bcs   .exit
-;variant3
+.variant3b
+         inx
+         jsr   modify3    ; then set T00,S05,$66 =
+         !byte $B9,$F0,$85; encrypted, decrypts to '#$00 / BEQ +$39'
+                          ; which will set Y to 0 (required) and branch to $BBA2
+                          ; to finish setting side effects and continue on success path
+                          ; passport-test-suite/Pacific 231.woz [V=0] reaches here
+         bvc   .exit      ; always branches
+
+.variant3a
          jsr   modify2    ; then set T00,S05,$6B =
          !byte $6B,$F6    ; encrypted, decrypts to 'BNE +$5C' which will unconditionally branch to success path at $BBC9
          lda   #$06
