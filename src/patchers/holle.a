@@ -68,9 +68,33 @@
          dec   .sector+1
          bpl   .sector
 
+         ; look for secondary RWTS that enforces elongated timing after data prologue
+         ; e.g. Sherwood Forest
+         ldy   #$09
+         jsr   SearchTrack
+         !byte $49,$AD               ; EOR #$AD
+         !byte $D0,$E7               ; BNE -
+         !byte $08                   ; PHP
+         !byte $20,WILDCARD,WILDCARD ; JSR xxxx
+         !byte $28                   ; PLP
+         bcs   +
+         jsr   inx4
+         jsr   modify2
+         !byte $F0,$03               ; BEQ +3
+
+         ; look for secondary disk volume number check
+         ; e.g. Sherwood Forest
++        ldy   #$03
+         jsr   SearchTrack
+         !byte $A4,$1A               ; LDY $1A
+         !byte $8C                   ; STY
+         bcs   +
+         jsr   modify2
+         !byte $A0,$00               ; LDY #$00
+
          ; look for secondary disk volume number check
          ; e.g. Crime Wave
-         ldy   #$04
++        ldy   #$04
          jsr   SearchTrack
          LDA   $2F
          ORA   $2E
