@@ -417,7 +417,7 @@ IN THE SOFTWARE.
 
 ## History
 
-In-development (unreleased)
+2022-07-07
 - NEW: patchers/mak.a (fixes "Kittens,
   Kids, and a Frog")
 - NEW: patchers/t00_baudville.a (fixes
@@ -447,6 +447,8 @@ In-development (unreleased)
 - IMPROVED: RW18 sector verification
 - Detect extra wide tracks anywhere,
   not just on track 6
+- Matching updates to the
+  [Passport test suite](https://github.com/a2-4am/passport-test-suite)
 
 2021-09-04
 - IMPROVED: patchers/universale7.a
