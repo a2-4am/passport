@@ -367,7 +367,7 @@
          jsr   SearchTrack
          !byte $AD,WILDCARD,WILDCARD ;LDA $xxxx
          !byte $49,WILDCARD          ;EOR #$xx
-         !byte $D0,01                ;BNE *+3
+         !byte $D0,$01               ;BNE *+3
          !byte $20                   ;dummy
          !byte $8D                   ;STA $xxxx
          bcc   +
@@ -531,6 +531,7 @@
          bcs   .exit
 .page8
          lda   $D109,x
+         sta   .tryalt2+1
          pha
 .adj
          adc   #$D1
@@ -548,6 +549,15 @@
          bcc   .yes
          pha
 .tryalt
+         ldx   #$D1
+         ldy   #3
+         jsr   compare
+         !byte $A9,$1C ;LDA #$1C
+         !byte $8D     ;STA $xxxx
+         pla
+         bcc   .yes
+         pha
+.tryalt2
          ldx   #$D1
          ldy   #3
          jsr   compare
