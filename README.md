@@ -245,6 +245,9 @@ were common in educational software.
 - Softsmith
   e.g. Astro Attack, Dinner on a Disk
 
+- Software Publishing Corporation
+  e.g. PFS File, PFS Graph, PFS Write
+
 - Spinnaker Software
   e.g. Snooper Troops, KidWriter
 
@@ -275,6 +278,9 @@ variation and "one-off" protection in
 games than in educational software, so
 your mileage may vary.
 
+- Accolade
+  e.g. Hardball, Law of the West
+
 - Activision (patcher by TRex)
   e.g. Hacker, Rampage
 
@@ -283,6 +289,9 @@ your mileage may vary.
 
 - Atari
   e.g. Defender, Gremlins
+
+- Baudville
+  e.g. Blazing Paddles, Take 1
 
 - Border
   e.g. Arena, Early Bird
@@ -423,6 +432,10 @@ In-development (unreleased)
   Funbunch College Prep)
 - IMPROVED: patchers/ea.a (fixes
   Boulder Dash II) (by qkumba)
+- IMPROVED: patchers/holle.a (fixes
+  Sherwood Forest)
+- IMPROVED: patchers/jmpbb03.a (fixes
+  Pacific 231)
 - IMPROVED: patchers/jmpb400.a (fixes
   Rebus Writer, Writer's Helper)
 - IMPROVED: patchers/jmpb4bb.a (fixes
