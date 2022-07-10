@@ -29,8 +29,6 @@
          !byte $48
          bcs   +
 
-         jsr   PrintByID
-         !byte s_tamper
          jsr   modify1
          !byte $EA
 +
