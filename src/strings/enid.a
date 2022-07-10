@@ -151,3 +151,5 @@ s_lockitupserial = $92
 s_protection = $93
 s_baudville  = $94
 s_pfs        = $95
+s_enlightenmentb0 = $96
+s_enlightenment = $97

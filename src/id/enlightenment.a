@@ -1,0 +1,18 @@
+;-------------------------------
+; IDEnlightenment
+; identify Enlightenment bootloader
+;
+; in:    $800..$8FF contains T00,S00
+; out:   C clear if Enlightenment bootloader found
+;        C set otherwise
+;        all other registers & flags clobbered
+;-------------------------------
+!macro IDEnlightenment {
+         lda   #$08
+         ldx   #$01
+         ldy   #$04
+         jsr   CompareMemory
+         !byte $A9,$B7
+         !byte $85,$27
+                                     ; passport-test-suite/Paul Whitehead Teaches Chess.woz [C=0] matches
+}

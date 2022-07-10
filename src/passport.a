@@ -1,7 +1,7 @@
 ;-------------------------------
 ; Passport
 ; a 4am hack
-; (c) 2016-2021 by 4am
+; (c) 2016-2022 by 4am
 ;
 ; Permission is hereby granted, free of charge, to any
 ; person obtaining a copy of this software and associated
@@ -72,6 +72,7 @@ NonRelocatable
          !source "id/dinkeydos.a"
          !source "id/advent.a"
          !source "id/baudville.a"
+         !source "id/enlightenment.a"
          !source "id/panglosdos.a"
          !source "id/davidson.a"
          !source "id/holle.a"
@@ -368,6 +369,7 @@ AnalyzeTrack
          !source "patchers/b4bbbasic.a"         ; gPossibleB4BBBasic only
          !source "patchers/sigcheck.a"          ; gPossibleSigCheck only
          !source "patchers/errord51.a"          ; gIsLowDOS only
+         !source "patchers/enlightenment.a"     ; gIsEnlightenment && T02 only
          ;
          ; DOS 3.3-specific patchers
          ;

@@ -115,6 +115,10 @@ were common in educational software.
   e.g. Problem Solving in Algebra,
   Math Skills: Elementary Level
 
+- Enlightenment
+  e.g. Paul Whitehead Teaches Chess,
+  Living Chess Library
+
 - Focus Media
   e.g. The Time Tunnel (series),
   Travels with Za-Zoom
@@ -417,7 +421,7 @@ IN THE SOFTWARE.
 
 ## History
 
-2022-07-07
+2022-07-12
 - NEW: patchers/mak.a (fixes "Kittens,
   Kids, and a Frog")
 - NEW: patchers/t00_baudville.a (fixes
@@ -428,6 +432,8 @@ IN THE SOFTWARE.
   pfs:* Pascal titles)
 - NEW: patchers/pfs.prodos.a (fixes
   pfs:* ProDOS titles)
+- NEW: patchers/enlightenment.a (fixes
+  Paul Whitehead Teaches Chess)
 - IMPROVED: id/555.a (fixes Fax,
   Funbunch College Prep)
 - IMPROVED: patchers/ea.a (fixes

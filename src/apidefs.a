@@ -184,9 +184,10 @@ gPossibleWoodbury             = gPossibleMECCSwapper-$01              ; byte
 gPossibleB4BBBasic            = gPossibleWoodbury-$01                 ; byte
 gIsLowDOS                     = gPossibleB4BBBasic-$01                ; byte
 gIsBaudville                  = gIsLowDOS-$01                         ; byte
+gIsEnlightenment              = gIsBaudville-$01                      ; byte
 ;LASTFILTER ; add new gIs* above this line
 ;gIsInfocom18 is a special case whose ID is not in the regular inspection path
-gIsInfocom18                  = gIsBaudville-$01                      ; byte
+gIsInfocom18                  = gIsEnlightenment-$01                  ; byte
 ;gIs13Sector is a special case whose ID is not in the regular inspection path
 gIs13Sector                   = gIsInfocom18-$01                      ; byte
 ;gMECCFastloadType is a special case integer whose default value cannot be #FALSE

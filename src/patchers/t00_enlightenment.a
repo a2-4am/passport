@@ -1,0 +1,41 @@
+;-------------------------------
+; #T00_ENLIGHTENMENT
+; RWTS third data prologue varies,
+; also an insane flux-level timing
+; protection
+;
+; tested on
+; - Paul Whitehead Teaches Chess
+; - King's Indian Defense
+; - Living Chess Library - 50 Classic Games
+;-------------------------------
+!zone {
+         lda   gIsEnlightenment
+         bne   .exit
+
+         lda   #$0A
+         ldx   #$26
+         jsr   compare2
+         !byte $85,$3D
+         bcs   +
+
+         jsr   PrintByID
+         !byte s_enlightenment
+         jsr   modify2
+         !byte $18
+         !byte $60
++
+         lda   #$0C
+         ldx   #$94
+         jsr   compare3
+         !byte $BD,$00,$BF
+         bcs   +
+
+         jsr   PrintByID
+         !byte s_bytrack
+         jsr   modify3
+         !byte $EA
+         !byte $A9,$AD
++
+.exit
+}

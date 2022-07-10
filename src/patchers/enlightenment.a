@@ -1,0 +1,50 @@
+;-------------------------------
+; #ENLIGHTENMENT
+; anti-tamper checks on the changes
+; we're about to make on track 0
+; to disable the RWTS swapper and
+; protection check
+;-------------------------------
+!zone {
+         lda   gIsEnlightenment
+         bne   .exit
+         lda   gTrack
+         cmp   #$02
+         bne   .exit
+
+         lda   #$01
+         ldx   #$AE
+         jsr   compare1
+         !byte $48
+         bcs   +
+
+         jsr   PrintByID
+         !byte s_tamper
+         jsr   modify1
+         !byte $EA
++
+         lda   #$01
+         ldx   #$D5
+         jsr   compare1
+         !byte $48
+         bcs   +
+
+         jsr   PrintByID
+         !byte s_tamper
+         jsr   modify1
+         !byte $EA
++
+         lda   #$09
+         ldx   #$8A
+         jsr   compare3
+         !byte $A9,$00
+         !byte $48
+         bcs   +
+         inx
+         jsr   PrintByID
+         !byte s_tamper
+         jsr   modify1
+         !byte $52
++
+.exit
+}

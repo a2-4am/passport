@@ -57,6 +57,7 @@ IDBootloader
 .sanity
 ;
 ; Quick sanity check -- only recognized values for $0800 are
+; $00 = some Enlightenment disks
 ; $01 = most disks
 ; $02 = Special Delivery (DOS 3.3P)
 ; $05 = some EA disks
@@ -67,7 +68,19 @@ IDBootloader
          bcc   .sane
          cmp   #$05
          beq   .sane
-+        jmp   UseUniversal
+-        jmp   UseUniversal
++
+;
+; Try to identify Enlightenment bootloader.
+; (in none; out none)
+;
+         +IDEnlightenment
+         bcs   -
+         lda   #TRUE
+         sta   gIsEnlightenment
+         jsr   PrintByID
+         !byte s_enlightenmentb0
+         bvc   -                     ; always branches
 
 .sane
 ;

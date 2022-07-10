@@ -79,6 +79,10 @@
                           ; set in IDBootFailure() after reading T00
 
 FIRSTFILTER
+;gIsEnlightenment
+         !byte FALSE      ; 0=true, 1=false
+                          ; reset before each operation
+                          ; set in IDBootloader() after reading T00,S00
 ;gIsBaudville
          !byte FALSE      ; 0=true, 1=false
                           ; reset before each operation
