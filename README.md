@@ -385,7 +385,7 @@ Passport is open source and is
 distributed under the MIT license.
 
 Passport
-Copyright (c) 2016-2021 by 4am
+Copyright (c) 2016-2022 by 4am
 
 Permission is hereby granted, free of
 charge, to any person obtaining a copy
