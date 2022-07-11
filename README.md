@@ -451,6 +451,7 @@ IN THE SOFTWARE.
 - IMPROVED: patchers/sigcheck.a (fixes
   Inca, Holy Grail)
 - IMPROVED: RW18 sector verification
+  (fixes Toy Shop)
 - Detect extra wide tracks anywhere,
   not just on track 6
 - Matching updates to the

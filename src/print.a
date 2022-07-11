@@ -83,10 +83,8 @@ PrintByID
          bcc   @nosub
          cmp   #":"
          bcs   @nosub
-         sec
-         sbc   #"0"
          tax
-         lda   gDisplayBytes, x
+         lda   gDisplayBytes-$B0, x
 @printbyte
          jsr   PrintByte
          bvc   @next      ; unconditional branch
