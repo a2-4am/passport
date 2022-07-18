@@ -40,8 +40,8 @@ Using Passport is simple. After running
 the program, put an original disk in
 slot 6, drive 1 and a blank formatted
 disk in any other drive. If necessary,
-press "S" to cycle through your drives.
-Then press "C" to start the cracking.
+press `S` to cycle through your drives.
+Then press `C` to start the cracking.
 
 If all goes well, Passport will read
 your original disk and write a copy in
