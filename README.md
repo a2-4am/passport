@@ -62,6 +62,14 @@ reduce the number of original disks in
 the world; they aren't making any more
 of them.
 
+During crack processing, you can hit
+the `ESC` key to stop.  Whether the
+crack completes because it finished
+successfully or not, you can retry the
+samenthing again by hitting the `2`
+key, or retry with ignoring errors
+with the key combination `CTRL-R`.
+
 ## Supported protections
 
 Passport targets common protection
