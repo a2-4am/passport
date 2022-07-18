@@ -55,20 +55,29 @@ copy program.
 If all does not go well, Passport will
 tell you where it all went wrong.
 
+During the process, you can press any
+key to cancel immediately.
+
+If you have a two-sided disk where only
+one side is bootable, after the first
+side completes, you can press `2` to
+reuse the captured RWTS on the second
+side.
+
+If Passport stops because of read errors
+but you suspect the errors are due to
+physical damage (as opposed to just copy
+protection), you can retry the process
+ignoring errors by pressing `Ctrl-R`.
+The resulting copy may or may not be
+usable.
+
 In any case, Passport will NEVER write
 to or alter your original disk in any
 way. And neither should you! Don't
 reduce the number of original disks in
 the world; they aren't making any more
 of them.
-
-During crack processing, you can hit
-the `ESC` key to stop.  Whether the
-crack completes because it finished
-successfully or not, you can retry the
-samenthing again by hitting the `2`
-key, or retry with ignoring errors
-with the key combination `CTRL-R`.
 
 ## Supported protections
 
