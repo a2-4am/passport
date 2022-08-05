@@ -62,6 +62,7 @@ AnalyzeT00
          !source "../patchers/t00_methods.a"
          !source "../patchers/t00_microfun.a"
          !source "../patchers/t00_microfun2.a"
+         !source "../patchers/t00_microlearn.a"
          !source "../patchers/t00_milliken.a"
          !source "../patchers/t00_muserwts.a"
          !source "../patchers/t00_panglosdos.a"

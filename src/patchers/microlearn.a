@@ -1,0 +1,30 @@
+;-------------------------------
+; #MICROLEARN
+; protection check that writes
+; its own protection track on
+; first boot
+;
+;-------------------------------
+!zone {
+         lda   gTrack
+         cmp   #$01
+         bne   .exit
+
+         lda   #$00
+         ldx   #$84
+         jsr   compare3
+         !byte $4C,$8E,$AE
+         bcs   .exit
+
+         sta   gDisplayBytes
+         ldy   #$AE
+         sty   gDisplayBytes+1       ; address (hi)
+         ldy   #$8E
+         sty   gDisplayBytes+2       ; address (lo)
+         jsr   PrintByID
+         !byte s_beforedos
+
+         jsr   modify3
+         !byte $AD,$E9,$B7
+.exit
+}

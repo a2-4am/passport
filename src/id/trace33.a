@@ -334,6 +334,37 @@ TraceDOS33c               ; 2nd-level trace callback is here
          jsr   $BC61
 .notFun
 ;
+; Check for Micro Learn RWTS
+; (uses per-disk zero page values within RWTS)
+;
+         lda   MaybeB7
+         cmp   #$B7
+         bne   .notLearn
+         ldx   #$38
+         ldy   #$08
+         jsr   CompareMemory
+         !byte $A9,WILDCARD
+         !byte $85,$31
+         !byte $A9,WILDCARD
+         !byte $85,$D6
+         bcs   .notLearn  ; passport-test-suite/U.S. Constitution Tutor.woz [C=0] matches
+         lda   #$C9
+         sta   $B8E6
+         sta   $B8F0
+         sta   $B934
+         sta   $B954
+         sta   $B95E
+         sta   $B990
+         lda   $B739
+         sta   $B8F1
+         sta   $B955
+         sta   $B991
+         lda   $B73D
+         sta   $B8E7
+         sta   $B935
+         sta   $B95F
+.notLearn
+;
 ; Check for alternate RWTS entry point (e.g. Swordthrust)
 ;
          lda   MaybeB7

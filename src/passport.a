@@ -379,6 +379,7 @@ AnalyzeTrack
 +
          !source "patchers/hallabs.a"           ; gIsBoot0 && T01 only
          !source "patchers/harvey.a"            ; gIsBoot0 && T01 only
+         !source "patchers/microlearn.a"        ; gIsBoot0 && T01 only
          !source "patchers/jmpb400.a"           ; gIsBoot0 && T02 only
          !source "patchers/jmpb412.a"           ; gIsBoot0 && T02 only
          !source "patchers/mak.a"               ; gIsBoot0 && T02 only

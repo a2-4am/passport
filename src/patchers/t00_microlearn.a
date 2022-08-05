@@ -1,0 +1,41 @@
+;-------------------------------
+; #MICROLEARN
+; RWTS uses per-disk values in
+; zero page
+;
+; tested on
+; - U.S. Constitution Tutor
+; - SAT English 1
+;-------------------------------
+!zone {
+         ; gTrack = 0
+         ; Caller found DOS 3.3 RWTS
+
+         lda   #$02
+         ldx   #$E6
+         jsr   compare2
+         !byte $C5,$D6
+         bcs   +
+         jsr   modify2
+         !byte $C9,$D5
++        ldx   #$F0
+         jsr   compare2
+         !byte $C5,$31
+         bcs   +
+         jsr   modify2
+         !byte $C9,$AA
++        lda   #$03
+         ldx   #$54
+         jsr   compare2
+         !byte $C5,$31
+         bcs   +
+         jsr   modify2
+         !byte $C9,$D5
++        ldx   #$5E
+         jsr   compare2
+         !byte $C5,$D6
+         bcs   +
+         jsr   modify2
+         !byte $C9,$AA
++
+}
