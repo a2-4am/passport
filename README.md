@@ -40,8 +40,8 @@ Using Passport is simple. After running
 the program, put an original disk in
 slot 6, drive 1 and a blank formatted
 disk in any other drive. If necessary,
-press "S" to cycle through your drives.
-Then press "C" to start the cracking.
+press `S` to cycle through your drives.
+Then press `C` to start the cracking.
 
 If all goes well, Passport will read
 your original disk and write a copy in
@@ -54,6 +54,23 @@ copy program.
 
 If all does not go well, Passport will
 tell you where it all went wrong.
+
+During the process, you can press any
+key to cancel immediately.
+
+If you have a two-sided disk where only
+one side is bootable, after the first
+side completes, you can press `2` to
+reuse the captured RWTS on the second
+side.
+
+If Passport stops because of read errors
+but you suspect the errors are due to
+physical damage (as opposed to just copy
+protection), you can retry the process
+ignoring errors by pressing `Ctrl-R`.
+The resulting copy may or may not be
+usable.
 
 In any case, Passport will NEVER write
 to or alter your original disk in any
