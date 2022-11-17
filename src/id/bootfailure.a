@@ -161,7 +161,6 @@ VerifyInfocom18
          stx   $43
          stx   $44
          stx   $45
-         bne   +
 
 .retryrw18
          jsr   ReadNib
@@ -172,7 +171,7 @@ VerifyInfocom18
          bne   --
          jsr   .rw18pro
          bne   .badrw18
-+        ldx   $2D
+         ldx   $2D
          cmp   $40,x
          beq   .badrw18
          sta   $40,x

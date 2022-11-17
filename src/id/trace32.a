@@ -41,7 +41,7 @@ TraceDOS32LO
 .TraceDOS32c
          lda   #$03
          ldx   #$0D
-         ldy   #$39
+         ldy   #$36
          jsr   CompareMemory
          !byte $A6,$2B
          !byte $A9,$09
@@ -70,7 +70,6 @@ TraceDOS32LO
          !byte $AD,$CC,$03
          !byte $85,$3F
          !byte $E6,$3F
-         !byte $6C,$3E,$00
          bcs   .tryChoplifter
          lda   $03CC
          cmp   #$B2                  ; RDOS
@@ -99,6 +98,18 @@ TraceDOS32LO
          sta   b4bbcompare+1
          lda   #$00
          sta   jCallRWTS+1
+
+         ;don't let The Game Show print
+
+         lda   $343
+         eor   #$4C
+         bne   +
+         sta   $345
+         lda   #$6C
+         sta   $343
+         lda   #$3E
+         sta   $344
++
 
 ; set up final trace
 
