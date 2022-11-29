@@ -1,0 +1,30 @@
+;-------------------------------
+; #T00SCOTTFORESMANDOS33
+; nibble count during early boot
+;
+; tested on
+; - Addition and Subtraction 3 (Scott, Foresman and Company)
+; - Decimals 2 (Scott, Foresman and Company)
+; - Fractions 1 (Scott, Foresman and Company)
+; - Fractions 2 (Scott, Foresman and Company)
+; - Multiplication 2 (Scott, Foresman and Company)
+; - Percent 1 (Scott, Foresman and Company)
+;-------------------------------
+         ; gTrack = 0
+         lda   #$0B
+         ldx   #$15
+         ldy   #$06
+         jsr   compare    ; if T00,S0B,$15 ==
+         !byte $EE,$F3,$03
+         !byte $20,$00,$87
+         bcs   +
+
+         jsr   PrintByID
+         !byte s_sfc
+
+         inx
+         inx
+         inx
+         jsr   modify1    ; then set T00,S0B,$18 ==
+         !byte $2C
++
