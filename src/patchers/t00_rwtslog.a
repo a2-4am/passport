@@ -14,13 +14,27 @@ _rwtslog_start
 ; to reduce duplicated code
 ;
 @compare_lsr6a
-         ldy   #$0A
+         ldy   #$09
          jsr   compare
          !byte $BD,$8C,$C0
          !byte $10,$FB
          !byte $4A
          !byte WILDCARD,$6A
-         !byte $D0,$EF
+         !byte $D0
+         rts
+
+@compare_cmp08
+         ldy   #$11
+         jsr   compare
+         !byte $BD,$8C,$C0
+         !byte $10,$FB
+         !byte $C9,$DE
+         !byte $F0,$0A
+         !byte $48
+         !byte $68
+         !byte $BD,$8C,$C0
+         !byte $C9,$08
+         !byte $B0
          rts
 
 @compare_bne0
@@ -49,9 +63,15 @@ _rwtslog_start
          jsr   @compare_lsr6a
          bcc   @print_lsr6a          ; passport-test-suite/Roadwar 2000.woz [C=0] matches
 
+; ATILA variant
+         lda   #$04                  ; or T00,S04,$A5 ==
+         ldx   #$A5
+         jsr   @compare_lsr6a
+         bcc   @print_lsr6a          ; passport-test-suite/The Treasure of Forest Isle.woz [C=0] matches
+
 ; Pascal variant
          lda   #$0D
-         ldx   #$05                  ; oro T00,S0D,$05 ==
+         ldx   #$05                  ; or T00,S0D,$05 ==
          jsr   @compare_lsr6a
          bcs   @lsr6a_end            ; passport-test-suite/GATO v1.3.woz [C=0] matches
 
@@ -67,22 +87,9 @@ _rwtslog_start
 ; for the first address epilogue nibble
 ;-------------------------------
 ; DOS 3.3 variant
-         lda   #$03
+         lda   #$03                  ; if T00,S03,$8B ==
          ldx   #$8B
-         ldy   #$15
-         jsr   compare               ; if T00,S03,$8B ==
-         !byte $BD,$8C,$C0
-         !byte $10,$FB
-         !byte $C9,$DE
-         !byte $F0,$0A
-         !byte $48
-         !byte $68
-         !byte $BD,$8C,$C0
-         !byte $C9,$08
-         !byte $B0,$A5
-         !byte $EA
-         !byte $18
-         !byte $60
+         jsr   @compare_cmp08
          bcc   @print_bcs08          ; passport-test-suite/The Seasons.woz [C=0] matches
 
 ; RDOS variant
@@ -98,7 +105,13 @@ _rwtslog_start
          !byte $BD,$8C,$C0
          !byte $C9,$80
          !byte $B0
-         bcs   @bcs08_end            ; passport-test-suite/Roadwar 2000.woz [C=0] matches
+         bcc   @print_bcs08          ; passport-test-suite/Roadwar 2000.woz [C=0] matches
+
+; ATILA variant
+         lda   #$04
+         ldx   #$E6                  ; or T00,S04,$E6 ==
+         jsr   @compare_cmp08
+         bcs   @bcs08_end            ; passport-test-suite/The Treasure of Forest Isle.woz [C=0] matches
 
 @print_bcs08
          jsr   PrintByID
