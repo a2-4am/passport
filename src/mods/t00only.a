@@ -98,6 +98,7 @@ T00_IsNotRWTS
          !source "../patchers/t00_sigcheck.a"
          !source "../patchers/t00_baudville.a"
          !source "../patchers/t00_enlightenment.a"
+         !source "../patchers/t00_scottforesman.a"
          rts
 
 !if * > $3200 {

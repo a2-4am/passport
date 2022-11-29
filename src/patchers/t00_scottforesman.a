@@ -1,0 +1,53 @@
+;-------------------------------
+; #T00SCOTTFORESMAN
+; nibble count during early boot
+;
+; tested on
+; - Addition and Subtraction 4 (Scott, Foresman and Company)
+; - Decimals 3 (Scott, Foresman and Company)
+; - Dinosaurs and Squids (Scott, Foresman and Company)
+; - Division 2 (Scott, Foresman and Company)
+; - Division 3 (Scott, Foresman and Company)
+; - Fractions 3 (Scott, Foresman and Company)
+; - Fractions 5 (Scott, Foresman and Company)
+; - Multiplication 3 (Scott, Foresman and Company)
+; - Percent 2 (Scott, Foresman and Company)
+;-------------------------------
+         ; gTrack = 0
+         lda   #$00
+         ldx   #$33
+         ldy   #$08
+         jsr   compare    ; if T00,S00,$33 ==
+         !byte $A9,$79
+         !byte $85,$3C
+         !byte $A9,$08
+         !byte $85,$3D
+         bcs   +
+
+         lda   #$06
+         ldx   #$02
+         tay
+         jsr   compare    ; and T00,S06,$02 ==
+         !byte $48
+         !byte $20,WILDCARD,WILDCARD
+         !byte $68
+         !byte $D0
+         bcs   +
+
+         lda   #$0E
+         ldx   #$FF
+         jsr   compare1   ; and T00,S0E,$FF ==
+         !byte $20
+         bcs   +
+
+         jsr   PrintByID
+         !byte s_sfc
+
+         jsr   modify1    ; then set T00,S0E,$FF ==
+         !byte $EA
+
+         lda   #$06
+         ldx   #$00
+         jsr   modify2    ; and set T00,S06,$00 ==
+         !byte $A9,$00
++
