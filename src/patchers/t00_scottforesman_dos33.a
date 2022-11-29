@@ -17,7 +17,7 @@
          jsr   compare    ; if T00,S0B,$15 ==
          !byte $EE,$F3,$03
          !byte $20,$00,$87
-         bcs   +
+         bcs   +          ; passport-test-suite/Addition and Subtraction 3.woz [C=0] matches
 
          jsr   PrintByID
          !byte s_sfc

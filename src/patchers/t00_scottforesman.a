@@ -38,7 +38,7 @@
          ldx   #$FF
          jsr   compare1   ; and T00,S0E,$FF ==
          !byte $20
-         bcs   +
+         bcs   +          ; passport-test-suite/Addition and Subtraction 4.woz [C=0] matches
 
          jsr   PrintByID
          !byte s_sfc
