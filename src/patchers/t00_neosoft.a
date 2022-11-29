@@ -1,0 +1,43 @@
+;-------------------------------
+; #T00NEOSOFT
+; nibble count during early boot
+;
+; tested on
+; - Comparison Kitchen (Neosoft/DLM)
+; - Animal Photo Fun (Neosoft/DLM)
+;-------------------------------
+         ; gTrack = 0
+         ; Caller found DOS 3.3 RWTS
+
+         lda   #$01
+         ldx   #$38
+         jsr   compare3   ; if T00,S01,$38 ==
+         !byte $20,$90,$B7
+         bcs   +
+
+         ldx   #$90
+         jsr   compare3   ; and T00,S01,$90 ==
+         !byte $20,$00,$BB
+         bcs   +
+
+         lda   #$05
+         ldx   #$DA
+         jsr   compare3   ; and T00,S05,$DA ==
+         !byte $F8,$55,$E2; XOR #$55 of $AD $00 $B7 (LDA $B700)
+         bcs   +
+
+         ldx   #$6C
+         jsr   compare2   ; and T00,S05,$6C ==
+         !byte $D0,$55    ; XOR #$55 of $85 $00 (STA $00)
+         bcs   +          ; passport-test-suite/Animal Photo Fun.woz [C=0] matches
+
+         jsr   PrintByID
+         !byte s_neosoft
+
+         jsr   modify2    ; then set T00,S05,$6C ==
+         !byte $A5,$39    ; XOR #$55 of $F0 $6C (BEQ +6C)
+
+         ldx   #$DA
+         jsr   modify1
+         !byte $D8        ; XOR #$55 of $8D (STA)
++

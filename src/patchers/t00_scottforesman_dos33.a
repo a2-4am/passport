@@ -11,6 +11,8 @@
 ; - Percent 1 (Scott, Foresman and Company)
 ;-------------------------------
          ; gTrack = 0
+         ; Caller found DOS 3.3 RWTS
+
          lda   #$0B
          ldx   #$15
          ldy   #$06
