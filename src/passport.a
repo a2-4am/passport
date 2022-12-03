@@ -37,7 +37,7 @@
 VERBOSE  = $00       ; set to $01 to display API label addresses
 }
 
-!to "../build/PASSPORT.TMP",plain
+!to "../build/passport.tmp",plain
 !ct "lcase.ct"
 
 Relocatable
