@@ -29,6 +29,7 @@
 ; - Mixed Up Mother Goose
 ; - The Artist
 ; - Ultima II
+; - The General Manager
 ;
 ; module by qkumba
 ;-------------------------------
@@ -44,6 +45,30 @@
          bcs   +
          jsr   modify1
          !byte $2C
+
+         pha
+         txa
+         sec
+         sbc   #10
+         tax
+         pla
+         ldy   #8
+         jsr   compare
+         !byte $AD,WILDCARD,$63 ;LDA $63xx
+         !byte $C9,$20          ;CMP #$20
+         !byte $F0,$03          ;BEQ *+5
+         !byte $4C              ;JMP $xxxx
+         bcs   +
+         pha
+         jsr   PrintByID
+         !byte s_tamper
+         txa
+         clc
+         adc   #4
+         tax
+         pla
+         jsr   modify1
+         !byte $2C ;don't run protection check
 
          ;there are two of these on the same track
 
