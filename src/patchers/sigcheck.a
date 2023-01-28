@@ -12,15 +12,40 @@
 ; - Conjecture (Robert Scott)
 ;-------------------------------
          lda   gIsBoot0
-         bne   +
+         bne   @exit
          ldy   #$05
          jsr   SearchTrack
          !byte $BD,$80,$C0; LDA $C080,X
          !byte $18        ; CLC
          !byte $68        ; PLA
-         bcs   +          ; passport-test-suite/Advanced Electricity.woz [C=0] matches
+         bcs   @exit      ; passport-test-suite/Advanced Electricity.woz [C=0] matches
          inx
          inx
          jsr   modify1
          !byte $D0        ; change indexed softswitch address so it does nothing
-+
+                          ; now search for non-standard RWTS parameters
+                          ; conveniently listed at beginning of SIGCHECK routine
+         ldy   #$0C
+         jsr   SearchTrack
+         !byte $D5,$AA,$96
+         !byte WILDCARD,WILDCARD
+         !byte $D5,$AA,$AD
+         !byte WILDCARD,WILDCARD
+         !byte $18,$B0
+         bcs   @exit
+         jsr   +
+         jmp   @exit
++        jsr   ++
+         inx
+         inx
+++       inx
+         inx
+         inx
+         jsr   compare2
+         !byte $DE,$AA
+         bcc   +++
+                          ; passport-test-suite/Water Pollution.woz reaches here
+         jsr   modify2
+         !byte $DE,$AA
++++      rts
+@exit
