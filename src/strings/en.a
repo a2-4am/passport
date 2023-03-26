@@ -217,6 +217,7 @@ StringTableLow            ; must be kept in sync with constants in enid.a
          !byte <.enlightenment
          !byte <.sfc
          !byte <.neosoft
+         !byte <.probs5
 
 StringTableHigh           ; must be kept in sync with constants in enid.a
          !byte >.header
@@ -373,11 +374,12 @@ StringTableHigh           ; must be kept in sync with constants in enid.a
          !byte >.enlightenment
          !byte >.sfc
          !byte >.neosoft
+         !byte >.probs5
 
 .passport
          !text "Passport ",$00
 .header
-         !text "@",s_passport,"by 4am@",s_space7,"@",s_space7," 2023-01-27",$00
+         !text "@",s_passport,"by 4am@",s_space7,"@",s_space7," 2023-03-26",$00
 .bar9
          !text "_________",$00
 .bar18
@@ -772,3 +774,5 @@ StringTableHigh           ; must be kept in sync with constants in enid.a
          !text "@",s_found,"SFC @",s_protectioncheck,$8D,$00
 .neosoft
          !text "@",s_found,"Neosoft @",s_protectioncheck,$8D,$00
+.probs5
+         !text "@",s_found,"PROBS5 @",s_protectioncheck,$8D,$00

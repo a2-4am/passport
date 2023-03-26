@@ -1,0 +1,35 @@
+;-------------------------------
+; #PROBS5
+; sector check of track $23
+; usually found in PROBS5 file
+;
+; tested on
+; - Addition and Subtraction of Fractions Analyzer
+; - Addition and Subtraction of Fractions Worksheet
+; - Decimals Analyzer
+; - Decimals Worksheet
+; - Multiplication and Division of Fractions Analyzer
+; - Multiplication and Division of Fractions Worksheet
+; - Whole Numbers Analyzer
+; - Whole Numbers Worksheet
+;-------------------------------
+!zone {
+         lda   #$0F
+         sta   .sector+1
+.sector  lda   #$FF       ; modified at runtime
+         ldx   #$00
+         ldy   #$08
+         jsr   compare
+         !byte $00,$20, $FF,$0F ; DOS 3.3 file header
+         !byte $A9,$23    ; LDA #$23
+         !byte $8D,$EC    ; STA $..EC
+         bcs   +          ; passport-test-suite/Addition and Subtraction of Fractions Analyzer.woz [C=0] matches
+         jsr   PrintByID
+         !byte s_probs5
+         ldx   #$04
+         jsr   modify1
+         !byte $60        ; RTS
++        dec   .sector+1
+         bpl   .sector
+.exit
+}
