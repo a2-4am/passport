@@ -385,7 +385,8 @@ AnalyzeTrack
          !source "patchers/mak.a"               ; gIsBoot0 && T02 only
          !source "patchers/jsr8635.a"           ; gIsBoot0 only
          !source "patchers/sierra.a"            ; gIsBoot0 only
-         !source "patchers/probs5.a"
+         !source "patchers/probs5.a"            ; gIsBoot0 only
+         !source "patchers/didatech.a"          ; gIsBoot0 && gIsDidatech only
 _endDOS33Patchers
          ;
          ; Diversi-DOS-specific patchers

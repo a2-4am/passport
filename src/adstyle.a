@@ -180,7 +180,7 @@ ADStyle
 ;
 +
 b4bbcompare
-         lda   #$FD                  ; modified at runtime (in Inspect1)
+         lda   #$FD                  ; SMC
          ldx   #$00
          ldy   #$20
          jsr   CompareMemory
@@ -236,10 +236,10 @@ x0       lda   $FFC2                 ; high byte modified at runtime (above)
          sta   gPossibleB4BBBasic
          lda   #$BB
 b4bbmodify
-         sta   $FFFF                 ; modified at runtime (high byte in Inspect1, low byte above)
+         sta   $FFFF                 ; SMC
          lda   #$DE
 b4bbmodify2
-         sta   $FFFF                 ; modified at runtime (high byte in Inspect1, low byte above)
+         sta   $FFFF                 ; SMC
          lda   gIsDOS32
          bne   _b4bbexit
          lda   #kSectorCustomDOS32B4BB

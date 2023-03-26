@@ -79,6 +79,10 @@
                           ; set in IDBootFailure() after reading T00
 
 FIRSTFILTER
+;gIsDidatech
+         !byte FALSE      ; 0=true, 1=false
+                          ; reset before each operation
+                          ; set in TraceDOS33c() after tracing DOS 3.3-shaped RWTS
 ;gIsEnlightenment
          !byte FALSE      ; 0=true, 1=false
                           ; reset before each operation

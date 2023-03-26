@@ -1,0 +1,25 @@
+;-------------------------------
+; #DIDATECH
+; nibble check of malformed T02,S07
+;
+; tested on
+; - Crosscountry Canada
+; - Crosscountry USA
+; - Crosscountry California
+;-------------------------------
+         lda   gIsDidatech
+         bne   +
+
+         ldy   #$09
+         jsr   SearchTrack; code is XOR #$96 but not tamper-checked
+         !byte $06,$59    ; BCC -$CF
+         !byte $8E        ; CLC
+         !byte $36,$68    ; LDY #$FE
+         !byte $06,$97    ; BCC +$01
+         !byte $5E        ; INY
+         !byte $1A        ; STY ....
+         bcs   +          ; passport-test-suite/Crosscountry Canada.woz [C=0] matches
+         jsr   inx7
+         jsr   modify1
+         !byte $7C        ; NOP instead of INY
++

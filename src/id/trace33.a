@@ -204,6 +204,28 @@ TraceDOS33c               ; 2nd-level trace callback is here
          sta   T02S05
 .notMilliken
 ;
+; Check for Didatech decryption routine
+; (affects readable/ignoreable sector map, so must ID now)
+;
+         jsr   $ff58
+         lda   MaybeBC
+         ldx   #$E1
+         ldy   #$0A
+         jsr   CompareMemory
+         !byte $A2,$04
+         !byte $A0,$05
+         !byte $A9,$96
+         !byte $59,$00,$08
+         !byte $99
+         bcs   .notDidatech ; passport-test-suite/Crosscountry Canada.woz [C=0] matches
+         jsr   PrintByID
+         !byte s_didatech
+         lda   #kSectorOptional
+         sta   T02S07
+         lda   #TRUE
+         sta   gIsDidatech
+.notDidatech
+;
 ; Try to initialize the 'current track' variable like the bootloader would --
 ; required for some disks that use a strange location for this variable
 ; e.g. Super Taxman II
