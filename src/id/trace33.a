@@ -207,7 +207,6 @@ TraceDOS33c               ; 2nd-level trace callback is here
 ; Check for Didatech decryption routine
 ; (affects readable/ignoreable sector map, so must ID now)
 ;
-         jsr   $ff58
          lda   MaybeBC
          ldx   #$E1
          ldy   #$0A
@@ -218,6 +217,8 @@ TraceDOS33c               ; 2nd-level trace callback is here
          !byte $59,$00,$08
          !byte $99
          bcs   .notDidatech ; passport-test-suite/Crosscountry Canada.woz [C=0] matches
+         lda   #$07
+         sta   gDisplayBytes
          jsr   PrintByID
          !byte s_didatech
          lda   #kSectorOptional

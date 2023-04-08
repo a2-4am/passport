@@ -381,7 +381,7 @@ StringTableHigh           ; must be kept in sync with constants in enid.a
 .passport
          !text "Passport ",$00
 .header
-         !text "@",s_passport,"by 4am@",s_space7,"@",s_space7," 2023-03-26",$00
+         !text "@",s_passport,"by 4am@",s_space7,"@",s_space7," 2023-04-08",$00
 .bar9
          !text "_________",$00
 .bar18
@@ -779,5 +779,5 @@ StringTableHigh           ; must be kept in sync with constants in enid.a
 .probs5
          !text "@",s_found,"PROBS5 @",s_protectioncheck,$8D,$00
 .didatech
-         !text "@",s_found,"Didatech @",s_protectioncheck,$8D
+         !text "@",s_found,"Didatech disk",$8D
          !text "T02,S07 @",s_maybeunreadable,$8D,$00
