@@ -3,15 +3,16 @@
 ; nibble count with weird bitstream
 ; involving $D5 and $F7 as delimiters
 ;
-; Ace Detective
-; Cat 'n Mouse
-; Cotton Tales
-; Dyno-Quest
-; Easy Street
-; Fraction-oids
-; Math Magic
-; RoboMath
+; Ace Detective (Mindplay)
+; Cat 'n Mouse (Mindplay)
+; Cotton Tales (Mindplay)
+; Dyno-Quest (Mindplay)
+; Easy Street (Mindplay)
+; Fraction-oids (Mindplay)
+; Math Magic (Mindplay)
+; RoboMath (Mindplay)
 ; NoteCard Maker (Pascal variant)
+; Les Sports (DC Heath) - variant wrapped by PHA/PLAs
 ;-------------------------------
 !zone {
 ;
@@ -50,7 +51,8 @@
                           ; passport-test-suite/Notecard Maker.woz [C=0] matches
          jsr   PrintByID
          !byte s_d5d5f7
-         jsr   modify1
-         !byte $60        ; RTS
+         jsr   modify3
+         !byte $18        ; CLC
+         !byte $90,$62    ; BCC +$62
 .exit
 }
