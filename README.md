@@ -402,7 +402,7 @@ Passport is open source and is
 distributed under the MIT license.
 
 Passport
-Copyright (c) 2016-2022 by 4am
+Copyright (c) 2016-2023 by 4am
 
 Permission is hereby granted, free of
 charge, to any person obtaining a copy
@@ -437,6 +437,35 @@ SOFTWARE OR THE USE OR OTHER DEALINGS
 IN THE SOFTWARE.
 
 ## History
+
+development branch
+- NEW: patchers/didatech.a (fixes
+  Crosscountry USA, Crosscountry
+  Canada, Crosscountry California)
+- NEW: patchers/microlearn.a (fixes
+  US Constitution Tutor, SAT English 1)
+- NEW: patchers/probs5.a (fixes
+  Decimals Analyzer, Whole Numbers
+  Analyzer)
+- NEW: patchers/t00_neosoft.a (fixes
+  Comparison Kitchen, Animal Photo Fun)
+- NEW: patchers/t00_scottforesman.a
+  (fixes Addition and Subtraction 4,
+  Decimals 3, Dinosaurs and Squids)
+- NEW: patchers/t00_scottforesman_
+  dos33.a (fixes Addition and
+  Subtraction 3, Decimals 2)
+- IMPROVED: patchers/d5d5f7.a (fixes
+  Les Sports)
+- IMPROVED: patchers/gamco.a (fixes
+  Percent)
+- IMPROVED: patchers/sierra.a (fixes
+  secondary anti-tamper check in
+  The General Manager)
+- IMPROVED: patchers/sigcheck.a (fixes
+  Water Pollution)
+- IMPROVED: patchers/t00_rwtslog.a
+  (fixes The Treasure of Forest Isle)
 
 2022-07-12
 - NEW: patchers/mak.a (fixes "Kittens,
