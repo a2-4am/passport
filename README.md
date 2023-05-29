@@ -87,7 +87,10 @@ companies. These types of protection
 were common in educational software.
 
 - Abracadata
-  e.g. Design Your Own Home
+  e.g. Design Your Own Home series
+
+- Allyn and Bacon
+  e.g. CAAT Skill Tester series
 
 - American Guidance Service
   e.g. SocMate Analogies Games
@@ -98,7 +101,7 @@ were common in educational software.
 - ArtSci
   e.g. AceCalc, Magicalc
 
-- Blue Chip
+- Blue Chip Software
   e.g. Squire, Baron, Tycoon
 
 - BrainBank
@@ -117,6 +120,10 @@ were common in educational software.
 - Developmental Learning Materials
   e.g. Curious George in Outer Space,
   Alien Addition
+
+- Didatech Software
+  e.g. Crosscountry USA, Crosscountry
+  Canada
 
 - Edu-Ware
   e.g. Decimals, Algebra 2
@@ -140,7 +147,7 @@ were common in educational software.
   e.g. The Time Tunnel (series),
   Travels with Za-Zoom
 
-- Gamco
+- Gamco Publishing
   e.g. Math Leap Frog, Math Football
 
 - Grolier Publishing
@@ -150,7 +157,7 @@ were common in educational software.
   e.g. Chariots, Cougars, and Kings;
   Tim and the Cat and the Big Red Hat
 
-- Hayden
+- Hayden Software
   e.g. SAT Score Improvement System,
   Microscopic Journey
 
@@ -171,7 +178,7 @@ were common in educational software.
   e.g. Building Reading Skills,
   Explorations in Science
 
-- Krell
+- Krell Software
   e.g. Time Traveler, College Boards
 
 - Laureate Learning Systems
@@ -204,7 +211,7 @@ were common in educational software.
 - Methods & Solutions
   e.g. Fantasy Land, Behind The Wheel
 
-- Micrograms
+- Micrograms Publishing
   e.g. Wild West Math, Granny
   Applebee's Cookie Factory
 
@@ -225,6 +232,10 @@ were common in educational software.
 
 - National Geographic Society
   e.g. The Botanist's Apprentice
+
+- Neosoft
+  e.g. Comparison Kitchen, Animal Photo
+  Fun
 
 - Optimum Resource
   e.g. Stickybear Math, Car Builder
@@ -262,6 +273,13 @@ were common in educational software.
 
 - Science Research Associates
   e.g. Computer Drill and Instruction
+
+- Scott, Foresman and Company
+  e.g. Addition and Subtraction 4,
+  Decimals 3, Dinosaurs and Squids
+
+- Silicon Valley Systems
+  e.g. Rapid Reader, E-Z Learner
 
 - Softsmith
   e.g. Astro Attack, Dinner on a Disk
@@ -465,7 +483,10 @@ development branch
 - IMPROVED: patchers/sigcheck.a (fixes
   Water Pollution)
 - IMPROVED: patchers/t00_rwtslog.a
-  (fixes The Treasure of Forest Isle)
+  (ATILA variant of LSR $6A detection
+  fixes The Treasure of Forest Isle,
+  TAY/BIT detection fixes Rapid
+  Reader and E-Z Learner)
 
 2022-07-12
 - NEW: patchers/mak.a (fixes "Kittens,
