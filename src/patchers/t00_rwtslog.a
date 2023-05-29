@@ -154,9 +154,26 @@ _rwtslog_start
          !byte $10,$FB
          !byte $C9,$AA
          !byte $EA,$EA
-         bcs   _rwtslog_end          ; passport-test-suite/La Guillotine.woz [C=0] matches
+         bcs   @cmpnopnop_end        ; passport-test-suite/La Guillotine.woz [C=0] matches
          jsr   PrintByID
          !byte s_cmpnopnop
+         inc   gPatchCount
+@cmpnopnop_end
+
+;-------------------------------
+; RWTS "TAY / BIT" identification
+; disk allows any value for
+; for address field checksum
+;-------------------------------
+         lda   #$03
+         ldx   #$88
+         ldy   #$03
+         jsr   compare               ; if T00,S03,$88 ==
+         !byte $A8
+         !byte $24,$B7
+         bcs   _rwtslog_end          ; passport-test-suite/E-Z Learner.woz [C=0] matches
+         jsr   PrintByID
+         !byte s_anychecksum
          inc   gPatchCount
 
 _rwtslog_end

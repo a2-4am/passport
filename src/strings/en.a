@@ -219,6 +219,7 @@ StringTableLow            ; must be kept in sync with constants in enid.a
          !byte <.neosoft
          !byte <.probs5
          !byte <.didatech
+         !byte <.anychecksum
 
 StringTableHigh           ; must be kept in sync with constants in enid.a
          !byte >.header
@@ -377,11 +378,12 @@ StringTableHigh           ; must be kept in sync with constants in enid.a
          !byte >.neosoft
          !byte >.probs5
          !byte >.didatech
+         !byte >.anychecksum
 
 .passport
          !text "Passport ",$00
 .header
-         !text "@",s_passport,"by 4am@",s_space7,"@",s_space7," 2023-05-04",$00
+         !text "@",s_passport,"by 4am@",s_space7,"@",s_space7," 2023-05-28",$00
 .bar9
          !text "_________",$00
 .bar18
@@ -781,3 +783,6 @@ StringTableHigh           ; must be kept in sync with constants in enid.a
 .didatech
          !text "@",s_found,"Didatech disk",$8D
          !text "T02,S07 @",s_maybeunreadable,$8D,$00
+.anychecksum
+         !text "@",s_rwts,"@",s_acceptsany,$8D
+         !text "address field checksum",$8D,$00

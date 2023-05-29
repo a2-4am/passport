@@ -157,3 +157,4 @@ s_sfc        = $98
 s_neosoft    = $99
 s_probs5     = $9A
 s_didatech   = $9B
+s_anychecksum = $9C
