@@ -39,6 +39,13 @@ SkipTrack
          lda   #s_sync
          bcc   @print
 ;
+; Unexepcted 13-sector track on a 16-sector disk?
+; (Micrograms likes to do this)
+;
+         jsr   Unexpected5And3InBaggingArea
+         lda   #s_unexpected5and3
+         bcc   @print
+;
 ; RW18-format track?
 ;
          jsr   VerifyInfocom18
@@ -311,4 +318,53 @@ Read4x4
     }
   }
          and   tmp
+         rts
+
+;-------------------------------
+; Unexpected5And3InBaggingArea
+; check if track is unexpectedly full of
+; 5-and-3-encoded sectors on a disk where
+; we expected 6-and-2 encoded sectors
+;
+; used by e.g. Micrograms as a weak form
+; of copy protection to foil COPYA-style
+; copying
+;
+; in  slot 6, drive 1 is on track to test
+; out C clear if unexpected track found
+;     C set if not found
+;-------------------------------
+Unexpected5And3InBaggingArea
+         lda   gIs13Sector
+         beq   @no                   ; if ID'd as a 13 sector disk, then this is not unexpected
+         lda   $C0E9
+         lda   #$19
+         sta   nibcount
+         ldx   #$0C
+         ldy   #$00
+@restart
+         dey
+         bne   +
+         dec   nibcount
+         beq   @no
++
+-        lda   $C0EC
+         bpl   -
+@maybeD5
+         cmp   #$D5
+         bne   @restart
+-        lda   $C0EC
+         bpl   -
+         cmp   #$AA
+         bne   @maybeD5
+-        lda   $C0EC
+         bpl   -
+         cmp   #$B5
+         bne   @maybeD5
+         dex
+         bne   @restart
+         clc                         ; passport-test-suite/Real Math.woz [C=0] matches
+         !byte $A9
+@no      sec
+         lda   $C0E8
          rts

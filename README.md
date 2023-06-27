@@ -473,6 +473,8 @@ development branch
 - NEW: patchers/t00_scottforesman_
   dos33.a (fixes Addition and
   Subtraction 3, Decimals 2)
+- NEW: unexpected 5&3 track detection
+  (fixes Real Math, Mathosaurus)
 - IMPROVED: patchers/d5d5f7.a (fixes
   Les Sports)
 - IMPROVED: patchers/gamco.a (fixes
