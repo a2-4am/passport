@@ -850,6 +850,8 @@ Do555
          sta   $BDF2
          lda   #$B9
          sta   $BE2B
+         lda   #$50
+         sta   $47E       ; blow away track number to force full recalibration
          rts
 
 .exit
