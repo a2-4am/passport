@@ -456,7 +456,7 @@ IN THE SOFTWARE.
 
 ## History
 
-development branch
+2023-07-28
 - NEW: patchers/didatech.a (fixes
   Crosscountry USA, Crosscountry
   Canada, Crosscountry California)
@@ -489,6 +489,8 @@ development branch
   fixes The Treasure of Forest Isle,
   TAY/BIT detection fixes Rapid
   Reader and E-Z Learner)
+- Matching updates to the
+  [Passport test suite](https://github.com/a2-4am/passport-test-suite)
 
 2022-07-12
 - NEW: patchers/mak.a (fixes "Kittens,
