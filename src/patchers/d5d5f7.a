@@ -47,7 +47,7 @@
          !byte $C8        ; INY
          !byte $18        ; CLC
          !byte $6D        ; ADC
-         bcs   .exit      ; passport-test-suite/RoboMath.woz [C=0] matches
+         bcs   .exit      ; passport-test-suite/Cotton Tales.woz [C=0] matches
                           ; passport-test-suite/Notecard Maker.woz [C=0] matches
          jsr   PrintByID
          !byte s_d5d5f7
