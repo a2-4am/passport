@@ -113,6 +113,7 @@ PreReadSector
 @earthware
          ldx   #$4C
          stx   $B8F6
+EarthwareSwapperLo
          ldx   #$89
          stx   $B8F7
          ldx   #$B6

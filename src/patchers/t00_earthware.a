@@ -10,14 +10,16 @@
 ;
 ; tested on
 ; - Black Belt (Earthware Computer Services)
+; - Black Belt rev. 2 (Earthware Computer Services)
 ; - Zoo Master (Earthware Computer Services)
+; - Zoo Master rev. 2 (Earthware Computer Services)
 ; - Star Search (Earthware Computer Services)
 ;-------------------------------
 EARTHWARE
          lda   #$02
          ldx   #$F6
          jsr   compare3
-         !byte $4C,$89,$B6
+         !byte $4C,WILDCARD,$B6
          bcs   @exit                 ; passport-test-suite/Zoo Master.woz [C=0] here
          jsr   PrintByID
          !byte s_bytrack

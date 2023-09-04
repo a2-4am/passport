@@ -429,9 +429,21 @@ TraceDOS33c               ; 2nd-level trace callback is here
          !byte $D0,$13
          !byte WILDCARD,WILDCARD
          !byte $9D,$8D,$C0
-         bcs   .notEarthware ; passport-test-suite/Zoo Master.woz [C=0] matches
+         bcc   .yesEarthware ; passport-test-suite/Zoo Master.woz [C=0] matches
+         ldx   #$8C
+         jsr   CompareMemory
+         !byte $BD,$8C,$C0
+         !byte $10,$FB
+         !byte $C9,$AD
+         !byte $D0,$F4
+         !byte $A9,$F8
+         !byte $3D,$8C,$C0
+         bcs   .notEarthware ; passport-test-suite/Zoo Master rev. 2.woz [C=0] matches
+.yesEarthware
          lda   #$BD
          sta   $B8F6
+         lda   $B8F7
+         sta   EarthwareSwapperLo+1
          lda   #$8C
          sta   $B8F7
          lda   #$C0
