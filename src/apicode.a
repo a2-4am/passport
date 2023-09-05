@@ -192,10 +192,6 @@ FIRSTFILTER
          !byte FALSE      ; 0=true, 1=false
                           ; reset before each operation
                           ; set in IDBootloader() after reading T00,S00
-;gPossibleD5D5F7
-         !byte FALSE      ; 0=true, 1=false
-                          ; reset before each operation
-                          ; set in IDBootloader() after reading T00,S00
 ;gIsOptimum
          !byte FALSE      ; 0=true, 1=false
                           ; reset before each operation

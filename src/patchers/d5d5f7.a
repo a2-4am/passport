@@ -13,20 +13,14 @@
 ; RoboMath (Mindplay)
 ; NoteCard Maker (Pascal variant)
 ; Les Sports (DC Heath) - variant wrapped by PHA/PLAs
+; Picture Perfect (1987) (Mindplay)
 ;-------------------------------
 !zone {
 ;
-; always run on Pascal disks
+; only run on Pascal disks and DOS 3.3 disks
 ;
          lda   gIsPascal
-;
-; if DOS 3.3-shaped bootloader, only run if we found
-; specific markers on T00,S00 earlier that are shared
-; by all the samples I have that use this protection.
-; (This filter is subject to revision if we find
-; additional samples.)
-;
-         and   gPossibleD5D5F7
+         and   gIsBoot0
          bne   .exit
          ldy   #$20
          jsr   SearchTrack

@@ -65,7 +65,6 @@ NonRelocatable
          !source "id/quickdos.a"
          !source "id/diversidos.a"
          !source "id/prontodos.a"
-         !source "id/d5d5f7.a"
          !source "id/laureate.a"
          !source "id/micrograms.a"
          !source "id/volumename.a"
@@ -334,7 +333,7 @@ AnalyzeTrack
          ; only run these modules in crack mode
          !source "patchers/universale7.a"
          !source "patchers/c9ff.a"
-         !source "patchers/d5d5f7.a"            ; gIsPascal || (gIsBoot0 && gPossibleD5D5F7) only
+         !source "patchers/d5d5f7.a"            ; gIsPascal || gIsBoot0 only
          !source "patchers/rwtsswapmecc.a"      ; gMECCFastloadType || gPossibleMECCSwapper only
          !source "patchers/meccdqc.a"           ; gMECCFastloadType==1 && gT07 only
          !source "patchers/rwtsswappenguin.a"   ; T01 only

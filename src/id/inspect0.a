@@ -99,12 +99,6 @@ IDBootloader
          bcs   .notdos33
          sta   gIsBoot0              ; A = 0 (TRUE)
 ;
-; Try to identify specific DOS 3.3-shaped bootloader
-; that may imply a D5D5F7 whole-track protection.
-; (in A=0; out A=0)
-;
-         +IDD5D5F7
-;
 ; Try to identify Diversi-DOS
 ; (in A=0; out A=0)
 ;
