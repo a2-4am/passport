@@ -90,3 +90,45 @@ mod_tmp_y=*+1
          ldy   #$FD                  ; SMC
          clv
          rts
+
+multimodify
+; in:    (A/Y) -> sector+offsets+values block
+;        X = number of values (must also be equal number of sectors and offsets)
+; out:   all registers/flags clobbered
+         sta   @getsector+1
+         sty   @getsector+2
+         stx   @loop+1
+         clc
+         adc   @loop+1
+         bcc   +
+         iny
++        sta   @getoffset+1
+         sty   @getoffset+2
+         clc
+         adc   @loop+1
+         bcc   +
+         iny
++        sta   @getvalue+1
+         sty   @getvalue+2
+         jmp   @next
+@loop
+         ldy   #$FD                  ; SMC
+@getvalue
+         lda   $FDFD, y              ; SMC
+         sta   @cmpvalue
+         sta   @modvalue
+@getsector
+         lda   $FDFD, y              ; SMC
+@getoffset
+         ldx   $FDFD, y              ; SMC
+         jsr   compare1
+@cmpvalue
+         !byte $FD                   ; SMC
+         bcc   @next
+         jsr   modify1
+@modvalue
+         !byte $FD                   ; SMC
+@next
+         dec   @loop+1
+         bpl   @loop
+         rts

@@ -1,0 +1,47 @@
+;------------------------------------------------------------------------------
+; IDJMP600
+; identify JMP600 bootloader
+; custom boot sector uses its own RWTS to load one or more sectors into the
+; text page and eventually jumps to $600 which uses a second RWTS to load
+; and jump to a third RWTS at $B700
+;
+; in:    track buffer contains T00,S00
+;        A = 0
+;        X = 0
+; out:   C clear if JMP600 bootloader was found
+;        C set if not found
+;        A = 0
+;        X = 0
+;        all other registers & flags clobbered
+;-------------------------------
+!macro IDJMP600 {
+         ldy   #$11
+         jsr   compare
+         !byte $01,$A2,$00,$BD,$00,$08,$9D,$00
+         !byte $02,$E8,$D0,$F7,$4C,$0F,$02,$A9
+         !byte $A0
+                          ; passport-test-suite/Competition Karate.woz [C=0] matches
+}
+
+FoundJMP600
+;
+; We found a JMP600 bootloader. Now we create
+; an RWTS that can read the rest of the disk.
+; Starting with our built-in RWTS, we modify address
+; and data prologues based on the parameters of the
+; original disk.
+;
+         lda   $84A
+         lsr
+         sta   UNIV_A1
+         lda   $853
+         sta   UNIV_A2
+         lda   $85D
+         sta   UNIV_A3
+         lda   $888
+         sta   UNIV_D1
+         lda   $891
+         sta   UNIV_D2
+         lda   $89B
+         sta   UNIV_D3
+         jmp   ADStyle

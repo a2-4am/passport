@@ -63,6 +63,7 @@ VerifyInfocom18
          beq   .setcount  ; passport-test-suite/Trinity - Side B.woz [Z=1] here
          lda   #$02       ; passport-test-suite/Time Lord.woz [Z=0] here
                           ; only two sectors when in ID mode
+
 .setcount
          sta   tmp        ; sector counter
 
@@ -422,3 +423,7 @@ read13
          lda   $C0E8
          rts
 }
+
+; this prevents branches in this file from crossing a page
+; (adjust as necessary)
+filler   !fill 9

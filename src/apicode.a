@@ -37,6 +37,8 @@
          jmp   modify2
 ;jmodify3
          jmp   modify3
+;jmultimodify
+         jmp   multimodify
 ;jcompare
          jmp   compare
 ;jcompare1
@@ -79,6 +81,10 @@
                           ; set in IDBootFailure() after reading T00
 
 FIRSTFILTER
+;gIsJMP600
+         !byte FALSE      ; 0=true, 1=false
+                          ; reset before each operation
+                          ; set in IDBootloader() after reading T00,S00
 ;gIsDidatech
          !byte FALSE      ; 0=true, 1=false
                           ; reset before each operation

@@ -76,6 +76,7 @@ NonRelocatable
          !source "id/davidson.a"
          !source "id/holle.a"
          !source "id/phoenix.a"
+         !source "id/jmp600.a"
          !source "id/555.a"
          !source "id/trace32.a"
          !source "id/trace8b3.a"

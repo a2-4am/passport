@@ -185,9 +185,10 @@ gIsLowDOS                     = gPossibleB4BBBasic-$01                ; byte
 gIsBaudville                  = gIsLowDOS-$01                         ; byte
 gIsEnlightenment              = gIsBaudville-$01                      ; byte
 gIsDidatech                   = gIsEnlightenment-$01                  ; byte
+gIsJMP600                     = gIsDidatech-$01                       ; byte
 ;LASTFILTER ; add new gIs* above this line
 ;gIsInfocom18 is a special case whose ID is not in the regular inspection path
-gIsInfocom18                  = gIsDidatech-$01                       ; byte
+gIsInfocom18                  = gIsJMP600-$01                         ; byte
 ;gIs13Sector is a special case whose ID is not in the regular inspection path
 gIs13Sector                   = gIsInfocom18-$01                      ; byte
 ;gMECCFastloadType is a special case integer whose default value cannot be #FALSE
@@ -203,7 +204,8 @@ jcompare3                     = gDisplayBytes-$03                     ; 3-byte
 jcompare2                     = jcompare3-$03                         ; 3-byte
 jcompare1                     = jcompare2-$03                         ; 3-byte
 jcompare                      = jcompare1-$03                         ; 3-byte
-jmodify3                      = jcompare-$03                          ; 3-byte
+jmultimodify                  = jcompare-$03                          ; 3-byte
+jmodify3                      = jmultimodify-$03                      ; 3-byte
 jmodify2                      = jmodify3-$03                          ; 3-byte
 jmodify1                      = jmodify2-$03                          ; 3-byte
 jmodify                       = jmodify1-$03                          ; 3-byte
@@ -226,6 +228,7 @@ modify                    = jmodify
 modify1                   = jmodify1
 modify2                   = jmodify2
 modify3                   = jmodify3
+multimodify               = jmultimodify
 PrintByID                 = jPrintByID
 SearchTrack               = jSearchTrack
 CallRWTS                  = jCallRWTS
@@ -302,6 +305,7 @@ ConstructStandardDelivery = jConstructStandardDelivery
 !warn "gDisplayBytes=",gDisplayBytes
 !warn "jcompare=",jcompare
 !warn "jmodify=",jmodify
+!warn "jmultimodify=",jmultimodify
 !warn "jPrintByID=",jPrintByID
 !warn "jSearchTrack=",jSearchTrack
 !warn "jCallRWTS=",jCallRWTS

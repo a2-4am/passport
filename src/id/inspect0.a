@@ -148,6 +148,19 @@ IDBootloader
          jmp   Trace8B3
 .not8b3
 ;
+; Try to identify a bootloader that loads several sectors
+; into the text page before loading a non-standard RWTS in
+; higher memory.
+; Exit via custom trace function if found.
+;
+         +IDJMP600
+         bcs   .notjmp600
+         jsr   PrintByID
+         !byte s_jmp600
+         sta   gIsJMP600             ; A = 0 (TRUE)
+         jmp   FoundJMP600
+.notjmp600
+;
 ; Try to identify all the different MECC fastloader variants.
 ; Exit via custom trace function if found.
 ; (in A=0,X=0; out A=0,X=0)

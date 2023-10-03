@@ -1,0 +1,90 @@
+;------------------------------------------------------------------------------
+; #JMP600
+; custom boot sector uses its own RWTS to load one or more sectors into the
+; text page and eventually jumps to $600 which uses a second RWTS to load
+; and jump to a third RWTS at $B700
+;
+; tested on
+; - Dinosaurs v1.0 (Advanced Ideas)
+; - Wizard of Words v1.0 (Advanced Ideas)
+;------------------------------------------------------------------------------
+;
+; common to all variants:
+;
+; T00,S00,$4A:  -> D5
+; T00,S00,$53:  -> AA
+; T00,S00,$5D:  -> 96
+;
+; T00,S00,$88:  -> D5
+; T00,S00,$91:  -> AA
+; T00,S00,$9B:  -> AD
+;
+; T00,S03,$1A:  -> D5
+; T00,S03,$23:  -> AA
+; T00,S03,$2D:  -> 96
+;
+; T00,S03,$57:  -> D5
+; T00,S03,$60:  -> AA
+; T00,S03,$6A:  -> AD
+;
+; That's all that's required for the 'basic' version (e.g. Wizard of Words v1.0).
+; Its final RWTS loaded into $B700+ is custom but seamlessly supports both
+; reading and reading of both protected and unprotected disks. However, there
+; are several variants in use. Some variants require additional patches because
+; - they don't support reading from unprotected disks (e.g. In Search of the Most Amazing Thing), or
+; - they don't support writing to unprotected disks, or
+; - they support writing to disks but in some other protected format that is
+;   different than the program disk (e.g. Competition Karate, Amazon)
+
+; e.g. Competition Karate / Amazon variant:
+;
+; T00,S06,$53:  -> D5
+; T00,S06,$58:  -> AA
+; T00,S06,$5D:  -> AD
+; T00,S06,$9E:  -> DE
+; T00,S06,$A3:  -> AA
+; T00,S06,$A8:  -> EB
+;
+; T00,S07,$46:  -> D5
+; T00,S07,$4B:  -> AA
+; T00,S07,$50:  -> 96
+; T00,S07,$7A:  -> DE
+; T00,S07,$7F:  -> AA
+; T00,S07,$84:  -> EB
+;
+; T00,S08,$74:  -> D5
+; T00,S08,$82:  -> AA
+; T00,S08,$91:  -> 96
+;
+; TODO need to test on real hardware and see if these are sufficient:
+; T00,S06,$49:  -> 04 to restore standard timing
+; T00,S07,$D2:  -> 2C to burn fewer cycles
+; T00,S08,$6C:  -> 2C to burn fewer cycles
+;
+;.competitionkaratemulti ; length=21 dec
+;         !byte $08,$08,$08,$08,$07,$07,$07,$07,$07,$07,$07,$07,$07,$07,$06,$06,$06,$06,$06,$06,$06
+;         !byte $91,$82,$74,$6C,$F7,$E8,$DA,$D2,$84,$7F,$7A,$50,$4B,$46,$A8,$A3,$9E,$5D,$58,$53,$49
+;         !byte $96,$AA,$D5,$2C,$AD,$AA,$D5,$2C,$EB,$AA,$DE,$96,$AA,$D5,$EB,$AA,$DE,$AD,$AA,$D5,$04
+
+!zone {
+         ; gTrack = 0
+         lda   gIsJMP600
+         beq   .start
+         jmp   .exit
+
+.jmp600multi ; length=12 dec
+;sectors
+         !byte $03,$03,$03,$03,$03,$03,$00,$00,$00,$00,$00,$00
+;offsets
+         !byte $6A,$60,$57,$2D,$23,$1A,$9B,$91,$88,$5D,$53,$4A
+;values
+         !byte $AD,$AA,$D5,$96,$AA,$D5,$AD,$AA,$D5,$96,$AA,$D5
+
+.start
+         lda   #<.jmp600multi
+         ldy   #>.jmp600multi
+         ldx   #12
+         jsr   multimodify
+
+.exit
+}

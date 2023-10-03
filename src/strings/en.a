@@ -221,6 +221,7 @@ StringTableLow            ; must be kept in sync with constants in enid.a
          !byte <.didatech
          !byte <.anychecksum
          !byte <.unexpected5and3
+         !byte <.jmp600
 
 StringTableHigh           ; must be kept in sync with constants in enid.a
          !byte >.header
@@ -381,11 +382,12 @@ StringTableHigh           ; must be kept in sync with constants in enid.a
          !byte >.didatech
          !byte >.anychecksum
          !byte >.unexpected5and3
+         !byte >.jmp600
 
 .passport
          !text "Passport ",$00
 .header
-         !text "@",s_passport,"by 4am@",s_space7,"@",s_space7," 2023-09-04",$00
+         !text "@",s_passport,"by 4am@",s_space7,"@",s_space7," 2023-10-02",$00
 .bar9
          !text "_________",$00
 .bar18
@@ -790,3 +792,5 @@ StringTableHigh           ; must be kept in sync with constants in enid.a
          !text "address field checksum",$8D,$00
 .unexpected5and3
          !text "@",s_tfound,"5-and-3 @",s_protectiontrack,$8D,$00
+.jmp600
+         !text "@",s_found,"JMP $0600 @",s_bootloader,$8D,$00

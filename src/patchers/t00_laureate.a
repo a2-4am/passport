@@ -6,31 +6,21 @@
 !zone {
          lda   gIsLaureate
          bne   .exit
-         beq   +          ; passport-test-suite/Sound Ideas- Word Attack - Disk 1 - Ending Consonants.woz [Z=1] reaches here
+         beq   .start     ; passport-test-suite/Sound Ideas- Word Attack - Disk 1 - Ending Consonants.woz [Z=1] reaches here
 
-.sectors
+.laureatemulti
+;sectors
          !byte $04,$04,$04,$04,$04,$04,$04,$04,$04,$05,$05,$05,$05,$05,$05,$05,$06,$06,$06
-.offsets
+;offsets
          !byte $53,$58,$5D,$9E,$A3,$A8,$E7,$F1,$FC,$35,$3F,$55,$5F,$6A,$91,$9B,$49,$D5,$D6
-.values
+;values
          !byte $D5,$AA,$AD,$DE,$AA,$EB,$D5,$AA,$AD,$DE,$AA,$D5,$AA,$96,$DE,$AA,$D6,$D5,$20
 
-+        lda   #$12
-         sta   .loop+1
-
-.loop    ldy   #$d1
-         lda   .values,y
-         sta   .valuea
-         sta   .valueb
-         lda   .sectors,y
-         ldx   .offsets,y
-         jsr   compare1
-.valuea  !byte $d1
-         bcc   +
-         jsr   modify1
-.valueb  !byte $d1
-+        dec   .loop+1
-         bpl   .loop
+.start
+         lda   #<.laureatemulti
+         ldy   #>.laureatemulti
+         ldx   #19
+         jsr   multimodify
 
          lda   #$0A
          ldx   #$12
