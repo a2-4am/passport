@@ -70,7 +70,7 @@
          ldx   #$92
          jsr   modify1    ; and set T00,S01,$92 =
          !byte $F1        ; change branch to unconditionally jump to success path
-         bvc   .exit      ; always branches
+         bvc   .rwtsswap  ; always branches
 
 .variant2
          inx
@@ -84,5 +84,17 @@
          ldx   #$92
          jsr   modify1    ; and set T00,S01,$92 =
          !byte $F2        ; change branch to unconditionally jump to success path
+
+.rwtsswap
+         lda   #$0C
+         ldx   #$40
+         ldy   #$04
+         jsr   compare
+         !byte $32,$A2    ; MON and NOMON commands at $A233 and $A247
+         !byte $46,$A2    ; are used to toggle protected/normal RWTS
+         bcs   .exit
+         jsr   modify
+         !byte $57,$FF    ; point them both to $FF58 (does nothing)
+         !byte $57,$FF
 .exit
 }
