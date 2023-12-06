@@ -80,11 +80,35 @@
 ;values
          !byte $AD,$AA,$D5,$96,$AA,$D5,$AD,$AA,$D5,$96,$AA,$D5
 
+.bc56multi ; length=12 dec
+;sectors
+         !byte $0C,$0C,$0C,$0C,$0C,$09,$09,$09,$09,$09,$09,$09
+;offsets
+         !byte $C4,$87,$78,$6A,$66,$B1,$F4,$F3,$F2,$A2,$94,$90
+;values
+         !byte $AA,$96,$AA,$D5,$2C,$AD,$0B,$F0,$DE,$AA,$D5,$2C
+
 .start
          lda   #<.jmp600multi
          ldy   #>.jmp600multi
          ldx   #12
          jsr   multimodify
 
+         lda   #$0C
+         ldx   #$61
+         ldy   #$09
+         jsr   compare
+         !byte $BD,$8C,$C0
+         !byte $10,$FB
+         !byte $20,$C8,$BC
+         !byte $C9
+         bcs   .notbc56
+
+         lda   #<.bc56multi
+         ldy   #>.bc56multi
+         ldx   #12
+         jsr   multimodify
+
+.notbc56
 .exit
 }
