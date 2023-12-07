@@ -89,11 +89,17 @@
          !byte $AA,$96,$AA,$D5,$2C,$AD,$0B,$F0,$DE,$AA,$D5,$2C
 
 .start
+         ; patches common to all known variants
          lda   #<.jmp600multi
          ldy   #>.jmp600multi
          ldx   #12
          jsr   multimodify
 
+         ; some variants have a secondary RWTS with an address
+         ; prologue entry point at $BC56 instead of $B944
+         ; note: these patches only affect the read routines
+         ; and thus will only work if the disk either supports
+         ; writes to unprotected disks or never writes anything
          lda   #$0C
          ldx   #$61
          ldy   #$09
@@ -110,5 +116,29 @@
          jsr   multimodify
 
 .notbc56
+         ; variant seen on some versions of Broadsides
+         ; that uses LSR6A+CMP08 protection with an
+         ; explicit epilogue check
+         lda   #$0C
+         ldx   #$AC
+         ldy   #$09
+         jsr   compare
+         !byte $BD,$8C,$C0
+         !byte $10,$FB
+         !byte $C9,$AF
+         !byte $D0,$14
+         bcs   .notcmpaf
+
+         jsr   PrintByID
+         !byte s_lsr6a
+
+         jsr   PrintByID
+         !byte s_bcs08
+
+         ldx   #$C9
+         jsr   modify1
+         !byte $18
+
+.notcmpaf
 .exit
 }
