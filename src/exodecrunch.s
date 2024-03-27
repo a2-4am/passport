@@ -66,7 +66,7 @@ EXTRA_TABLE_ENTRY_FOR_LENGTH_THREE = 1
 ; -------------------------------------------------------------------
 ; optional progress UI
 !IFNDEF SHOW_PROGRESS_DURING_DECRUNCH {
-        SHOW_PROGRESS_DURING_DECRUNCH = 0
+  !set SHOW_PROGRESS_DURING_DECRUNCH = 0
 }
 ; -------------------------------------------------------------------
 ; zero page addresses used
@@ -160,23 +160,18 @@ gb_get_hi:
 decrunch:
 
 !IF SHOW_PROGRESS_DURING_DECRUNCH = 1 {
-        lda $FBB3
-        cmp #$EA
-        bne +
-        lda #$A1 ; use ! instead of | for initial spinner animation
-        sta progress_char+1
-        sta progress_char+5
-+
-; -------------------------------------------------------------------
-; show initial on-screen progress UI
-;
-        ldy #7
-init_progress_loop:
-        lda progress_char,y
-        jsr show_one_progress_char
-        dey
-        bpl init_progress_loop
-done_init_progress_loop:
+kExoProgressWidth = 23               ; depends on total size, max 38
+         ldx   #(kExoProgressWidth+2)
+         lda   #$DF
+-        sta   $0528+(20-(kExoProgressWidth/2))-1, x
+         sta   $05A8+(20-(kExoProgressWidth/2))-1, x
+         dex
+         bpl   -
+         lda   #$20
+         sta   $05A8+(20-(kExoProgressWidth/2))-1
+         sta   $05A8+(20-(kExoProgressWidth/2))+kExoProgressWidth+1
+         lda   #$A8+(20-(kExoProgressWidth/2))
+         sta   ExoProgressPtr+1
 }
 ; -------------------------------------------------------------------
 ; init zeropage, x and y regs. (12 bytes)
@@ -259,25 +254,15 @@ no_hi_decr:
         sta (zp_dest_lo),y
 
 !IF SHOW_PROGRESS_DURING_DECRUNCH = 1 {
-; periodically update on-screen progress UI
-        dec progress_counter
-        bne dont_update_progress_ui
-        tya
-        pha
-        ldy progress_index
-        lda progress_char,y
-        jsr show_one_progress_char
-        inc progress_index
-        lda progress_index
-        and #$07
-        sta progress_index
-        tay
-        lda #$20
-        jsr show_one_progress_char
-        pla
-        tay
-dont_update_progress_ui:
+         dec   ExoProgressCounter
+         bne   +
+         lda   #$20
+ExoProgressPtr
+         sta   $0500                 ; SMC lo byte
+         inc   ExoProgressPtr+1
++
 }
+
 } else {
 literal_start1:
         jsr get_crunched_byte
@@ -473,28 +458,8 @@ tabl_bit:
         !BYTE $8c, $e2
 }
 !IF SHOW_PROGRESS_DURING_DECRUNCH = 1 {
-progress_index:
-        !BYTE $00
-progress_counter:
-        !BYTE $00
-progress_char:
-        !BYTE $DC, $FC, $AF, $AD, $DC, $FC, $AF, $AD
-progress_address_lo:
-        !BYTE $BB, $BC, $BD, $3D, $BD, $BC, $BB, $3B
-progress_address_hi:
-        !BYTE $05, $05, $05, $06, $06, $06, $06, $06
-show_one_progress_char:
-; in: A=ASCII char to show
-;     y=0..7 index into progress_address_lo/hi array
-        pha
-        lda progress_address_lo,y
-        sta progress_STA+1
-        lda progress_address_hi,y
-        sta progress_STA+2
-        pla
-progress_STA:
-        sta $FFFF
-        rts
+ExoProgressCounter
+         !byte $00
 }
 ; -------------------------------------------------------------------
 ; end of decruncher
