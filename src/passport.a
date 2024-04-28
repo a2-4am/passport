@@ -466,6 +466,8 @@ _byte_skip_hi:
          rts
 
          !source "id/bootfailure.a"
+         nop
+         nop
          !source "wholetrack.a"
          !source "apicode.a"                    ; /!\ must be last
 

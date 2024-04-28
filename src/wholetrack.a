@@ -87,6 +87,8 @@ SkipTrack
          cmp   #$22
          clc
          bne   @donotskip
+         lda   #TRUE
+         sta   gAdventureInternational
          lda   gIsProDOS
          bne   @donotskip
          sta   gPossibleGamco

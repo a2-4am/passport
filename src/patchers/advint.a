@@ -1,30 +1,66 @@
 ;-------------------------------
 ; #ADVINT
-; encrypted protection check on
-; Adventure International disks
+; protection check on Adventure International disks
+; usually encrypted but not always
 ;
 ; tested on
 ; - Curse of Crowley Manor
 ; - Earthquake San Francisco 1906
 ; - QuestProbe featuring The Hulk
+; - QuestProbe featuring Spider-Man vB-258
+; - QuestProbe featuring Spider-Man vF-261
 ; - SAGA1 - Adventureland v2.0-416
 ; - SAGA1 - Adventureland v2.1-416
 ; - SAGA2 - Pirate Adventure v2.1-408
-; - SAGA3 - Mission Impossible v2.1/306
-; - SAGA4 - Voodoo Castle v2.1/119
+; - SAGA3 - Mission Impossible v2.1-306
+; - SAGA4 - Voodoo Castle v2.1-119
 ; - SAGA5 - The Count v2.1-115
 ; - SAGA6 - Strange Odyssey v2.1-119
 ;-------------------------------
 !zone {
          lda   gAdventureInternational
          bne   .exit
+         ; variant 0 - very old, possibly first generation
+         ldy   #$09
+         jsr   SearchTrack
+         !byte $C9,$9C
+         !byte $B0,$04
+         !byte $BD,$88,$C0
+         !byte $60
+         !byte $4C
+         bcs   .variant1             ; passport-test-suite/War.woz [C=0] matches
+         jsr   PrintByID
+         !byte s_advint
+         jsr   inx8
+         jsr   modify3
+         !byte $18                   ;CLC
+         !byte $90,$F9               ;BCC -$F9
+         bvc   .exit                 ; always branches
+;-----
+.variant1
+         ; variant 1 - unencrypted
          ldy   #$08
          jsr   SearchTrack
-         ; bytes are XORd with #$C9 on disk -- comments show decrypted code
+         !byte $4C,WILDCARD,WILDCARD ;JMP $****
+         !byte $BD,$8C,$C0           ;LDA $C08C,X
+         !byte $10,$FB               ;BPL -$FB
+         bcs   .variant2             ; passport-test-suite/Spiderman B.woz [C=0] matches
+         jsr   PrintByID
+         !byte s_advint
+         jsr   modify3
+         !byte $18                   ;CLC
+         !byte $90,$6E               ;BCC +$6E
+         bvc   .exit                 ; always branches
+;-----
+.variant2
+         ; variant 2 - bytes are XOR'd with #$C9 on disk
+         ; comments show decrypted code
+         ldy   #$08
+         jsr   SearchTrack
          !byte $85,WILDCARD,WILDCARD ;JMP $****
          !byte $74,$45,$09           ;LDA $C08C,X
          !byte $D9,$32               ;BPL -$FB
-         bcs   .exit      ; passport-test-suite/S.A.G.A. 6.woz [C=0] matches
+         bcs   .exit                 ; passport-test-suite/S.A.G.A. 6.woz [C=0] matches
          jsr   PrintByID
          !byte s_advint
          jsr   modify3
