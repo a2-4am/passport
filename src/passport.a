@@ -404,6 +404,7 @@ _endDiversiPatchers
 +
          !source "patchers/bbf9.a"              ; gIsProDOS only
          !source "patchers/fbffencrypted.a"     ; gIsProDOS only
+         !source "patchers/e7everywhere.encrypted.a" ; gIsProDOS only
          !source "patchers/pfs.prodos.a"        ; gIsProDOS && T05 only
          !source "patchers/leisure.a"           ; gIsProDOS && T22 only
          !source "patchers/memory.config.a"     ; gIsProDOS only

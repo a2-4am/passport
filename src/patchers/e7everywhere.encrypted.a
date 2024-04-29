@@ -1,0 +1,30 @@
+;------------------------------------------------------------------------------
+; #E7EVERYWHERE.ENCRYPTED
+; E7 bitstream in the track seam of every track
+;
+; We can't attack the bitstream itself (like #UNIVERSALE7) because it's not
+; within any sector data, so we search for the code instead.
+;
+; tested on
+; - Language Carnival 1 & 2 (DLM)
+;------------------------------------------------------------------------------
+         ; gIsProDOS is TRUE here
+         lda   #$0F
+         sta   .sector+1
+.sector  lda   #$FF                  ; modified at runtime
+         ldx   #$0C
+         ldy   #$0A
+         jsr   compare
+         !byte $F5
+         !byte $20,$00,$20
+         !byte $90,$04
+         !byte $20,$B0,$FE
+         !byte $60
+         bcs   .nextsector           ; passport-test-suite/Language Carnival.woz [C=0] matches
+         jsr   PrintByID
+         !byte s_e7everywhere
+         jsr   modify1               ; change branch target to success path
+         !byte $09
+.nextsector
+         dec   .sector+1
+         bpl   .sector
