@@ -24,7 +24,8 @@ universale7
          bne   .eor
 
          lda   .sector+2  ; passport-test-suite/Rocky's Boots.woz [C=1] reaches here
-         and   #$0F
+         sec
+         sbc   #BASEPAGE
          sta   gDisplayBytes
          jsr   PrintByID
          !byte s_e7
