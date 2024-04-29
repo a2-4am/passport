@@ -456,6 +456,21 @@ IN THE SOFTWARE.
 
 ## History
 
+Unreleased
+- NEW: patchers/t00_jmp600.a
+  (fixes Wizard of Words, Alphabet Zoo,
+  Broadsides)
+- NEW: patchers/e7everywhere.encrypted.a
+  (fixes Language Carnival 1 & 2)
+- IMPROVED: patchers/t00_earthware.a
+  (fixes Black Belt rev. 2)
+- IMPROVED: patchers/d5d5f7.a
+  (fixes Picture Perfect 1987)
+- IMPROVED: patchers/t00_rps.a
+  (fixes Evelyn Dynamic Reader)
+- IMPROVED: patchers/advint.a
+  (fixes War, Questprobe/Spider-Man)
+
 2023-07-28
 - NEW: patchers/didatech.a (fixes
   Crosscountry USA, Crosscountry
