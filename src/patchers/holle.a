@@ -92,6 +92,17 @@
          jsr   modify2
          !byte $A0,$00               ; LDY #$00
 
+         ; look for save game disk volume number check
+         ; e.g. Sherwood Forest
++        ldy   #$05
+         jsr   SearchTrack
+         !byte $AD,$16,$98           ; LDA $9816
+         !byte $F0,$0F               ; BEQ +0F
+         bcs   +
+         jsr   inx4
+         jsr   modify1
+         !byte $00
+
          ; look for secondary disk volume number check
          ; e.g. Crime Wave
 +        ldy   #$04
