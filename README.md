@@ -420,7 +420,7 @@ Passport is open source and is
 distributed under the MIT license.
 
 Passport
-Copyright (c) 2016-2023 by 4am
+Copyright (c) 2016-2024 by 4am
 
 Permission is hereby granted, free of
 charge, to any person obtaining a copy
@@ -470,6 +470,8 @@ IN THE SOFTWARE.
   (fixes Evelyn Dynamic Reader)
 - IMPROVED: patchers/advint.a
   (fixes War, Questprobe/Spider-Man)
+- Matching updates to the
+  [Passport test suite](https://github.com/a2-4am/passport-test-suite)
 
 2023-07-28
 - NEW: patchers/didatech.a (fixes
