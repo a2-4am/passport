@@ -5,7 +5,12 @@
 ; and jump to a third RWTS at $B700
 ;
 ; tested on
+; - Alphabet Zoo v1.0 (Spinnaker)
+; - Broadsides (SSI) [several variants]
 ; - Dinosaurs v1.0 (Advanced Ideas)
+; - Fortress (SSI)
+; - Fraction Fever (Spinnaker)
+; - J-Bird (Orion)
 ; - Wizard of Words v1.0 (Advanced Ideas)
 ;------------------------------------------------------------------------------
 ;

@@ -20,7 +20,7 @@
          !byte $01,$A2,$00,$BD,$00,$08,$9D,$00
          !byte $02,$E8,$D0,$F7,$4C,$0F,$02,$A9
          !byte $A0
-                          ; passport-test-suite/Competition Karate.woz [C=0] matches
+                          ; passport-test-suite/J-Bird.woz [C=0] matches
 }
 
 FoundJMP600

@@ -160,18 +160,18 @@ gb_get_hi:
 decrunch:
 
 !IF SHOW_PROGRESS_DURING_DECRUNCH = 1 {
-kExoProgressWidth = 23               ; depends on total size, max 38
          ldx   #(kExoProgressWidth+2)
          lda   #$DF
--        sta   $0528+(20-(kExoProgressWidth/2))-1, x
-         sta   $05A8+(20-(kExoProgressWidth/2))-1, x
+-        sta   $0528+(20-(kExoProgressWidth/2))-2, x
+         sta   $05A8+(20-(kExoProgressWidth/2))-2, x
          dex
          bpl   -
          lda   #$20
-         sta   $05A8+(20-(kExoProgressWidth/2))-1
-         sta   $05A8+(20-(kExoProgressWidth/2))+kExoProgressWidth+1
-         lda   #$A8+(20-(kExoProgressWidth/2))
+         sta   $05A8+(20-(kExoProgressWidth/2))-2
+         sta   $05A8+(20-(kExoProgressWidth/2))+kExoProgressWidth
+         lda   #$A8+(20-(kExoProgressWidth/2))-1
          sta   ExoProgressPtr+1
+decrunch_no_reset_progress:
 }
 ; -------------------------------------------------------------------
 ; init zeropage, x and y regs. (12 bytes)
@@ -243,16 +243,7 @@ no_fixup_lohi:
 !ifndef FORWARD_DECRUNCHING {
   !set FORWARD_DECRUNCHING = 1
 }
-!if FORWARD_DECRUNCHING = 0 {
 literal_start1:
-        tya
-        bne no_hi_decr
-        dec zp_dest_hi
-no_hi_decr:
-        dey
-        jsr get_crunched_byte
-        sta (zp_dest_lo),y
-
 !IF SHOW_PROGRESS_DURING_DECRUNCH = 1 {
          dec   ExoProgressCounter
          bne   +
@@ -262,9 +253,15 @@ ExoProgressPtr
          inc   ExoProgressPtr+1
 +
 }
-
+!if FORWARD_DECRUNCHING = 0 {
+        tya
+        bne no_hi_decr
+        dec zp_dest_hi
+no_hi_decr:
+        dey
+        jsr get_crunched_byte
+        sta (zp_dest_lo),y
 } else {
-literal_start1:
         jsr get_crunched_byte
         sta (zp_dest_lo),y
         iny

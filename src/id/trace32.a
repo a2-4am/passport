@@ -188,8 +188,19 @@ TraceDOS32d
          ldy   #$04       ; at RWTS entry point
          jsr   CompareMemory ; (e.g. $BD00 or $3D00)
          !byte $84,$48,$85,$49
+         bcc   .RWTSEntryOK
+
+         jsr   CompareMemory
+         !byte $84,$10,$85,$11 ; variant used by Micro-Labs
          bcs   .fail
 
+         lda   #$D6
+         sta   $48
+         lda   #$B5
+         sta   $D6
+         bne   .patchmap  ; always branches
+
+.RWTSEntryOK
          lda   #$FA
          sta   modsrc
          lda   jCallRWTS+2

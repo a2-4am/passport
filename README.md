@@ -456,7 +456,7 @@ IN THE SOFTWARE.
 
 ## History
 
-Unreleased
+2024-09-13
 - NEW: patchers/t00_jmp600.a
   (fixes Wizard of Words, Alphabet Zoo,
   Broadsides)

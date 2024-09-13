@@ -453,7 +453,7 @@ inx4     inx
 
 universalrwts
          !bin "../build/universalrwts.pak"
-         !source "exodecrunch.s"
+         !source "exodecrunch.a"
 
 get_crunched_byte:
 _byte_lo = * + 1

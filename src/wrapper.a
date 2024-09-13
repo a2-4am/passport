@@ -88,8 +88,9 @@ OneTimeSetup
          !source "hw.harddisk.a"
 
 SHOW_PROGRESS_DURING_DECRUNCH = 1    ; activates optional UI code in exodecrunch
+kExoProgressWidth = 23               ; depends on total size, max 38
 
-         !source "exodecrunch.s"
+         !source "exodecrunch.a"
 
 get_crunched_byte
          lda _byte_lo
