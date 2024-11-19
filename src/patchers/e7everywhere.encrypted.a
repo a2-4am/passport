@@ -7,19 +7,22 @@
 ;
 ; tested on
 ; - Language Carnival 1 & 2 (DLM)
+; - Scoop Mahoney (DLM)
 ;------------------------------------------------------------------------------
          ; gIsProDOS is TRUE here
          lda   #$0F
          sta   .sector+1
 .sector  lda   #$FF                  ; modified at runtime
          ldx   #$0C
-         ldy   #$0A
+         ldy   #$0D
          jsr   compare
          !byte $F5
          !byte $20,$00,$20
          !byte $90,$04
-         !byte $20,$B0,$FE
+         !byte $20,WILDCARD,WILDCARD
          !byte $60
+         !byte $A9,$02
+         !byte $85
          bcs   .nextsector           ; passport-test-suite/Language Carnival.woz [C=0] matches
          jsr   PrintByID
          !byte s_e7everywhere
