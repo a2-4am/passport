@@ -7,30 +7,11 @@
          ; gIsPascal is TRUE here
          ; (only ever seen this protection on Pascal disks)
 
-         ldy   #$09
-         jsr   SearchTrack
-         !byte $BD,$8C,$C0; LDA $C08C,X
-         !byte $10,$FB    ; BPL -$FB
-         !byte $C9,$A6    ; CMP #$A6
-         !byte $D0,$ED    ; BNE -$ED
-         bcs   .exit
-         ldy   #$07
-         jsr   SearchTrack
-         !byte $BD,$8C,$C0; LDA $C08C,X
-         !byte $10,$FB    ; BPL -$FB
-         !byte $C9,$BC    ; CMP #$BC
-         bcs   .exit
-         ldy   #$07
-         jsr   SearchTrack
-         !byte $BD,$8C,$C0; LDA $C08C,X
-         !byte $10,$FB    ; BPL -$FB
-         !byte $C9,$95    ; CMP #$95
-         bcs   .exit      ; passport-test-suite/Writing Skills Volume 2.woz [C=0] matches
          ldy   #$04
          jsr   SearchTrack
          !byte $AE,$F8,$01; LDX $01F8
          !byte $A9
-         bcs   .exit
+         bcs   .exit      ; passport-test-suite/Writing Skills Volume 2.woz [C=0] matches
          jsr   PrintByID
          !byte s_a6bc95
          jsr   modify1
