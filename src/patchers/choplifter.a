@@ -378,6 +378,7 @@ ReadChoplifter
          bne   ---
 ;;something
          jsr   .cleanup
+         lsr   gTrack
          jmp   FatalError
 
 .readnibx
