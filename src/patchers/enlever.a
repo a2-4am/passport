@@ -1,0 +1,33 @@
+;------------------------------------------------------------------------------
+; #ENLEVER
+; Enlever track length protection (prints 'ENLEVER' if it fails)
+;
+; tested on
+; - Les Secrets de Gertrude (Visi)
+; - Les Puzzles de Gertrude (Visi)
+;------------------------------------------------------------------------------
+!zone {
+         lda   #$0F
+         sta   .sector+1
+.sector  lda   #$FF                  ; modified at runtime
+         ldx   #$36
+         ldy   #$07
+         jsr   compare
+         !byte $45,$4E,$4C,$45,$56,$45,$52
+         bcs   .nextsector           ; passport-test-suite/Les Secrets de Gertrude.woz [C=0] matches
+         lda   .sector+1
+         ldx   #$51
+         ldy   #$05
+         jsr   compare
+         !byte $A9,$02
+         !byte $85,$08
+         !byte $A5
+         jsr   PrintByID
+         !byte s_enlever
+         jsr   inx4
+         jsr   modify1               ; change branch target to success path
+         !byte $60
+.nextsector
+         dec   .sector+1
+         bpl   .sector
+}

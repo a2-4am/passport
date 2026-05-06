@@ -160,3 +160,4 @@ s_didatech   = $9B
 s_anychecksum = $9C
 s_unexpected5and3 = $9D
 s_jmp600     = $9E
+s_enlever    = $9F

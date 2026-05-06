@@ -370,6 +370,7 @@ AnalyzeTrack
          !source "patchers/sigcheck.a"          ; gPossibleSigCheck only
          !source "patchers/errord51.a"          ; gIsLowDOS only
          !source "patchers/enlightenment.a"     ; gIsEnlightenment && T02 only
+         !source "patchers/enlever.a"
          ;
          ; DOS 3.3-specific patchers
          ;

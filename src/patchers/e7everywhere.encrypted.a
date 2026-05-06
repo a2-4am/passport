@@ -9,6 +9,7 @@
 ; - Language Carnival 1 & 2 (DLM)
 ; - Scoop Mahoney (DLM)
 ;------------------------------------------------------------------------------
+!zone {
          ; gIsProDOS is TRUE here
          lda   #$0F
          sta   .sector+1
@@ -31,3 +32,4 @@
 .nextsector
          dec   .sector+1
          bpl   .sector
+}
