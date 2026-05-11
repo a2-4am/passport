@@ -46,6 +46,15 @@ _rwtslog_start
          !byte $D0,$00
          rts
 
+@compare_nopnop
+         ldy   #$09
+         jsr   compare
+         !byte $BD,$8C,$C0
+         !byte $10,$FB
+         !byte $C9,$AA
+         !byte $EA,$EA
+         rts
+
 ;-------------------------------
 ; RWTS "LSR $6A" identification
 ; disk allows either $D4 or $D5 for the
@@ -146,15 +155,19 @@ _rwtslog_start
 ; disk allows any value for
 ; for the second address epilogue nibble
 ;-------------------------------
+; DOS variant
          lda   #$03
          ldx   #$95
-         ldy   #$09
-         jsr   compare               ; if T00,S03,$95 ==
-         !byte $BD,$8C,$C0
-         !byte $10,$FB
-         !byte $C9,$AA
-         !byte $EA,$EA
-         bcs   @cmpnopnop_end        ; passport-test-suite/La Guillotine.woz [C=0] matches
+         jsr   @compare_nopnop
+         bcc   @print_nopnop        ; passport-test-suite/La Guillotine.woz [C=0] matches
+
+; Pascal variant
+         lda   #$0F
+         ldx   #$75
+         jsr   @compare_nopnop
+         bcs   @cmpnopnop_end
+
+@print_nopnop
          jsr   PrintByID
          !byte s_cmpnopnop
          inc   gPatchCount
