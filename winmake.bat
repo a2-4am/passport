@@ -24,6 +24,8 @@ cd ..\src
 2>..\build\out.txt %ACME% -DFORWARD_DECRUNCHING=1 passport.a
 for /f "tokens=2,3 delims=)" %%q in ('find "RELBASE =" ..\build\out.txt') do set _make=%%q
 2>..\build\out.txt %ACME% -r ..\build\passport.lst -DRELBASE=$%_make:~-4% -DFORWARD_DECRUNCHING=1 passport.a
+for /f "tokens=4,* delims=:(" %%q in ('find "LowPoint=" ..\build\out.txt') do echo %%q >> ..\build\vars.a
+for /f "tokens=4,* delims=:(" %%q in ('find "CopyMemory1=" ..\build\out.txt') do echo %%q >> ..\build\vars.a
 for /f "tokens=4,* delims=:(" %%q in ('find "ThisSlot=" ..\build\out.txt') do echo %%q >> ..\build\vars.a
 for /f "tokens=4,* delims=:(" %%q in ('find "PrintByID=" ..\build\out.txt') do echo %%q >> ..\build\vars.a
 for /f "tokens=4,* delims=:(" %%q in ('find "WaitForKey=" ..\build\out.txt') do echo %%q >> ..\build\vars.a
@@ -39,10 +41,7 @@ for /f "tokens=4,* delims=:(" %%q in ('find "SLOT=" ..\build\out.txt') do echo %
 for /f "tokens=4,* delims=:(" %%q in ('find "DRIVE=" ..\build\out.txt') do echo %%q >> ..\build\vars.a
 for /f "tokens=4,* delims=:(" %%q in ('find "MainMenu=" ..\build\out.txt') do echo %%q >> ..\build\vars.a
 for /f "tokens=4,* delims=:(" %%q in ('find "CheckCache=" ..\build\out.txt') do echo %%q >> ..\build\vars.a
-cd ..\build
-%EXOMIZER% raw -q -P23 -T4 -b passport.tmp -o passport.pak
-cd ..\src
-%ACME% -DFORWARD_DECRUNCHING=0 wrapper.a
+%ACME% wrapper.a
 cd ..
 1>nul copy res\work.po %BUILDDISK%.po
 1>nul copy res\_FileInformation.txt build\
