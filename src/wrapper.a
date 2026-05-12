@@ -5,8 +5,6 @@
          ; no code in these
          !source "apidefs.a"
          !source "strings/enid.a"
-         !source "prefs.load.a"
-         !source "hw.diskii.a"
          !source "../build/vars.a"
 
          bit   $C082                 ; read ROM, no write
@@ -14,8 +12,6 @@
          sta   $C00C                 ; 40 columns
          sta   $C000                 ; 80STORE off
          sta   $C002                 ; read main memory
-         jsr   $FB2F                 ; TEXT
-         jsr   $FC58                 ; HOME
          jsr   $FE84                 ; NORMAL
          jsr   $FE93                 ; PR#0
          jsr   $FE89                 ; IN#0
@@ -28,27 +24,10 @@
 quit     !byte 4
 
 OneTimeSetup
-         jsr   decrunch              ; decompress main Passport code
-         sty   $FE                   ;;zp_dest_lo = low byte of Passport entry point
-         ldx   #$0D                  ; copy t00only.pak to $3200
-         ldy   #$32
-         sty   $F1
-         ldy   #$00
-         sty   $F0
--        lda   ($FE), y
-         sta   ($F0), y
-         iny
-         bne   -
-         inc   $FF
-         inc   $F1
-         dex
-         bne   -
-         ;X=0,Y=0
-
--        lda   $BF00, y              ; save a copy of ProDOS system global page
-         sta   $0F00, y              ; (will be copied back and forth by SwapProDOS later)
-         iny
-         bne   -
+         lda   #$BF
+         ldx   #$0F
+         jsr   CopyMemory1           ; save a copy of ProDOS system global page
+                                     ; (will be copied back and forth by SwapProDOS later)
          ;X=0,Y=0
 
          lda   $FBB3                 ; ROM MachineID
@@ -58,10 +37,12 @@ OneTimeSetup
          sta   kForceLower
 +
          ;X=0,Y=0
-         +ScanForDiskII              ; scan slots for Disk II drives
+         !source "hw.diskii.a"       ; scan slots for Disk II drives
          ;X=0
          lda   DiskIIArray+5
          bne   +
+         jsr   $FB2F                 ; TEXT
+         jsr   $FC58                 ; HOME
          jsr   PrintByID             ; no Disk II in slot 6, this is fatal
          !byte s_noslot6
          jsr   WaitForKey
@@ -69,7 +50,7 @@ OneTimeSetup
 +
          ;X=0
          jsr   ScanForRAMAndHardDisks; scan for things that look like RAM disks or hard disks
-         +LoadPrefs                  ; load preferences (if available)
+         !source "prefs.load.a"      ; load preferences (if available)
          jsr   ThisSlot              ; get information about selected drive and set gTargetType for main menu
 
          lda   #<MainMenu            ; set reset vector
@@ -87,22 +68,5 @@ OneTimeSetup
 
          !source "hw.harddisk.a"
 
-SHOW_PROGRESS_DURING_DECRUNCH = 1    ; activates optional UI code in exodecrunch
-kExoProgressWidth = 23               ; depends on total size, max 38
-
-         !source "exodecrunch.a"
-
-get_crunched_byte
-         lda _byte_lo
-         bne _byte_skip_hi
-         dec _byte_hi
-_byte_skip_hi
-         dec _byte_lo
-_byte_lo = * + 1
-_byte_hi = * + 2
-         lda packend                 ; needs to be set correctly before decrunch_file is called
-         rts
-
-!bin "../build/passport.pak"
-!word HIGHPOINT
-packend
+*=LowPoint
+!bin "../build/passport.tmp"

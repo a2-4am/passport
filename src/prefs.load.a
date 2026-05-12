@@ -8,7 +8,6 @@ DEFDRIVE =     $32        ; ASCII "2"
 ;
 ; in:  ProDOS must be in memory
 ;-------------------------------
-!macro LoadPrefs {
          lda   #<PREFSFILE
          sta   mliparam+1
          lda   #>PREFSFILE
@@ -76,4 +75,3 @@ DEFDRIVE =     $32        ; ASCII "2"
          lda   #$32
          sta   DRIVE
 +
-}

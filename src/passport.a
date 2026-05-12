@@ -40,9 +40,6 @@ VERBOSE  = $00       ; set to $01 to display API label addresses
 !to "../build/passport.tmp",plain
 !ct "lcase.ct"
 
-Relocatable
-         !bin "../build/t00only.pak"
-
 NonRelocatable
          !source "apidefs.a"
          !source "strings/en.a"
@@ -477,16 +474,16 @@ _byte_skip_hi:
   !ifdef PASS2 {
   } else { ;PASS2
     !set PASS2=1
-    !warn "RELBASE = ", HIGHPOINT - (* - Relocatable)
+    !warn "RELBASE = ", HIGHPOINT - (* - NonRelocatable)
   }
 } else {
   !if (HIGHPOINT - (* - NonRelocatable)) < LOWPOINT {
-    ; code before NonRelocatable is moved and tracked, so it can be below LOWPOINT
     !serious "My spoon is too big (", HIGHPOINT - (* - NonRelocatable), ") is below minimum (", LOWPOINT, ")!"
   } else {
     !warn "LowPoint=", NonRelocatable
   }
 
+  !warn "CopyMemory1=",CopyMemory1
   !warn "ThisSlot=",ThisSlot
   !warn "PrintByID=",PrintByID
   !warn "WaitForKey=",WaitForKey
@@ -503,3 +500,6 @@ _byte_skip_hi:
   !warn "MainMenu=",MainMenu
   !warn "CheckCache=",CheckCache
 }
+
+;*=B200 here, to match T00PakPtr
+         !bin "../build/t00only.pak"

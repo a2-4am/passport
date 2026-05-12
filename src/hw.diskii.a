@@ -8,7 +8,6 @@
 ;        X = 0
 ;        all other registers and flags clobbered
 ;-------------------------------
-!macro ScanForDiskII {
          ;X=0,Y=0
          stx   cmp1
          ldx   #$07
@@ -33,4 +32,3 @@
          sta   DiskIIArray-1, x
 +        dex
          bne   -
-}

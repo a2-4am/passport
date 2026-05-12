@@ -290,7 +290,7 @@ LASTFILTER
 ;DiskIIArray
          !fill 7
 ;T00PakPtr
-         !word $3200
+         !word $B200
 ;kForceLower
          !byte $FF
 ;OnlineReturn

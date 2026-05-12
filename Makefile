@@ -30,6 +30,8 @@ asm:
 	echo > build/vars.a
 	cd src && $(ACME) -r ../build/passport.lst -DFORWARD_DECRUNCHING=1 passport.a 2> ../build/relbase.log
 	cd src && $(ACME) -r ../build/passport.lst -DRELBASE=`cat ../build/relbase.log | grep "RELBASE =" | cut -d"=" -f2 | cut -d"(" -f2 | cut -d")" -f1` -DFORWARD_DECRUNCHING=1 passport.a 2> ../build/vars.log
+	grep -m1 "LowPoint=" build/vars.log | cut -d":" -f3 | cut -d"(" -f1 >> build/vars.a
+	grep -m1 "CopyMemory1=" build/vars.log | cut -d":" -f3 | cut -d"(" -f1 >> build/vars.a
 	grep -m1 "ThisSlot=" build/vars.log | cut -d":" -f3 | cut -d"(" -f1 >> build/vars.a
 	grep -m1 "PrintByID=" build/vars.log | cut -d":" -f3 | cut -d"(" -f1 >> build/vars.a
 	grep -m1 "WaitForKey=" build/vars.log | cut -d":" -f3 | cut -d"(" -f1 >> build/vars.a
@@ -45,8 +47,7 @@ asm:
 	grep -m1 "DRIVE=" build/vars.log | cut -d":" -f3 | cut -d"(" -f1 >> build/vars.a
 	grep -m1 "MainMenu=" build/vars.log | cut -d":" -f3 | cut -d"(" -f1 >> build/vars.a
 	grep -m1 "CheckCache=" build/vars.log | cut -d":" -f3 | cut -d"(" -f1 >> build/vars.a
-	$(EXOMIZER) raw -q -P23 -b build/passport.tmp -o build/passport.pak
-	cd src && $(ACME) -DFORWARD_DECRUNCHING=0 wrapper.a
+	cd src && $(ACME) wrapper.a
 	cp res/work.po "$(BUILDDISK)".po
 	cp res/_FileInformation.txt build/
 	$(CADIUS) ADDFILE "${BUILDDISK}".po "/PASSPORT/" "build/PASSPORT.SYSTEM"
