@@ -378,6 +378,9 @@ your mileage may vary.
 - MicroFun
   e.g. Crown of Arthain, Miner 2049er
 
+- Numbervision
+  e.g. Abacus, Blocks, Supercounter
+
 - Origin Systems
   e.g. Ultima V, Times of Lore
 
@@ -411,6 +414,10 @@ your mileage may vary.
 - TSR
   e.g. Dawn Patrol, Dungeon
 
+- Vifi Corporation
+  e.g. Les Secrets de Gertrude, Les
+  Puzzles de Gertrude
+
 - Voyager Software
   e.g. Starship Commander
 
@@ -420,7 +427,7 @@ Passport is open source and is
 distributed under the MIT license.
 
 Passport
-Copyright (c) 2016-2024 by 4am
+Copyright (c) 2016-2026 by 4am
 
 Permission is hereby granted, free of
 charge, to any person obtaining a copy
@@ -455,6 +462,21 @@ SOFTWARE OR THE USE OR OTHER DEALINGS
 IN THE SOFTWARE.
 
 ## History
+
+unreleased
+- NEW: patchers/e7everywhere.encrypted.a
+  (fixes Language Carnival 1 & 2, Scoop
+  Mahoney)
+- NEW: patchers/enlever.a
+  (fixes Les Secrets de Gertrude, Les
+  Puzzles de Gertrude)
+- IMPROVED: patchers/a6bc95.a
+  (fixes EasyGraph rev. 2)
+- IMPROVED: patchers/t00_rwtslog.a
+  (fixes Abacus, Blocks, Supercounter)
+- Fix display error on some Roland disks
+- Matching updates to the
+  [Passport test suite](https://github.com/a2-4am/passport-test-suite)
 
 2024-09-13
 - NEW: patchers/t00_jmp600.a
