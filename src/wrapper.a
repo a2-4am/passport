@@ -7,6 +7,16 @@
          !source "strings/enid.a"
          !source "../build/vars.a"
 
+Title
+         jmp   +
+         !bin  "../res/PASSPORT10TH",$1FFD,3
+
++
+         lda   #$FC
+         sta   Title
+         LDA   #$FF
+         sta   Title+1
+         sta   Title+2
          bit   $C082                 ; read ROM, no write
          sta   $C00E                 ; primary character set
          sta   $C00C                 ; 40 columns
@@ -24,6 +34,10 @@
 quit     !byte 4
 
 OneTimeSetup
+         bit   $C050
+         bit   $C054
+         bit   $C052
+         bit   $C057
          lda   #$BF
          ldx   #$0F
          jsr   CopyMemory1           ; save a copy of ProDOS system global page
